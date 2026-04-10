@@ -1978,7 +1978,22 @@
 <body>
   <!-- Login Overlay -->
   <div class="login-overlay" id="loginOverlay">
-    <div class="login-card">
+    <!-- 로딩 화면 (인증 체크 중) -->
+    <div id="loginLoading" style="text-align:center;">
+      <div style="margin-bottom:16px;">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="#2563eb" fill-opacity="0.08"/>
+          <path d="M12 20h16M20 12v16" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="20" cy="20" r="8" stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>
+        </svg>
+      </div>
+      <div class="login-logo"><span class="af-logo-text" style="font-size:32px;">about<br>fishing</span></div>
+      <div style="margin-top:20px;font-size:13px;color:#9ca3af;">연결 중...</div>
+      <div style="margin-top:12px;"><div style="width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto;"></div></div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    </div>
+    <!-- 실제 로그인 폼 (auth 체크 후 표시) -->
+    <div class="login-card" id="loginCard" style="display:none;">
       <div style="margin-bottom: 8px;">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
           <rect width="40" height="40" rx="10" fill="#2563eb" fill-opacity="0.08"/>
@@ -2558,6 +2573,11 @@
 
     function showLoginScreen() {
       document.getElementById('loginOverlay').classList.remove('hidden');
+      // 로딩 숨기고 로그인 폼 표시
+      var loading = document.getElementById('loginLoading');
+      var card = document.getElementById('loginCard');
+      if (loading) loading.style.display = 'none';
+      if (card) card.style.display = '';
     }
 
     function hideLoginScreen() {
@@ -3710,11 +3730,21 @@
         _fb.skipNext = true;
         _fb.ref.set(obj).then(function() {
           _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
+          // 배포 버전 타임스탬프 업데이트
+          var now = new Date();
+          var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+          _fb.db.ref('settings/deployVersion').set(vStr);
+          _updateDeployVersion(vStr);
         }).catch(function(err) {
           console.error('Firebase 저장 실패:', err);
           _updateSync('저장 실패', '#fee2e2', '#dc2626');
         });
       }, 500);
+    }
+
+    function _updateDeployVersion(v) {
+      var el = document.getElementById('deployVersion');
+      if (el) el.textContent = 'v' + v;
     }
 
     function loadProjects() {
@@ -3803,6 +3833,12 @@
         } else {
           _updateSync('연결 중...', '#fef3c7', '#d97706');
         }
+      });
+
+      // 배포 버전 실시간 동기화 — 모든 사용자가 같은 버전 표시
+      _fb.db.ref('settings/deployVersion').on('value', function(snap) {
+        var v = snap.val();
+        if (v) _updateDeployVersion(v);
       });
 
       // 실시간 리스너 — 다른 사용자가 수정하면 반영
@@ -5671,41 +5707,59 @@
       if (state.currentTab === 'projects') renderProjects();
     }
 
+    function _saveCurrentLinkInputs() {
+      if (!state.selectedProject) return;
+      var linkTypes = document.querySelectorAll('.link-type-select');
+      var linkUrls = document.querySelectorAll('.link-url-input');
+      state.selectedProject.links = [];
+      linkTypes.forEach(function(sel, i) {
+        var type = sel.value;
+        if (type === '__custom__') {
+          var customInput = sel.parentElement.querySelector('.link-custom-type');
+          type = customInput ? customInput.value.trim() || '기타' : '기타';
+        }
+        state.selectedProject.links.push({ type: type, url: linkUrls[i].value });
+      });
+    }
+
+    function _reopenCurrentPanel() {
+      var detailBody = document.querySelector('.detail-body');
+      var scrollPos = detailBody ? detailBody.scrollTop : 0;
+      if (state.isCreating) {
+        createNewProject._reopen = true;
+        createNewProject();
+      } else {
+        openDetailPanel(state.selectedProject.id);
+      }
+      // 스크롤 위치 복원
+      setTimeout(function() {
+        var body = document.querySelector('.detail-body');
+        if (body) body.scrollTop = scrollPos;
+      }, 60);
+    }
+
     function addLink() {
       if (!state.selectedProject) return;
       if (!state.selectedProject.links) state.selectedProject.links = [];
-      // Save current input values before re-render
-      const linkTypes = document.querySelectorAll('.link-type-select');
-      const linkUrls = document.querySelectorAll('.link-url-input');
-      state.selectedProject.links = [];
-      linkTypes.forEach((sel, i) => {
-        state.selectedProject.links.push({ type: sel.value, url: linkUrls[i].value });
-      });
+      _saveCurrentLinkInputs();
       state.selectedProject.links.push({ type: '기획서', url: '' });
-      openDetailPanel(state.selectedProject.id);
+      _reopenCurrentPanel();
     }
 
     function editLinkInline(idx) {
       if (!state.selectedProject || !state.selectedProject.links) return;
-      // Convert saved link back to editable inputs by clearing URL temporarily
-      const link = state.selectedProject.links[idx];
+      var link = state.selectedProject.links[idx];
       if (link) {
         link._editing = true;
-        openDetailPanel(state.selectedProject.id);
+        _reopenCurrentPanel();
       }
     }
 
     function removeLink(idx) {
       if (!state.selectedProject || !state.selectedProject.links) return;
-      // Save current input values before re-render
-      const linkTypes = document.querySelectorAll('.link-type-select');
-      const linkUrls = document.querySelectorAll('.link-url-input');
-      state.selectedProject.links = [];
-      linkTypes.forEach((sel, i) => {
-        state.selectedProject.links.push({ type: sel.value, url: linkUrls[i].value });
-      });
+      _saveCurrentLinkInputs();
       state.selectedProject.links.splice(idx, 1);
-      openDetailPanel(state.selectedProject.id);
+      _reopenCurrentPanel();
     }
 
     function _getServiceTypes() {
@@ -6644,46 +6698,52 @@
     }
 
     function createNewProject() {
-      // Generate next ID
-      const maxNum = state.projects.reduce((max, p) => {
-        const n = parseInt(p.id.replace('P', ''));
-        return n > max ? n : max;
-      }, 0);
-      const newId = 'P' + String(maxNum + 1).padStart(2, '0');
+      var isReopen = createNewProject._reopen;
+      createNewProject._reopen = false;
 
-      const newProject = {
-        id: newId,
-        name: '',
-        desc: '',
-        rationale: '',
-        tier: 'TIER3',
-        score: 5,
-        impact: 5,
-        urgency: 5,
-        complexity: 3,
-        dependency: 0,
-        deps: [],
-        assignments: { plan: [], design: [], front: [], back: [], qa: [] },
-        phases: { plan: {start:'',end:''}, design: {start:'',end:''}, front: {start:'',end:''}, back: {start:'',end:''}, qa: {start:'',end:''} },
-        deployDate: '',
-        status: '대기',
-        continuous: false,
-        links: []
-      };
+      if (!isReopen) {
+        // 새로 생성할 때만 새 프로젝트 객체 생성
+        var maxNum = state.projects.reduce(function(max, p) {
+          var n = parseInt(p.id.replace('P', ''));
+          return n > max ? n : max;
+        }, 0);
+        var newId = 'P' + String(maxNum + 1).padStart(2, '0');
 
-      // Set as selectedProject and open panel in "create" mode
-      state.selectedProject = newProject;
-      state.isCreating = true;
+        var newProject = {
+          id: newId,
+          name: '',
+          desc: '',
+          rationale: '',
+          tier: 'TIER3',
+          score: 5,
+          impact: 5,
+          urgency: 5,
+          complexity: 3,
+          dependency: 0,
+          deps: [],
+          assignments: { plan: [], design: [], front: [], back: [], qa: [] },
+          phases: { plan: {start:'',end:''}, design: {start:'',end:''}, front: {start:'',end:''}, back: {start:'',end:''}, qa: {start:'',end:''} },
+          deployDate: '',
+          status: '대기',
+          continuous: false,
+          links: [],
+          serviceTypes: []
+        };
 
-      const panel = document.getElementById('detailPanel');
-      const title = document.getElementById('detailTitle');
-      const body = document.getElementById('detailBody');
+        state.selectedProject = newProject;
+        state.isCreating = true;
+      }
+
+      var sp = state.selectedProject;
+      var panel = document.getElementById('detailPanel');
+      var title = document.getElementById('detailTitle');
+      var body = document.getElementById('detailBody');
 
       title.textContent = '새 안건 등록';
       body.innerHTML = `
         <div class="detail-section">
           <label class="detail-label">ID</label>
-          <input type="text" class="detail-input" value="${newId}" disabled style="background: #f3f4f6; color: #6b7280;">
+          <input type="text" class="detail-input" value="${sp.id}" disabled style="background: #f3f4f6; color: #6b7280;">
         </div>
         <div class="detail-section">
           <label class="detail-label">서비스 종류 <span style="font-size:10px;color:#9ca3af;font-weight:400;">(복수 선택 가능)</span></label>
@@ -6691,40 +6751,40 @@
         </div>
         <div class="detail-section">
           <label class="detail-label">안건명</label>
-          <input type="text" class="detail-input" id="detailName" value="" placeholder="안건명을 입력하세요" autofocus>
+          <input type="text" class="detail-input" id="detailName" value="${(sp.name || '').replace(/"/g, '&quot;')}" placeholder="안건명을 입력하세요" autofocus>
         </div>
         <div class="detail-section">
           <label class="detail-label">설명</label>
-          <textarea class="detail-input" id="detailDesc" style="height: 80px;" placeholder="안건 설명..."></textarea>
+          <textarea class="detail-input" id="detailDesc" style="height: 80px;" placeholder="안건 설명...">${sp.desc || ''}</textarea>
         </div>
         <div class="detail-section">
           <label class="detail-label">티어</label>
           <select class="detail-input" id="detailTier">
-            <option value="CRITICAL">CRITICAL</option>
-            <option value="TIER1">TIER 1</option>
-            <option value="TIER2">TIER 2</option>
-            <option value="TIER3" selected>TIER 3</option>
-            <option value="TIER4">TIER 4</option>
-            <option value="CONTINUOUS">지속 병행</option>
+            <option value="CRITICAL" ${sp.tier==='CRITICAL'?'selected':''}>CRITICAL</option>
+            <option value="TIER1" ${sp.tier==='TIER1'?'selected':''}>TIER 1</option>
+            <option value="TIER2" ${sp.tier==='TIER2'?'selected':''}>TIER 2</option>
+            <option value="TIER3" ${sp.tier==='TIER3'?'selected':''}>TIER 3</option>
+            <option value="TIER4" ${sp.tier==='TIER4'?'selected':''}>TIER 4</option>
+            <option value="CONTINUOUS" ${sp.tier==='CONTINUOUS'?'selected':''}>지속 병행</option>
           </select>
         </div>
         <div class="detail-section">
           <label class="detail-label">배포일</label>
-          <input type="date" class="detail-input" id="detailDeployDate" value="" onfocus="try{this.showPicker()}catch(e){}">
+          <input type="date" class="detail-input" id="detailDeployDate" value="${sp.deployDate || ''}" onfocus="try{this.showPicker()}catch(e){}">
         </div>
         <div class="detail-section">
           <label class="detail-label">상태</label>
           <select class="detail-input" id="detailStatus">
-            <option value="대기" selected>대기</option>
-            <option value="진행">진행</option>
-            <option value="완료">완료</option>
-            <option value="연기">연기</option>
-            <option value="Deprecated">Deprecated</option>
+            <option value="대기" ${sp.status==='대기'?'selected':''}>대기</option>
+            <option value="진행" ${sp.status==='진행'?'selected':''}>진행</option>
+            <option value="완료" ${sp.status==='완료'?'selected':''}>완료</option>
+            <option value="연기" ${sp.status==='연기'?'selected':''}>연기</option>
+            <option value="Deprecated" ${sp.status==='Deprecated'?'selected':''}>Deprecated</option>
           </select>
         </div>
         <div class="detail-section">
           <label class="detail-label">근거</label>
-          <textarea class="detail-input" id="detailRationale" style="height: 60px;" placeholder="우선순위 근거..."></textarea>
+          <textarea class="detail-input" id="detailRationale" style="height: 60px;" placeholder="우선순위 근거...">${sp.rationale || ''}</textarea>
         </div>
         <div style="margin-top: 16px; padding: 16px; border-top: 1px solid #e5e7eb; background: #f9fafb; border-radius: 8px;">
           <label class="detail-label" style="margin-bottom: 12px; font-weight: 700; font-size: 13px;">우선순위 점수</label>
@@ -6732,35 +6792,35 @@
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:12px;color:#374151;">사업 영향도</span>
-                <span style="font-size:12px;font-weight:700;color:#2563eb;" id="createImpactVal">5</span>
+                <span style="font-size:12px;font-weight:700;color:#2563eb;" id="createImpactVal">${sp.impact||5}</span>
               </div>
-              <input type="range" min="1" max="10" value="5" id="createImpact" oninput="document.getElementById('createImpactVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#2563eb;">
+              <input type="range" min="1" max="10" value="${sp.impact||5}" id="createImpact" oninput="document.getElementById('createImpactVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#2563eb;">
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:12px;color:#374151;">긴급도</span>
-                <span style="font-size:12px;font-weight:700;color:#f59e0b;" id="createUrgencyVal">5</span>
+                <span style="font-size:12px;font-weight:700;color:#f59e0b;" id="createUrgencyVal">${sp.urgency||5}</span>
               </div>
-              <input type="range" min="1" max="10" value="5" id="createUrgency" oninput="document.getElementById('createUrgencyVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#f59e0b;">
+              <input type="range" min="1" max="10" value="${sp.urgency||5}" id="createUrgency" oninput="document.getElementById('createUrgencyVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#f59e0b;">
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:12px;color:#374151;">복잡도</span>
-                <span style="font-size:12px;font-weight:700;color:#ef4444;" id="createComplexityVal">3</span>
+                <span style="font-size:12px;font-weight:700;color:#ef4444;" id="createComplexityVal">${sp.complexity||3}</span>
               </div>
-              <input type="range" min="1" max="10" value="3" id="createComplexity" oninput="document.getElementById('createComplexityVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#ef4444;">
+              <input type="range" min="1" max="10" value="${sp.complexity||3}" id="createComplexity" oninput="document.getElementById('createComplexityVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#ef4444;">
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
                 <span style="font-size:12px;color:#374151;">의존도</span>
-                <span style="font-size:12px;font-weight:700;color:#8b5cf6;" id="createDependencyVal">0</span>
+                <span style="font-size:12px;font-weight:700;color:#8b5cf6;" id="createDependencyVal">${sp.dependency||0}</span>
               </div>
-              <input type="range" min="0" max="10" value="0" id="createDependency" oninput="document.getElementById('createDependencyVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#8b5cf6;">
+              <input type="range" min="0" max="10" value="${sp.dependency||0}" id="createDependency" oninput="document.getElementById('createDependencyVal').textContent=this.value;_recalcCreateScore()" style="width:100%;accent-color:#8b5cf6;">
             </div>
           </div>
           <div style="margin-top:12px;text-align:center;padding:8px;background:white;border-radius:6px;border:1px solid #e5e7eb;">
             <span style="font-size:11px;color:#6b7280;">종합 점수</span>
-            <span style="font-size:20px;font-weight:800;color:#1f2937;margin-left:8px;" id="createScoreDisplay">3.3</span>
+            <span style="font-size:20px;font-weight:800;color:#1f2937;margin-left:8px;" id="createScoreDisplay">${sp.score||3.3}</span>
           </div>
         </div>
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
@@ -6832,16 +6892,23 @@
       var score = Math.round(((state.selectedProject.impact + state.selectedProject.urgency + state.selectedProject.dependency) / 3 - state.selectedProject.complexity * 0.1) * 10) / 10;
       state.selectedProject.score = score;
       state.selectedProject.bizScore = score;
-      // Save links
-      const linkTypes = document.querySelectorAll('.link-type-select');
-      const linkUrls = document.querySelectorAll('.link-url-input');
+      // Save links (커스텀 타입 처리 포함)
+      var linkTypes = document.querySelectorAll('.link-type-select');
+      var linkUrls = document.querySelectorAll('.link-url-input');
       state.selectedProject.links = [];
-      linkTypes.forEach((sel, i) => {
-        const url = linkUrls[i].value.trim();
+      linkTypes.forEach(function(sel, i) {
+        var url = linkUrls[i].value.trim();
         if (url) {
-          state.selectedProject.links.push({ type: sel.value, url });
+          var type = sel.value;
+          if (type === '__custom__') {
+            var customInput = sel.parentElement.querySelector('.link-custom-type');
+            type = customInput ? customInput.value.trim() || '기타' : '기타';
+          }
+          state.selectedProject.links.push({ type: type, url: url });
         }
       });
+      // serviceTypes는 체크박스 onchange에서 이미 state.selectedProject.serviceTypes에 저장됨
+      if (!state.selectedProject.serviceTypes) state.selectedProject.serviceTypes = [];
 
       state.projects.push(state.selectedProject);
       state.isCreating = false;
@@ -6864,8 +6931,7 @@
 
     /* ========== INIT ========== */
     function init() {
-      // Load history and restore admin mode
-      loadHistory();
+      // Restore admin mode (history는 Firebase init 후 _initAuthCheck에서 로드)
       if (localStorage.getItem('af_adminMode') === 'true') {
         state.adminMode = true;
         document.getElementById('adminToggle').textContent = '🔓';
@@ -6883,6 +6949,11 @@
 
       // 1단계: 즉시 데이터 로드 및 렌더 (Firebase 무관하게 화면 먼저 표시)
       initProjects();
+      // 초기 렌더링 (현재 활성 탭 기준)
+      if (state.currentTab === 'schedule') renderGantt();
+      else if (state.currentTab === 'projects') renderProjects();
+      else if (state.currentTab === 'overview') renderOverview();
+      else if (state.currentTab === 'team') renderTeam();
 
       // 2단계: Firebase 초기화 (SDK는 head에서 이미 로딩됨)
       _bootFirebase();
@@ -6900,6 +6971,7 @@
           if (tabId === 'projects') renderProjects();
           else if (tabId === 'team') renderTeam();
           else if (tabId === 'overview') renderOverview();
+          else if (tabId === 'history') renderHistory();
           else renderGantt();
         };
       });

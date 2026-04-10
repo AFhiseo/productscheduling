@@ -2171,6 +2171,7 @@
           <div style="display:flex;gap:8px;margin-bottom:16px;">
             <button class="btn" id="histTabChanges" onclick="switchHistoryTab('changes')" style="font-size:13px;padding:6px 16px;">변경 이력</button>
             <button class="btn btn-secondary" id="histTabAccess" onclick="switchHistoryTab('access')" style="font-size:13px;padding:6px 16px;">접속 이력</button>
+            <button class="btn btn-secondary" id="histTabDeploy" onclick="switchHistoryTab('deploy')" style="font-size:13px;padding:6px 16px;">릴리즈노트</button>
             <div style="flex:1;"></div>
             <button class="btn-secondary btn" onclick="clearHistory()" id="clearHistoryBtn" style="font-size:12px;display:none;">이력 초기화</button>
           </div>
@@ -2573,6 +2574,9 @@
             pushAccessLog('로그인');
             loadHistory();
             loadAccessLogs();
+            loadDeployLogs();
+            // 딥링크 처리 (URL에 #project=XX 있으면 해당 프로젝트 열기)
+            setTimeout(_handleDeepLink, 500);
           } else {
             firebase.auth().signOut();
             showLoginScreen();
@@ -3809,18 +3813,138 @@
       });
     }
 
+    // === 배포이력 (대시보드 HTML 깃헙 수정/배포 릴리즈 노트) ===
+    var _deployLogs = [];
+    var _LS_DEPLOY_KEY = 'af_history_deploy';
+
+    function pushDeployLog(version, changes) {
+      // version: 'v2026.04.10' 형태, changes: ['기능1 추가', '버그2 수정', ...] 배열
+      var member = _getLinkedMember(state.currentUser ? state.currentUser.email : '');
+      var entry = {
+        timestamp: new Date().toISOString(),
+        version: version || '',
+        changes: changes || [],
+        user: member ? member.name : (state.currentUser ? state.currentUser.displayName || state.currentUser.email : ''),
+        email: state.currentUser ? state.currentUser.email : ''
+      };
+      _deployLogs.push(entry);
+      try { localStorage.setItem(_LS_DEPLOY_KEY, JSON.stringify(_deployLogs.slice(-200))); } catch(e) {}
+      if (_fb.db) {
+        _fb.db.ref('history/deploy').push(entry).then(function() {
+          console.log('[Deploy] Firebase write OK');
+        }).catch(function(err) {
+          console.error('[Deploy] Firebase write FAIL:', err);
+        });
+      }
+      if (state.currentTab === 'history' && _historyTab === 'deploy') renderHistory();
+    }
+
+    function loadDeployLogs() {
+      var saved = localStorage.getItem(_LS_DEPLOY_KEY);
+      if (saved) {
+        try { var p = JSON.parse(saved); if (p && p.length) _deployLogs = p; } catch(e) {}
+      }
+      if (!_fb.db) return;
+      _fb.db.ref('history/deploy').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+        var data = snap.val();
+        if (data) {
+          var arr = [];
+          Object.keys(data).forEach(function(k) { arr.push(data[k]); });
+          arr.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+          _deployLogs = arr;
+          try { localStorage.setItem(_LS_DEPLOY_KEY, JSON.stringify(_deployLogs)); } catch(e) {}
+        }
+        if (state.currentTab === 'history' && _historyTab === 'deploy') renderHistory();
+      }, function(err) {
+        console.error('[Deploy] Firebase listener error:', err);
+      });
+    }
+
+    function _submitDeployLog() {
+      var verInput = document.getElementById('deployLogVersion');
+      var changesArea = document.getElementById('deployLogChanges');
+      if (!verInput || !changesArea) return;
+      var version = verInput.value.trim();
+      var rawChanges = changesArea.value.trim();
+      if (!version) { _showToast('버전을 입력해주세요'); return; }
+      if (!rawChanges) { _showToast('작업 내역을 입력해주세요'); return; }
+      var changes = rawChanges.split('\n').map(function(s) { return s.replace(/^[\-\*\•]\s*/, '').trim(); }).filter(Boolean);
+      pushDeployLog(version, changes);
+      verInput.value = '';
+      changesArea.value = '';
+      _showToast('릴리즈노트가 등록되었습니다');
+    }
+
+    function _renderDeployLog(container) {
+      var logs = (_deployLogs || []).slice().reverse();
+      // 등록 폼 (관리자만)
+      var formHtml = '';
+      if (state.adminMode || _hasWritePermission()) {
+        var today = new Date();
+        var defaultVer = 'v' + today.getFullYear() + '.' + String(today.getMonth()+1).padStart(2,'0') + '.' + String(today.getDate()).padStart(2,'0');
+        formHtml = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:20px;">' +
+          '<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">릴리즈노트 등록</div>' +
+          '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">' +
+            '<label style="font-size:12px;color:#6b7280;flex-shrink:0;width:50px;">버전</label>' +
+            '<input type="text" id="deployLogVersion" value="' + defaultVer + '" placeholder="v2026.04.10" style="flex:1;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-weight:600;">' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">' +
+            '<label style="font-size:12px;color:#6b7280;flex-shrink:0;width:50px;padding-top:6px;">내역</label>' +
+            '<textarea id="deployLogChanges" rows="4" placeholder="한 줄에 하나씩 작성\n예:\n- 팀원 권한 시스템 추가\n- 스케줄탭 바 겹침 수정\n- 이력탭 Firebase 연동" style="flex:1;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;line-height:1.6;resize:vertical;font-family:inherit;"></textarea>' +
+          '</div>' +
+          '<div style="text-align:right;">' +
+            '<button onclick="_submitDeployLog()" class="btn" style="font-size:12px;padding:6px 16px;">등록</button>' +
+          '</div>' +
+        '</div>';
+      }
+
+      if (logs.length === 0 && !formHtml) {
+        container.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:60px 0;">릴리즈노트가 없습니다.</div>';
+        return;
+      }
+
+      var html = formHtml;
+      logs.forEach(function(log) {
+        var dt = new Date(log.timestamp);
+        var dateStr = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+        var timeStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+        var changes = log.changes || [];
+        // 이전 형식 호환 (summary 필드만 있던 경우)
+        if (changes.length === 0 && log.summary) changes = [log.summary];
+        html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px;">' +
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+            '<span style="font-size:20px;">🚀</span>' +
+            '<span style="font-size:15px;font-weight:800;color:#1f2937;">' + (log.version || '') + '</span>' +
+            '<span style="font-size:12px;color:#9ca3af;">' + dateStr + ' ' + timeStr + '</span>' +
+            '<span style="font-size:11px;color:#6366f1;background:#eef2ff;padding:2px 8px;border-radius:8px;font-weight:500;margin-left:auto;">' + (log.user || '') + '</span>' +
+          '</div>' +
+          (changes.length > 0 ? '<ul style="margin:0;padding-left:20px;">' + changes.map(function(c) {
+            return '<li style="font-size:13px;color:#374151;line-height:1.8;">' + _escapeHtml(c) + '</li>';
+          }).join('') + '</ul>' : '') +
+        '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function _escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
     var _historyTab = 'changes';
     function switchHistoryTab(tab) {
       _historyTab = tab;
-      var changesBtn = document.getElementById('histTabChanges');
-      var accessBtn = document.getElementById('histTabAccess');
-      if (tab === 'changes') {
-        changesBtn.className = 'btn'; changesBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
-        accessBtn.className = 'btn btn-secondary'; accessBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
-      } else {
-        changesBtn.className = 'btn btn-secondary'; changesBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
-        accessBtn.className = 'btn'; accessBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
-      }
+      var tabs = { changes: 'histTabChanges', access: 'histTabAccess', deploy: 'histTabDeploy' };
+      Object.keys(tabs).forEach(function(k) {
+        var btn = document.getElementById(tabs[k]);
+        if (!btn) return;
+        if (k === tab) {
+          btn.className = 'btn'; btn.style.cssText = 'font-size:13px;padding:6px 16px;';
+        } else {
+          btn.className = 'btn btn-secondary'; btn.style.cssText = 'font-size:13px;padding:6px 16px;';
+        }
+      });
       renderHistory();
     }
 
@@ -5637,9 +5761,61 @@
     }
 
     /* ========== UI FUNCTIONS ========== */
+    // === 딥링크 시스템 ===
+    function _setHash(projectId) {
+      if (projectId) {
+        history.replaceState(null, '', '#project=' + projectId);
+      } else {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+    function _getHashProjectId() {
+      var hash = window.location.hash;
+      var m = hash.match(/^#project=([A-Za-z0-9_]+)/);
+      return m ? m[1] : null;
+    }
+    function _handleDeepLink() {
+      var pid = _getHashProjectId();
+      if (!pid) return;
+      // 프로젝트가 로드될 때까지 약간의 지연
+      var attempts = 0;
+      function tryOpen() {
+        var proj = state.projects.find(function(p) { return p.id === pid; });
+        if (proj) {
+          openDetailPanel(pid);
+        } else if (attempts < 10) {
+          attempts++;
+          setTimeout(tryOpen, 300);
+        }
+      }
+      tryOpen();
+    }
+    function copyProjectLink(projectId) {
+      var url = window.location.origin + window.location.pathname + '#project=' + projectId;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() {
+          _showToast('링크가 복사되었습니다');
+        }).catch(function() {
+          _fallbackCopyLink(url);
+        });
+      } else {
+        _fallbackCopyLink(url);
+      }
+    }
+    function _fallbackCopyLink(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); _showToast('링크가 복사되었습니다'); } catch(e) { _showToast('복사 실패 — URL을 직접 복사해주세요'); }
+      document.body.removeChild(ta);
+    }
+
     function openDetailPanel(projectId) {
       state.selectedProject = state.projects.find(p => p.id === projectId);
       if (!state.selectedProject) return;
+      _setHash(projectId);
 
       const panel = document.getElementById('detailPanel');
       const title = document.getElementById('detailTitle');
@@ -5665,7 +5841,7 @@
         if (ends.length) scheduleEnd = ends[ends.length - 1];
       }
 
-      title.textContent = p.name;
+      title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>';
       body.innerHTML = `
         <!-- 요약 카드 -->
         <div style="background: linear-gradient(135deg, ${tierColor}08, ${tierColor}15); border: 1px solid ${tierColor}30; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;">
@@ -5821,6 +5997,7 @@
       document.getElementById('panelBackdrop').classList.remove('open');
       _unlockBodyScroll();
       state.selectedProject = null;
+      _setHash(null);
       if (state.isCreating) {
         state.isCreating = false;
         restoreDetailActions();
@@ -6517,6 +6694,12 @@
         return;
       }
 
+      if (_historyTab === 'deploy') {
+        if (clearBtn) clearBtn.style.display = 'none';
+        _renderDeployLog(container);
+        return;
+      }
+
       // 변경 이력 렌더링
       if (clearBtn) clearBtn.style.display = state.currentUser ? '' : 'none';
       var hist = (state.history || []).slice().reverse();
@@ -7200,6 +7383,7 @@
             if (_fb.db && state.history.length === 0) {
               loadHistory();
               loadAccessLogs();
+              loadDeployLogs();
             }
             renderHistory();
           }
@@ -7450,6 +7634,7 @@
     }
 
     window.openDetailPanel = openDetailPanel;
+    window.copyProjectLink = copyProjectLink;
     window.closeDetailPanel = closeDetailPanel;
     window.saveDetail = saveDetail;
     window.deleteProject = deleteProject;
@@ -7473,6 +7658,7 @@
     window.clearHistory = clearHistory;
     window.renderHistory = renderHistory;
     window.switchHistoryTab = switchHistoryTab;
+    window._submitDeployLog = _submitDeployLog;
     window.openMemberManagement = openMemberManagement;
     window.addNewMember = addNewMember;
     window.removeMember = removeMember;

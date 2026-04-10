@@ -3636,9 +3636,14 @@
       };
       var proj = state.projects.find(function(p) { return p.id === projectId; });
       if (proj) entry.projectName = proj.name;
+      console.log('[History] push:', action, projectId, field, '| fb:', !!_fb.db);
       // Firebase에 저장
       if (_fb.db) {
-        _fb.db.ref('history/changes').push(entry);
+        _fb.db.ref('history/changes').push(entry).then(function() {
+          console.log('[History] Firebase write OK');
+        }).catch(function(err) {
+          console.error('[History] Firebase write FAIL:', err);
+        });
       }
       // 로컬 캐시에도 추가
       state.history.push(entry);
@@ -3646,6 +3651,7 @@
     }
 
     function loadHistory() {
+      console.log('[History] loadHistory called, fb:', !!_fb.db);
       // Firebase에서 실시간 로드
       if (_fb.db) {
         _fb.db.ref('history/changes').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
@@ -3655,9 +3661,11 @@
             Object.keys(data).forEach(function(k) { state.history.push(data[k]); });
             state.history.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
           }
+          console.log('[History] loaded from Firebase:', state.history.length, 'entries');
           if (state.currentTab === 'history' && _historyTab === 'changes') renderHistory();
         });
       } else {
+        console.log('[History] no Firebase, fallback to localStorage');
         // fallback: localStorage
         var saved = localStorage.getItem('af_history');
         if (saved) { try { state.history = JSON.parse(saved); } catch(e) {} }
@@ -3666,6 +3674,7 @@
 
     // 접속이력 기록
     function pushAccessLog(action) {
+      console.log('[Access] pushAccessLog:', action, '| fb:', !!_fb.db, '| user:', !!state.currentUser);
       if (!_fb.db || !state.currentUser) return;
       var member = _getLinkedMember(state.currentUser.email);
       var entry = {
@@ -3684,6 +3693,7 @@
 
     var _accessLogs = [];
     function loadAccessLogs() {
+      console.log('[Access] loadAccessLogs called, fb:', !!_fb.db);
       if (!_fb.db) return;
       _fb.db.ref('history/access').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
         var data = snap.val();
@@ -3692,6 +3702,7 @@
           Object.keys(data).forEach(function(k) { _accessLogs.push(data[k]); });
           _accessLogs.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
         }
+        console.log('[Access] loaded from Firebase:', _accessLogs.length, 'entries');
         if (state.currentTab === 'history' && _historyTab === 'access') renderHistory();
       });
     }
@@ -5097,12 +5108,50 @@
 
           nameRow.appendChild(topLine);
           nameRow.appendChild(bottomLine);
+
+          // 활성 페이즈 겹침 감지 → 레인 분배 (nameRow/barRow 높이 결정 위해 먼저 계산)
+          var _activePhases = [];
+          ['plan', 'design', 'front', 'back', 'qa'].forEach(function(phase) {
+            var pd = project.phases[phase];
+            if (pd && pd.start && pd.end) {
+              _activePhases.push({ phase: phase, start: parseLocalDate(pd.start), end: parseLocalDate(pd.end) });
+            }
+          });
+          // 레인 할당: 겹치는 바는 다른 줄에 배치
+          var _phaseLanes = [];
+          _activePhases.sort(function(a, b) { return a.start - b.start; });
+          _activePhases.forEach(function(item) {
+            var placed = false;
+            for (var li = 0; li < _phaseLanes.length; li++) {
+              var lastEnd = _phaseLanes[li][_phaseLanes[li].length - 1].end;
+              if (item.start > lastEnd) { // start가 lastEnd보다 커야 겹치지 않음 (같은 날 = 겹침)
+                _phaseLanes[li].push(item);
+                placed = true;
+                break;
+              }
+            }
+            if (!placed) _phaseLanes.push([item]);
+          });
+          // 페이즈별 레인 인덱스 매핑
+          var _phaseLaneMap = {};
+          _phaseLanes.forEach(function(lane, laneIdx) {
+            lane.forEach(function(item) { _phaseLaneMap[item.phase] = laneIdx; });
+          });
+          var _laneCount = Math.max(_phaseLanes.length, 1);
+          var _barH = 26;
+          var _barGap = 2;
+          var _rowPad = 4;
+          var _rowH = _laneCount * (_barH + _barGap) + _rowPad;
+
+          // nameRow/barRow 높이 설정 후 DOM 추가
+          nameRow.style.minHeight = _rowH + 'px';
           namesScroll.appendChild(nameRow);
 
           const row = document.createElement('div');
           row.className = 'bar-row' + (rowIdx % 2 === 1 ? ' row-even' : '');
           row.id = `row-${project.id}`;
-          // row paired with nameRow by index
+          row.style.minHeight = _rowH + 'px';
+          row.style.height = _rowH + 'px';
 
           // Render bars for each phase
           ['plan', 'design', 'front', 'back', 'qa'].forEach(phase => {
@@ -5114,11 +5163,15 @@
               const width = durationDays(start, end) * DAY_WIDTH * state.zoom;
               const assignees = project.assignments[phase] || [];
               const assigneeStr = assignees.slice(0, 2).map(getInitials).join('/');
+              var laneIdx = _phaseLaneMap[phase] !== undefined ? _phaseLaneMap[phase] : 0;
+              var topPos = _rowPad / 2 + laneIdx * (_barH + _barGap);
 
               const bar = document.createElement('div');
               bar.className = `gantt-bar phase-${phase}`;
               bar.style.left = left + 'px';
               bar.style.width = Math.max(width, 20) + 'px';
+              bar.style.top = topPos + 'px';
+              bar.style.height = _barH + 'px';
 
               // 진행률 바
               const stripe = document.createElement('div');
@@ -7028,7 +7081,14 @@
           if (tabId === 'projects') renderProjects();
           else if (tabId === 'team') renderTeam();
           else if (tabId === 'overview') renderOverview();
-          else if (tabId === 'history') renderHistory();
+          else if (tabId === 'history') {
+            // 이력 탭 진입 시 Firebase 리스너가 아직 안 걸려 있으면 재등록
+            if (_fb.db && state.history.length === 0) {
+              loadHistory();
+              loadAccessLogs();
+            }
+            renderHistory();
+          }
           else renderGantt();
         };
       });

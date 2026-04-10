@@ -2007,7 +2007,7 @@
     <!-- Header -->
     <div class="header">
       <div class="header-top">
-        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전">v2026.04.10 09:36</span></div>
+        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전">v2026.04.10 10:08</span></div>
         <div class="header-controls">
           <input type="text" class="search-input" id="searchInput" placeholder="검색...">
           <div class="filter-group">
@@ -2148,13 +2148,15 @@
 
       <!-- Tab 4: Overview -->
       <div class="tab-content" id="overview">
-        <div class="overview-grid" id="overviewContent"></div>
+        <div id="overviewContent" style="padding:20px;"></div>
       </div>
       <!-- Tab 5: History -->
       <div class="tab-content" id="history">
         <div style="padding: 20px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <h3 style="font-size:18px;font-weight:700;">변경 이력</h3>
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <button class="btn" id="histTabChanges" onclick="switchHistoryTab('changes')" style="font-size:13px;padding:6px 16px;">변경 이력</button>
+            <button class="btn btn-secondary" id="histTabAccess" onclick="switchHistoryTab('access')" style="font-size:13px;padding:6px 16px;">접속 이력</button>
+            <div style="flex:1;"></div>
             <button class="btn-secondary btn" onclick="clearHistory()" id="clearHistoryBtn" style="font-size:12px;display:none;">이력 초기화</button>
           </div>
           <div id="historyContent" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -2324,7 +2326,10 @@
     function _loadAllowedEmails() {
       try { var saved = localStorage.getItem('af_allowed_emails'); if (saved) _allowedEmails = JSON.parse(saved); } catch(e) {}
     }
-    function _saveAllowedEmails() { localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails)); }
+    function _saveAllowedEmails() {
+      localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails));
+      if (_fb.db) _fb.db.ref('settings/allowedEmails').set(_allowedEmails);
+    }
 
     // 팀원 접속 상태 (Firebase에 저장)
     var _memberPresence = {}; // { memberId: { online: bool, lastSeen: timestamp, email: '', displayName: '' } }
@@ -2523,13 +2528,17 @@
               state.currentUser.memberName = linked.name;
               _updatePresence(linked.id, true);
               // 브라우저 닫을 때 오프라인 처리
-              window.addEventListener('beforeunload', function() { _updatePresence(linked.id, false); });
+              window.addEventListener('beforeunload', function() { _updatePresence(linked.id, false); pushAccessLog('페이지 이탈'); });
               // 세션 만료 감시 시작
               setTimeout(_startSessionCheck, 1000);
             }
             _loadPresence();
             updateUserHeader();
             hideLoginScreen();
+            // 접속이력 기록 및 이력 로드
+            pushAccessLog('로그인');
+            loadHistory();
+            loadAccessLogs();
           } else {
             firebase.auth().signOut();
             showLoginScreen();
@@ -2610,6 +2619,7 @@
 
     function logoutUser() {
       if (!_fb.auth) return;
+      pushAccessLog('로그아웃');
       firebase.auth().signOut().then(function() {
         state.currentUser = null;
         showLoginScreen();
@@ -2719,7 +2729,7 @@
               var hasMention = false;
               unreadSnap.forEach(function(c) {
                 var m = c.val();
-                if (m && m.uid !== state.currentUser.uid) {
+                if (m && state.currentUser && m.uid !== state.currentUser.uid) {
                   count++;
                   if (checkMentionInMessage(m.text)) hasMention = true;
                 }
@@ -3207,7 +3217,7 @@
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
           const notif = new Notification(title, { body: body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="%232563eb"/><text x="50%" y="55%" text-anchor="middle" fill="white" font-size="32" font-weight="bold" dominant-baseline="middle">AF</text></svg>', tag: tag || 'af-chat-' + Date.now(), requireInteraction: false });
-          notif.onclick = function() { window.focus(); document.getElementById('chatPanel').classList.add('open'); _lockBodyScroll(); notif.close(); };
+          notif.onclick = function() { window.focus(); var cp = document.getElementById('chatPanel'); if (!cp.classList.contains('open')) { cp.classList.add('open'); _lockBodyScroll(); } clearChatBadge(); notif.close(); };
           setTimeout(function() { notif.close(); }, 5000);
         } catch(e) { console.log('Notification error:', e); }
       }
@@ -3238,7 +3248,7 @@
     }
 
     function checkMentionInMessage(text) {
-      if (!state.currentUser) return false;
+      if (!text || !state.currentUser) return false;
       // Match @name patterns against current user's display name
       const userName = state.currentUser.displayName || '';
       if (!userName) return false;
@@ -3573,6 +3583,10 @@
         }
       });
       localStorage.setItem('af_team', JSON.stringify(TEAM));
+      if (_fb.db) {
+        _fb.db.ref('settings/team').set(TEAM);
+        _fb.db.ref('settings/allowedEmails').set(_allowedEmails);
+      }
       document.getElementById('memberMgmtOverlay')?.remove();
       _unlockBodyScroll();
       _showToast('팀원 정보가 저장되었습니다');
@@ -3589,26 +3603,92 @@
     }
 
     function pushHistory(action, projectId, field, oldVal, newVal) {
-      const entry = {
+      var entry = {
         timestamp: new Date().toISOString(),
         action: action,
         projectId: projectId,
+        projectName: '',
         field: field,
         oldValue: oldVal,
         newValue: newVal,
-        user: _getCurrentMemberName()
+        user: _getCurrentMemberName(),
+        uid: state.currentUser ? state.currentUser.uid : ''
       };
+      var proj = state.projects.find(function(p) { return p.id === projectId; });
+      if (proj) entry.projectName = proj.name;
+      // Firebase에 저장
+      if (_fb.db) {
+        _fb.db.ref('history/changes').push(entry);
+      }
+      // 로컬 캐시에도 추가
       state.history.push(entry);
-      localStorage.setItem('af_history', JSON.stringify(state.history));
+      if (state.currentTab === 'history' && _historyTab === 'changes') renderHistory();
     }
 
     function loadHistory() {
-      const saved = localStorage.getItem('af_history');
-      if (saved) {
-        try {
-          state.history = JSON.parse(saved);
-        } catch(e) {}
+      // Firebase에서 실시간 로드
+      if (_fb.db) {
+        _fb.db.ref('history/changes').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+          var data = snap.val();
+          state.history = [];
+          if (data) {
+            Object.keys(data).forEach(function(k) { state.history.push(data[k]); });
+            state.history.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+          }
+          if (state.currentTab === 'history' && _historyTab === 'changes') renderHistory();
+        });
+      } else {
+        // fallback: localStorage
+        var saved = localStorage.getItem('af_history');
+        if (saved) { try { state.history = JSON.parse(saved); } catch(e) {} }
       }
+    }
+
+    // 접속이력 기록
+    function pushAccessLog(action) {
+      if (!_fb.db || !state.currentUser) return;
+      var member = _getLinkedMember(state.currentUser.email);
+      var entry = {
+        timestamp: new Date().toISOString(),
+        action: action,
+        uid: state.currentUser.uid,
+        email: state.currentUser.email || '',
+        displayName: state.currentUser.displayName || '',
+        memberName: member ? member.name : '',
+        memberId: member ? member.id : '',
+        memberRole: member ? member.role : '',
+        userAgent: navigator.userAgent.substring(0, 120)
+      };
+      _fb.db.ref('history/access').push(entry);
+    }
+
+    var _accessLogs = [];
+    function loadAccessLogs() {
+      if (!_fb.db) return;
+      _fb.db.ref('history/access').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+        var data = snap.val();
+        _accessLogs = [];
+        if (data) {
+          Object.keys(data).forEach(function(k) { _accessLogs.push(data[k]); });
+          _accessLogs.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+        }
+        if (state.currentTab === 'history' && _historyTab === 'access') renderHistory();
+      });
+    }
+
+    var _historyTab = 'changes';
+    function switchHistoryTab(tab) {
+      _historyTab = tab;
+      var changesBtn = document.getElementById('histTabChanges');
+      var accessBtn = document.getElementById('histTabAccess');
+      if (tab === 'changes') {
+        changesBtn.className = 'btn'; changesBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
+        accessBtn.className = 'btn btn-secondary'; accessBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
+      } else {
+        changesBtn.className = 'btn btn-secondary'; changesBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
+        accessBtn.className = 'btn'; accessBtn.style.cssText = 'font-size:13px;padding:6px 16px;';
+      }
+      renderHistory();
     }
 
     /* ========== STORAGE (localStorage + Firebase 비동기) ========== */
@@ -3646,16 +3726,31 @@
 
     // ===== BODY SCROLL LOCK (모달/슬라이드 열릴 때 배경 스크롤 방지) =====
     var _scrollLockCount = 0;
+    var _savedScrollY = 0;
     function _lockBodyScroll() {
       _scrollLockCount++;
       if (_scrollLockCount === 1) {
+        _savedScrollY = window.scrollY;
+        document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = '-' + _savedScrollY + 'px';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
       }
     }
     function _unlockBodyScroll() {
       _scrollLockCount = Math.max(0, _scrollLockCount - 1);
       if (_scrollLockCount === 0) {
+        document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        window.scrollTo(0, _savedScrollY);
       }
     }
 
@@ -3689,7 +3784,10 @@
         _fb.available = true;
         console.log('Firebase initialized OK');
         _startFirebaseSync();
-        _initAuthCheck();
+        _loadSettingsFromFirebase(function() {
+          console.log('Settings loaded, starting auth check');
+          _initAuthCheck();
+        });
       } catch(e) {
         console.error('Firebase init fail:', e);
         _updateSync('로컬 모드', '#fef3c7', '#d97706');
@@ -3744,6 +3842,53 @@
         _updateSync('연결 실패', '#fee2e2', '#dc2626');
         // 에러 나도 로컬 데이터는 그대로 — 아무것도 안 건드림
       });
+    }
+
+    function _loadSettingsFromFirebase(callback) {
+      if (!_fb.db) { if (callback) callback(); return; }
+      var _loaded = { serviceTypes: false, team: false, emails: false };
+      function _checkDone() {
+        if (_loaded.serviceTypes && _loaded.team && _loaded.emails) {
+          if (callback) callback();
+        }
+      }
+      // 서비스 타입
+      _fb.db.ref('settings/serviceTypes').once('value', function(snap) {
+        var data = snap.val();
+        if (data && Array.isArray(data) && data.length > 0) {
+          localStorage.setItem('af_service_types', JSON.stringify(data));
+        }
+        _loaded.serviceTypes = true; _checkDone();
+      });
+      // 팀원 정보
+      _fb.db.ref('settings/team').once('value', function(snap) {
+        var data = snap.val();
+        if (data && Array.isArray(data) && data.length > 0) {
+          TEAM.length = 0;
+          data.forEach(function(m) { TEAM.push(m); });
+          localStorage.setItem('af_team', JSON.stringify(TEAM));
+        }
+        _loaded.team = true; _checkDone();
+      });
+      // 허용 이메일 목록
+      _fb.db.ref('settings/allowedEmails').once('value', function(snap) {
+        var data = snap.val();
+        if (data && Array.isArray(data) && data.length > 0) {
+          _allowedEmails = data;
+          localStorage.setItem('af_allowed_emails', JSON.stringify(data));
+        }
+        _loaded.emails = true; _checkDone();
+      });
+      // 3초 타임아웃 (Firebase 응답 없으면 로컬 데이터로 진행)
+      setTimeout(function() {
+        if (!_loaded.serviceTypes || !_loaded.team || !_loaded.emails) {
+          console.warn('Settings load timeout, proceeding with local data');
+          if (callback) callback();
+          callback = null; // 중복 호출 방지
+        }
+      }, 3000);
+      // 서비스 타입 실시간 리스너
+      _loadServiceTypesFromFirebase();
     }
 
     /* ========== PROJECT DATA ========== */
@@ -4785,13 +4930,26 @@
       tierOrder.forEach(tier => {
         const projects = grouped[tier];
         if (projects.length === 0) return;
-        // 완료/Deprecated 프로젝트를 그룹 내 최하단으로 정렬
+        // 티어 그룹 내 정렬: 사용자 선택 정렬키 반영 + 완료/Deprecated 최하단
+        var tierRank = { CRITICAL: 0, TIER1: 1, TIER2: 2, TIER3: 3, TIER4: 4, CONTINUOUS: 5 };
+        var statusRank = { '진행': 0, '대기': 1, '연기': 2, '완료': 3, 'Deprecated': 4 };
         projects.sort(function(a, b) {
           var aDone = a.status === '완료' || a.status === 'Deprecated';
           var bDone = b.status === '완료' || b.status === 'Deprecated';
           if (aDone && !bDone) return 1;
           if (!aDone && bDone) return -1;
-          return 0;
+          switch (_projectSortKey) {
+            case 'name': return a.name.localeCompare(b.name, 'ko');
+            case 'score': return (b.bizScore || 0) - (a.bizScore || 0);
+            case 'status': return (statusRank[a.status] || 99) - (statusRank[b.status] || 99);
+            case 'deploy': {
+              var da = a.deployDate ? parseLocalDate(a.deployDate) : null;
+              var db2 = b.deployDate ? parseLocalDate(b.deployDate) : null;
+              if (!da && !db2) return 0; if (!da) return 1; if (!db2) return -1;
+              return da - db2;
+            }
+            default: return 0;
+          }
         });
 
         // Tier header — use createElement to avoid innerHTML += destroying event handlers
@@ -4874,8 +5032,8 @@
 
           chatBtn.onclick = function(e) {
             e.stopPropagation();
-            document.getElementById('chatPanel').classList.add('open');
-            _lockBodyScroll();
+            var cp = document.getElementById('chatPanel');
+            if (!cp.classList.contains('open')) { cp.classList.add('open'); _lockBodyScroll(); }
             switchChatTab('project');
             enterRoom(project.id);
             clearChatBadge();
@@ -5056,7 +5214,8 @@
             bar.appendChild(mLabel);
 
             // 툴팁 데이터
-            bar.setAttribute('data-tooltip', item.project.name + ' - ' + PHASE_LABELS[item.phase] + '\n' + item.project.phases[item.phase].start + ' ~ ' + item.project.phases[item.phase].end);
+            var phaseData = item.project.phases[item.phase];
+            bar.setAttribute('data-tooltip', item.project.name + ' - ' + PHASE_LABELS[item.phase] + '\n' + (phaseData ? phaseData.start + ' ~ ' + phaseData.end : ''));
 
             // 리소스 충돌 체크
             const hasConflict = sorted.some(other =>
@@ -5556,6 +5715,16 @@
     }
     function _saveServiceTypes(arr) {
       localStorage.setItem('af_service_types', JSON.stringify(arr));
+      if (_fb.db) _fb.db.ref('settings/serviceTypes').set(arr);
+    }
+    function _loadServiceTypesFromFirebase() {
+      if (!_fb.db) return;
+      _fb.db.ref('settings/serviceTypes').on('value', function(snap) {
+        var data = snap.val();
+        if (data && Array.isArray(data) && data.length > 0) {
+          localStorage.setItem('af_service_types', JSON.stringify(data));
+        }
+      });
     }
 
     // ===== 서비스 종류 체크박스 멀티셀렉트 =====
@@ -5641,7 +5810,6 @@
       }
       render();
       overlay.appendChild(modal);
-      overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
       document.body.appendChild(overlay);
 
       // Expose inner functions
@@ -5887,6 +6055,7 @@
     function sortProjects(key) {
       _projectSortKey = key;
       renderProjects();
+      if (state.currentTab === 'schedule') renderGantt();
     }
 
     function getSortedProjects(projects) {
@@ -6078,26 +6247,35 @@
     }
 
     function renderHistory() {
-      const container = document.getElementById('historyContent');
+      var container = document.getElementById('historyContent');
       if (!container) return;
-      const hist = (state.history || []).slice().reverse();
+      var clearBtn = document.getElementById('clearHistoryBtn');
+
+      if (_historyTab === 'access') {
+        if (clearBtn) clearBtn.style.display = 'none';
+        _renderAccessLog(container);
+        return;
+      }
+
+      // 변경 이력 렌더링
+      if (clearBtn) clearBtn.style.display = state.currentUser ? '' : 'none';
+      var hist = (state.history || []).slice().reverse();
       if (hist.length === 0) {
         container.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:60px 0;">변경 이력이 없습니다.</div>';
         return;
       }
-      const ACTION_ICONS = { create: '➕', edit: '✏️', delete: '🗑️', status: '🔄' };
-      const ACTION_LABELS = { create: '생성', edit: '수정', delete: '삭제', status: '상태변경' };
-      container.innerHTML = hist.map(h => {
-        const icon = ACTION_ICONS[h.action] || '📝';
-        const label = ACTION_LABELS[h.action] || h.action;
-        const dt = new Date(h.timestamp);
-        const timeStr = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0') + ' ' + String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
-        const userName = h.user || '';
-        let detail = '';
+      var ACTION_ICONS = { create: '➕', edit: '✏️', delete: '🗑️', status: '🔄', '수정': '✏️', '생성': '➕' };
+      var ACTION_LABELS = { create: '생성', edit: '수정', delete: '삭제', status: '상태변경', '수정': '수정', '생성': '생성' };
+      container.innerHTML = hist.map(function(h) {
+        var icon = ACTION_ICONS[h.action] || '📝';
+        var label = ACTION_LABELS[h.action] || h.action;
+        var dt = new Date(h.timestamp);
+        var timeStr = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0') + ' ' + String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+        var userName = h.user || '';
+        var detail = '';
         if (h.field) detail += '<span style="color:#6366f1;font-weight:600;">' + h.field + '</span> ';
         if (h.oldValue !== undefined && h.oldValue !== null && h.oldValue !== '') detail += '<span style="color:#ef4444;text-decoration:line-through;">' + String(h.oldValue).substring(0,50) + '</span> → ';
         if (h.newValue !== undefined && h.newValue !== null && h.newValue !== '') detail += '<span style="color:#10b981;">' + String(h.newValue).substring(0,50) + '</span>';
-        // 이전 형식 호환 (oldVal/newVal)
         if (!detail && h.oldVal !== undefined) {
           if (h.field) detail += '<span style="color:#6366f1;font-weight:600;">' + h.field + '</span> ';
           if (h.oldVal) detail += '<span style="color:#ef4444;text-decoration:line-through;">' + String(h.oldVal).substring(0,50) + '</span> → ';
@@ -6118,112 +6296,300 @@
       }).join('');
     }
 
+    function _renderAccessLog(container) {
+      var logs = (_accessLogs || []).slice().reverse();
+      if (logs.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:60px 0;">접속 이력이 없습니다.</div>';
+        return;
+      }
+      // 날짜별 그룹핑
+      var groups = {};
+      logs.forEach(function(log) {
+        var dt = new Date(log.timestamp);
+        var dateKey = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+        if (!groups[dateKey]) groups[dateKey] = [];
+        groups[dateKey].push(log);
+      });
+
+      var html = '';
+      Object.keys(groups).forEach(function(dateKey) {
+        var dayLogs = groups[dateKey];
+        html += '<div style="margin-bottom:16px;">';
+        html += '<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;padding:4px 0;border-bottom:1px solid #e5e7eb;">' + dateKey + ' <span style="font-weight:400;color:#9ca3af;">(' + dayLogs.length + '건)</span></div>';
+        dayLogs.forEach(function(log) {
+          var dt = new Date(log.timestamp);
+          var timeStr = String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0') + ':' + String(dt.getSeconds()).padStart(2,'0');
+          var member = log.memberId ? TEAM.find(function(t) { return t.id === log.memberId; }) : null;
+          var memberColor = member ? member.color : '#6b7280';
+          var displayName = log.memberName || log.displayName || log.email || '알 수 없음';
+          var role = log.memberRole || '';
+          var actionIcon = log.action === '로그인' ? '🟢' : log.action === '로그아웃' ? '🔴' : '🔵';
+          var actionColor = log.action === '로그인' ? '#10b981' : log.action === '로그아웃' ? '#ef4444' : '#6366f1';
+
+          html += '<div style="display:flex;gap:10px;padding:8px 12px;background:white;border-radius:6px;border:1px solid #f3f4f6;align-items:center;margin-bottom:4px;">';
+          html += '<span style="font-size:14px;">' + actionIcon + '</span>';
+          html += '<span style="font-size:12px;color:#9ca3af;width:60px;flex-shrink:0;">' + timeStr + '</span>';
+          html += '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + memberColor + ';flex-shrink:0;"></span>';
+          html += '<span style="font-size:13px;font-weight:600;color:#1f2937;">' + displayName + '</span>';
+          if (role) html += '<span style="font-size:10px;color:#9ca3af;background:#f3f4f6;padding:1px 6px;border-radius:8px;">' + role + '</span>';
+          html += '<span style="font-size:11px;font-weight:600;color:' + actionColor + ';margin-left:auto;">' + log.action + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    }
+
     function clearHistory() {
-      if (!confirm('이력을 모두 삭제하시겠습니까?')) return;
+      if (!confirm('변경 이력을 모두 삭제하시겠습니까?')) return;
       state.history = [];
       localStorage.removeItem('af_history');
+      if (_fb.db) _fb.db.ref('history/changes').remove();
       renderHistory();
-      _showToast('이력이 초기화되었습니다');
+      _showToast('변경 이력이 초기화되었습니다');
     }
 
     function renderOverview() {
-      const all = state.projects;
-      const inProgress = all.filter(p => p.status === '진행').length;
-      const completed = all.filter(p => p.status === '완료').length;
-      const waiting = all.filter(p => p.status === '대기').length;
-      const p26 = all.find(p => p.id === 'P26');
-      const daysLeft = p26 ? Math.ceil((parseLocalDate('2026-08-15') - TODAY) / 86400000) : 0;
+      var all = state.projects;
+      var today = new Date(); today.setHours(0,0,0,0);
+      var inProgress = all.filter(function(p) { return p.status === '진행'; }).length;
+      var completed = all.filter(function(p) { return p.status === '완료'; }).length;
+      var waiting = all.filter(function(p) { return p.status === '대기'; }).length;
+      var deprecated = all.filter(function(p) { return p.status === 'Deprecated'; }).length;
+      var delayed = all.filter(function(p) { return p.status === '연기'; }).length;
+      var p26 = all.find(function(p) { return p.id === 'P26'; });
+      var daysLeft = p26 ? Math.ceil((parseLocalDate('2026-08-15') - today) / 86400000) : 0;
 
       // 티어별 집계
-      const tierCounts = {};
-      ['CRITICAL','TIER1','TIER2','TIER3','TIER4','CONTINUOUS'].forEach(t => {
-        tierCounts[t] = all.filter(p => p.tier === t).length;
+      var tierCounts = {};
+      ['CRITICAL','TIER1','TIER2','TIER3','TIER4','CONTINUOUS'].forEach(function(t) {
+        tierCounts[t] = all.filter(function(p) { return p.tier === t; }).length;
       });
 
-      // 이번 주 / 다음 주 착수 예정
-      const thisWeek = [], nextWeek = [];
-      all.forEach(p => {
-        ['plan','design','front','back','qa'].forEach(ph => {
+      // 이번 주 / 다음 주 착수 예정 (오늘 기준!)
+      var thisWeek = [], nextWeek = [];
+      var todayMs = today.getTime();
+      var weekEnd = todayMs + 7 * 86400000;
+      var nextWeekEnd = todayMs + 14 * 86400000;
+      all.forEach(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
           if (p.phases[ph] && p.phases[ph].start) {
-            const d = daysSinceStart(parseLocalDate(p.phases[ph].start));
-            if (d >= 0 && d <= 7) thisWeek.push({ p, ph });
-            else if (d > 7 && d <= 14) nextWeek.push({ p, ph });
+            var d = parseLocalDate(p.phases[ph].start).getTime();
+            if (d >= todayMs && d < weekEnd) thisWeek.push({ p: p, ph: ph, start: p.phases[ph].start });
+            else if (d >= weekEnd && d < nextWeekEnd) nextWeek.push({ p: p, ph: ph, start: p.phases[ph].start });
+          }
+        });
+      });
+      thisWeek.sort(function(a,b) { return a.start < b.start ? -1 : 1; });
+      nextWeek.sort(function(a,b) { return a.start < b.start ? -1 : 1; });
+
+      // 현재 진행 중인 페이즈 (오늘이 start~end 사이)
+      var activePhases = [];
+      all.forEach(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
+          if (p.phases[ph] && p.phases[ph].start && p.phases[ph].end) {
+            var s = parseLocalDate(p.phases[ph].start).getTime();
+            var e = parseLocalDate(p.phases[ph].end).getTime();
+            if (todayMs >= s && todayMs <= e) {
+              var assignees = (p.assignments[ph] || []).map(function(id) {
+                var m = TEAM.find(function(t) { return t.id === id; });
+                return m ? m.name : id;
+              });
+              activePhases.push({ p: p, ph: ph, end: p.phases[ph].end, assignees: assignees });
+            }
           }
         });
       });
 
-      // 팀원별 워크로드 바 차트
-      let memberBarsHTML = '';
-      TEAM.forEach(m => {
-        const count = all.filter(p =>
-          ['plan','design','front','back','qa'].some(ph => p.assignments[ph] && p.assignments[ph].includes(m.id))
-        ).length;
-        const pct = Math.round((count / Math.max(all.length, 1)) * 100);
-        const barColor = count >= 8 ? '#dc2626' : count >= 5 ? '#f59e0b' : '#10b981';
-        memberBarsHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
-          '<div style="width:56px;font-size:11px;color:#6b7280;text-align:right;">' + m.name + '</div>' +
-          '<div style="flex:1;height:16px;background:#f3f4f6;border-radius:3px;overflow:hidden;position:relative;">' +
-          '<div style="width:' + Math.min(pct * 2.5, 100) + '%;height:100%;background:' + barColor + ';border-radius:3px;"></div>' +
-          '</div>' +
-          '<div style="width:28px;font-size:12px;font-weight:700;color:' + barColor + ';">' + count + '</div></div>';
+      // 마감 임박 (7일 이내 end)
+      var deadlineSoon = [];
+      all.forEach(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
+          if (p.phases[ph] && p.phases[ph].end) {
+            var e = parseLocalDate(p.phases[ph].end).getTime();
+            var diff = Math.ceil((e - todayMs) / 86400000);
+            if (diff >= 0 && diff <= 7) {
+              deadlineSoon.push({ p: p, ph: ph, end: p.phases[ph].end, daysLeft: diff });
+            }
+          }
+        });
+      });
+      deadlineSoon.sort(function(a,b) { return a.daysLeft - b.daysLeft; });
+
+      // 팀원별 현재 진행 중 (active) 페이즈 수
+      var memberActive = {};
+      TEAM.forEach(function(m) { memberActive[m.id] = { active: 0, total: 0 }; });
+      all.forEach(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
+          (p.assignments[ph] || []).forEach(function(id) {
+            if (!memberActive[id]) return;
+            memberActive[id].total++;
+            if (p.phases[ph] && p.phases[ph].start && p.phases[ph].end) {
+              var s = parseLocalDate(p.phases[ph].start).getTime();
+              var e = parseLocalDate(p.phases[ph].end).getTime();
+              if (todayMs >= s && todayMs <= e) memberActive[id].active++;
+            }
+          });
+        });
       });
 
-      // 리스크 프로젝트 (스코어 높은데 아직 대기)
-      const riskProjects = all.filter(p => p.score >= 7.5 && p.status === '대기')
-        .sort((a, b) => b.score - a.score).slice(0, 5);
+      // 리스크 + GMV
+      var riskProjects = all.filter(function(p) { return p.score >= 7.5 && p.status === '대기'; })
+        .sort(function(a,b) { return b.score - a.score; }).slice(0, 5);
+      var topGmv = all.filter(function(p) { return p.gmvImpact && p.status !== '완료' && p.status !== 'Deprecated'; })
+        .sort(function(a,b) { return b.score - a.score; }).slice(0, 5);
 
-      // 상위 GMV 프로젝트
-      const topGmv = all.filter(p => p.gmvImpact && !p.gmvImpact.includes('완료') && !p.gmvImpact.includes('간접'))
-        .sort((a, b) => b.score - a.score).slice(0, 5);
+      // 전체 진행률 계산
+      var totalPhases = 0, completedPhases = 0;
+      all.forEach(function(p) {
+        if (p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
+          totalPhases++;
+          if (p.phases[ph] && p.phases[ph].end) {
+            var e = parseLocalDate(p.phases[ph].end).getTime();
+            if (todayMs > e) completedPhases++;
+          }
+        });
+      });
+      var progressPct = totalPhases > 0 ? Math.round((completedPhases / totalPhases) * 100) : 0;
 
-      const html = `
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;text-align:center;">
-            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">전체 안건</div>
-            <div style="font-size:28px;font-weight:800;color:#1f2937;">${all.length}</div>
-          </div>
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;text-align:center;">
-            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">대기 / 진행 / 완료</div>
-            <div style="font-size:18px;font-weight:700;"><span style="color:#6b7280;">${waiting}</span> / <span style="color:#f59e0b;">${inProgress}</span> / <span style="color:#10b981;">${completed}</span></div>
-          </div>
-          <div style="background:#fef2f2;border:2px solid #dc2626;border-radius:10px;padding:16px;text-align:center;">
-            <div style="font-size:11px;color:#dc2626;font-weight:600;margin-bottom:4px;">P26 앱 경량화 D-Day</div>
-            <div style="font-size:28px;font-weight:800;color:#dc2626;">D-${Math.max(0, daysLeft)}</div>
-          </div>
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;">티어별 분포</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;">
-              ${['CRITICAL','TIER1','TIER2','TIER3','TIER4','CONTINUOUS'].map(t => '<span style="font-size:10px;padding:2px 6px;border-radius:3px;background:' + (TIER_COLORS[t] || '#6b7280') + '20;color:' + (TIER_COLORS[t] || '#6b7280') + ';font-weight:600;">' + (t === 'CONTINUOUS' ? '지속' : t) + ' ' + tierCounts[t] + '</span>').join('')}
-            </div>
-          </div>
-        </div>
+      var html = '';
+      // ROW 1: KPI 카드 (한 줄 컴팩트)
+      html += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px;">';
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
+        '<div style="font-size:10px;color:#9ca3af;">전체 안건</div><div style="font-size:24px;font-weight:800;">' + all.length + '</div></div>';
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
+        '<div style="font-size:10px;color:#9ca3af;">대기 / 진행</div><div style="font-size:18px;font-weight:700;"><span style="color:#6b7280;">' + waiting + '</span> / <span style="color:#f59e0b;">' + inProgress + '</span></div></div>';
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
+        '<div style="font-size:10px;color:#9ca3af;">완료 / 연기</div><div style="font-size:18px;font-weight:700;"><span style="color:#10b981;">' + completed + '</span> / <span style="color:#9ca3af;">' + delayed + '</span></div></div>';
+      html += '<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:12px;text-align:center;">' +
+        '<div style="font-size:10px;color:#dc2626;font-weight:600;">P26 D-Day</div><div style="font-size:24px;font-weight:800;color:#dc2626;">D-' + Math.max(0, daysLeft) + '</div></div>';
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
+        '<div style="font-size:10px;color:#9ca3af;">전체 진행률</div><div style="font-size:18px;font-weight:800;color:#2563eb;">' + progressPct + '%</div>' +
+        '<div style="height:4px;background:#e5e7eb;border-radius:2px;margin-top:4px;"><div style="height:100%;width:' + progressPct + '%;background:#2563eb;border-radius:2px;"></div></div></div>';
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;">' +
+        '<div style="font-size:10px;color:#9ca3af;margin-bottom:4px;">티어 분포</div>' +
+        '<div style="display:flex;gap:3px;flex-wrap:wrap;">' +
+        ['CRITICAL','TIER1','TIER2','TIER3','TIER4'].map(function(t) { return '<span style="font-size:9px;padding:1px 4px;border-radius:2px;background:' + (TIER_COLORS[t] || '#6b7280') + '20;color:' + (TIER_COLORS[t] || '#6b7280') + ';font-weight:600;">' + t.replace('TIER','T') + ' ' + tierCounts[t] + '</span>'; }).join('') +
+        '</div></div>';
+      html += '</div>';
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:10px;">이번 주 착수 예정</div>
-            ${thisWeek.length ? thisWeek.slice(0, 6).map(x => '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f3f4f6;"><span style="font-size:10px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span><span style="font-size:11px;color:#374151;flex:1;">' + x.p.name + '</span><span style="font-size:9px;padding:1px 5px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span></div>').join('') : '<div style="font-size:12px;color:#9ca3af;">없음</div>'}
-          </div>
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:10px;">다음 주 착수 예정</div>
-            ${nextWeek.length ? nextWeek.slice(0, 6).map(x => '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f3f4f6;"><span style="font-size:10px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span><span style="font-size:11px;color:#374151;flex:1;">' + x.p.name + '</span><span style="font-size:9px;padding:1px 5px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span></div>').join('') : '<div style="font-size:12px;color:#9ca3af;">없음</div>'}
-          </div>
-        </div>
+      // ROW 2: 3-column (현재 진행 중 | 마감 임박 | 팀원 현황)
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">';
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:10px;">팀원별 할당 현황</div>
-            ${memberBarsHTML}
-          </div>
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:13px;font-weight:700;color:#dc2626;margin-bottom:10px;">주요 리스크 (고점수 + 대기)</div>
-            ${riskProjects.map(p => '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f3f4f6;cursor:pointer;" onclick="openDetailPanel(\'' + p.id + '\')"><span style="font-size:10px;font-weight:700;color:' + (TIER_COLORS[p.tier] || '#6b7280') + ';">' + p.id + '</span><span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + p.name + '</span><span style="font-size:11px;font-weight:700;color:#dc2626;">' + p.score + '</span></div>').join('')}
-          </div>
-          <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
-            <div style="font-size:13px;font-weight:700;color:#059669;margin-bottom:10px;">Top GMV 기여 안건</div>
-            ${topGmv.map(p => '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f3f4f6;cursor:pointer;" onclick="openDetailPanel(\'' + p.id + '\')"><span style="font-size:10px;font-weight:700;color:' + (TIER_COLORS[p.tier] || '#6b7280') + ';">' + p.id + '</span><span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + p.name + '</span><span class="gmv-badge">' + (p.gmvImpact || '-') + '</span></div>').join('')}
-          </div>
-        </div>
-      `;
+      // 현재 진행 중인 작업
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:220px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:8px;">현재 진행 중 <span style="color:#f59e0b;">(' + activePhases.length + ')</span></div>';
+      if (activePhases.length === 0) {
+        html += '<div style="font-size:12px;color:#9ca3af;">진행 중인 작업 없음</div>';
+      } else {
+        activePhases.slice(0, 8).forEach(function(x) {
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;cursor:pointer;" onclick="openDetailPanel(\'' + x.p.id + '\')">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span>' +
+            '<span style="font-size:9px;padding:1px 4px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + x.p.name + '</span>' +
+            '<span style="font-size:9px;color:#9ca3af;">' + x.assignees.join(',') + '</span></div>';
+        });
+      }
+      html += '</div>';
+
+      // 마감 임박
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:220px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">마감 임박 (7일 이내) <span style="color:#dc2626;">(' + deadlineSoon.length + ')</span></div>';
+      if (deadlineSoon.length === 0) {
+        html += '<div style="font-size:12px;color:#9ca3af;">임박 마감 없음</div>';
+      } else {
+        deadlineSoon.slice(0, 8).forEach(function(x) {
+          var dColor = x.daysLeft <= 2 ? '#dc2626' : x.daysLeft <= 4 ? '#f59e0b' : '#6b7280';
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;cursor:pointer;" onclick="openDetailPanel(\'' + x.p.id + '\')">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span>' +
+            '<span style="font-size:9px;padding:1px 4px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + x.p.name + '</span>' +
+            '<span style="font-size:10px;font-weight:700;color:' + dColor + ';">D-' + x.daysLeft + '</span></div>';
+        });
+      }
+      html += '</div>';
+
+      // 팀원 현황 (현재 active 페이즈 수 + 전체 할당)
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:220px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:8px;">팀원별 업무 현황</div>';
+      TEAM.forEach(function(m) {
+        var info = memberActive[m.id] || { active: 0, total: 0 };
+        var barPct = Math.min(info.total * 8, 100);
+        var barColor = info.active >= 3 ? '#dc2626' : info.active >= 2 ? '#f59e0b' : '#10b981';
+        html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:' + m.color + ';flex-shrink:0;"></span>' +
+          '<span style="width:42px;font-size:10px;color:#6b7280;">' + m.name + '</span>' +
+          '<div style="flex:1;height:12px;background:#f3f4f6;border-radius:2px;overflow:hidden;">' +
+          '<div style="width:' + barPct + '%;height:100%;background:' + barColor + ';border-radius:2px;"></div></div>' +
+          '<span style="font-size:10px;font-weight:700;color:' + barColor + ';width:30px;text-align:right;">' + info.active + '/' + info.total + '</span></div>';
+      });
+      html += '</div>';
+      html += '</div>';
+
+      // ROW 3: 3-column (이번주 착수 | 리스크 | GMV)
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">';
+
+      // 이번 주 + 다음 주 착수 예정
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:200px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:8px;">이번 주 착수 <span style="color:#2563eb;">(' + thisWeek.length + ')</span></div>';
+      if (thisWeek.length === 0) {
+        html += '<div style="font-size:12px;color:#9ca3af;">없음</div>';
+      } else {
+        thisWeek.slice(0, 6).forEach(function(x) {
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span>' +
+            '<span style="font-size:9px;padding:1px 4px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + x.p.name + '</span>' +
+            '<span style="font-size:9px;color:#9ca3af;">' + x.start + '</span></div>';
+        });
+      }
+      if (nextWeek.length > 0) {
+        html += '<div style="font-size:11px;font-weight:600;color:#6b7280;margin-top:8px;margin-bottom:4px;">다음 주 (' + nextWeek.length + ')</div>';
+        nextWeek.slice(0, 4).forEach(function(x) {
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[x.p.tier] || '#6b7280') + ';">' + x.p.id + '</span>' +
+            '<span style="font-size:9px;padding:1px 4px;border-radius:2px;background:' + PHASE_COLORS[x.ph] + ';color:white;">' + PHASE_SHORT[x.ph] + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + x.p.name + '</span></div>';
+        });
+      }
+      html += '</div>';
+
+      // 리스크 프로젝트
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:200px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">고점수 대기 리스크</div>';
+      if (riskProjects.length === 0) {
+        html += '<div style="font-size:12px;color:#9ca3af;">리스크 없음</div>';
+      } else {
+        riskProjects.forEach(function(p) {
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;cursor:pointer;" onclick="openDetailPanel(\'' + p.id + '\')">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[p.tier] || '#6b7280') + ';">' + p.id + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + p.name + '</span>' +
+            '<span style="font-size:11px;font-weight:700;color:#dc2626;">' + p.score + '</span></div>';
+        });
+      }
+      html += '</div>';
+
+      // Top GMV
+      html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:14px;max-height:200px;overflow-y:auto;">';
+      html += '<div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:8px;">Top GMV 기여 안건</div>';
+      if (topGmv.length === 0) {
+        html += '<div style="font-size:12px;color:#9ca3af;">없음</div>';
+      } else {
+        topGmv.forEach(function(p) {
+          html += '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f9fafb;cursor:pointer;" onclick="openDetailPanel(\'' + p.id + '\')">' +
+            '<span style="font-size:9px;font-weight:700;color:' + (TIER_COLORS[p.tier] || '#6b7280') + ';">' + p.id + '</span>' +
+            '<span style="font-size:11px;color:#374151;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + p.name + '</span>' +
+            '<span class="gmv-badge" style="font-size:9px;">' + (p.gmvImpact || '-') + '</span></div>';
+        });
+      }
+      html += '</div>';
+      html += '</div>';
+
       document.getElementById('overviewContent').innerHTML = html;
     }
 
@@ -6431,6 +6797,7 @@
 
       panel.classList.add('open');
       document.getElementById('panelBackdrop').classList.add('open');
+      _lockBodyScroll();
 
       // Focus name field after panel opens
       setTimeout(renderCreateServiceTags, 50);
@@ -6802,6 +7169,7 @@
     window._recalcScore = _recalcScore;
     window.clearHistory = clearHistory;
     window.renderHistory = renderHistory;
+    window.switchHistoryTab = switchHistoryTab;
     window.openMemberManagement = openMemberManagement;
     window.addNewMember = addNewMember;
     window.removeMember = removeMember;

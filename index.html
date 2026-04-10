@@ -2007,7 +2007,7 @@
     <!-- Header -->
     <div class="header">
       <div class="header-top">
-        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전">v2026.04.10 21:30</span></div>
+        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전">v2026.04.10 09:36</span></div>
         <div class="header-controls">
           <input type="text" class="search-input" id="searchInput" placeholder="검색...">
           <div class="filter-group">
@@ -2940,6 +2940,9 @@
       panel.classList.toggle('open');
       if (panel.classList.contains('open')) {
         clearChatBadge();
+        _lockBodyScroll();
+      } else {
+        _unlockBodyScroll();
       }
     }
 
@@ -3204,7 +3207,7 @@
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
           const notif = new Notification(title, { body: body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="%232563eb"/><text x="50%" y="55%" text-anchor="middle" fill="white" font-size="32" font-weight="bold" dominant-baseline="middle">AF</text></svg>', tag: tag || 'af-chat-' + Date.now(), requireInteraction: false });
-          notif.onclick = function() { window.focus(); document.getElementById('chatPanel').classList.add('open'); notif.close(); };
+          notif.onclick = function() { window.focus(); document.getElementById('chatPanel').classList.add('open'); _lockBodyScroll(); notif.close(); };
           setTimeout(function() { notif.close(); }, 5000);
         } catch(e) { console.log('Notification error:', e); }
       }
@@ -3445,7 +3448,8 @@
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay show';
       overlay.id = 'memberMgmtOverlay';
-      overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+      overlay.onclick = function(e) { if (e.target === overlay) { overlay.remove(); _unlockBodyScroll(); } };
+      _lockBodyScroll();
       const modal = document.createElement('div');
       modal.className = 'modal';
       modal.style.maxWidth = '700px';
@@ -3501,7 +3505,7 @@
           '<div style="margin-top:16px;display:flex;gap:8px;">' +
             '<button onclick="addNewMember()" class="btn" style="font-size:13px;">+ 팀원 추가</button>' +
             '<button onclick="saveMemberChanges()" class="btn" style="font-size:13px;background:#10b981;">저장</button>' +
-            '<button onclick="document.getElementById(\'memberMgmtOverlay\').remove()" class="btn btn-secondary" style="font-size:13px;">닫기</button>' +
+            '<button onclick="document.getElementById(\'memberMgmtOverlay\').remove(); _unlockBodyScroll();" class="btn btn-secondary" style="font-size:13px;">닫기</button>' +
           '</div>';
       }
       renderMemberList();
@@ -3570,6 +3574,7 @@
       });
       localStorage.setItem('af_team', JSON.stringify(TEAM));
       document.getElementById('memberMgmtOverlay')?.remove();
+      _unlockBodyScroll();
       _showToast('팀원 정보가 저장되었습니다');
       populateFilters();
       renderAll();
@@ -3636,6 +3641,21 @@
       var saved = localStorage.getItem('af_projects');
       if (saved) {
         try { state.projects = JSON.parse(saved); } catch(e) {}
+      }
+    }
+
+    // ===== BODY SCROLL LOCK (모달/슬라이드 열릴 때 배경 스크롤 방지) =====
+    var _scrollLockCount = 0;
+    function _lockBodyScroll() {
+      _scrollLockCount++;
+      if (_scrollLockCount === 1) {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function _unlockBodyScroll() {
+      _scrollLockCount = Math.max(0, _scrollLockCount - 1);
+      if (_scrollLockCount === 0) {
+        document.body.style.overflow = '';
       }
     }
 
@@ -4596,7 +4616,7 @@
         // 주말 음영 (토~일 2일분)
         if (isSat) {
           const shade = document.createElement('div');
-          shade.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(0,0,0,0.03);pointer-events:none;z-index:0;';
+          shade.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(0,0,0,0.04);pointer-events:none;z-index:1;';
           shade.style.left = x + 'px';
           shade.style.width = (dayW * 2) + 'px';
           gridContainer.appendChild(shade);
@@ -4855,6 +4875,7 @@
           chatBtn.onclick = function(e) {
             e.stopPropagation();
             document.getElementById('chatPanel').classList.add('open');
+            _lockBodyScroll();
             switchChatTab('project');
             enterRoom(project.id);
             clearChatBadge();
@@ -5413,6 +5434,7 @@
 
       panel.classList.add('open');
       document.getElementById('panelBackdrop').classList.add('open');
+      _lockBodyScroll();
       setTimeout(renderDetailServiceTags, 50);
       // Bind link type change for custom input toggle
       document.querySelectorAll('.link-type-select').forEach(sel => {
@@ -5426,6 +5448,7 @@
     function closeDetailPanel() {
       document.getElementById('detailPanel').classList.remove('open');
       document.getElementById('panelBackdrop').classList.remove('open');
+      _unlockBodyScroll();
       state.selectedProject = null;
       if (state.isCreating) {
         state.isCreating = false;
@@ -5586,6 +5609,8 @@
       var overlay = document.createElement('div');
       overlay.id = 'serviceTypeMgmtOverlay';
       overlay.className = 'modal-overlay show';
+      overlay.onclick = function(e) { if (e.target === overlay) { overlay.remove(); _unlockBodyScroll(); } };
+      _lockBodyScroll();
       var modal = document.createElement('div');
       modal.style.cssText = 'background:white;border-radius:12px;padding:24px;max-width:460px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);';
 
@@ -5593,7 +5618,7 @@
         var types = _getServiceTypes();
         var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
           '<h3 style="font-size:16px;font-weight:700;margin:0;">서비스 종류 관리</h3>' +
-          '<button onclick="document.getElementById(\'serviceTypeMgmtOverlay\').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#6b7280;line-height:1;">×</button>' +
+          '<button onclick="document.getElementById(\'serviceTypeMgmtOverlay\').remove(); _unlockBodyScroll();" style="background:none;border:none;font-size:22px;cursor:pointer;color:#6b7280;line-height:1;">×</button>' +
           '</div>';
         html += '<div style="display:flex;gap:6px;margin-bottom:16px;">' +
           '<input type="text" id="newServiceTypeInput" placeholder="새 서비스 종류 입력..." style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;">' +
@@ -5697,10 +5722,12 @@
       });
 
       modal.classList.add('show');
+      _lockBodyScroll();
     }
 
     function closeEditModal() {
       document.getElementById('editModal').classList.remove('show');
+      _unlockBodyScroll();
       state.editingPhase = null;
     }
 

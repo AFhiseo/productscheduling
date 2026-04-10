@@ -2022,7 +2022,7 @@
     <!-- Header -->
     <div class="header">
       <div class="header-top">
-        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전">v2026.04.10 10:08</span></div>
+        <div class="header-title"><span class="af-logo-text">about<br>fishing</span><span style="font-size:15px;font-weight:500;color:#6b7280;margin-left:12px;">스케줄 대시보드</span> <span id="syncStatus" style="font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 10px; margin-left: 4px; background: #f3f4f6; color: #9ca3af;">로컬</span> <span id="deployVersion" style="font-size: 10px; font-weight: 400; color: #9ca3af; margin-left: 6px;" title="최종 배포 버전"></span></div>
         <div class="header-controls">
           <input type="text" class="search-input" id="searchInput" placeholder="검색...">
           <div class="filter-group">
@@ -3838,7 +3838,14 @@
       // 배포 버전 실시간 동기화 — 모든 사용자가 같은 버전 표시
       _fb.db.ref('settings/deployVersion').on('value', function(snap) {
         var v = snap.val();
-        if (v) _updateDeployVersion(v);
+        if (v) {
+          _updateDeployVersion(v);
+        } else {
+          // Firebase에 버전 정보가 없으면 현재 시간으로 초기화
+          var now = new Date();
+          var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+          _fb.db.ref('settings/deployVersion').set(vStr);
+        }
       });
 
       // 실시간 리스너 — 다른 사용자가 수정하면 반영
@@ -3850,6 +3857,18 @@
           // Firebase에 데이터 있음 → 반영
           var arr = Object.values(data).sort(function(a, b) {
             return parseInt(a.id.replace('P', '')) - parseInt(b.id.replace('P', ''));
+          });
+          // 필수 필드 보정 (Firebase에서 빈 객체가 누락될 수 있음)
+          var _emptyPhases = {plan:{start:'',end:''},design:{start:'',end:''},front:{start:'',end:''},back:{start:'',end:''},qa:{start:'',end:''}};
+          var _emptyAssign = {plan:[],design:[],front:[],back:[],qa:[]};
+          arr.forEach(function(p) {
+            if (!p.phases) p.phases = JSON.parse(JSON.stringify(_emptyPhases));
+            else { ['plan','design','front','back','qa'].forEach(function(ph) { if (!p.phases[ph]) p.phases[ph] = {start:'',end:''}; }); }
+            if (!p.assignments) p.assignments = JSON.parse(JSON.stringify(_emptyAssign));
+            else { ['plan','design','front','back','qa'].forEach(function(ph) { if (!p.assignments[ph]) p.assignments[ph] = []; }); }
+            if (!p.links) p.links = [];
+            if (!p.serviceTypes) p.serviceTypes = [];
+            if (!p.status) p.status = '대기';
           });
           // 안전장치: Firebase 데이터가 비어있으면 무시
           if (arr.length > 0) {
@@ -5602,13 +5621,13 @@
             const typeColors = {'기획서':'#6366f1','Figma':'#a855f7','PRD':'#06b6d4','API':'#10b981','기타':'#6b7280'};
             const color = typeColors[link.type] || '#6b7280';
             return hasUrl ? `
-            <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center; padding: 6px 10px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
+            <div class="link-row" data-link-row="${i}" style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center; padding: 6px 10px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
               <span style="font-size: 11px; font-weight: 600; color: ${color}; background: ${color}15; padding: 2px 8px; border-radius: 4px; flex-shrink: 0;">${link.type}</span>
               <a href="${link.url}" target="_blank" rel="noopener" style="flex: 1; font-size: 12px; color: #2563eb; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${link.url}">${link.url.replace(/^https?:[/][/]/, '').substring(0, 50)}${link.url.length > 60 ? '...' : ''}</a>
               <button onclick="editLinkInline(${i})" style="border: none; background: none; color: #6b7280; cursor: pointer; font-size: 12px; padding: 2px 4px; flex-shrink: 0;" title="수정">✎</button>
               <button onclick="removeLink(${i})" style="border: none; background: none; color: #ef4444; cursor: pointer; font-size: 14px; padding: 2px 4px; flex-shrink: 0;" title="삭제">×</button>
             </div>` : `
-            <div style="display: flex; gap: 6px; margin-bottom: 6px; align-items: center;">
+            <div class="link-row" data-link-row="${i}" style="display: flex; gap: 6px; margin-bottom: 6px; align-items: center;">
               <select class="detail-input link-type-select" data-link-idx="${i}" style="width: 90px; flex-shrink: 0; font-size: 12px; padding: 4px 6px;">
                 <option value="기획서" ${link.type === '기획서' ? 'selected' : ''}>기획서</option>
                 <option value="Figma" ${link.type === 'Figma' ? 'selected' : ''}>Figma</option>
@@ -5707,43 +5726,42 @@
       if (state.currentTab === 'projects') renderProjects();
     }
 
-    function _saveCurrentLinkInputs() {
+    function _buildLinkRowHTML(idx) {
+      return '<div class="link-row" data-link-row="' + idx + '" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">' +
+        '<select class="detail-input link-type-select" data-link-idx="' + idx + '" style="width:90px;flex-shrink:0;font-size:12px;padding:4px 6px;" onchange="var ci=this.parentElement.querySelector(\'.link-custom-type\');if(ci)ci.style.display=this.value===\'__custom__\'?\'block\':\'none\';">' +
+        '<option value="기획서">기획서</option><option value="Figma">Figma</option><option value="PRD">PRD</option><option value="API">API</option><option value="TC">TC</option><option value="기타">기타</option><option value="__custom__">직접입력</option></select>' +
+        '<input type="text" class="detail-input link-custom-type" data-link-idx="' + idx + '" placeholder="타입명" style="width:70px;flex-shrink:0;font-size:12px;padding:4px 6px;display:none;">' +
+        '<input type="text" class="detail-input link-url-input" data-link-idx="' + idx + '" placeholder="URL 입력" style="flex:1;font-size:12px;padding:4px 8px;">' +
+        '<button onclick="removeLink(' + idx + ')" style="border:none;background:none;color:#ef4444;cursor:pointer;font-size:16px;padding:2px 4px;flex-shrink:0;" title="삭제">×</button></div>';
+    }
+
+    function addLink() {
       if (!state.selectedProject) return;
+      if (!state.selectedProject.links) state.selectedProject.links = [];
+      // 현재 입력값을 state에 반영
       var linkTypes = document.querySelectorAll('.link-type-select');
       var linkUrls = document.querySelectorAll('.link-url-input');
       state.selectedProject.links = [];
       linkTypes.forEach(function(sel, i) {
         var type = sel.value;
         if (type === '__custom__') {
-          var customInput = sel.parentElement.querySelector('.link-custom-type');
-          type = customInput ? customInput.value.trim() || '기타' : '기타';
+          var ci = sel.parentElement.querySelector('.link-custom-type');
+          type = ci ? ci.value.trim() || '기타' : '기타';
         }
         state.selectedProject.links.push({ type: type, url: linkUrls[i].value });
       });
-    }
-
-    function _reopenCurrentPanel() {
-      var detailBody = document.querySelector('.detail-body');
-      var scrollPos = detailBody ? detailBody.scrollTop : 0;
-      if (state.isCreating) {
-        createNewProject._reopen = true;
-        createNewProject();
-      } else {
-        openDetailPanel(state.selectedProject.id);
-      }
-      // 스크롤 위치 복원
-      setTimeout(function() {
-        var body = document.querySelector('.detail-body');
-        if (body) body.scrollTop = scrollPos;
-      }, 60);
-    }
-
-    function addLink() {
-      if (!state.selectedProject) return;
-      if (!state.selectedProject.links) state.selectedProject.links = [];
-      _saveCurrentLinkInputs();
+      var newIdx = state.selectedProject.links.length;
       state.selectedProject.links.push({ type: '기획서', url: '' });
-      _reopenCurrentPanel();
+      // DOM에 새 행만 추가 (패널 전체를 다시 그리지 않음)
+      var addBtn = document.querySelector('[onclick="addLink()"]');
+      if (addBtn) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = _buildLinkRowHTML(newIdx);
+        addBtn.parentElement.insertBefore(tmp.firstChild, addBtn);
+        // 새로 추가된 URL input에 포커스
+        var newUrl = addBtn.parentElement.querySelector('[data-link-idx="' + newIdx + '"].link-url-input');
+        if (newUrl) newUrl.focus();
+      }
     }
 
     function editLinkInline(idx) {
@@ -5751,15 +5769,42 @@
       var link = state.selectedProject.links[idx];
       if (link) {
         link._editing = true;
-        _reopenCurrentPanel();
+        // 기존 방식: 패널 다시 그림 (편집 모드 전환 필요)
+        var detailBody = document.querySelector('.detail-body');
+        var scrollPos = detailBody ? detailBody.scrollTop : 0;
+        if (state.isCreating) { createNewProject._reopen = true; createNewProject(); }
+        else { openDetailPanel(state.selectedProject.id); }
+        setTimeout(function() { var b = document.querySelector('.detail-body'); if (b) b.scrollTop = scrollPos; }, 60);
       }
     }
 
     function removeLink(idx) {
       if (!state.selectedProject || !state.selectedProject.links) return;
-      _saveCurrentLinkInputs();
+      // 현재 입력값을 state에 반영
+      var linkTypes = document.querySelectorAll('.link-type-select');
+      var linkUrls = document.querySelectorAll('.link-url-input');
+      state.selectedProject.links = [];
+      linkTypes.forEach(function(sel, i) {
+        var type = sel.value;
+        if (type === '__custom__') {
+          var ci = sel.parentElement.querySelector('.link-custom-type');
+          type = ci ? ci.value.trim() || '기타' : '기타';
+        }
+        state.selectedProject.links.push({ type: type, url: linkUrls[i].value });
+      });
+      // DOM에서 해당 행만 제거
+      var row = document.querySelector('[data-link-row="' + idx + '"]');
+      if (row) row.remove();
       state.selectedProject.links.splice(idx, 1);
-      _reopenCurrentPanel();
+      // data-link-idx 재정렬
+      document.querySelectorAll('.link-row').forEach(function(r, i) {
+        r.setAttribute('data-link-row', i);
+        r.querySelector('.link-type-select').setAttribute('data-link-idx', i);
+        r.querySelector('.link-custom-type').setAttribute('data-link-idx', i);
+        r.querySelector('.link-url-input').setAttribute('data-link-idx', i);
+        var delBtn = r.querySelector('button[title="삭제"]');
+        if (delBtn) delBtn.setAttribute('onclick', 'removeLink(' + i + ')');
+      });
     }
 
     function _getServiceTypes() {
@@ -6404,7 +6449,13 @@
     }
 
     function renderOverview() {
+      try {
       var all = state.projects;
+      if (!all || all.length === 0) {
+        var el = document.getElementById('overviewContent');
+        if (el) el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:60px 0;font-size:14px;">프로젝트 데이터 로딩 중...</div>';
+        return;
+      }
       var today = new Date(); today.setHours(0,0,0,0);
       var inProgress = all.filter(function(p) { return p.status === '진행'; }).length;
       var completed = all.filter(function(p) { return p.status === '완료'; }).length;
@@ -6426,7 +6477,7 @@
       var weekEnd = todayMs + 7 * 86400000;
       var nextWeekEnd = todayMs + 14 * 86400000;
       all.forEach(function(p) {
-        if (p.status === '완료' || p.status === 'Deprecated') return;
+        if (p.status === '완료' || p.status === 'Deprecated' || !p.phases) return;
         ['plan','design','front','back','qa'].forEach(function(ph) {
           if (p.phases[ph] && p.phases[ph].start) {
             var d = parseLocalDate(p.phases[ph].start).getTime();
@@ -6441,7 +6492,7 @@
       // 현재 진행 중인 페이즈 (오늘이 start~end 사이)
       var activePhases = [];
       all.forEach(function(p) {
-        if (p.status === '완료' || p.status === 'Deprecated') return;
+        if (p.status === '완료' || p.status === 'Deprecated' || !p.phases) return;
         ['plan','design','front','back','qa'].forEach(function(ph) {
           if (p.phases[ph] && p.phases[ph].start && p.phases[ph].end) {
             var s = parseLocalDate(p.phases[ph].start).getTime();
@@ -6460,7 +6511,7 @@
       // 마감 임박 (7일 이내 end)
       var deadlineSoon = [];
       all.forEach(function(p) {
-        if (p.status === '완료' || p.status === 'Deprecated') return;
+        if (p.status === '완료' || p.status === 'Deprecated' || !p.phases) return;
         ['plan','design','front','back','qa'].forEach(function(ph) {
           if (p.phases[ph] && p.phases[ph].end) {
             var e = parseLocalDate(p.phases[ph].end).getTime();
@@ -6477,9 +6528,9 @@
       var memberActive = {};
       TEAM.forEach(function(m) { memberActive[m.id] = { active: 0, total: 0 }; });
       all.forEach(function(p) {
-        if (p.status === '완료' || p.status === 'Deprecated') return;
+        if (p.status === '완료' || p.status === 'Deprecated' || !p.phases) return;
         ['plan','design','front','back','qa'].forEach(function(ph) {
-          (p.assignments[ph] || []).forEach(function(id) {
+          ((p.assignments || {})[ph] || []).forEach(function(id) {
             if (!memberActive[id]) return;
             memberActive[id].total++;
             if (p.phases[ph] && p.phases[ph].start && p.phases[ph].end) {
@@ -6500,7 +6551,7 @@
       // 전체 진행률 계산
       var totalPhases = 0, completedPhases = 0;
       all.forEach(function(p) {
-        if (p.status === 'Deprecated') return;
+        if (p.status === 'Deprecated' || !p.phases) return;
         ['plan','design','front','back','qa'].forEach(function(ph) {
           totalPhases++;
           if (p.phases[ph] && p.phases[ph].end) {
@@ -6644,7 +6695,13 @@
       html += '</div>';
       html += '</div>';
 
-      document.getElementById('overviewContent').innerHTML = html;
+      var overviewEl = document.getElementById('overviewContent');
+      if (overviewEl) overviewEl.innerHTML = html;
+      } catch(err) {
+        console.error('[renderOverview] ERROR:', err);
+        var el = document.getElementById('overviewContent');
+        if (el) el.innerHTML = '<div style="color:#dc2626;padding:20px;font-size:13px;">개요 렌더링 오류: ' + err.message + '</div>';
+      }
     }
 
     function editDeployDate(projectId, td) {
@@ -6829,7 +6886,7 @@
             링크
           </label>
           ${(state.selectedProject.links || []).map((link, i) => `
-            <div style="display: flex; gap: 6px; margin-bottom: 6px; align-items: center;">
+            <div class="link-row" data-link-row="${i}" style="display: flex; gap: 6px; margin-bottom: 6px; align-items: center;">
               <select class="detail-input link-type-select" data-link-idx="${i}" style="width: 90px; flex-shrink: 0; font-size: 12px; padding: 4px 6px;">
                 <option value="기획서" ${link.type === '기획서' ? 'selected' : ''}>기획서</option>
                 <option value="Figma" ${link.type === 'Figma' ? 'selected' : ''}>Figma</option>

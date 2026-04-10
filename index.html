@@ -2346,6 +2346,25 @@
       if (_fb.db) _fb.db.ref('settings/allowedEmails').set(_allowedEmails);
     }
 
+    // === 권한 시스템: read(읽기전용) / write(읽기+쓰기) ===
+    // TEAM 멤버에 permission 필드가 없으면 기본 'read'
+    function _ensurePermissionField() {
+      TEAM.forEach(function(m) { if (!m.permission) m.permission = 'read'; });
+    }
+    function _hasWritePermission() {
+      if (!state.currentUser) return false;
+      // 관리자 모드면 항상 쓰기 가능
+      if (state.adminMode) return true;
+      var member = _getLinkedMember(state.currentUser.email);
+      if (!member) return false;
+      return member.permission === 'write';
+    }
+    function _checkWritePermission() {
+      if (_hasWritePermission()) return true;
+      _showToast('쓰기 권한이 없습니다. 관리자에게 요청해주세요.');
+      return false;
+    }
+
     // 팀원 접속 상태 (Firebase에 저장)
     var _memberPresence = {}; // { memberId: { online: bool, lastSeen: timestamp, email: '', displayName: '' } }
 
@@ -2656,7 +2675,13 @@
       if (state.currentUser) {
         headerInfo.style.display = 'flex';
         chatBtn.style.display = 'inline-block';
-        nameEl.textContent = state.currentUser.displayName;
+        var permBadge = '';
+        if (_hasWritePermission()) {
+          permBadge = ' <span style="font-size:9px;padding:1px 5px;border-radius:3px;background:#dcfce7;color:#15803d;font-weight:600;vertical-align:middle;">쓰기</span>';
+        } else {
+          permBadge = ' <span style="font-size:9px;padding:1px 5px;border-radius:3px;background:#f3f4f6;color:#9ca3af;font-weight:600;vertical-align:middle;">읽기</span>';
+        }
+        nameEl.innerHTML = state.currentUser.displayName + permBadge;
         if (state.currentUser.photoURL) {
           avatarEl.innerHTML = '<img src="' + state.currentUser.photoURL + '">';
         } else {
@@ -3486,19 +3511,18 @@
       modal.style.maxHeight = '85vh';
       modal.style.overflow = 'auto';
       function renderMemberList() {
-        var presenceInfo = '';
-        TEAM.forEach(function(m) {
-          var p = _memberPresence[m.id];
-          var statusDot = p && p.online ? '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;" title="온라인"></span>' : '<span style="width:8px;height:8px;border-radius:50%;background:#d1d5db;display:inline-block;" title="오프라인"></span>';
-          var lastSeen = p && p.lastSeen ? _formatRelativeTime(p.lastSeen) : '기록 없음';
-          presenceInfo = '';
-        });
-
+        _ensurePermissionField();
         modal.innerHTML = '<h3 style="margin-bottom:16px;font-size:16px;font-weight:700;">팀원 관리</h3>' +
           TEAM.map((m, i) => {
             var p = _memberPresence[m.id];
             var onlineDot = p && p.online ? '🟢' : '⚪';
             var lastSeenStr = p && p.lastSeen ? _formatRelativeTime(p.lastSeen) : '';
+            var perm = m.permission || 'read';
+            var permColor = perm === 'write' ? '#10b981' : '#6b7280';
+            var permLabel = perm === 'write' ? '읽기+쓰기' : '읽기전용';
+            var permBtnStyle = perm === 'write'
+              ? 'background:#dcfce7;color:#15803d;border:1px solid #86efac;'
+              : 'background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db;';
             return '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
               '<div style="width:32px;height:32px;border-radius:50%;background:' + m.color + ';display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0;">' + m.name.substring(0,1) + '</div>' +
               '<div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:200px;">' +
@@ -3506,6 +3530,7 @@
                   '<input type="text" value="' + m.name + '" style="width:80px;padding:4px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:13px;font-weight:600;" data-member-field="name" data-member-idx="' + i + '">' +
                   '<input type="text" value="' + m.role + '" style="width:130px;padding:4px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:12px;color:#6b7280;" data-member-field="role" data-member-idx="' + i + '">' +
                   '<input type="color" value="' + m.color + '" style="width:28px;height:28px;border:none;cursor:pointer;" data-member-field="color" data-member-idx="' + i + '">' +
+                  '<button onclick="_togglePermission(' + i + ')" style="cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap;' + permBtnStyle + '" title="클릭하여 권한 변경">' + permLabel + '</button>' +
                 '</div>' +
                 '<div style="display:flex;gap:6px;align-items:center;">' +
                   '<input type="email" value="' + (m.email || '') + '" placeholder="Google 계정 이메일" style="flex:1;padding:3px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:11px;color:#6b7280;" data-member-field="email" data-member-idx="' + i + '">' +
@@ -3573,9 +3598,18 @@
       return (d.getMonth()+1) + '/' + d.getDate();
     }
 
+    function _togglePermission(idx) {
+      if (!TEAM[idx]) return;
+      TEAM[idx].permission = (TEAM[idx].permission === 'write') ? 'read' : 'write';
+      // UI 즉시 갱신
+      document.getElementById('memberMgmtOverlay')?.remove();
+      _unlockBodyScroll();
+      openMemberManagement();
+    }
+
     function addNewMember() {
       const newId = 'member_' + Date.now();
-      TEAM.push({ id: newId, name: '새 팀원', role: '역할', color: '#6b7280', email: '' });
+      TEAM.push({ id: newId, name: '새 팀원', role: '역할', color: '#6b7280', email: '', permission: 'read' });
       document.getElementById('memberMgmtOverlay')?.remove();
       openMemberManagement();
     }
@@ -4000,6 +4034,7 @@
         if (data && Array.isArray(data) && data.length > 0) {
           TEAM.length = 0;
           data.forEach(function(m) { TEAM.push(m); });
+          _ensurePermissionField();
           localStorage.setItem('af_team', JSON.stringify(TEAM));
         }
         _loaded.team = true; _checkDone();
@@ -5529,6 +5564,7 @@
     }
 
     function startDrag(e, projectId, phase) {
+      if (!_hasWritePermission()) return;
       pushUndo(); // 드래그 전 상태 저장
       const bar = e.target.closest('.gantt-bar');
       if (!bar) return;
@@ -5792,6 +5828,7 @@
     }
 
     function saveDetail() {
+      if (!_checkWritePermission()) return;
       pushUndo();
       if (!state.selectedProject) return;
       var p = state.selectedProject;
@@ -6074,6 +6111,7 @@
     }
 
     function deleteProject() {
+      if (!_checkWritePermission()) return;
       if (!state.selectedProject) return;
       if (!confirm(`${state.selectedProject.name}을 삭제하시겠습니까?`)) return;
       pushHistory('삭제', state.selectedProject.id, '안건', state.selectedProject.name, null);
@@ -6120,6 +6158,7 @@
     }
 
     function saveEdit() {
+      if (!_checkWritePermission()) return;
       pushUndo();
       if (!state.editingPhase) return;
       const { projectId, phase } = state.editingPhase;
@@ -6230,6 +6269,7 @@
     }
 
     function saveInlineSchedule() {
+      if (!_checkWritePermission()) return;
       if (!_inlineState.projectId || !_inlineState.phase) {
         _showToast('페이즈를 선택해주세요');
         return;
@@ -6827,6 +6867,7 @@
     }
 
     function editDeployDate(projectId, td) {
+      if (!_checkWritePermission()) return;
       const project = state.projects.find(p => p.id === projectId);
       if (!project) return;
       const input = document.createElement('input');
@@ -6850,6 +6891,7 @@
     }
 
     function editStatus(projectId, td) {
+      if (!_checkWritePermission()) return;
       const project = state.projects.find(p => p.id === projectId);
       if (!project) return;
       const sel = document.createElement('select');
@@ -6877,6 +6919,7 @@
     }
 
     function createNewProject() {
+      if (!createNewProject._reopen && !_checkWritePermission()) return;
       var isReopen = createNewProject._reopen;
       createNewProject._reopen = false;
 
@@ -7053,6 +7096,7 @@
     }
 
     function saveNewProject() {
+      if (!_checkWritePermission()) return;
       if (!state.selectedProject || !state.isCreating) return;
       const name = document.getElementById('detailName').value.trim();
       if (!name) { alert('안건명을 입력하세요'); return; }
@@ -7125,6 +7169,7 @@
       if (savedTeam) {
         try { const t = JSON.parse(savedTeam); if (t.length) { TEAM.length = 0; TEAM.push(...t); } } catch(e) {}
       }
+      _ensurePermissionField();
 
       // 1단계: 즉시 데이터 로드 및 렌더 (Firebase 무관하게 화면 먼저 표시)
       initProjects();
@@ -7432,6 +7477,7 @@
     window.addNewMember = addNewMember;
     window.removeMember = removeMember;
     window.saveMemberChanges = saveMemberChanges;
+    window._togglePermission = _togglePermission;
     window._addAllowedEmail = _addAllowedEmail;
     window._removeAllowedEmail = _removeAllowedEmail;
     window._revokeSession = _revokeSession;

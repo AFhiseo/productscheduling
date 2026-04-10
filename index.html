@@ -3839,6 +3839,33 @@
       if (state.currentTab === 'history' && _historyTab === 'deploy') renderHistory();
     }
 
+    /* ── 초기 릴리즈노트 시드 데이터 ── */
+    var _SEED_RELEASE_NOTES = [
+      { version:'v2026.04.09-1', timestamp:'2026-04-09T09:00:00.000Z', changes:['Gantt 차트 DAY_WIDTH 20px 확장 및 전체 날짜(1-31) 헤더 표시','월요일/주말/오늘 강조 표현 (진한 구분선, 회색 배경, 빨간색)','엑셀 방식 가로 스크롤 타임라인 구현 (1월~2027년 지원)','innerHTML 버그 수정 (이벤트 핸들러 소실 → appendChild 방식)','프로젝트/담당자 뷰 lane-based 자동 위치 배치','Gantt 바 클릭 → 상세 패널 열기 기능','의존성 라인 렌더링 (프로젝트 간 선 표시)','GMV 뱃지 추가 (프로젝트명 옆)'] },
+      { version:'v2026.04.09-2', timestamp:'2026-04-09T13:00:00.000Z', changes:['Firebase Realtime DB 연동 시작','localStorage ↔ Firebase 듀얼 저장 (오프라인 지원)','프로젝트 CRUD → Firebase 즉시 동기화','스케줄 연도 무한 확장 (recalcGanttRange)'] },
+      { version:'v2026.04.09-3', timestamp:'2026-04-09T14:30:00.000Z', changes:['History 탭 추가 (pushHistory 기본 함수)','프로젝트별 채팅방 자동 생성 (room-based)','Firebase에 채팅 메시지 저장','프로젝트 삭제 후 재생성 시 이전 대화 복구'] },
+      { version:'v2026.04.09-4', timestamp:'2026-04-09T15:50:00.000Z', changes:['Firebase SDK 비동기 동적 로드로 변경 (페이지 블로킹 해결)','Google 로그인 구현 (signInWithPopup)','로컬 모드(file://) 바이패스 → 배포 환경에서만 Firebase Auth','에러 핸들링 & 재시도 로직 강화'] },
+      { version:'v2026.04.09-5', timestamp:'2026-04-09T16:20:00.000Z', changes:['saveDetail, deleteProject, saveEdit에 pushHistory 호출 추가','필드 변경 시 이전/이후 값 기록','담당자 변경 이력 추적','TEAM에 email 필드 추가 (Google 계정 ↔ 팀원 자동 매칭)','pushHistory에 actor(사용자) 정보 추가'] },
+      { version:'v2026.04.09-6', timestamp:'2026-04-09T22:50:00.000Z', changes:['Firebase presence/{memberId}/revoked 플래그 저장','멤버관리에 "세션 만료" 버튼 (온라인 팀원에만 표시)','주기적 체크 → 만료되면 자동 로그아웃'] },
+      { version:'v2026.04.10-1', timestamp:'2026-04-10T00:30:00.000Z', changes:['serviceType 관리 모달 overlay 스크롤 잠금 누락 수정','Firebase 설정 로드 vs 인증 레이스 컨디션 타이밍 수정','팀 데이터 & allowedEmails Firebase 동기화','접근 이력(access log) 탭 추가 (로그인 기록)','변경 이력 + 접근 이력 2개 탭 분리'] },
+      { version:'v2026.04.10-2', timestamp:'2026-04-10T01:12:00.000Z', changes:['createNewProject 링크 row 수정 (_lockBodyScroll 호출 추가)','saveNewProject() 후 상세 패널 자동 닫기','스케줄탭 Gantt 바 겹침 수정 (lane-based overlap 해결)','동일 날짜 페이즈 바 자동 레인 분배'] },
+      { version:'v2026.04.10-3', timestamp:'2026-04-10T08:50:00.000Z', changes:['변경이력/접속이력 Firebase 저장 연동 (캐시 삭제 후에도 유지)','Firebase 보안 규칙에 history, settings, presence 경로 추가','Firebase + localStorage 듀얼 스토리지 (방어적 구현)'] },
+      { version:'v2026.04.10-4', timestamp:'2026-04-10T09:50:00.000Z', changes:['팀원 권한 시스템 추가 (read/write)','기본 읽기 권한 → 쓰기 권한 토글 가능','모든 쓰기 작업에 권한 체크 가드 적용','팀원관리 UI에 권한 뱃지 및 토글 버튼 추가'] },
+      { version:'v2026.04.10-5', timestamp:'2026-04-10T10:20:00.000Z', changes:['프로젝트 딥링크 시스템 추가 (URL 해시 기반)','링크 공유 시 로그인 후 해당 프로젝트 자동 열림','상세 슬라이드 상단에 🔗 링크 복사 버튼 추가','clipboard API + fallback 구현'] },
+      { version:'v2026.04.10-6', timestamp:'2026-04-10T12:50:00.000Z', changes:['릴리즈노트 탭 추가 (이력 탭 내 서브탭)','GitHub 배포 이력 수동 등록 폼 (버전 + 작업 내역)','Firebase history/deploy 경로 저장 연동','릴리즈노트 카드형 UI (버전, 날짜, 작성자, 변경 목록)'] }
+    ];
+
+    function _autoSeedReleaseNotes() {
+      if (!_fb.db) return;
+      var ref = _fb.db.ref('history/deploy');
+      var user = state.currentUser ? (state.currentUser.displayName || state.currentUser.email) : 'System';
+      var email = state.currentUser ? state.currentUser.email : '';
+      _SEED_RELEASE_NOTES.forEach(function(n) {
+        ref.push({ version: n.version, timestamp: n.timestamp, changes: n.changes, user: user, email: email });
+      });
+      console.log('[Deploy] 초기 릴리즈노트 ' + _SEED_RELEASE_NOTES.length + '건 자동 등록');
+    }
+
     function loadDeployLogs() {
       var saved = localStorage.getItem(_LS_DEPLOY_KEY);
       if (saved) {
@@ -3853,6 +3880,9 @@
           arr.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
           _deployLogs = arr;
           try { localStorage.setItem(_LS_DEPLOY_KEY, JSON.stringify(_deployLogs)); } catch(e) {}
+        } else {
+          // Firebase에 데이터 없으면 초기 시드 자동 등록
+          _autoSeedReleaseNotes();
         }
         if (state.currentTab === 'history' && _historyTab === 'deploy') renderHistory();
       }, function(err) {

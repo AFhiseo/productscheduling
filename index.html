@@ -5690,6 +5690,21 @@
           };
           bottomLine.appendChild(chatBtn);
 
+          // 📅 일정 등록 버튼 (write 권한 있는 사용자만)
+          if (_hasWritePermission()) {
+            var schedBtn = document.createElement('button');
+            schedBtn.title = project.name + ' 일정 등록';
+            schedBtn.style.cssText = 'background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;cursor:pointer;font-size:11px;padding:0 4px;line-height:16px;color:#15803d;font-weight:600;';
+            schedBtn.innerHTML = '📅';
+            schedBtn.onclick = (function(pid) {
+              return function(e) {
+                e.stopPropagation();
+                openScheduleFromDetail(pid);
+              };
+            })(project.id);
+            bottomLine.appendChild(schedBtn);
+          }
+
           nameRow.appendChild(topLine);
           nameRow.appendChild(bottomLine);
 
@@ -6200,7 +6215,8 @@
         if (ends.length) scheduleEnd = ends[ends.length - 1];
       }
 
-      title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>';
+      var _schedBtn = _hasWritePermission() ? ' <button onclick="openScheduleFromDetail(\'' + p.id + '\')" class="write-only-ui" style="border:none;background:#f0fdf4;color:#15803d;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="페이즈 일정 등록/수정">📅 일정 등록</button>' : '';
+      title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>' + _schedBtn;
       body.innerHTML = `
         <!-- 요약 카드 -->
         <div style="background: linear-gradient(135deg, ${tierColor}08, ${tierColor}15); border: 1px solid ${tierColor}30; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;">
@@ -6757,6 +6773,14 @@
 
     /* ========== INLINE SCHEDULE ========== */
     let _inlineState = { projectId: null, phase: null };
+
+    function openScheduleFromDetail(projectId) {
+      if (!_checkWritePermission()) return;
+      var today = new Date();
+      // 가짜 이벤트 — 화면 중앙 배치용
+      var fakeEvt = { clientX: window.innerWidth / 2 - 130, clientY: window.innerHeight / 2 - 200 };
+      openInlineSchedule(projectId, today, fakeEvt);
+    }
 
     function openInlineSchedule(projectId, clickDate, evt) {
       const project = state.projects.find(p => p.id === projectId);
@@ -8045,6 +8069,7 @@
     window.switchHistoryTab = switchHistoryTab;
     window._submitDeployLog = _submitDeployLog;
     window.openManual = openManual;
+    window.openScheduleFromDetail = openScheduleFromDetail;
     window.openMemberManagement = openMemberManagement;
     window.addNewMember = addNewMember;
     window.removeMember = removeMember;

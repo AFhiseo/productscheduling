@@ -3622,6 +3622,25 @@
       else if (state.currentTab === 'history') renderHistory();
     }
 
+    // === 이력 저장: Firebase + localStorage 이중 저장 ===
+    var _LS_HISTORY_KEY = 'af_history_changes';
+    var _LS_ACCESS_KEY = 'af_history_access';
+    var _historyFbOk = false;  // Firebase history 쓰기 성공 여부
+    var _accessFbOk = false;
+
+    function _saveHistoryToLocal() {
+      try {
+        var trimmed = state.history.slice(-200);
+        localStorage.setItem(_LS_HISTORY_KEY, JSON.stringify(trimmed));
+      } catch(e) {}
+    }
+    function _saveAccessToLocal() {
+      try {
+        var trimmed = _accessLogs.slice(-200);
+        localStorage.setItem(_LS_ACCESS_KEY, JSON.stringify(trimmed));
+      } catch(e) {}
+    }
+
     function pushHistory(action, projectId, field, oldVal, newVal) {
       var entry = {
         timestamp: new Date().toISOString(),
@@ -3637,45 +3656,62 @@
       var proj = state.projects.find(function(p) { return p.id === projectId; });
       if (proj) entry.projectName = proj.name;
       console.log('[History] push:', action, projectId, field, '| fb:', !!_fb.db);
-      // Firebase에 저장
+      // 로컬 캐시에 즉시 추가
+      state.history.push(entry);
+      _saveHistoryToLocal();
+      // Firebase에 저장 시도
       if (_fb.db) {
         _fb.db.ref('history/changes').push(entry).then(function() {
           console.log('[History] Firebase write OK');
+          _historyFbOk = true;
         }).catch(function(err) {
           console.error('[History] Firebase write FAIL:', err);
+          _historyFbOk = false;
         });
       }
-      // 로컬 캐시에도 추가
-      state.history.push(entry);
       if (state.currentTab === 'history' && _historyTab === 'changes') renderHistory();
     }
 
     function loadHistory() {
       console.log('[History] loadHistory called, fb:', !!_fb.db);
-      // Firebase에서 실시간 로드
+      // 1) 먼저 localStorage에서 즉시 로드 (빠름)
+      var saved = localStorage.getItem(_LS_HISTORY_KEY);
+      if (saved) {
+        try {
+          var parsed = JSON.parse(saved);
+          if (parsed && parsed.length > 0) {
+            state.history = parsed;
+            console.log('[History] loaded from localStorage:', state.history.length, 'entries');
+          }
+        } catch(e) {}
+      }
+      // 2) Firebase 리스너 등록 (데이터 있으면 덮어씀)
       if (_fb.db) {
         _fb.db.ref('history/changes').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
           var data = snap.val();
-          state.history = [];
           if (data) {
-            Object.keys(data).forEach(function(k) { state.history.push(data[k]); });
-            state.history.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+            var fbHistory = [];
+            Object.keys(data).forEach(function(k) { fbHistory.push(data[k]); });
+            fbHistory.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+            state.history = fbHistory;
+            _historyFbOk = true;
+            _saveHistoryToLocal();
+            console.log('[History] loaded from Firebase:', state.history.length, 'entries');
+          } else {
+            console.log('[History] Firebase returned empty, keeping localStorage data (' + state.history.length + ' entries)');
           }
-          console.log('[History] loaded from Firebase:', state.history.length, 'entries');
           if (state.currentTab === 'history' && _historyTab === 'changes') renderHistory();
+        }, function(err) {
+          console.error('[History] Firebase listener error:', err);
+          // Firebase 실패해도 localStorage 데이터 유지
         });
-      } else {
-        console.log('[History] no Firebase, fallback to localStorage');
-        // fallback: localStorage
-        var saved = localStorage.getItem('af_history');
-        if (saved) { try { state.history = JSON.parse(saved); } catch(e) {} }
       }
     }
 
     // 접속이력 기록
     function pushAccessLog(action) {
       console.log('[Access] pushAccessLog:', action, '| fb:', !!_fb.db, '| user:', !!state.currentUser);
-      if (!_fb.db || !state.currentUser) return;
+      if (!state.currentUser) return;
       var member = _getLinkedMember(state.currentUser.email);
       var entry = {
         timestamp: new Date().toISOString(),
@@ -3688,22 +3724,54 @@
         memberRole: member ? member.role : '',
         userAgent: navigator.userAgent.substring(0, 120)
       };
-      _fb.db.ref('history/access').push(entry);
+      // 로컬 캐시에 즉시 추가
+      _accessLogs.push(entry);
+      _saveAccessToLocal();
+      // Firebase에 저장 시도
+      if (_fb.db) {
+        _fb.db.ref('history/access').push(entry).then(function() {
+          console.log('[Access] Firebase write OK');
+          _accessFbOk = true;
+        }).catch(function(err) {
+          console.error('[Access] Firebase write FAIL:', err);
+          _accessFbOk = false;
+        });
+      }
+      if (state.currentTab === 'history' && _historyTab === 'access') renderHistory();
     }
 
     var _accessLogs = [];
     function loadAccessLogs() {
       console.log('[Access] loadAccessLogs called, fb:', !!_fb.db);
+      // 1) 먼저 localStorage에서 즉시 로드
+      var saved = localStorage.getItem(_LS_ACCESS_KEY);
+      if (saved) {
+        try {
+          var parsed = JSON.parse(saved);
+          if (parsed && parsed.length > 0) {
+            _accessLogs = parsed;
+            console.log('[Access] loaded from localStorage:', _accessLogs.length, 'entries');
+          }
+        } catch(e) {}
+      }
+      // 2) Firebase 리스너 등록
       if (!_fb.db) return;
       _fb.db.ref('history/access').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
         var data = snap.val();
-        _accessLogs = [];
         if (data) {
-          Object.keys(data).forEach(function(k) { _accessLogs.push(data[k]); });
-          _accessLogs.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+          var fbAccess = [];
+          Object.keys(data).forEach(function(k) { fbAccess.push(data[k]); });
+          fbAccess.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
+          _accessLogs = fbAccess;
+          _accessFbOk = true;
+          _saveAccessToLocal();
+          console.log('[Access] loaded from Firebase:', _accessLogs.length, 'entries');
+        } else {
+          console.log('[Access] Firebase returned empty, keeping localStorage data (' + _accessLogs.length + ' entries)');
         }
-        console.log('[Access] loaded from Firebase:', _accessLogs.length, 'entries');
         if (state.currentTab === 'history' && _historyTab === 'access') renderHistory();
+      }, function(err) {
+        console.error('[Access] Firebase listener error:', err);
       });
     }
 
@@ -6495,7 +6563,8 @@
     function clearHistory() {
       if (!confirm('변경 이력을 모두 삭제하시겠습니까?')) return;
       state.history = [];
-      localStorage.removeItem('af_history');
+      localStorage.removeItem(_LS_HISTORY_KEY);
+      localStorage.removeItem('af_history'); // legacy key
       if (_fb.db) _fb.db.ref('history/changes').remove();
       renderHistory();
       _showToast('변경 이력이 초기화되었습니다');

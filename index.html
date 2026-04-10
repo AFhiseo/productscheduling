@@ -2059,6 +2059,7 @@
         <span id="adminBadge" style="display:none;background:#dc2626;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px;">ADMIN</span>
         <button class="btn btn-secondary" id="memberMgmtBtn" onclick="openMemberManagement()" style="display:none;font-size:12px;padding:6px 10px;">팀원 관리</button>
         <button class="btn btn-secondary" id="serviceMgmtBtn" onclick="openServiceTypeManagement()" style="display:none;font-size:12px;padding:6px 10px;">서비스 관리</button>
+        <button class="btn btn-secondary" onclick="openManual()" style="font-size:12px;padding:6px 10px;" title="사용 매뉴얼">📖 매뉴얼</button>
       </div>
       </div>
 
@@ -2728,6 +2729,222 @@
         headerInfo.style.display = 'none';
         chatBtn.style.display = 'none';
       }
+    }
+
+    /* ── 매뉴얼 (새 탭) ── */
+    function openManual() {
+      var w = window.open('', '_blank');
+      if (!w) { _showToast('팝업이 차단되었습니다. 팝업 허용 후 다시 시도해주세요.'); return; }
+      w.document.write('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>대시보드 매뉴얼</title>' +
+      '<style>' +
+        '*{margin:0;padding:0;box-sizing:border-box}' +
+        'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}' +
+        '.mh{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:40px 24px;text-align:center}' +
+        '.mh h1{font-size:24px;font-weight:800;margin-bottom:6px}.mh p{font-size:14px;opacity:.85}' +
+        '.toc{max-width:800px;margin:-20px auto 0;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:24px 28px;position:relative;z-index:1}' +
+        '.toc h2{font-size:15px;font-weight:700;color:#6366f1;margin-bottom:12px}' +
+        '.toc ol{padding-left:20px}.toc li{margin-bottom:6px}' +
+        '.toc a{color:#4f46e5;text-decoration:none;font-size:14px;font-weight:500}.toc a:hover{text-decoration:underline}' +
+        '.ct{max-width:800px;margin:24px auto;padding:0 16px 60px}' +
+        '.s{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06);padding:28px;margin-bottom:20px}' +
+        '.s h2{font-size:18px;font-weight:800;color:#1e293b;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e2e8f0;display:flex;align-items:center;gap:8px}' +
+        '.s h2 .ic{font-size:22px}' +
+        '.s h3{font-size:14px;font-weight:700;color:#4f46e5;margin:18px 0 8px;padding-left:10px;border-left:3px solid #6366f1}' +
+        '.s p,.s li{font-size:13.5px;color:#374151}.s p{margin-bottom:10px}' +
+        '.s ul{padding-left:20px;margin-bottom:12px}.s li{margin-bottom:4px}' +
+        '.bg{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;vertical-align:middle}' +
+        '.bw{background:#dcfce7;color:#15803d}.br{background:#f3f4f6;color:#6b7280}.ba{background:#fef2f2;color:#dc2626}.bn{background:#fef3c7;color:#92400e}' +
+        '.sc{display:inline-block;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 6px;font-size:12px;font-weight:600;font-family:monospace;color:#475569}' +
+        '.co{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:#1e40af}' +
+        '.cw{background:#fffbeb;border-color:#fde68a;color:#92400e}' +
+        'table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}' +
+        'th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #e5e7eb}' +
+        'th{background:#f8fafc;font-weight:700;color:#374151;font-size:12px}' +
+        '.fd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;font-size:13px}' +
+        '.fs{background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:6px 14px;font-weight:600;color:#4338ca}' +
+        '.fa{color:#9ca3af;font-weight:700}' +
+        '@media(max-width:640px){.mh{padding:28px 16px}.mh h1{font-size:20px}.toc,.s{padding:20px}.s h2{font-size:16px}}' +
+      '</style></head><body>' +
+
+      '<div class="mh"><h1>어바웃피싱 Q2-Q3 프로젝트 스케줄링 대시보드</h1><p>사용자 매뉴얼 — 전체 기능 안내</p></div>' +
+
+      '<div class="toc"><h2>목차</h2><ol>' +
+        '<li><a href="#login">로그인 및 접근 권한</a></li>' +
+        '<li><a href="#perm">권한 시스템 (읽기 / 쓰기 / 관리자)</a></li>' +
+        '<li><a href="#schedule">스케줄 탭 (Gantt 차트)</a></li>' +
+        '<li><a href="#projects">프로젝트 탭</a></li>' +
+        '<li><a href="#team">팀 탭</a></li>' +
+        '<li><a href="#overview">개요 탭</a></li>' +
+        '<li><a href="#history">이력 탭 (변경 / 접속 / 릴리즈노트)</a></li>' +
+        '<li><a href="#detail">프로젝트 상세 패널</a></li>' +
+        '<li><a href="#chat">채팅 시스템</a></li>' +
+        '<li><a href="#admin">관리자 모드</a></li>' +
+        '<li><a href="#deeplink">딥링크 (프로젝트 링크 공유)</a></li>' +
+        '<li><a href="#etc">단축키 및 기타 기능</a></li>' +
+        '<li><a href="#fb">Firebase 연동 안내</a></li>' +
+      '</ol></div>' +
+
+      '<div class="ct">' +
+
+      /* 1 로그인 */
+      '<div class="s" id="login">' +
+        '<h2><span class="ic">🔐</span> 1. 로그인 및 접근 권한</h2>' +
+        '<p>대시보드는 Google 로그인 기반으로 작동합니다.</p>' +
+        '<h3>자동 허용 계정</h3>' +
+        '<p><strong>@aboutfishing.kr</strong> 도메인 이메일은 별도 등록 없이 자동으로 로그인할 수 있습니다. 처음 로그인하면 읽기 권한으로 자동 등록됩니다.</p>' +
+        '<h3>외부 계정 (예외 허용)</h3>' +
+        '<p>aboutfishing.kr 외의 Gmail 등 외부 계정은 관리자가 "팀원 관리 → 로그인 허용 예외 이메일"에 추가해야 접속할 수 있습니다.</p>' +
+        '<div class="co">신규 직원이 처음 접속하면 자동으로 <span class="bg br">읽기전용</span> 권한으로 등록되며, 관리자 🔒 버튼에 빨간 뱃지로 알림이 표시됩니다.</div>' +
+      '</div>' +
+
+      /* 2 권한 */
+      '<div class="s" id="perm">' +
+        '<h2><span class="ic">🛡️</span> 2. 권한 시스템</h2>' +
+        '<p>모든 사용자는 세 가지 권한 레벨 중 하나를 갖습니다.</p>' +
+        '<table><thead><tr><th>권한</th><th>표시</th><th>할 수 있는 것</th><th>할 수 없는 것</th></tr></thead><tbody>' +
+          '<tr><td><span class="bg br">읽기전용</span></td><td>헤더에 "읽기" 뱃지</td><td>모든 탭 조회, 프로젝트 상세 열람, 채팅 열람</td><td>프로젝트 등록/수정/삭제, 채팅 입력, Gantt 바 드래그, 일정 편집</td></tr>' +
+          '<tr><td><span class="bg bw">읽기+쓰기</span></td><td>헤더에 "쓰기" 뱃지</td><td>읽기 + 프로젝트 CRUD, 일정 수정, 채팅 입력, 릴리즈노트 등록</td><td>팀원 관리, 서비스 관리 (관리자 모드 필요)</td></tr>' +
+          '<tr><td><span class="bg ba">관리자</span></td><td>ADMIN 뱃지</td><td>모든 기능 + 팀원 관리, 서비스 종류 관리, 권한 변경, 세션 만료</td><td>—</td></tr>' +
+        '</tbody></table>' +
+        '<div class="co cw">관리자 모드는 권한과 별개로 비밀번호(🔒 버튼 클릭)로 진입합니다. 쓰기 권한이 있어도 팀원/서비스 관리는 관리자 모드에서만 가능합니다.</div>' +
+      '</div>' +
+
+      /* 3 스케줄 */
+      '<div class="s" id="schedule">' +
+        '<h2><span class="ic">📅</span> 3. 스케줄 탭 (Gantt 차트)</h2>' +
+        '<p>프로젝트별 페이즈(기획/디자인/프론트엔드/백엔드/QA) 일정을 시각적으로 보여주는 Gantt 차트입니다.</p>' +
+        '<h3>뷰 전환</h3><ul><li><strong>프로젝트 뷰</strong> — 프로젝트별로 묶어서 표시 (기본)</li><li><strong>담당자 뷰</strong> — 팀원별로 할당된 일정 표시</li></ul>' +
+        '<h3>줌 컨트롤</h3><p>좌측 상단의 − / + 버튼 또는 줌 슬라이더로 타임라인 확대/축소가 가능합니다. 날짜 헤더에 월요일(진한선), 주말(회색), 오늘(빨간선)이 강조됩니다.</p>' +
+        '<h3>바 드래그 (쓰기 권한)</h3><p>Gantt 바의 좌/우 끝을 드래그하면 시작/종료일을 변경합니다. 바 중앙을 드래그하면 전체 기간이 이동합니다.</p>' +
+        '<h3>바 겹침 처리</h3><p>동일 프로젝트에서 페이즈 날짜가 겹치면 자동으로 레인(행)을 분배하여 겹치지 않게 표시됩니다.</p>' +
+        '<h3>인라인 편집 (쓰기 권한)</h3><p>좌측 프로젝트 이름 영역에서 배포일, 상태를 직접 클릭하여 인라인으로 수정할 수 있습니다.</p>' +
+        '<h3>프로젝트 상세 열기</h3><p>프로젝트 이름 또는 Gantt 바를 클릭하면 우측에 상세 패널이 열립니다.</p>' +
+      '</div>' +
+
+      /* 4 프로젝트 */
+      '<div class="s" id="projects">' +
+        '<h2><span class="ic">📋</span> 4. 프로젝트 탭</h2>' +
+        '<p>모든 프로젝트를 카드 형태로 보여줍니다.</p>' +
+        '<h3>정렬</h3><p>우측 상단 드롭다운으로 점수순, 티어순, 배포일순으로 정렬할 수 있습니다.</p>' +
+        '<h3>필터링</h3><p>상단의 상태 필터(전체/대기/진행/완료/연기)와 멤버 필터를 조합하여 원하는 프로젝트만 볼 수 있습니다.</p>' +
+        '<h3>안건 추가 (쓰기 권한)</h3><p>"+ 안건 추가" 버튼으로 새 프로젝트를 등록합니다. 읽기 전용 사용자에게는 이 버튼이 보이지 않습니다.</p>' +
+        '<h3>카드 정보</h3><p>각 카드에 티어, 상태, 서비스 종류, GMV 영향도, 총점, 담당자, 일정이 요약 표시됩니다.</p>' +
+      '</div>' +
+
+      /* 5 팀 */
+      '<div class="s" id="team">' +
+        '<h2><span class="ic">👥</span> 5. 팀 탭</h2>' +
+        '<p>등록된 팀원 목록과 각 팀원에게 배정된 프로젝트를 확인할 수 있습니다. 팀원별 현재 온라인 여부(🟢/⚪)와 마지막 접속 시간이 표시됩니다.</p>' +
+      '</div>' +
+
+      /* 6 개요 */
+      '<div class="s" id="overview">' +
+        '<h2><span class="ic">📊</span> 6. 개요 탭</h2>' +
+        '<p>프로젝트 전체 현황을 한눈에 파악할 수 있는 요약 대시보드입니다. 상태별 분포, 티어별 분포, 서비스 종류별 분포 등 통계를 제공합니다.</p>' +
+      '</div>' +
+
+      /* 7 이력 */
+      '<div class="s" id="history">' +
+        '<h2><span class="ic">📝</span> 7. 이력 탭</h2>' +
+        '<p>세 가지 서브탭으로 구성됩니다.</p>' +
+        '<h3>변경 이력</h3><p>프로젝트 데이터의 모든 변경 사항이 자동으로 기록됩니다. 누가, 언제, 어떤 프로젝트의 어떤 필드를 어떻게 변경했는지 이전값/이후값과 함께 표시됩니다.</p>' +
+        '<h3>접속 이력</h3><p>팀원들의 로그인/로그아웃/페이지 이탈 기록입니다. 신규 직원이 처음 접속하면 "신규 접속 (자동 등록)"으로 표시됩니다.</p>' +
+        '<h3>릴리즈노트</h3><p>이 대시보드 HTML 자체의 GitHub 배포 이력입니다. 버전별로 어떤 기능이 추가/수정되었는지 기록됩니다.</p>' +
+        '<ul><li>쓰기 권한자는 상단 등록 폼에서 버전과 작업 내역을 직접 입력하여 새 릴리즈노트를 등록할 수 있습니다.</li><li>작업 내역은 한 줄에 하나씩 작성합니다.</li></ul>' +
+        '<div class="co">모든 이력은 Firebase에 저장되어 누구든 같은 데이터를 볼 수 있습니다. 캐시를 비워도 사라지지 않습니다.</div>' +
+      '</div>' +
+
+      /* 8 상세 패널 */
+      '<div class="s" id="detail">' +
+        '<h2><span class="ic">🔍</span> 8. 프로젝트 상세 패널</h2>' +
+        '<p>프로젝트를 클릭하면 우측에 슬라이드 패널이 열립니다.</p>' +
+        '<h3>요약 카드</h3><p>티어, 상태, 서비스 종류, 일정, 담당자, GMV 영향도가 상단에 요약됩니다.</p>' +
+        '<h3>우선순위 점수 (쓰기 권한)</h3><p>영향도, 긴급도, 복잡도, 의존도 4개 슬라이더를 조절하면 총점이 자동 계산됩니다.</p>' +
+        '<table><thead><tr><th>항목</th><th>설명</th><th>범위</th></tr></thead><tbody>' +
+          '<tr><td>영향(Impact)</td><td>비즈니스/사용자에 미치는 영향</td><td>0~10</td></tr>' +
+          '<tr><td>긴급(Urgency)</td><td>시간적 긴급성</td><td>0~10</td></tr>' +
+          '<tr><td>복잡(Complexity)</td><td>기술적 복잡도 (높을수록 감점)</td><td>0~10</td></tr>' +
+          '<tr><td>의존(Dependency)</td><td>다른 프로젝트와의 의존도</td><td>0~10</td></tr>' +
+        '</tbody></table>' +
+        '<h3>"왜 중요한가" 섹션</h3><p>프로젝트의 배경과 우선순위 근거를 자유롭게 작성할 수 있는 텍스트 영역입니다.</p>' +
+        '<h3>편집 영역 (쓰기 권한)</h3><ul><li><strong>서비스 종류</strong> — 복수 선택 가능 (체크박스)</li><li><strong>이름, 티어, 배포일, 상태, 메모</strong> — 직접 수정</li><li><strong>링크</strong> — 기획서, Figma, PRD, API, TC 등 관련 URL 등록 (추가/수정/삭제)</li></ul>' +
+        '<h3>링크 복사</h3><p>상단의 "🔗 링크 복사" 버튼을 클릭하면 해당 프로젝트의 딥링크가 클립보드에 복사됩니다.</p>' +
+        '<h3>저장 / 삭제 (쓰기 권한)</h3><p>하단의 "저장" 버튼으로 변경사항을 반영하고, "삭제"로 프로젝트를 제거합니다. 읽기 전용 사용자에게는 "닫기"만 표시됩니다.</p>' +
+      '</div>' +
+
+      /* 9 채팅 */
+      '<div class="s" id="chat">' +
+        '<h2><span class="ic">💬</span> 9. 채팅 시스템</h2>' +
+        '<p>상단의 💬 버튼을 클릭하면 채팅 패널이 열립니다.</p>' +
+        '<h3>전체 채팅</h3><p>모든 팀원이 참여하는 공용 채팅방입니다.</p>' +
+        '<h3>프로젝트별 채팅</h3><p>각 프로젝트마다 자동으로 채팅방이 생성됩니다. 드롭다운에서 프로젝트를 선택하여 해당 방으로 이동합니다.</p>' +
+        '<h3>@멘션</h3><p>입력창에 @를 입력하면 팀원 목록이 나타나며, 선택하면 해당 팀원을 멘션할 수 있습니다. 멘션된 메시지는 하이라이트되어 표시됩니다.</p>' +
+        '<h3>알림 뱃지</h3><p>읽지 않은 메시지가 있으면 💬 버튼에 숫자 뱃지가 표시됩니다.</p>' +
+        '<div class="co cw">읽기 전용 사용자는 채팅 메시지를 볼 수는 있지만 입력할 수 없습니다.</div>' +
+      '</div>' +
+
+      /* 10 관리자 */
+      '<div class="s" id="admin">' +
+        '<h2><span class="ic">🔒</span> 10. 관리자 모드</h2>' +
+        '<p>우측 상단 🔒 버튼을 클릭하고 비밀번호를 입력하면 관리자 모드로 전환됩니다.</p>' +
+        '<h3>신규 접속자 뱃지</h3><p>🔒 버튼에 빨간 숫자 뱃지가 표시되면 미확인 신규 접속자가 있다는 의미입니다. 팀원 관리에 진입하면 뱃지가 초기화됩니다.</p>' +
+        '<h3>팀원 관리</h3><ul>' +
+          '<li><strong>멤버 추가/삭제</strong> — 이름, 역할, 색상, 이메일 설정</li>' +
+          '<li><strong>권한 변경</strong> — "읽기전용" ↔ "읽기+쓰기" 토글 버튼 클릭</li>' +
+          '<li><strong>세션 만료</strong> — 현재 온라인인 팀원을 강제 로그아웃 처리</li>' +
+          '<li><strong>신규 접속자</strong> — 자동 등록된 멤버에 <span class="bg bn">신규</span> 뱃지가 표시됩니다. 역할, 이름, 권한을 수정하고 저장하세요.</li>' +
+          '<li><strong>허용 예외 이메일</strong> — aboutfishing.kr 외 접속 허용할 이메일 관리</li>' +
+        '</ul>' +
+        '<h3>서비스 종류 관리</h3><p>프로젝트에 태그할 수 있는 서비스 종류(예: 예약, 쇼핑, 커뮤니티 등)를 추가/삭제합니다.</p>' +
+        '<h3>관리자 모드 해제</h3><p>🔓 버튼을 다시 클릭하면 관리자 모드가 해제됩니다.</p>' +
+      '</div>' +
+
+      /* 11 딥링크 */
+      '<div class="s" id="deeplink">' +
+        '<h2><span class="ic">🔗</span> 11. 딥링크 (프로젝트 링크 공유)</h2>' +
+        '<p>특정 프로젝트를 다른 팀원에게 바로 공유할 수 있습니다.</p>' +
+        '<h3>링크 복사</h3><p>프로젝트 상세 패널 상단의 "🔗 링크 복사" 버튼을 클릭하면 URL이 클립보드에 복사됩니다.</p>' +
+        '<h3>링크로 접속</h3>' +
+        '<div class="fd"><span class="fs">링크 클릭</span><span class="fa">→</span><span class="fs">로그인 확인</span><span class="fa">→</span><span class="fs">해당 프로젝트 상세 자동 열림</span></div>' +
+        '<p>로그인이 안 된 상태면 로그인 후 자동으로 해당 프로젝트가 열립니다.</p>' +
+      '</div>' +
+
+      /* 12 단축키 */
+      '<div class="s" id="etc">' +
+        '<h2><span class="ic">⌨️</span> 12. 단축키 및 기타 기능</h2>' +
+        '<h3>실행 취소 / 다시 실행</h3><p>프로젝트 데이터 변경 후 실수로 잘못 수정했을 때 되돌리기가 가능합니다.</p>' +
+        '<table><thead><tr><th>기능</th><th>방법</th></tr></thead><tbody>' +
+          '<tr><td>실행 취소 (Undo)</td><td><span class="sc">Ctrl+Z</span> 또는 ↩ 버튼</td></tr>' +
+          '<tr><td>다시 실행 (Redo)</td><td><span class="sc">Ctrl+Y</span> 또는 ↪ 버튼</td></tr>' +
+        '</tbody></table>' +
+        '<h3>CSV 내보내기</h3><p>스케줄 탭 좌측 상단의 "CSV" 버튼을 클릭하면 전체 프로젝트 데이터를 CSV 파일로 다운로드합니다.</p>' +
+        '<h3>이력 초기화 (관리자)</h3><p>이력 탭에서 "이력 초기화" 버튼으로 변경/접속 이력을 리셋할 수 있습니다.</p>' +
+        '<h3>의존성 라인</h3><p>프로젝트 간 선행 의존이 설정되어 있으면 Gantt 차트에 연결선이 표시됩니다.</p>' +
+      '</div>' +
+
+      /* 13 Firebase */
+      '<div class="s" id="fb">' +
+        '<h2><span class="ic">🔥</span> 13. Firebase 연동 안내</h2>' +
+        '<p>이 대시보드는 Firebase Realtime Database를 사용하여 모든 데이터를 실시간 동기화합니다.</p>' +
+        '<h3>저장 구조</h3>' +
+        '<table><thead><tr><th>경로</th><th>내용</th></tr></thead><tbody>' +
+          '<tr><td>projects</td><td>프로젝트 전체 데이터</td></tr>' +
+          '<tr><td>settings/team</td><td>팀원 목록 및 권한</td></tr>' +
+          '<tr><td>settings/allowedEmails</td><td>외부 허용 이메일</td></tr>' +
+          '<tr><td>history/changes</td><td>변경 이력</td></tr>' +
+          '<tr><td>history/access</td><td>접속 이력</td></tr>' +
+          '<tr><td>history/deploy</td><td>릴리즈노트</td></tr>' +
+          '<tr><td>chats/global</td><td>전체 채팅</td></tr>' +
+          '<tr><td>chats/project/{id}</td><td>프로젝트별 채팅</td></tr>' +
+          '<tr><td>presence/{memberId}</td><td>온라인 상태</td></tr>' +
+          '<tr><td>notifications/newMembers</td><td>신규 접속자 알림</td></tr>' +
+        '</tbody></table>' +
+        '<h3>오프라인 대응</h3><p>주요 데이터는 localStorage에도 저장됩니다. 네트워크 문제로 Firebase 연결이 끊겨도 로컬 데이터로 조회할 수 있으며, 재연결 시 자동 동기화됩니다.</p>' +
+        '<div class="co cw">Firebase 보안 규칙이 올바르게 설정되어야 합니다. 규칙에 누락된 경로가 있으면 해당 기능의 읽기/쓰기가 차단됩니다.</div>' +
+      '</div>' +
+
+      '</div></body></html>');
+      w.document.close();
     }
 
     /* ── 읽기 전용 UI 제어 ── */
@@ -7827,6 +8044,7 @@
     window.renderHistory = renderHistory;
     window.switchHistoryTab = switchHistoryTab;
     window._submitDeployLog = _submitDeployLog;
+    window.openManual = openManual;
     window.openMemberManagement = openMemberManagement;
     window.addNewMember = addNewMember;
     window.removeMember = removeMember;

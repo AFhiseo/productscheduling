@@ -2609,6 +2609,8 @@
             loadDeployLogs();
             // 관리자용 신규 접속자 알림 리스너
             _listenNewMemberNotifications();
+            // 권한 정보 반영된 UI 재렌더링 (일정등록 버튼 등)
+            renderAll();
             // 딥링크 처리 (URL에 #project=XX 있으면 해당 프로젝트 열기)
             setTimeout(_handleDeepLink, 500);
           } else {
@@ -4179,26 +4181,46 @@
       { version:'v2026.04.10-6', timestamp:'2026-04-10T12:50:00.000Z', changes:['릴리즈노트 탭 추가 (이력 탭 내 서브탭)','GitHub 배포 이력 수동 등록 폼 (버전 + 작업 내역)','Firebase history/deploy 경로 저장 연동','릴리즈노트 카드형 UI (버전, 날짜, 작성자, 변경 목록)'] },
       { version:'v2026.04.10-7', timestamp:'2026-04-10T13:30:00.000Z', changes:['TEAM 미등록 직원 로그인 시 읽기 권한으로 자동 등록','신규 접속자 Firebase 알림 기록 (notifications/newMembers)','관리자/쓰기 권한자에게 신규 접속 토스트 알림','접속이력에 "신규 접속 (자동 등록)" 태그 기록','팀원관리에 자동 등록 멤버 "신규" 뱃지 표시'] },
       { version:'v2026.04.10-8', timestamp:'2026-04-10T14:00:00.000Z', changes:['읽기 전용 모드 UI 전면 적용','상세 패널 모든 입력 비활성화 + 저장/삭제 버튼 숨김','안건 추가 버튼 읽기 권한자에게 숨김','Gantt 새 안건 추가 행 쓰기 권한자만 표시','채팅 메시지 조회 가능하되 입력창 숨김','채팅 전송에 쓰기 권한 체크 추가'] },
-      { version:'v2026.04.10-9', timestamp:'2026-04-10T14:20:00.000Z', changes:['관리자 모드 🔒 버튼에 미확인 신규 접속자 수 빨간 뱃지 표시','최근 7일 이내 신규 접속자 카운트','팀원관리 진입 시 뱃지 자동 초기화 (확인 처리)','확인 상태 localStorage 영속 저장'] }
+      { version:'v2026.04.10-9', timestamp:'2026-04-10T14:20:00.000Z', changes:['관리자 모드 🔒 버튼에 미확인 신규 접속자 수 빨간 뱃지 표시','최근 7일 이내 신규 접속자 카운트','팀원관리 진입 시 뱃지 자동 초기화 (확인 처리)','확인 상태 localStorage 영속 저장'] },
+      { version:'v2026.04.10-10', timestamp:'2026-04-10T14:35:00.000Z', changes:['📖 매뉴얼 버튼 추가 (헤더 영역)','전체 기능 사용 매뉴얼 새 탭 열기 (13개 섹션)','프로젝트 상세 패널에 📅 일정 등록 버튼 추가','스케줄 탭 프로젝트 행에 📅 일정 등록 아이콘 버튼 추가','일정 등록 모달 화면 중앙 표시 (상세 패널에서 호출)','릴리즈노트 초기 시드 데이터 자동 등록 (Firebase 빈 경우)'] }
     ];
 
-    function _autoSeedReleaseNotes() {
+    function _autoSeedReleaseNotes(existingData) {
       if (!_fb.db) return;
       var ref = _fb.db.ref('history/deploy');
       var user = state.currentUser ? (state.currentUser.displayName || state.currentUser.email) : 'System';
       var email = state.currentUser ? state.currentUser.email : '';
+      // 기존 버전 목록 수집
+      var existingVersions = {};
+      if (existingData) {
+        Object.keys(existingData).forEach(function(k) {
+          if (existingData[k].version) existingVersions[existingData[k].version] = true;
+        });
+      }
+      var added = 0;
       _SEED_RELEASE_NOTES.forEach(function(n) {
-        ref.push({ version: n.version, timestamp: n.timestamp, changes: n.changes, user: user, email: email });
+        if (!existingVersions[n.version]) {
+          ref.push({ version: n.version, timestamp: n.timestamp, changes: n.changes, user: user, email: email });
+          added++;
+        }
       });
-      console.log('[Deploy] 초기 릴리즈노트 ' + _SEED_RELEASE_NOTES.length + '건 자동 등록');
+      if (added > 0) console.log('[Deploy] 릴리즈노트 ' + added + '건 신규 등록 (기존 ' + Object.keys(existingVersions).length + '건 스킵)');
     }
 
+    var _seedChecked = false; // 시드 체크 1회만
     function loadDeployLogs() {
       var saved = localStorage.getItem(_LS_DEPLOY_KEY);
       if (saved) {
         try { var p = JSON.parse(saved); if (p && p.length) _deployLogs = p; } catch(e) {}
       }
       if (!_fb.db) return;
+      // 시드 체크: once로 1회만 실행 (on 리스너와 분리하여 무한루프 방지)
+      if (!_seedChecked) {
+        _seedChecked = true;
+        _fb.db.ref('history/deploy').once('value', function(seedSnap) {
+          _autoSeedReleaseNotes(seedSnap.val());
+        });
+      }
       _fb.db.ref('history/deploy').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
         var data = snap.val();
         if (data) {
@@ -4207,9 +4229,6 @@
           arr.sort(function(a, b) { return a.timestamp < b.timestamp ? -1 : 1; });
           _deployLogs = arr;
           try { localStorage.setItem(_LS_DEPLOY_KEY, JSON.stringify(_deployLogs)); } catch(e) {}
-        } else {
-          // Firebase에 데이터 없으면 초기 시드 자동 등록
-          _autoSeedReleaseNotes();
         }
         if (state.currentTab === 'history' && _historyTab === 'deploy') renderHistory();
       }, function(err) {
@@ -5688,14 +5707,12 @@
             enterRoom(project.id);
             clearChatBadge();
           };
-          bottomLine.appendChild(chatBtn);
-
-          // 📅 일정 등록 버튼 (write 권한 있는 사용자만)
+          // ➕ 일정 등록 버튼 (write 권한 있는 사용자만) — 채팅 버튼 왼쪽
           if (_hasWritePermission()) {
             var schedBtn = document.createElement('button');
             schedBtn.title = project.name + ' 일정 등록';
-            schedBtn.style.cssText = 'background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;cursor:pointer;font-size:11px;padding:0 4px;line-height:16px;color:#15803d;font-weight:600;';
-            schedBtn.innerHTML = '📅';
+            schedBtn.style.cssText = 'background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:13px;padding:0 4px;line-height:16px;color:#6b7280;margin-left:auto;font-weight:700;';
+            schedBtn.textContent = '+';
             schedBtn.onclick = (function(pid) {
               return function(e) {
                 e.stopPropagation();
@@ -5703,7 +5720,9 @@
               };
             })(project.id);
             bottomLine.appendChild(schedBtn);
+            chatBtn.style.marginLeft = '2px'; // 채팅은 일정 버튼 바로 오른쪽
           }
+          bottomLine.appendChild(chatBtn);
 
           nameRow.appendChild(topLine);
           nameRow.appendChild(bottomLine);
@@ -5803,17 +5822,6 @@
               bar.ontouchstart = (e) => { startDrag(e, project.id, phase); };
               row.appendChild(bar);
             }
-          });
-
-          // 빈 영역 클릭 시 인라인 스케줄 등록
-          row.addEventListener('click', function(ev) {
-            if (ev.target.closest('.gantt-bar') || ev.target.closest('.deploy-marker')) return;
-            const rect = row.getBoundingClientRect();
-            const x = ev.clientX - rect.left;
-            const clickDay = Math.floor(x / (DAY_WIDTH * state.zoom));
-            const clickDate = new Date(GANTT_START);
-            clickDate.setDate(clickDate.getDate() + clickDay);
-            openInlineSchedule(project.id, clickDate, event);
           });
 
           // Add deploy date marker

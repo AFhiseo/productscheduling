@@ -2055,7 +2055,7 @@
               <button class="btn btn-secondary" id="logoutBtn" onclick="logoutUser()" style="font-size:11px;padding:2px 6px;">로그아웃</button>
             </div>
           </div>
-          <button class="btn btn-secondary" id="adminToggle" title="Admin Mode" onclick="toggleAdminMode()" style="font-size:16px;padding:6px 10px;">🔒</button>
+          <button class="btn btn-secondary" id="adminToggle" title="Admin Mode" onclick="toggleAdminMode()" style="font-size:16px;padding:6px 10px;position:relative;">🔒<span id="adminNewBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#dc2626;color:white;font-size:10px;font-weight:700;min-width:16px;height:16px;line-height:16px;text-align:center;border-radius:8px;padding:0 4px;">0</span></button>
         <span id="adminBadge" style="display:none;background:#dc2626;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px;">ADMIN</span>
         <button class="btn btn-secondary" id="memberMgmtBtn" onclick="openMemberManagement()" style="display:none;font-size:12px;padding:6px 10px;">팀원 관리</button>
         <button class="btn btn-secondary" id="serviceMgmtBtn" onclick="openServiceTypeManagement()" style="display:none;font-size:12px;padding:6px 10px;">서비스 관리</button>
@@ -2132,7 +2132,7 @@
             <option value="status">상태순</option>
             <option value="deploy">배포일순</option>
           </select>
-          <button class="btn btn-secondary" onclick="createNewProject()" style="margin-left:auto;font-size:12px;padding:4px 12px;">+ 안건 추가</button>
+          <button class="btn btn-secondary write-only-ui" onclick="createNewProject()" style="margin-left:auto;font-size:12px;padding:4px 12px;">+ 안건 추가</button>
         </div>
         <div class="table-container">
           <table>
@@ -2243,10 +2243,10 @@
       <button class="detail-close" onclick="closeDetailPanel()">×</button>
     </div>
     <div class="detail-body" id="detailBody"></div>
-    <div class="detail-actions">
+    <div class="detail-actions" id="detailActions">
       <button class="btn btn-secondary" onclick="closeDetailPanel()">닫기</button>
-      <button class="btn" onclick="saveDetail()">저장</button>
-      <button class="btn btn-secondary" style="color: #dc2626;" onclick="deleteProject()">삭제</button>
+      <button class="btn" id="detailSaveBtn" onclick="saveDetail()">저장</button>
+      <button class="btn btn-secondary" id="detailDeleteBtn" style="color: #dc2626;" onclick="deleteProject()">삭제</button>
     </div>
   </div>
 
@@ -2558,23 +2558,51 @@
             state.currentUser._loginTime = Date.now();
             // TEAM 멤버 자동 연동
             var linked = _getLinkedMember(user.email);
-            if (linked) {
-              state.currentUser.memberId = linked.id;
-              state.currentUser.memberName = linked.name;
-              _updatePresence(linked.id, true);
-              // 브라우저 닫을 때 오프라인 처리
-              window.addEventListener('beforeunload', function() { _updatePresence(linked.id, false); pushAccessLog('페이지 이탈'); });
-              // 세션 만료 감시 시작
-              setTimeout(_startSessionCheck, 1000);
+            var _isNewMember = false;
+            if (!linked) {
+              // TEAM에 없는 신규 직원 → 읽기 권한으로 자동 등록
+              _isNewMember = true;
+              var _newId = 'auto_' + Date.now();
+              var _newName = user.displayName || user.email.split('@')[0];
+              var _newMember = {
+                id: _newId,
+                name: _newName,
+                role: '신규 접속자',
+                color: '#9ca3af',
+                email: user.email.toLowerCase(),
+                permission: 'read'
+              };
+              TEAM.push(_newMember);
+              _saveAllowedEmails(); // 팀/설정 동기화
+              linked = _newMember;
+              // Firebase에 신규 접속 알림 기록
+              if (_fb.db) {
+                _fb.db.ref('notifications/newMembers').push({
+                  name: _newName,
+                  email: user.email,
+                  timestamp: new Date().toISOString()
+                });
+              }
+              console.log('[Auth] 신규 직원 자동 등록:', user.email);
             }
+            state.currentUser.memberId = linked.id;
+            state.currentUser.memberName = linked.name;
+            _updatePresence(linked.id, true);
+            // 브라우저 닫을 때 오프라인 처리
+            window.addEventListener('beforeunload', function() { _updatePresence(linked.id, false); pushAccessLog('페이지 이탈'); });
+            // 세션 만료 감시 시작
+            setTimeout(_startSessionCheck, 1000);
             _loadPresence();
             updateUserHeader();
+            _applyReadOnlyUI();
             hideLoginScreen();
             // 접속이력 기록 및 이력 로드
-            pushAccessLog('로그인');
+            pushAccessLog(_isNewMember ? '신규 접속 (자동 등록)' : '로그인');
             loadHistory();
             loadAccessLogs();
             loadDeployLogs();
+            // 관리자용 신규 접속자 알림 리스너
+            _listenNewMemberNotifications();
             // 딥링크 처리 (URL에 #project=XX 있으면 해당 프로젝트 열기)
             setTimeout(_handleDeepLink, 500);
           } else {
@@ -2695,6 +2723,15 @@
         headerInfo.style.display = 'none';
         chatBtn.style.display = 'none';
       }
+    }
+
+    /* ── 읽기 전용 UI 제어 ── */
+    function _applyReadOnlyUI() {
+      var isReadOnly = !_hasWritePermission();
+      // write-only-ui 클래스 요소 숨기기/표시
+      document.querySelectorAll('.write-only-ui').forEach(function(el) {
+        el.style.display = isReadOnly ? 'none' : '';
+      });
     }
 
     /* ========== CHAT SYSTEM ========== */
@@ -3199,6 +3236,7 @@
 
     function sendChatMessage(type) {
       if (!_fb.db || !state.currentUser) return;
+      if (!_checkWritePermission()) return;
 
       const textInputId = type === 'global' ? 'globalChatText' : 'projectChatText';
       const textEl = document.getElementById(textInputId);
@@ -3240,10 +3278,18 @@
 
     function updateChatInputVisibility() {
       const hasAuth = !!state.currentUser;
+      var canWrite = hasAuth && _hasWritePermission();
       if (!hasAuth) {
+        // 로그인 안 됨 → 전체 비활성
         document.getElementById('globalChatDisabled').style.display = 'block';
         document.getElementById('globalChatInput').style.display = 'none';
         document.getElementById('projectChatDisabled').style.display = 'block';
+        document.getElementById('projectChatInput').style.display = 'none';
+      } else if (!canWrite) {
+        // 로그인 됨 + 읽기 전용 → 메시지는 보이되 입력만 숨김
+        document.getElementById('globalChatDisabled').style.display = 'none';
+        document.getElementById('globalChatInput').style.display = 'none';
+        document.getElementById('projectChatDisabled').style.display = 'none';
         document.getElementById('projectChatInput').style.display = 'none';
       } else {
         document.getElementById('globalChatDisabled').style.display = 'none';
@@ -3502,6 +3548,7 @@
 
     function openMemberManagement() {
       if (!state.adminMode) { alert('관리자 모드에서만 사용 가능합니다.'); return; }
+      _clearNewMemberBadge();
       const existing = document.getElementById('memberMgmtOverlay');
       if (existing) existing.remove();
       const overlay = document.createElement('div');
@@ -3521,6 +3568,7 @@
             var p = _memberPresence[m.id];
             var onlineDot = p && p.online ? '🟢' : '⚪';
             var lastSeenStr = p && p.lastSeen ? _formatRelativeTime(p.lastSeen) : '';
+            var isAutoMember = m.id && m.id.indexOf('auto_') === 0;
             var perm = m.permission || 'read';
             var permColor = perm === 'write' ? '#10b981' : '#6b7280';
             var permLabel = perm === 'write' ? '읽기+쓰기' : '읽기전용';
@@ -3535,6 +3583,7 @@
                   '<input type="text" value="' + m.role + '" style="width:130px;padding:4px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:12px;color:#6b7280;" data-member-field="role" data-member-idx="' + i + '">' +
                   '<input type="color" value="' + m.color + '" style="width:28px;height:28px;border:none;cursor:pointer;" data-member-field="color" data-member-idx="' + i + '">' +
                   '<button onclick="_togglePermission(' + i + ')" style="cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap;' + permBtnStyle + '" title="클릭하여 권한 변경">' + permLabel + '</button>' +
+                  (isAutoMember ? '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-weight:600;">신규</span>' : '') +
                 '</div>' +
                 '<div style="display:flex;gap:6px;align-items:center;">' +
                   '<input type="email" value="' + (m.email || '') + '" placeholder="Google 계정 이메일" style="flex:1;padding:3px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:11px;color:#6b7280;" data-member-field="email" data-member-idx="' + i + '">' +
@@ -3747,6 +3796,59 @@
     }
 
     // 접속이력 기록
+    /* ── 신규 접속자 알림 + 관리자 뱃지 ── */
+    var _notifiedNewMembers = {};
+    var _newMemberCount = 0;
+    var _newMemberDismissedKey = 'af_newMember_dismissed';
+
+    function _getNewMemberDismissed() {
+      try { return JSON.parse(localStorage.getItem(_newMemberDismissedKey)) || []; } catch(e) { return []; }
+    }
+    function _setNewMemberDismissed(arr) {
+      try { localStorage.setItem(_newMemberDismissedKey, JSON.stringify(arr)); } catch(e) {}
+    }
+
+    function _updateAdminBadge() {
+      var badge = document.getElementById('adminNewBadge');
+      if (!badge) return;
+      if (_newMemberCount > 0) {
+        badge.textContent = _newMemberCount > 99 ? '99+' : _newMemberCount;
+        badge.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function _clearNewMemberBadge() {
+      // 현재까지의 신규 접속자를 모두 확인 처리
+      var dismissed = Object.keys(_notifiedNewMembers);
+      _setNewMemberDismissed(dismissed);
+      _newMemberCount = 0;
+      _updateAdminBadge();
+    }
+
+    function _listenNewMemberNotifications() {
+      if (!_fb.db) return;
+      var dismissed = _getNewMemberDismissed();
+      // 최근 7일 이내 신규 접속만
+      var cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      _fb.db.ref('notifications/newMembers').orderByChild('timestamp').startAt(cutoff).on('child_added', function(snap) {
+        var data = snap.val();
+        if (!data) return;
+        _notifiedNewMembers[snap.key] = data;
+        // 내 이메일이면 스킵
+        if (state.currentUser && data.email === state.currentUser.email) return;
+        // 이미 확인 처리한 항목이면 스킵
+        if (dismissed.indexOf(snap.key) !== -1) return;
+        _newMemberCount++;
+        _updateAdminBadge();
+        // 관리자 또는 쓰기 권한자에게 토스트
+        if (state.adminMode || _hasWritePermission()) {
+          _showToast('📢 신규 접속: ' + data.name + ' (' + data.email + ')', 5000);
+        }
+      });
+    }
+
     function pushAccessLog(action) {
       console.log('[Access] pushAccessLog:', action, '| fb:', !!_fb.db, '| user:', !!state.currentUser);
       if (!state.currentUser) return;
@@ -3852,7 +3954,10 @@
       { version:'v2026.04.10-3', timestamp:'2026-04-10T08:50:00.000Z', changes:['변경이력/접속이력 Firebase 저장 연동 (캐시 삭제 후에도 유지)','Firebase 보안 규칙에 history, settings, presence 경로 추가','Firebase + localStorage 듀얼 스토리지 (방어적 구현)'] },
       { version:'v2026.04.10-4', timestamp:'2026-04-10T09:50:00.000Z', changes:['팀원 권한 시스템 추가 (read/write)','기본 읽기 권한 → 쓰기 권한 토글 가능','모든 쓰기 작업에 권한 체크 가드 적용','팀원관리 UI에 권한 뱃지 및 토글 버튼 추가'] },
       { version:'v2026.04.10-5', timestamp:'2026-04-10T10:20:00.000Z', changes:['프로젝트 딥링크 시스템 추가 (URL 해시 기반)','링크 공유 시 로그인 후 해당 프로젝트 자동 열림','상세 슬라이드 상단에 🔗 링크 복사 버튼 추가','clipboard API + fallback 구현'] },
-      { version:'v2026.04.10-6', timestamp:'2026-04-10T12:50:00.000Z', changes:['릴리즈노트 탭 추가 (이력 탭 내 서브탭)','GitHub 배포 이력 수동 등록 폼 (버전 + 작업 내역)','Firebase history/deploy 경로 저장 연동','릴리즈노트 카드형 UI (버전, 날짜, 작성자, 변경 목록)'] }
+      { version:'v2026.04.10-6', timestamp:'2026-04-10T12:50:00.000Z', changes:['릴리즈노트 탭 추가 (이력 탭 내 서브탭)','GitHub 배포 이력 수동 등록 폼 (버전 + 작업 내역)','Firebase history/deploy 경로 저장 연동','릴리즈노트 카드형 UI (버전, 날짜, 작성자, 변경 목록)'] },
+      { version:'v2026.04.10-7', timestamp:'2026-04-10T13:30:00.000Z', changes:['TEAM 미등록 직원 로그인 시 읽기 권한으로 자동 등록','신규 접속자 Firebase 알림 기록 (notifications/newMembers)','관리자/쓰기 권한자에게 신규 접속 토스트 알림','접속이력에 "신규 접속 (자동 등록)" 태그 기록','팀원관리에 자동 등록 멤버 "신규" 뱃지 표시'] },
+      { version:'v2026.04.10-8', timestamp:'2026-04-10T14:00:00.000Z', changes:['읽기 전용 모드 UI 전면 적용','상세 패널 모든 입력 비활성화 + 저장/삭제 버튼 숨김','안건 추가 버튼 읽기 권한자에게 숨김','Gantt 새 안건 추가 행 쓰기 권한자만 표시','채팅 메시지 조회 가능하되 입력창 숨김','채팅 전송에 쓰기 권한 체크 추가'] },
+      { version:'v2026.04.10-9', timestamp:'2026-04-10T14:20:00.000Z', changes:['관리자 모드 🔒 버튼에 미확인 신규 접속자 수 빨간 뱃지 표시','최근 7일 이내 신규 접속자 카운트','팀원관리 진입 시 뱃지 자동 초기화 (확인 처리)','확인 상태 localStorage 영속 저장'] }
     ];
 
     function _autoSeedReleaseNotes() {
@@ -5492,16 +5597,18 @@
         });
       });
 
-      // Add + row
-      const addNameRow = document.createElement('div');
-      addNameRow.className = 'name-row add-row';
-      addNameRow.textContent = '+ 새 안건 추가';
-      addNameRow.onclick = () => createNewProject();
-      namesScroll.appendChild(addNameRow);
+      // Add + row (쓰기 권한자만)
+      if (_hasWritePermission()) {
+        const addNameRow = document.createElement('div');
+        addNameRow.className = 'name-row add-row';
+        addNameRow.textContent = '+ 새 안건 추가';
+        addNameRow.onclick = () => createNewProject();
+        namesScroll.appendChild(addNameRow);
 
-      const addBarRow = document.createElement('div');
-      addBarRow.className = 'bar-row add-row';
-      ganttBars.appendChild(addBarRow);
+        const addBarRow = document.createElement('div');
+        addBarRow.className = 'bar-row add-row';
+        ganttBars.appendChild(addBarRow);
+      }
     }
 
     function renderMemberView(projects, namesScroll, ganttBars) {
@@ -5673,7 +5780,7 @@
             else if (state.currentTab === 'history') renderHistory();
     }
 
-    function _showToast(msg) {
+    function _showToast(msg, duration) {
       let toast = document.getElementById('_toast');
       if (!toast) {
         toast = document.createElement('div');
@@ -5683,7 +5790,7 @@
       }
       toast.textContent = msg;
       toast.style.opacity = '1';
-      setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+      setTimeout(() => { toast.style.opacity = '0'; }, duration || 1800);
     }
 
     /* ========== CSV EXPORT ========== */
@@ -6020,6 +6127,32 @@
           if (customInput) customInput.style.display = this.value === '__custom__' ? 'block' : 'none';
         });
       });
+
+      // 읽기 전용 모드: 쓰기 권한 없으면 모든 입력 비활성화
+      if (!_hasWritePermission()) {
+        body.querySelectorAll('input, textarea, select').forEach(function(el) {
+          el.disabled = true;
+          el.style.opacity = '0.6';
+          el.style.cursor = 'default';
+        });
+        // 링크 수정/삭제/추가 버튼 숨기기
+        body.querySelectorAll('button').forEach(function(btn) {
+          var txt = btn.textContent || '';
+          if (txt.includes('링크 추가') || txt.includes('×') || txt.includes('✎')) {
+            btn.style.display = 'none';
+          }
+        });
+        // 저장/삭제 버튼 숨기기 (닫기만 남김)
+        var _saveBtn = document.getElementById('detailSaveBtn');
+        var _delBtn = document.getElementById('detailDeleteBtn');
+        if (_saveBtn) _saveBtn.style.display = 'none';
+        if (_delBtn) _delBtn.style.display = 'none';
+      } else {
+        var _saveBtn = document.getElementById('detailSaveBtn');
+        var _delBtn = document.getElementById('detailDeleteBtn');
+        if (_saveBtn) _saveBtn.style.display = '';
+        if (_delBtn) _delBtn.style.display = '';
+      }
     }
 
     function closeDetailPanel() {

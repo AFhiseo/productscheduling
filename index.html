@@ -2573,7 +2573,12 @@
                 permission: 'read'
               };
               TEAM.push(_newMember);
-              _saveAllowedEmails(); // 팀/설정 동기화
+              // TEAM 데이터 Firebase + localStorage 즉시 저장
+              localStorage.setItem('af_team', JSON.stringify(TEAM));
+              if (_fb.db) {
+                _fb.db.ref('settings/team').set(TEAM);
+              }
+              _saveAllowedEmails(); // 허용 이메일 동기화
               linked = _newMember;
               // Firebase에 신규 접속 알림 기록
               if (_fb.db) {

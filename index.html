@@ -3926,6 +3926,14 @@
             </div>
           </div>
         </div>
+
+        <!-- 새 안건 추가 플로팅 버튼 (쓰기 권한자만, 스케줄 탭에서만 표시) -->
+        <button id="floatingAddProjectBtn" onclick="createNewProject()" title="새 안건 추가"
+          style="position:fixed;bottom:28px;left:24px;z-index:1200;background:#6366f1;color:#fff;border:none;border-radius:50px;padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.4);display:none;align-items:center;gap:6px;transition:background 0.2s,transform 0.15s;"
+          onmouseover="this.style.background='#4f46e5';this.style.transform='scale(1.04)'"
+          onmouseout="this.style.background='#6366f1';this.style.transform='scale(1)'">
+          ＋ 새 안건 추가
+        </button>
       </div>
 
       <!-- Tab 2: Projects -->
@@ -4193,6 +4201,7 @@
             <option value="cancelled">취소</option>
           </select>
           <select id="deploySortSelect" onchange="renderDeployBundles()" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;color:#374151;">
+            <option value="date-closest">오늘 기준 가까운 순</option>
             <option value="date-desc">날짜 최신순</option>
             <option value="date-asc">날짜 오래된순</option>
             <option value="status">상태순</option>
@@ -4619,7 +4628,7 @@
       </div>
       <div class="modal-actions" style="padding:12px 20px;border-top:1px solid #e5e7eb;flex-shrink:0;display:flex;gap:8px;justify-content:flex-end;">
         <button class="btn btn-secondary" onclick="closeCreateIssueModal()" style="padding:8px 20px;">취소</button>
-        <button onclick="saveNewIssue()" style="background:#6366f1;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">🐛 이슈 등록</button>
+        <button type="button" onclick="saveNewIssue()" style="background:#6366f1;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">🐛 이슈 등록</button>
       </div>
     </div>
   </div>
@@ -5529,6 +5538,15 @@
       document.querySelectorAll('.write-only-ui').forEach(function(el) {
         el.style.display = isReadOnly ? 'none' : '';
       });
+      // 플로팅 버튼도 갱신
+      _updateFloatingAddBtn(state.currentTab);
+    }
+
+    function _updateFloatingAddBtn(tabId) {
+      var btn = document.getElementById('floatingAddProjectBtn');
+      if (!btn) return;
+      var show = (tabId === 'schedule') && _hasWritePermission();
+      btn.style.display = show ? 'flex' : 'none';
     }
 
     /* ========== CHAT SYSTEM ========== */
@@ -7672,7 +7690,7 @@
         { label: '우선순위', id: 'createIssue_priority', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '1', l: '1(Critical)' }, { v: '2', l: '2(High)' }, { v: '3', l: '3(Medium)' }, { v: '4', l: '4(Low)' }] }
       ]);
       _addRowToSection(detailSection, [
-        { label: '배포환경', id: 'createIssue_environment', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '운영', l: '운영' }, { v: '스테이지', l: '스테이지' }, { v: '개발', l: '개발' }] },
+        { label: '배포환경', id: 'createIssue_environment', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: 'production', l: '운영' }, { v: 'staging', l: '스테이징' }, { v: 'development', l: '개발' }] },
         { label: '빌드 카테고리', id: 'createIssue_buildCategory', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '앱', l: '앱' }, { v: '커뮤니티', l: '커뮤니티' }, { v: '쇼핑', l: '쇼핑' }, { v: '중고', l: '중고' }, { v: '예약', l: '예약' }, { v: '백오피스', l: '백오피스' }] }
       ]);
       // 프로젝트 (멀티셀렉트) + 서비스 2열
@@ -7808,7 +7826,11 @@
       document.getElementById('createIssueModal').classList.remove('show');
     }
 
+    var _savingIssue = false;
     function saveNewIssue() {
+      if (_savingIssue) return;
+      _savingIssue = true;
+      setTimeout(function() { _savingIssue = false; }, 1000);
       var issueData = {
         id: _generateIssueId(),
         title: document.getElementById('createIssue_title').value,
@@ -9641,6 +9663,7 @@ function renderIssues() {
       var iss = _issues.find(function(i) { return i.id === issueId; });
       if (!iss) return;
 
+      document.body.style.overflow = 'hidden';
       _currentIssueId = issueId;
       _targetAttachmentContext = 'detail';
       document.getElementById('issueDetailBackdrop').classList.add('open');
@@ -10738,6 +10761,7 @@ function renderIssues() {
     function closeIssueDetail() {
       document.getElementById('issueDetailBackdrop').classList.remove('open');
       document.getElementById('issueDetailPanel').classList.remove('open');
+      document.body.style.overflow = '';
       _currentIssueId = null;
       // Re-render the issue list to show any changes made in the detail panel
       renderIssues();
@@ -11756,7 +11780,7 @@ function renderDeployBundles() {
       var searchText = document.getElementById('deploySearchInput') ? document.getElementById('deploySearchInput').value.toLowerCase() : '';
       var envFilter = document.getElementById('deployEnvFilter') ? document.getElementById('deployEnvFilter').value : '';
       var statusFilter = document.getElementById('deployStatusFilter') ? document.getElementById('deployStatusFilter').value : '';
-      var sortMode = (document.getElementById('deploySortSelect') || {}).value || 'date-desc';
+      var sortMode = (document.getElementById('deploySortSelect') || {}).value || 'date-closest';
       container.innerHTML = '';
 
       var filtered = _deployBundles.filter(function(b) {
@@ -11777,8 +11801,17 @@ function renderDeployBundles() {
       }
 
       // 정렬 로직
+      var _now = new Date();
       filtered.sort(function(a, b) {
-        if (sortMode === 'date-asc') {
+        if (sortMode === 'date-closest') {
+          // 오늘 기준 가장 가까운 날짜 우선 (미래 > 과거 > 날짜없음)
+          var da = a.targetDate ? new Date(a.targetDate) : null;
+          var db = b.targetDate ? new Date(b.targetDate) : null;
+          if (!da && !db) return 0;
+          if (!da) return 1;
+          if (!db) return -1;
+          return Math.abs(da - _now) - Math.abs(db - _now);
+        } else if (sortMode === 'date-asc') {
           return new Date(a.targetDate) - new Date(b.targetDate);
         } else if (sortMode === 'date-desc') {
           return new Date(b.targetDate) - new Date(a.targetDate);
@@ -13051,6 +13084,10 @@ function renderDeployBundles() {
       const namesScroll = document.getElementById('namesScroll');
       const ganttBars = document.getElementById('ganttBars');
       const ganttHeader = document.getElementById('ganttHeader');
+      const ganttScrollEl = document.getElementById('ganttScroll');
+
+      // 스크롤 위치 보존: innerHTML 비울 때 scrollLeft가 0으로 리셋되는 버그 방지
+      var _savedScrollLeft = ganttScrollEl ? ganttScrollEl.scrollLeft : -1;
 
       namesScroll.innerHTML = '';
       ganttBars.innerHTML = '';
@@ -13212,6 +13249,22 @@ function renderDeployBundles() {
           var maxH = Math.max(nh, bh);
           if (nh < maxH) nameRows[ri].style.height = maxH + 'px';
           if (bh < maxH) barRows[ri].style.height = maxH + 'px';
+        }
+
+        // 스크롤 위치 복원: 이전에 보던 위치 유지 (또는 첫 로드 시 오늘 날짜로 이동)
+        var gs = document.getElementById('ganttScroll');
+        if (gs) {
+          if (_savedScrollLeft > 0) {
+            // 이전 스크롤 위치 복원
+            gs.scrollLeft = _savedScrollLeft;
+          } else if (_savedScrollLeft === 0 && !gs._ganttInitScrolled) {
+            // 첫 로드 시 오늘 날짜로 이동
+            gs._ganttInitScrolled = true;
+            var todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1);
+            gs.scrollLeft = Math.max(0, todayOffset - 100);
+          }
+          var gh = document.querySelector('.gantt-header');
+          if (gh) gh.scrollLeft = gs.scrollLeft;
         }
       });
     }
@@ -13532,18 +13585,6 @@ function renderDeployBundles() {
         });
       });
 
-      // Add + row (쓰기 권한자만)
-      if (_hasWritePermission()) {
-        const addNameRow = document.createElement('div');
-        addNameRow.className = 'name-row add-row';
-        addNameRow.textContent = '+ 새 안건 추가';
-        addNameRow.onclick = () => createNewProject();
-        namesScroll.appendChild(addNameRow);
-
-        const addBarRow = document.createElement('div');
-        addBarRow.className = 'bar-row add-row';
-        ganttBars.appendChild(addBarRow);
-      }
     }
 
     function renderIssueView(namesScroll, ganttBars) {
@@ -16741,6 +16782,8 @@ function renderNotifList() {
           if (scheduleFilters) {
             scheduleFilters.style.display = (tabId === 'schedule' || tabId === 'projects') ? 'flex' : 'none';
           }
+          // 새 안건 추가 플로팅 버튼: 스케줄 탭에서만 표시
+          _updateFloatingAddBtn(tabId);
 
           // Fade back in after content renders
           setTimeout(function() {
@@ -17035,19 +17078,8 @@ function renderNotifList() {
         }
       });
 
-      // Initial render
+      // Initial render (renderGantt 내부에서 첫 로드 시 오늘 날짜로 자동 스크롤)
       renderGantt();
-
-      // 오늘 위치로 스크롤 (약간 왼쪽 여유)
-      setTimeout(() => {
-        const gs = document.getElementById('ganttScroll');
-        if (gs) {
-          const todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * state.zoom;
-          gs.scrollLeft = Math.max(0, todayOffset - 100);
-          const gh = document.querySelector('.gantt-header');
-          if (gh) gh.scrollLeft = gs.scrollLeft;
-        }
-      }, 50);
     }
 
     window.openDetailPanel = openDetailPanel;

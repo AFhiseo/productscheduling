@@ -4057,16 +4057,6 @@
                 <div class="fp-label">서비스</div>
                 <select class="fp-select" id="issueServiceFilter" onchange="renderIssues();_updateFilterBadge();">
                   <option value="">전체 서비스</option>
-                  <option value="고객앱">고객앱</option>
-                  <option value="선주모바일">선주모바일</option>
-                  <option value="비즈페이지">비즈페이지</option>
-                  <option value="예약웹">예약웹</option>
-                  <option value="쇼핑웹">쇼핑웹</option>
-                  <option value="어드민">어드민</option>
-                  <option value="샵바이어드민">샵바이어드민</option>
-                  <option value="선박예약어드민">선박예약어드민</option>
-                  <option value="포인트맵">포인트맵</option>
-                  <option value="기타">기타</option>
                 </select>
               </div>
               <div class="fp-row">
@@ -4742,7 +4732,7 @@
 
   <script>
     /* ========== CONSTANTS ========== */
-    const TODAY = new Date(2026, 3, 8); // April 8, 2026
+    const TODAY = (function(){ var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); })(); // 항상 오늘 날짜
     const GANTT_START = new Date(2026, 0, 1); // January 1
     let GANTT_END = new Date(2028, 11, 31); // February 28, 2027
     let TOTAL_DAYS = Math.ceil((GANTT_END - GANTT_START) / 86400000);
@@ -7363,8 +7353,9 @@
             });
             _saveDeployBundlesToLocal();
           } else {
-            // Firebase에 데이터 없음 → 로컬 초기화
-            _deployBundles = [];
+            // Firebase에 데이터 없음 → 로컬 데이터 보존 (초기화 금지)
+            // 이전에 _deployBundles = [] 로 초기화하던 코드를 제거:
+            // 번들 생성 직후 Firebase null 응답이 오면 생성한 번들이 사라지는 버그 수정
           }
           // 탭 여부와 무관하게 항상 컨테이너 갱신 (탭이 비활성이어도 DOM에 존재)
           var _dc = document.getElementById('deployBundlesContainer');
@@ -7653,7 +7644,7 @@
       svcLbl.textContent = '서비스';
       svcGrp.appendChild(svcLbl);
       svcGrp.appendChild(_buildMcSelect('create_serviceTypes',
-        (SERVICE_TYPES||[]).map(function(st){return{v:st,l:st};}), [],
+        _getServiceTypes().map(function(st){return{v:st,l:st};}), [],
         {placeholder:'서비스 선택...'}));
       rowProjSvc.appendChild(svcGrp);
       detailSection.appendChild(rowProjSvc);
@@ -8667,8 +8658,8 @@ function renderIssues() {
             grouped[sk].push(iss);
           });
         });
-        // SERVICE_TYPES 순서대로 정렬 표시, 미할당은 마지막
-        var orderedKeys = (SERVICE_TYPES || []).filter(function(st) { return grouped[st]; });
+        // 관리자 설정 서비스 순서대로 정렬 표시, 미할당은 마지막
+        var orderedKeys = _getServiceTypes().filter(function(st) { return grouped[st]; });
         if (grouped['(미할당)']) orderedKeys.push('(미할당)');
         orderedKeys.forEach(function(key) {
           var header = document.createElement('div');
@@ -9840,7 +9831,7 @@ function renderIssues() {
       serviceGroup.appendChild(serviceLabel);
       if (canEdit) {
         serviceGroup.appendChild(_buildMcSelect('detail_serviceTypes',
-          (SERVICE_TYPES||[]).map(function(st){return{v:st,l:st};}),
+          _getServiceTypes().map(function(st){return{v:st,l:st};}),
           _getServiceIds(iss), {placeholder:'서비스 선택...'}));
       } else {
         var svcReadDiv = document.createElement('div');
@@ -10546,32 +10537,40 @@ function renderIssues() {
         commentFileInput.accept = 'image/*,video/*';
         commentFileInput.multiple = true;
         commentFileInput.style.display = 'none';
+        // 공통 파일 처리 함수 (파일 선택 + 드래그앤드랍 모두 사용)
+        function _handleCommentFile(file, issId) {
+          if (!file) return;
+          if (file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+              _compressCommentImage(ev.target.result, function(compressed, info) {
+                var att = { type: 'image', data: compressed, name: file.name, size: file.size, id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2,4) };
+                _commentAttachments.push(att);
+                _renderCommentAttachPreview(issId);
+                if (info) _showToast('이미지 압축: ' + info, 1800, 'success');
+              });
+            };
+            reader.readAsDataURL(file);
+          } else if (file.type.startsWith('video/')) {
+            var MAX_VIDEO = 15 * 1024 * 1024; // 15MB
+            if (file.size > MAX_VIDEO) {
+              _showToast('동영상은 15MB 이하만 첨부 가능합니다 (현재 ' + (file.size/1024/1024).toFixed(1) + 'MB)', 3000, 'error');
+              return;
+            }
+            _showToast('동영상 처리 중...', 1200);
+            _compressCommentVideo(file, function(result) {
+              var att = { type: 'video', data: result.data, name: file.name, size: result.size, id: 'att_' + Date.now() };
+              _commentAttachments.push(att);
+              _renderCommentAttachPreview(issId);
+              if (result.info) _showToast(result.info, 2000, 'success');
+            });
+          }
+        }
+
         commentFileInput.onchange = (function(issId) {
           return function() {
             if (!canWrite) return;
-            _targetAttachmentContext = 'comment';
-            Array.from(this.files).forEach(function(file) {
-              if (file.type.startsWith('image/')) {
-                var reader = new FileReader();
-                reader.onload = function(ev) {
-                  _compressImage(ev.target.result, function(compressed) {
-                    var att = { type: 'image', data: compressed, name: file.name, size: file.size, id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2,4) };
-                    _commentAttachments.push(att);
-                    _renderCommentAttachPreview(issId);
-                  });
-                };
-                reader.readAsDataURL(file);
-              } else if (file.type.startsWith('video/')) {
-                if (file.size > 2000000) { _showToast('동영상은 2MB 이하만 첨부 가능합니다', 2500, 'error'); return; }
-                var reader2 = new FileReader();
-                reader2.onload = function(ev) {
-                  var att = { type: 'video', data: ev.target.result, name: file.name, size: file.size, id: 'att_' + Date.now() };
-                  _commentAttachments.push(att);
-                  _renderCommentAttachPreview(issId);
-                };
-                reader2.readAsDataURL(file);
-              }
-            });
+            Array.from(this.files).forEach(function(file) { _handleCommentFile(file, issId); });
             this.value = '';
           };
         })(issueId);
@@ -10584,6 +10583,51 @@ function renderIssues() {
         commentAttachPreview.id = 'commentAttachPreview';
         commentAttachPreview.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;padding:4px 0;';
         addComm.appendChild(commentAttachPreview);
+
+        // ===== 드래그앤드랍 오버레이 =====
+        var dragOverlay = document.createElement('div');
+        dragOverlay.className = 'comment-drag-overlay';
+        dragOverlay.style.cssText = 'display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(99,102,241,0.08);border:2px dashed #6366f1;border-radius:8px;align-items:center;justify-content:center;pointer-events:none;z-index:10;gap:6px;flex-direction:column;';
+        dragOverlay.innerHTML = '<span style="font-size:24px;">📎</span><span style="font-size:13px;color:#6366f1;font-weight:600;">이미지·영상 파일을 여기에 놓으세요</span><span style="font-size:10px;color:#9ca3af;">이미지: 자동 압축 · 영상: 최대 15MB</span>';
+        addComm.appendChild(dragOverlay);
+
+        // 드래그앤드랍 이벤트
+        (function(ac, issId) {
+          var dragCount = 0; // 자식 요소 dragenter/dragleave 보정용
+          ac.addEventListener('dragenter', function(e) {
+            if (!canWrite) return;
+            var dt = e.dataTransfer;
+            if (!dt || !dt.types || Array.from(dt.types).indexOf('Files') === -1) return;
+            e.preventDefault(); e.stopPropagation();
+            dragCount++;
+            dragOverlay.style.display = 'flex';
+          });
+          ac.addEventListener('dragleave', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            dragCount--;
+            if (dragCount <= 0) { dragCount = 0; dragOverlay.style.display = 'none'; }
+          });
+          ac.addEventListener('dragover', function(e) {
+            if (!canWrite) return;
+            e.preventDefault(); e.stopPropagation();
+            e.dataTransfer.dropEffect = 'copy';
+          });
+          ac.addEventListener('drop', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            dragCount = 0;
+            dragOverlay.style.display = 'none';
+            if (!canWrite) return;
+            var files = e.dataTransfer.files;
+            if (!files || !files.length) return;
+            Array.from(files).forEach(function(file) {
+              if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+                _handleCommentFile(file, issId);
+              } else {
+                _showToast('이미지·동영상 파일만 첨부 가능합니다', 2000, 'error');
+              }
+            });
+          });
+        })(addComm, issueId);
 
         commGroup.appendChild(addComm);
       } else {
@@ -10785,8 +10829,21 @@ function renderIssues() {
           thumb.appendChild(img);
         } else if (att.type === 'video') {
           var vid = document.createElement('div');
-          vid.style.cssText = 'width:56px;height:44px;border-radius:4px;border:1px solid #e5e7eb;background:#1f2937;display:flex;align-items:center;justify-content:center;font-size:20px;';
-          vid.textContent = '🎬';
+          vid.style.cssText = 'position:relative;width:56px;height:44px;border-radius:4px;border:1px solid #e5e7eb;overflow:hidden;background:#1f2937;display:flex;align-items:center;justify-content:center;';
+          if (att.thumb) {
+            var thumbImg = document.createElement('img');
+            thumbImg.src = att.thumb;
+            thumbImg.style.cssText = 'width:100%;height:100%;object-fit:cover;opacity:0.85;';
+            vid.appendChild(thumbImg);
+          }
+          var playIcon = document.createElement('span');
+          playIcon.style.cssText = 'position:absolute;font-size:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6));';
+          playIcon.textContent = '▶';
+          vid.appendChild(playIcon);
+          var sizeLabel = document.createElement('div');
+          sizeLabel.style.cssText = 'position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:8px;color:#fff;background:rgba(0,0,0,0.5);padding:1px 0;';
+          sizeLabel.textContent = att.size ? (att.size/1024/1024).toFixed(1)+'MB' : '';
+          vid.appendChild(sizeLabel);
           thumb.appendChild(vid);
         }
         var rmBtn = document.createElement('button');
@@ -10926,6 +10983,74 @@ function renderIssues() {
         callback(compressed);
       };
       img.src = dataUrl;
+    }
+
+    // 코멘트 전용 향상된 이미지 압축 (WebP 우선, JPEG 폴백, 단계별 quality 조절)
+    function _compressCommentImage(dataUrl, callback) {
+      var img = new Image();
+      img.onload = function() {
+        var origW = img.width, origH = img.height;
+        var MAX_W = 1400; // 코멘트는 더 넓게 허용
+        var scale = origW > MAX_W ? MAX_W / origW : 1;
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(origW * scale);
+        canvas.height = Math.round(origH * scale);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // WebP 지원 여부에 따라 포맷 선택, quality 조절
+        var supportsWebP = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+        var fmt = supportsWebP ? 'image/webp' : 'image/jpeg';
+        var quality = 0.78;
+        var result = canvas.toDataURL(fmt, quality);
+
+        // 결과가 여전히 크면 추가 압축 (500KB 초과 시)
+        var approxKB = Math.round(result.length * 0.75 / 1024);
+        if (approxKB > 500) {
+          quality = 0.55;
+          result = canvas.toDataURL(fmt, quality);
+          approxKB = Math.round(result.length * 0.75 / 1024);
+        }
+        var info = canvas.width + '×' + canvas.height + ' · ' + approxKB + 'KB' + (scale < 1 ? ' (리사이즈됨)' : '');
+        callback(result, info);
+      };
+      img.onerror = function() { callback(dataUrl, null); }; // 압축 실패 시 원본
+      img.src = dataUrl;
+    }
+
+    // 코멘트 영상 압축 - Canvas 프레임 캡처로 poster 이미지 생성 후 영상 첨부
+    function _compressCommentVideo(file, callback) {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var dataUrl = ev.target.result;
+        // 브라우저에서 영상 자체를 재인코딩할 수 없으므로
+        // 영상 파일을 그대로 저장하되, 포스터(첫 프레임 썸네일)를 생성
+        var video = document.createElement('video');
+        video.muted = true;
+        video.preload = 'metadata';
+        video.src = dataUrl;
+        video.onloadeddata = function() {
+          video.currentTime = 0.5; // 0.5초 프레임 캡처
+        };
+        video.onseeked = function() {
+          try {
+            var c = document.createElement('canvas');
+            var scale = Math.min(1, 320 / video.videoWidth);
+            c.width = Math.round(video.videoWidth * scale);
+            c.height = Math.round(video.videoHeight * scale);
+            c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+            var thumb = c.toDataURL('image/jpeg', 0.6);
+            var sizeMB = (file.size / 1024 / 1024).toFixed(1);
+            callback({ data: dataUrl, size: file.size, thumb: thumb, info: '동영상 ' + sizeMB + 'MB 첨부됨' });
+          } catch(e) {
+            callback({ data: dataUrl, size: file.size, info: '동영상 첨부됨' });
+          }
+        };
+        video.onerror = function() {
+          callback({ data: dataUrl, size: file.size, info: '동영상 첨부됨' });
+        };
+      };
+      reader.readAsDataURL(file);
     }
 
     function addAttachment(att) {
@@ -12867,6 +12992,8 @@ function renderDeployBundles() {
       const showDays = state.zoom >= 1;
       ganttHeader.innerHTML = '<div class="gantt-header-months" style="min-width:' + totalWidth + 'px;">' + monthsHTML + '</div>' +
         (showDays ? '<div class="gantt-header-days" style="min-width:' + totalWidth + 'px;">' + daysHTML + '</div>' : '');
+      // 헤더 재빌드 후 ganttScroll 스크롤 위치와 즉시 동기화 (렌더링마다 1월로 리셋되는 버그 수정)
+      (function() { var gs = document.getElementById('ganttScroll'); if (gs) ganttHeader.scrollLeft = gs.scrollLeft; })();
 
       // ===== Grid lines (세로 줄) =====
       let existingGrid = document.getElementById('ganttGridLines');
@@ -13937,7 +14064,21 @@ function renderDeployBundles() {
       var _schedBtn = _hasWritePermission() ? ' <button onclick="openScheduleFromDetail(\'' + p.id + '\')" class="write-only-ui" style="border:none;background:#f0fdf4;color:#15803d;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="페이즈 일정 등록/수정">📅 일정 등록</button>' : '';
       var _relIssueCount = (_issues||[]).filter(function(iss){ return _getProjectIds(iss).indexOf(p.id) !== -1; }).length;
       var _issueBtn = ' <button onclick="goToProjectIssues(\'' + p.id + '\')" style="border:none;background:#fef3c7;color:#92400e;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="이 프로젝트 관련 이슈 보기">🐛 이슈 ' + _relIssueCount + '건</button>';
-      title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>' + _schedBtn + _issueBtn;
+
+      // 연관 배포 번들 링크 버튼
+      var _relBundles = (_deployBundles||[]).filter(function(b){ return (b.projects||[]).indexOf(p.id) !== -1; });
+      var _deployBtn = '';
+      if (_relBundles.length === 1) {
+        var _b = _relBundles[0];
+        var _statusMap = {planning:'준비중',ready:'배포준비',deployed:'배포완료',cancelled:'취소'};
+        var _bStatus = _statusMap[_b.status] || _b.status;
+        _deployBtn = ' <button onclick="(function(){document.querySelectorAll(\'.tab\').forEach(function(t){t.classList.remove(\'active\');});document.querySelector(\'.tab[data-tab=\\\"deploy\\\"]\').classList.add(\'active\');document.querySelectorAll(\'.tab-content\').forEach(function(tc){tc.classList.remove(\'active\');});document.getElementById(\'deploy\').classList.add(\'active\');state.currentTab=\'deploy\';renderDeployBundles();setTimeout(function(){openDeployBundleDetail(\'' + _b.id + '\');},150);})()" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="배포: ' + _escHtml(_b.title) + ' (' + _bStatus + ')">🚀 배포 1건</button>';
+      } else if (_relBundles.length > 1) {
+        var _bundleTitles = _relBundles.map(function(b){ return b.title; }).join(' / ');
+        _deployBtn = ' <button onclick="(function(){document.querySelectorAll(\'.tab\').forEach(function(t){t.classList.remove(\'active\');});document.querySelector(\'.tab[data-tab=\\\"deploy\\\"]\').classList.add(\'active\');document.querySelectorAll(\'.tab-content\').forEach(function(tc){tc.classList.remove(\'active\');});document.getElementById(\'deploy\').classList.add(\'active\');state.currentTab=\'deploy\';renderDeployBundles();})()" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="연관 배포: ' + _escHtml(_bundleTitles) + '">🚀 배포 ' + _relBundles.length + '건</button>';
+      }
+
+      title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>' + _schedBtn + _issueBtn + _deployBtn;
       body.innerHTML = `
         <!-- 요약 카드 -->
         <div style="background: linear-gradient(135deg, ${tierColor}08, ${tierColor}15); border: 1px solid ${tierColor}30; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;">
@@ -14280,7 +14421,23 @@ function renderDeployBundles() {
         if (data && Array.isArray(data) && data.length > 0) {
           localStorage.setItem('af_service_types', JSON.stringify(data));
         }
+        // 이슈 필터 드롭다운 옵션 갱신
+        _refreshIssueServiceFilter();
       });
+    }
+
+    // 이슈 서비스 필터 드롭다운 옵션을 관리자 설정 서비스로 동적 갱신
+    function _refreshIssueServiceFilter() {
+      var sel = document.getElementById('issueServiceFilter');
+      if (!sel) return;
+      var cur = sel.value; // 현재 선택값 유지
+      sel.innerHTML = '<option value="">전체 서비스</option>';
+      _getServiceTypes().forEach(function(st) {
+        var opt = document.createElement('option');
+        opt.value = st; opt.textContent = st;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur; // 선택값 복원
     }
 
     // ===== 서비스 종류 체크박스 멀티셀렉트 =====
@@ -15374,11 +15531,21 @@ function renderDeployBundles() {
 
       if (_historyTab === 'access') {
         if (clearBtn) clearBtn.style.display = 'none';
+        // 변경이력 전용 요소 제거 (탭 전환 시 다른 탭 잔여 요소 충돌 방지)
+        var hBar = document.getElementById('historyFilterBar');
+        var hList = document.getElementById('historyListContent');
+        if (hBar) hBar.remove();
+        if (hList) hList.remove();
         _renderAccessLog(container);
         return;
       }
 
       // 변경 이력 렌더링
+      // 접속이력 전용 요소 제거 (탭 전환 시 다른 탭 잔여 요소 충돌 방지)
+      var aBar = document.getElementById('accessFilterBar');
+      var aList = document.getElementById('accessListContent');
+      if (aBar) aBar.remove();
+      if (aList) aList.remove();
       if (clearBtn) clearBtn.style.display = state.currentUser ? '' : 'none';
       var hist = (state.history || []).slice().reverse();
 
@@ -15480,6 +15647,12 @@ function renderDeployBundles() {
 
     function _renderAccessLog(container) {
       var logs = (_accessLogs || []).slice().reverse();
+
+      // 변경이력 전용 요소 방어적 제거 (중복 표시 방지)
+      var hBar2 = document.getElementById('historyFilterBar');
+      var hList2 = document.getElementById('historyListContent');
+      if (hBar2) hBar2.remove();
+      if (hList2) hList2.remove();
 
       // Search/filter bar for access log
       var accessBarId = 'accessFilterBar';
@@ -16471,7 +16644,7 @@ function renderNotifList() {
           }, 50);
 
           if (tabId === 'projects') renderProjects();
-          else if (tabId === 'issues') renderIssues();
+          else if (tabId === 'issues') { _refreshIssueServiceFilter(); renderIssues(); }
           else if (tabId === 'deploy') renderDeployBundles();
           else if (tabId === 'team') renderTeam();
           else if (tabId === 'overview') renderOverview();

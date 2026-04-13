@@ -4264,6 +4264,23 @@
             <span style="font-size:11px;color:#9ca3af;">QA Dashboard 개선 이력</span>
           </div>
 
+          <div class="rn-version-block" style="border-left:3px solid #059669;padding:12px;background:#f0fdf4;border-radius:8px;margin-bottom:14px;">
+            <div class="rn-version-header">
+              <span class="rn-version-title" style="color:#059669;">v1.18 — 버그수정 · UX개선 · 터치포인트 확장</span>
+              <span class="rn-version-date">2026-04-14</span>
+            </div>
+            <div class="rn-items">
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>이슈 상세 멀티셀렉트 칩 표시 — 드롭다운 열기 전에도 선택값이 태그로 표시됨 (DOM 부착 후 지연 갱신)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>배포탭 카드 클릭 — 카드 전체 클릭 시 상세 모달 열림 (상태 태그만 클릭해야 했던 문제 수정)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>이슈 탭 이동 버튼 — goToProjectIssues에서 switchTab 미정의 오류 수정</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>코멘트 수정 권한 — _hasAdminPermission 미정의 오류 수정 (state.adminMode 사용)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>프로젝트 상세 배포 N건 버튼 — 배포탭 이동 및 상세 오픈 정상 동작 (goToDeployBundle 함수 분리)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>스케줄탭 이슈별 뷰 플로팅 버튼 — "새 이슈 등록"으로 변경, 이슈 등록 모달 연결</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-ux">UX</span>스케줄탭 프로젝트열 — 안건 카드 전체 클릭으로 상세 슬라이드 열기 (+ 일정·💬 채팅 버튼은 개별 동작 유지)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-ux">UX</span>스케줄탭 버튼 UI 통일 — 프로젝트별/이슈별 뷰 "일정" · 채팅 버튼 스타일 동일하게 정렬</div>
+            </div>
+          </div>
+
           <div class="rn-version-block" style="border-left:3px solid #7c3aed;padding:12px;background:#faf5ff;border-radius:8px;margin-bottom:14px;">
             <div class="rn-version-header">
               <span class="rn-version-title" style="color:#7c3aed;">v1.17 — 서비스/플랫폼 다중선택 · 코멘트 첨부 · 이력 검색</span>
@@ -5305,12 +5322,12 @@
       '<div class="s" id="schedule">' +
         '<h2><span class="ic">📅</span> 3. 스케줄 탭 (Gantt 차트)</h2>' +
         '<p>프로젝트별 페이즈(기획/디자인/프론트엔드/백엔드/QA) 일정을 시각적으로 보여주는 Gantt 차트입니다.</p>' +
-        '<h3>뷰 전환</h3><ul><li><strong>프로젝트 뷰</strong> — 프로젝트별로 묶어서 표시 (기본). 각 열(행)의 좌측에 "+ 일정" 버튼으로 페이즈별 일정·담당자 할당. 기존 일정이 있는 경우 수정 모달에 <strong>"🗑 삭제" 버튼</strong>이 표시되며, 클릭 시 해당 페이즈의 일정과 담당자 할당이 함께 삭제됩니다.</li><li><strong>이슈 뷰</strong> — 등록된 이슈를 상태별 그룹으로 표시. 각 이슈 행에 <strong>"+ 일정" 버튼</strong>(보라색)이 있어 클릭하면 시작일·종료일·담당자(복수 선택 가능)를 설정하는 풀 모달이 열립니다. 이미 일정이 등록된 경우 버튼에 날짜(MM-DD)가 표시되며, 모달에 <strong>"🗑 삭제" 버튼</strong>이 나타나 이슈 일정을 삭제할 수 있습니다.</li><li><strong>담당자 뷰</strong> — 팀원별로 할당된 일정 표시</li></ul>' +
-        '<h3>줌 컨트롤</h3><p>좌측 상단의 − / + 버튼 또는 줌 슬라이더로 타임라인 확대/축소가 가능합니다. 날짜 헤더에 월요일(진한선), 주말(회색), 오늘(빨간선)이 강조됩니다.</p>' +
+        '<h3>뷰 전환</h3><ul><li><strong>프로젝트별 뷰</strong> — 프로젝트별로 묶어서 표시 (기본). 각 행의 <strong>"+ 일정" 버튼</strong>으로 페이즈별 일정·담당자 할당. 기존 일정이 있는 경우 수정 모달에 <strong>"🗑 삭제" 버튼</strong>이 표시됩니다.</li><li><strong>이슈별 뷰</strong> — 등록된 이슈를 상태별 그룹으로 표시. 각 이슈 행에 <strong>"+ 일정" 버튼</strong>으로 시작일·종료일·담당자를 설정하는 풀 모달이 열립니다. 일정이 등록된 경우 버튼에 날짜(MM-DD)가 표시됩니다. 우하단 플로팅 버튼이 <strong>"새 이슈 등록"</strong>으로 전환됩니다.</li><li><strong>담당자 뷰</strong> — 팀원별로 할당된 일정 표시</li></ul>' +
+        '<h3>프로젝트 카드 클릭</h3><p>좌측 프로젝트 카드 어디든 클릭하면 우측 상세 슬라이드가 열립니다. <strong>"+ 일정"</strong> 버튼과 <strong>💬 채팅</strong> 버튼은 카드 내 별도 동작으로 분리되어 있습니다.</p>' +
+        '<h3>줌 컨트롤</h3><p>좌측 상단의 − / + 버튼으로 타임라인 확대/축소가 가능합니다. 날짜 헤더에 월요일(진한선), 주말(회색), 오늘(빨간선)이 강조됩니다.</p>' +
         '<h3>바 드래그 (쓰기 권한)</h3><p>Gantt 바의 좌/우 끝을 드래그하면 시작/종료일을 변경합니다. 바 중앙을 드래그하면 전체 기간이 이동합니다.</p>' +
         '<h3>바 겹침 처리</h3><p>동일 프로젝트에서 페이즈 날짜가 겹치면 자동으로 레인(행)을 분배하여 겹치지 않게 표시됩니다.</p>' +
         '<h3>인라인 편집 (쓰기 권한)</h3><p>좌측 프로젝트 이름 영역에서 배포일, 상태를 직접 클릭하여 인라인으로 수정할 수 있습니다.</p>' +
-        '<h3>프로젝트 상세 열기</h3><p>프로젝트 이름 또는 Gantt 바를 클릭하면 우측에 상세 패널이 열립니다.</p>' +
       '</div>' +
 
       /* 4 프로젝트 */
@@ -5393,7 +5410,7 @@
         '<h3>배포 번들이란?</h3><p>특정 배포에 포함될 이슈 목록과 대상 날짜를 함께 관리하는 단위입니다. 여러 이슈를 하나의 배포로 묶어 진행률을 한눈에 파악할 수 있습니다.</p>' +
         '<h3>⚡ 빠른 등록</h3><p>"⚡ 빠른 등록" 버튼 클릭 시 배포 탭 상단에 인라인 폼이 펼쳐집니다. 제목 + 목표일 + 환경 + 상태만 입력하고 등록. 이슈 연결 등 세부 설정은 이후 상세에서 추가 가능합니다.</p>' +
         '<h3>번들 상세 생성</h3><p>"+ 배포 번들 생성" 버튼 클릭 후 제목, 목표일(기본 7일 후 자동 설정), 배포 환경, 연결 프로젝트/이슈를 입력합니다. 등록 완료 시 모달이 자동으로 닫히고 배포 탭 목록에서 즉시 확인할 수 있습니다 (v1.14 수정).</p>' +
-        '<h3>1뎁스 어코디언</h3><p>배포 카드 클릭 시 모달 팝업 없이 카드 아래에 바로 상세 내용이 펼쳐집니다. 상태 원클릭 변경 버튼(준비중/배포준비/배포완료/취소)이 인라인으로 표시됩니다.</p>' +
+        '<h3>배포 카드 클릭</h3><p>카드 전체를 클릭하면 배포 상세 모달이 열립니다. 상단 <strong>상태 배지</strong>를 클릭하면 아코디언(카드 내 확장)이 토글됩니다. 카드 안 "상세 보기" 버튼으로도 모달을 열 수 있습니다.</p>' +
         '<h3>번들 카드 정보</h3><ul>' +
           '<li><strong>상태 배지</strong>: 준비중 / 배포준비 / 배포완료 / 취소</li>' +
           '<li><strong>D-day 배지</strong>: 목표일까지 남은 일수 (D-3 이내 빨강)</li>' +
@@ -5547,6 +5564,19 @@
       if (!btn) return;
       var show = (tabId === 'schedule') && _hasWritePermission();
       btn.style.display = show ? 'flex' : 'none';
+      if (show) {
+        if (state.view === 'issue') {
+          // 이슈별 뷰: 새 이슈 등록
+          btn.title = '새 이슈 등록';
+          btn.innerHTML = '<span style="font-size:20px;line-height:1;margin-right:6px;">＋</span> 새 이슈 등록';
+          btn.onclick = function() { createIssue(); };
+        } else {
+          // 프로젝트별/기본 뷰: 새 안건 추가
+          btn.title = '새 안건 추가';
+          btn.innerHTML = '<span style="font-size:20px;line-height:1;margin-right:6px;">＋</span> 새 안건 추가';
+          btn.onclick = function() { createNewProject(); };
+        }
+      }
     }
 
     /* ========== CHAT SYSTEM ========== */
@@ -10437,7 +10467,7 @@ function renderIssues() {
 
           // 수정/삭제 버튼 (본인 코멘트만 또는 admin)
           var isMyComment = state.currentUser && (com.userEmail === state.currentUser.email || state.currentUser.email === com.userEmail);
-          var canEditComment = isMyComment || _hasAdminPermission();
+          var canEditComment = isMyComment || state.adminMode;
           if (canEditComment && _hasWritePermission()) {
             var btnGroup = document.createElement('div');
             btnGroup.style.cssText = 'display:flex;gap:4px;';
@@ -10743,6 +10773,13 @@ function renderIssues() {
       panel.appendChild(activitySection);
 
       document.getElementById('issueDetailTitle').textContent = iss.id + ': ' + iss.title;
+
+      // 멀티셀렉트 칩 지연 갱신 (DOM 부착 후 체크박스 상태 기반으로 확실히 렌더링)
+      setTimeout(function() {
+        ['detail_serviceTypes', 'detail_projectIds', 'detail_assignees', 'detail_platforms', 'detail_references', 'detail_relatedIssues'].forEach(function(fid) {
+          _mcUpdateChipsFromDOM(fid);
+        });
+      }, 0);
 
       // Add paste listener
       document.getElementById('issueDetailPanel').addEventListener('paste', function(e) {
@@ -11936,18 +11973,18 @@ function renderDeployBundles() {
         _renderDeployBundleAccordionBody(bundle, accordBody);
         card.appendChild(accordBody);
 
-        // Make card header clickable for accordion
-        card.style.cursor = 'default';
-        // Find topBar and make it the toggle trigger
+        // 카드 전체 클릭 → 상세 모달, topBar 클릭 → 아코디언 펼치기/접기
+        card.style.cursor = 'pointer';
+        card.onclick = (function(bid) {
+          return function() { openDeployBundleDetail(bid); };
+        })(bundle.id);
         if (card.firstChild) {
           card.firstChild.style.cursor = 'pointer';
-          card.firstChild.title = '클릭해서 펼치기/접기';
+          card.firstChild.title = '클릭: 아코디언 / 카드 클릭: 상세 보기';
           card.firstChild.onclick = (function(bid) {
             return function(e) { e.stopPropagation(); toggleDeployAccordion(bid); };
           })(bundle.id);
         }
-        // Update old onclick to just open detail (only via detail button inside accordion)
-        card.onclick = null;
 
         container.appendChild(card);
       });
@@ -13405,8 +13442,6 @@ function renderDeployBundles() {
           const topLine = document.createElement('div');
           topLine.style.cssText = 'display:flex;align-items:center;gap:4px;width:100%;';
           topLine.innerHTML = '<span style="font-weight:600;flex-shrink:0;font-size:13px;">' + project.id + '</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;">' + shortName + '</span>' + (project.gmvImpact ? '<span class="gmv-badge" style="font-size:10px;">' + project.gmvImpact + '</span>' : '');
-          topLine.onclick = function() { openDetailPanel(project.id); };
-          topLine.style.cursor = 'pointer';
 
           // 2행: 서비스 태그 (태그 많으면 줄바꿈)
           var hasSvcTags = project.serviceTypes && project.serviceTypes.length > 0;
@@ -13454,8 +13489,8 @@ function renderDeployBundles() {
           if (_hasWritePermission()) {
             var schedBtn = document.createElement('button');
             schedBtn.title = project.name + ' 일정 등록';
-            schedBtn.style.cssText = 'background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:13px;padding:0 4px;line-height:16px;color:#6b7280;margin-left:auto;font-weight:700;';
-            schedBtn.textContent = '+';
+            schedBtn.style.cssText = 'background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:11px;padding:0 5px;line-height:16px;color:#6b7280;margin-left:auto;font-weight:700;';
+            schedBtn.textContent = '+ 일정';
             schedBtn.onclick = (function(pid) {
               return function(e) {
                 e.stopPropagation();
@@ -13466,6 +13501,12 @@ function renderDeployBundles() {
             chatBtn.style.marginLeft = '2px'; // 채팅은 일정 버튼 바로 오른쪽
           }
           bottomLine.appendChild(chatBtn);
+
+          // 안건 전체를 클릭하면 프로젝트 상세 슬라이드 열기 (+ 버튼, 채팅 버튼은 e.stopPropagation으로 분리됨)
+          nameRow.style.cursor = 'pointer';
+          nameRow.onclick = (function(pid) {
+            return function() { openDetailPanel(pid); };
+          })(project.id);
 
           nameRow.appendChild(topLine);
           nameRow.appendChild(bottomLine);
@@ -13693,30 +13734,27 @@ function renderDeployBundles() {
             nameRow.appendChild(assigneeRow);
           }
 
-          // 액션 버튼 행 (채팅, 일정 설정, 상세보기)
+          // 액션 버튼 행 (일정, 채팅) — 프로젝트별 뷰와 동일한 스타일
           var actionRow = document.createElement('div');
           actionRow.style.cssText = 'display:flex;align-items:center;gap:4px;padding-left:12px;';
-          var chatBtn = document.createElement('button');
-          chatBtn.style.cssText = 'font-size:10px;padding:1px 5px;border:1px solid #e5e7eb;border-radius:3px;background:#fff;cursor:pointer;color:#6b7280;';
-          chatBtn.textContent = '💬 채팅';
-          chatBtn.title = '이슈 채팅방 열기';
-          chatBtn.onclick = function(e) { e.stopPropagation(); openIssueChatFromSchedule(iss.id); };
-          actionRow.appendChild(chatBtn);
           if (_hasWritePermission()) {
             var schedBtn = document.createElement('button');
-            schedBtn.style.cssText = 'font-size:10px;padding:1px 6px;border:1.5px solid #6366f1;border-radius:4px;background:#f5f3ff;cursor:pointer;color:#6366f1;font-weight:700;';
             // 이미 일정 있으면 날짜 표시
-            schedBtn.textContent = iss.scheduleStart ? ('📅 ' + iss.scheduleStart.slice(5)) : '+ 일정';
+            var hasIssueSchedule = !!(iss.scheduleStart);
+            schedBtn.style.cssText = hasIssueSchedule
+              ? 'background:none;border:1px solid #6366f1;border-radius:4px;cursor:pointer;font-size:11px;padding:0 5px;line-height:16px;color:#6366f1;font-weight:700;'
+              : 'background:none;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:11px;padding:0 5px;line-height:16px;color:#6b7280;font-weight:700;';
+            schedBtn.textContent = hasIssueSchedule ? ('📅 ' + iss.scheduleStart.slice(5)) : '+ 일정';
             schedBtn.title = '이슈 일정 및 담당자 할당 모달 열기';
             schedBtn.onclick = function(e) { e.stopPropagation(); openIssueScheduleModal(iss.id); };
             actionRow.appendChild(schedBtn);
           }
-          var detailBtn = document.createElement('button');
-          detailBtn.style.cssText = 'font-size:10px;padding:1px 5px;border:1px solid #e5e7eb;border-radius:3px;background:#fff;cursor:pointer;color:#6b7280;';
-          detailBtn.textContent = '상세';
-          detailBtn.title = '이슈 상세 보기';
-          detailBtn.onclick = function(e) { e.stopPropagation(); openIssueDetail(iss.id); };
-          actionRow.appendChild(detailBtn);
+          var chatBtn = document.createElement('button');
+          chatBtn.style.cssText = 'position:relative;background:none;border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;font-size:11px;padding:0 4px;line-height:16px;color:#6b7280;';
+          chatBtn.innerHTML = '💬';
+          chatBtn.title = '이슈 채팅방 열기';
+          chatBtn.onclick = function(e) { e.stopPropagation(); openIssueChatFromSchedule(iss.id); };
+          actionRow.appendChild(chatBtn);
           nameRow.appendChild(actionRow);
 
           nameRow.onclick = function() { openIssueDetail(iss.id); };
@@ -14217,10 +14255,10 @@ function renderDeployBundles() {
         var _b = _relBundles[0];
         var _statusMap = {planning:'준비중',ready:'배포준비',deployed:'배포완료',cancelled:'취소'};
         var _bStatus = _statusMap[_b.status] || _b.status;
-        _deployBtn = ' <button onclick="(function(){document.querySelectorAll(\'.tab\').forEach(function(t){t.classList.remove(\'active\');});document.querySelector(\'.tab[data-tab=\\\"deploy\\\"]\').classList.add(\'active\');document.querySelectorAll(\'.tab-content\').forEach(function(tc){tc.classList.remove(\'active\');});document.getElementById(\'deploy\').classList.add(\'active\');state.currentTab=\'deploy\';renderDeployBundles();setTimeout(function(){openDeployBundleDetail(\'' + _b.id + '\');},150);})()" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="배포: ' + _escHtml(_b.title) + ' (' + _bStatus + ')">🚀 배포 1건</button>';
+        _deployBtn = ' <button onclick="goToDeployBundle(\'' + _b.id + '\')" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="배포: ' + _escHtml(_b.title) + ' (' + _bStatus + ')">🚀 배포 1건</button>';
       } else if (_relBundles.length > 1) {
         var _bundleTitles = _relBundles.map(function(b){ return b.title; }).join(' / ');
-        _deployBtn = ' <button onclick="(function(){document.querySelectorAll(\'.tab\').forEach(function(t){t.classList.remove(\'active\');});document.querySelector(\'.tab[data-tab=\\\"deploy\\\"]\').classList.add(\'active\');document.querySelectorAll(\'.tab-content\').forEach(function(tc){tc.classList.remove(\'active\');});document.getElementById(\'deploy\').classList.add(\'active\');state.currentTab=\'deploy\';renderDeployBundles();})()" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="연관 배포: ' + _escHtml(_bundleTitles) + '">🚀 배포 ' + _relBundles.length + '건</button>';
+        _deployBtn = ' <button onclick="goToDeployTab()" style="border:none;background:#ecfdf5;color:#065f46;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:4px;" title="연관 배포: ' + _escHtml(_bundleTitles) + '">🚀 배포 ' + _relBundles.length + '건</button>';
       }
 
       title.innerHTML = p.name + ' <button onclick="copyProjectLink(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;vertical-align:middle;margin-left:8px;" title="이 프로젝트 링크 복사">🔗 링크 복사</button>' + _schedBtn + _issueBtn + _deployBtn;
@@ -14935,8 +14973,8 @@ function renderDeployBundles() {
         _mcToggle(id);
       };
 
-      // Update chips
-      _mcUpdateChips(id, options, selectedVals || [], extraOpts.isIssue);
+      // Update chips (로컬 ref 직접 전달 - 아직 DOM에 없을 때도 작동)
+      _mcUpdateChips(id, options, selectedVals || [], extraOpts.isIssue, chipsDiv, ph);
 
       // Close when clicking outside
       document.addEventListener('click', function(e) {
@@ -15013,9 +15051,10 @@ function renderDeployBundles() {
       _mcUpdateChips(id, allOpts, selected, false);
     }
 
-    function _mcUpdateChips(id, options, selectedVals, isIssue) {
-      var chipsDiv = document.getElementById('mc_chips_' + id);
-      var ph = document.getElementById('mc_ph_' + id);
+    function _mcUpdateChips(id, options, selectedVals, isIssue, _chipsDiv, _ph) {
+      // _chipsDiv/_ph: 직접 전달된 로컬 ref (DOM 미부착 시 fallback)
+      var chipsDiv = _chipsDiv || document.getElementById('mc_chips_' + id);
+      var ph = _ph || document.getElementById('mc_ph_' + id);
       if (!chipsDiv) return;
       chipsDiv.innerHTML = '';
       if (selectedVals.length === 0) {
@@ -15119,8 +15158,17 @@ function renderDeployBundles() {
       // 프로젝트 상세 패널 닫기
       var panel = document.getElementById('detailPanel');
       if (panel) panel.classList.remove('open');
-      // 이슈 탭으로 이동
-      switchTab('issues');
+      // 이슈 탭으로 이동 (switchTab 함수 없으므로 직접 처리)
+      document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+      var issTab = document.querySelector('.tab[data-tab="issues"]');
+      var issContent = document.getElementById('issues');
+      if (issTab) issTab.classList.add('active');
+      if (issContent) issContent.classList.add('active');
+      state.currentTab = 'issues';
+      _refreshIssueServiceFilter();
+      renderIssues();
+      _updateFloatingAddBtn('issues');
       // 프로젝트 필터 적용
       setTimeout(function() {
         var pfEl = document.getElementById('issueProjectFilter');
@@ -16833,6 +16881,7 @@ function renderNotifList() {
           btn.classList.add('active');
           state.view = btn.dataset.view;
           renderGantt();
+          _updateFloatingAddBtn(state.currentTab); // 뷰 전환 시 플로팅 버튼 텍스트/동작 갱신
         };
       });
 
@@ -17147,6 +17196,22 @@ function renderNotifList() {
     window.deleteIssueScheduleModal = deleteIssueScheduleModal;
     window.deletePhaseSchedule = deletePhaseSchedule;
     window.goToProjectIssues = goToProjectIssues;
+    // 배포 탭으로 이동 + 특정 번들 상세 열기 (프로젝트 상세 배포 N건 버튼용)
+    window.goToDeployBundle = function(bundleId) {
+      document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+      var dt = document.querySelector('.tab[data-tab="deploy"]');
+      var dc = document.getElementById('deploy');
+      if (dt) dt.classList.add('active');
+      if (dc) dc.classList.add('active');
+      state.currentTab = 'deploy';
+      _updateFloatingAddBtn('deploy');
+      renderDeployBundles();
+      if (bundleId) { setTimeout(function(){ openDeployBundleDetail(bundleId); }, 150); }
+    };
+    window.goToDeployTab = function() {
+      window.goToDeployBundle(null);
+    };
     window._getMcValues = _getMcValues;
     window._mcToggle = _mcToggle;
     window._mcFilter = _mcFilter;

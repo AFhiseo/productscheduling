@@ -13170,8 +13170,24 @@ function renderDeployBundles() {
       const showDays = state.zoom >= 1;
       ganttHeader.innerHTML = '<div class="gantt-header-months" style="min-width:' + totalWidth + 'px;">' + monthsHTML + '</div>' +
         (showDays ? '<div class="gantt-header-days" style="min-width:' + totalWidth + 'px;">' + daysHTML + '</div>' : '');
-      // 헤더 재빌드 후 ganttScroll 스크롤 위치와 즉시 동기화 (렌더링마다 1월로 리셋되는 버그 수정)
-      (function() { var gs = document.getElementById('ganttScroll'); if (gs) ganttHeader.scrollLeft = gs.scrollLeft; })();
+      // 헤더 재빌드 후 스크롤 위치 즉시 동기화 (1월로 리셋되는 버그 수정)
+      // ganttHeaderEl(외부 .gantt-header 래퍼)에 scrollLeft를 설정해야 실제 스크롤이 됨
+      (function() {
+        var gs = document.getElementById('ganttScroll');
+        var gh = document.getElementById('ganttHeaderEl');
+        if (!gs || !gh) return;
+        var target;
+        if (_savedScrollLeft > 0) {
+          // 이전 스크롤 위치 즉시 복원
+          target = _savedScrollLeft;
+        } else {
+          // 첫 로드 또는 탭 전환 시 → 오늘 날짜 위치로 즉시 이동
+          target = Math.max(0, daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1) - 100);
+          gs._ganttInitScrolled = true; // requestAnimationFrame 중복 처리 방지
+        }
+        gs.scrollLeft = target;
+        gh.scrollLeft = target;
+      })();
 
       // ===== Grid lines (세로 줄) =====
       let existingGrid = document.getElementById('ganttGridLines');
@@ -13288,19 +13304,10 @@ function renderDeployBundles() {
           if (bh < maxH) barRows[ri].style.height = maxH + 'px';
         }
 
-        // 스크롤 위치 복원: 이전에 보던 위치 유지 (또는 첫 로드 시 오늘 날짜로 이동)
+        // 스크롤 위치 헤더 동기화 (즉시 IIFE에서 gs/gh.scrollLeft를 이미 설정했으므로 여기서는 헤더만 재동기화)
         var gs = document.getElementById('ganttScroll');
         if (gs) {
-          if (_savedScrollLeft > 0) {
-            // 이전 스크롤 위치 복원
-            gs.scrollLeft = _savedScrollLeft;
-          } else if (_savedScrollLeft === 0 && !gs._ganttInitScrolled) {
-            // 첫 로드 시 오늘 날짜로 이동
-            gs._ganttInitScrolled = true;
-            var todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1);
-            gs.scrollLeft = Math.max(0, todayOffset - 100);
-          }
-          var gh = document.querySelector('.gantt-header');
+          var gh = document.getElementById('ganttHeaderEl');
           if (gh) gh.scrollLeft = gs.scrollLeft;
         }
       });

@@ -4624,6 +4624,31 @@
     </div>
   </div>
 
+  <!-- 이슈→배포 추가 선택 모달 -->
+  <div id="issueToBundleOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:3000;align-items:center;justify-content:center;" onclick="if(event.target===this)closeIssueToBundleModal()">
+    <div style="background:#fff;border-radius:14px;width:480px;max-width:95vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e5e7eb;">
+        <h3 style="margin:0;font-size:15px;font-weight:700;color:#111827;">🚀 배포에 이슈 추가</h3>
+        <button onclick="closeIssueToBundleModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9ca3af;line-height:1;">×</button>
+      </div>
+      <div style="padding:14px 20px;border-bottom:1px solid #f3f4f6;">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:6px;">이슈 ID</div>
+        <div id="issueToBundleIssueId" style="font-size:13px;font-weight:600;color:#374151;background:#f9fafb;padding:6px 10px;border-radius:6px;"></div>
+      </div>
+      <div style="padding:14px 20px;overflow-y:auto;flex:1;">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px;">배포 번들 선택</div>
+        <div id="issueToBundleList" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <div style="height:1px;background:#e5e7eb;margin:12px 0;"></div>
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;">새 배포 번들 생성</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <input id="newBundleTitleInput" placeholder="배포 제목 *" style="padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:12px;color:#374151;">
+          <input id="newBundleDateInput" type="date" placeholder="배포 날짜" style="padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:12px;color:#374151;">
+          <button onclick="createNewBundleFromIssue()" style="padding:8px 16px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">+ 새 배포 번들 생성하여 추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Deploy Bundle Manager Modal -->
   <div class="modal-overlay" id="deployBundleOverlay" onclick="if(event.target===this)closeDeployBundleManager()">
     <div class="deploy-bundle-modal" id="deployBundleModal">
@@ -7288,6 +7313,8 @@
     /* ========== ISSUE MANAGEMENT SYSTEM ========== */
     var _issues = [];
     var _deployBundles = [];
+    var _fbDeploySkipNext = false; // Firebase on('value') 직후 로컬 번들 유실 방지 플래그
+    var _commentAttachments = []; // 코멘트 첨부파일 전역 배열 (로컬 var이면 addIssueComment에서 접근 불가)
     var _LS_ISSUES_KEY = 'af_issues';
     var _LS_DEPLOY_BUNDLES_KEY = 'af_deploy_bundles';
     var _currentIssueId = null;
@@ -7313,14 +7340,28 @@
         _fb.db.ref('issues').on('value', function(snap) {
           var data = snap.val();
           if (data) {
-            _issues = [];
+            // Firebase에서 로드된 이슈 데이터 정규화 (배열 필드 복원)
+            var fbIssues = [];
             Object.keys(data).forEach(function(k) {
               if (data[k] && typeof data[k] === 'object') {
-                data[k].id = data[k].id || k;
-                _issues.push(data[k]);
+                var iss = data[k];
+                iss.id = iss.id || k;
+                // Firebase는 배열을 object로 변환할 수 있으므로 배열 필드 정규화
+                ['platforms','projectIds','serviceTypes','assignees','references','relatedIssues','attachments','comments','agentFeedback'].forEach(function(field) {
+                  if (iss[field] && !Array.isArray(iss[field]) && typeof iss[field] === 'object') {
+                    iss[field] = Object.values(iss[field]);
+                  } else if (!iss[field]) {
+                    if (['attachments','comments','agentFeedback'].indexOf(field) !== -1) iss[field] = [];
+                  }
+                });
+                fbIssues.push(iss);
               }
             });
-            console.log('[Issues] loaded from Firebase:', _issues.length, 'issues');
+            // 로컬에만 있는 새 이슈 보존 (Firebase 쓰기 직후 타이밍 보호)
+            var fbIds = fbIssues.map(function(i) { return i.id; });
+            var localOnly = _issues.filter(function(i) { return fbIds.indexOf(i.id) === -1; });
+            _issues = fbIssues.concat(localOnly);
+            console.log('[Issues] loaded from Firebase:', fbIssues.length, 'issues' + (localOnly.length ? ' +' + localOnly.length + ' local' : ''));
             _saveIssuesToLocal();
             if (state.currentTab === 'issues') renderIssues();
             setTimeout(_checkP0AutoAlerts, 500);
@@ -7344,20 +7385,31 @@
         _fb.db.ref('deployBundles').on('value', function(snap) {
           var data = snap.val();
           if (data) {
-            _deployBundles = [];
+            var fbBundles = [];
             Object.keys(data).forEach(function(k) {
               if (data[k] && typeof data[k] === 'object') {
-                data[k].id = data[k].id || k;
-                _deployBundles.push(data[k]);
+                var b = data[k];
+                b.id = b.id || k;
+                // 배열 필드 정규화
+                ['projects','issues','manualItems','agentFeedback'].forEach(function(field) {
+                  if (b[field] && !Array.isArray(b[field]) && typeof b[field] === 'object') {
+                    b[field] = Object.values(b[field]);
+                  } else if (!b[field]) {
+                    b[field] = [];
+                  }
+                });
+                fbBundles.push(b);
               }
             });
+            // 로컬에만 있는 새 번들 보존 (Firebase 쓰기 직후 타이밍 보호)
+            var fbIds = fbBundles.map(function(b) { return b.id; });
+            var localOnly = _deployBundles.filter(function(b) { return fbIds.indexOf(b.id) === -1; });
+            _deployBundles = fbBundles.concat(localOnly);
+            console.log('[DeployBundles] Firebase sync:', fbBundles.length, 'bundles' + (localOnly.length ? ' +' + localOnly.length + ' local' : ''));
             _saveDeployBundlesToLocal();
-          } else {
-            // Firebase에 데이터 없음 → 로컬 데이터 보존 (초기화 금지)
-            // 이전에 _deployBundles = [] 로 초기화하던 코드를 제거:
-            // 번들 생성 직후 Firebase null 응답이 오면 생성한 번들이 사라지는 버그 수정
           }
-          // 탭 여부와 무관하게 항상 컨테이너 갱신 (탭이 비활성이어도 DOM에 존재)
+          // else: Firebase에 데이터 없음 → 로컬 데이터 보존
+          // 탭 여부와 무관하게 항상 컨테이너 갱신
           var _dc = document.getElementById('deployBundlesContainer');
           if (_dc) { try { renderDeployBundles(); } catch(e) { console.warn('[Deploy]', e); } }
         });
@@ -7920,6 +7972,15 @@
       if (!panel) return;
       var isOpen = panel.classList.contains('open');
       if (isOpen) { closeFilterPopover(); return; }
+      // smart-toolbar의 overflow-x:auto 클리핑 우회: position:fixed + 버튼 위치 계산
+      if (btn) {
+        var rect = btn.getBoundingClientRect();
+        panel.style.position = 'fixed';
+        panel.style.top = (rect.bottom + 6) + 'px';
+        panel.style.left = rect.left + 'px';
+        panel.style.right = 'auto';
+        panel.style.zIndex = '9999';
+      }
       panel.classList.add('open');
       if (btn) btn.classList.add('has-filter');
       setTimeout(function() {
@@ -7963,6 +8024,15 @@
       if (!panel) return;
       var isOpen = panel.classList.contains('open');
       if (isOpen) { closeStGroupPanel(); return; }
+      // smart-toolbar의 overflow-x:auto 클리핑 우회: position:fixed + 버튼 위치 계산
+      if (btn) {
+        var rect = btn.getBoundingClientRect();
+        panel.style.position = 'fixed';
+        panel.style.top = (rect.bottom + 6) + 'px';
+        panel.style.left = rect.left + 'px';
+        panel.style.right = 'auto';
+        panel.style.zIndex = '9999';
+      }
       panel.classList.add('open');
       if (btn) btn.classList.add('active');
       setTimeout(function() {
@@ -10286,7 +10356,8 @@ function renderIssues() {
       attGroup.appendChild(grid);
       panel.appendChild(attGroup);
 
-      var _commentAttachments = [];
+      // _commentAttachments는 외부 스코프(전역)에서 관리 — 이슈 패널 열릴 때마다 초기화
+      _commentAttachments = [];
 
       // Comments section
       var commGroup = document.createElement('div');
@@ -10735,56 +10806,87 @@ function renderIssues() {
     function addIssueToBundle() {
       if (!_currentIssueId) return;
       if (!_hasWritePermission()) { _checkWritePermission(); return; }
-      // 기존 배포 번들 목록에서 선택하거나 새로 생성
-      var planningBundles = _deployBundles.filter(function(b) { return b.status === 'planning' || b.status === 'ready'; });
-      var options = planningBundles.map(function(b) { return b.title + ' (' + (b.targetDate || '날짜 미정') + ')'; });
-      options.push('+ 새 배포 번들 생성');
-      var msg = '이슈 ' + _currentIssueId + '을 추가할 배포를 선택하세요:\n\n';
-      options.forEach(function(o, i) { msg += (i + 1) + '. ' + o + '\n'; });
-      var choice = prompt(msg, '1');
-      if (!choice) return;
-      var idx = parseInt(choice) - 1;
-      if (isNaN(idx) || idx < 0) return;
+      // 모달 오픈
+      var overlay = document.getElementById('issueToBundleOverlay');
+      var issLabel = document.getElementById('issueToBundleIssueId');
+      var listDiv = document.getElementById('issueToBundleList');
+      var titleInput = document.getElementById('newBundleTitleInput');
+      var dateInput = document.getElementById('newBundleDateInput');
+      if (!overlay) return;
 
-      if (idx === planningBundles.length) {
-        // 새 배포 번들 생성
-        var bundleTitle = prompt('배포 제목:');
-        if (!bundleTitle) return;
-        var bundleDate = prompt('배포 날짜 (YYYY-MM-DD):');
-        var newBundle = {
-          id: _generateBundleId(),
-          title: bundleTitle,
-          targetDate: bundleDate || '',
-          status: 'planning',
-          projects: [],
-          issues: [_currentIssueId],
-          manualItems: [],
-          notes: '',
-          agentFeedback: [],
-          created: new Date().toISOString(),
-          createdBy: state.currentUser ? state.currentUser.uid : ''
-        };
-        _deployBundles.push(newBundle);
-        _saveDeployBundlesToLocal();
-        if (_fb.db) {
-          var obj = {}; obj['deployBundles/' + newBundle.id] = newBundle;
-          _fb.db.ref().update(obj);
+      if (issLabel) issLabel.textContent = _currentIssueId;
+      if (titleInput) titleInput.value = '';
+      if (dateInput) { dateInput.value = new Date().toISOString().substring(0,10); }
+
+      // 기존 배포 번들 목록 렌더
+      if (listDiv) {
+        listDiv.innerHTML = '';
+        var planningBundles = _deployBundles.filter(function(b) { return b.status === 'planning' || b.status === 'ready'; });
+        if (planningBundles.length === 0) {
+          listDiv.innerHTML = '<div style="text-align:center;padding:14px;color:#9ca3af;font-size:12px;">진행중인 배포 번들이 없습니다</div>';
+        } else {
+          planningBundles.forEach(function(b) {
+            var alreadyIn = (b.issues || []).indexOf(_currentIssueId) !== -1;
+            var item = document.createElement('button');
+            var statusMap = {planning:'준비중',ready:'배포준비'};
+            var statusColor = {planning:'#f59e0b',ready:'#3b82f6'};
+            item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ' + (alreadyIn ? '#d1fae5' : '#e5e7eb') + ';border-radius:8px;background:' + (alreadyIn ? '#f0fdf4' : '#fafafa') + ';cursor:' + (alreadyIn ? 'default' : 'pointer') + ';text-align:left;width:100%;';
+            item.innerHTML = '<span style="font-size:11px;background:' + (statusColor[b.status]||'#6b7280') + '22;color:' + (statusColor[b.status]||'#6b7280') + ';padding:2px 8px;border-radius:8px;font-weight:600;flex-shrink:0;">' + (statusMap[b.status]||b.status) + '</span>' +
+              '<span style="flex:1;font-size:12px;font-weight:600;color:#374151;">' + _escHtml(b.title) + '</span>' +
+              '<span style="font-size:11px;color:#9ca3af;">' + (b.targetDate || '날짜 미정') + '</span>' +
+              (alreadyIn ? '<span style="font-size:10px;color:#10b981;font-weight:700;">✓ 포함됨</span>' : '');
+            if (!alreadyIn) {
+              item.onclick = (function(bundle) {
+                return function() {
+                  if (!bundle.issues) bundle.issues = [];
+                  bundle.issues.push(_currentIssueId);
+                  _saveDeployBundlesToLocal();
+                  if (_fb.db) { _fb.db.ref('deployBundles/' + bundle.id + '/issues').set(bundle.issues); }
+                  closeIssueToBundleModal();
+                  _showToast('"' + bundle.title + '" 배포에 이슈가 추가되었습니다');
+                };
+              })(b);
+            }
+            listDiv.appendChild(item);
+          });
         }
-        _showToast('새 배포 "' + bundleTitle + '"에 이슈가 추가되었습니다');
-      } else if (idx < planningBundles.length) {
-        var bundle = planningBundles[idx];
-        if (!bundle.issues) bundle.issues = [];
-        if (bundle.issues.indexOf(_currentIssueId) !== -1) {
-          _showToast('이미 해당 배포에 포함된 이슈입니다');
-          return;
-        }
-        bundle.issues.push(_currentIssueId);
-        _saveDeployBundlesToLocal();
-        if (_fb.db) {
-          _fb.db.ref('deployBundles/' + bundle.id + '/issues').set(bundle.issues);
-        }
-        _showToast('"' + bundle.title + '" 배포에 이슈가 추가되었습니다');
       }
+      overlay.style.display = 'flex';
+    }
+
+    function closeIssueToBundleModal() {
+      var overlay = document.getElementById('issueToBundleOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    function createNewBundleFromIssue() {
+      var titleInput = document.getElementById('newBundleTitleInput');
+      var dateInput = document.getElementById('newBundleDateInput');
+      var bundleTitle = titleInput ? titleInput.value.trim() : '';
+      if (!bundleTitle) { _showToast('배포 제목을 입력해주세요', 2000, 'error'); return; }
+      var bundleDate = dateInput ? dateInput.value : '';
+      var newBundle = {
+        id: _generateBundleId(),
+        title: bundleTitle,
+        targetDate: bundleDate || '',
+        status: 'planning',
+        projects: [],
+        issues: [_currentIssueId],
+        manualItems: [],
+        notes: '',
+        agentFeedback: [],
+        created: new Date().toISOString(),
+        createdBy: state.currentUser ? state.currentUser.uid : ''
+      };
+      _deployBundles.push(newBundle);
+      _saveDeployBundlesToLocal();
+      if (_fb.db) {
+        _fbDeploySkipNext = true;
+        var obj = {}; obj['deployBundles/' + newBundle.id] = newBundle;
+        _fb.db.ref().update(obj);
+      }
+      closeIssueToBundleModal();
+      _showToast('새 배포 "' + bundleTitle + '"에 이슈가 추가되었습니다');
     }
 
     function copyIssueAsNew(issueId) {
@@ -11403,6 +11505,7 @@ function renderIssues() {
       _saveDeployBundlesToLocal();
 
       if (_fb.db) {
+        _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + bundle.id] = bundle;
         _fb.db.ref().update(updateObj).catch(function(err) {
@@ -11442,6 +11545,7 @@ function renderIssues() {
       _saveDeployBundlesToLocal();
 
       if (_fb.db) {
+        _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + newBundle.id] = newBundle;
         _fb.db.ref().update(updateObj).catch(function(err) {
@@ -11558,7 +11662,7 @@ function renderIssues() {
 
       _deployBundles.unshift(bundle);
       _saveDeployBundlesToLocal();
-      if (_fb.db) { var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; _fb.db.ref().update(_obj1).catch(function(err){console.error(err);}); }
+      if (_fb.db) { _fbDeploySkipNext = true; var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; _fb.db.ref().update(_obj1).catch(function(err){console.error(err);}); }
       _addNotification('배포 번들 등록: ' + bundle.title, 'success');
 
       // Reset + close
@@ -16647,6 +16751,19 @@ function renderNotifList() {
           else if (tabId === 'issues') { _refreshIssueServiceFilter(); renderIssues(); }
           else if (tabId === 'deploy') renderDeployBundles();
           else if (tabId === 'team') renderTeam();
+          else if (tabId === 'schedule') {
+            renderGantt();
+            // 스케줄 탭 전환 시 오늘 날짜 위치로 스크롤 (1월로 리셋되는 버그 방지)
+            setTimeout(function() {
+              var gs = document.getElementById('ganttScroll');
+              if (gs && typeof daysSinceStart === 'function' && typeof DAY_WIDTH !== 'undefined') {
+                var todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1);
+                gs.scrollLeft = Math.max(0, todayOffset - 100);
+                var gh = document.querySelector('.gantt-header');
+                if (gh) gh.scrollLeft = gs.scrollLeft;
+              }
+            }, 60);
+          }
           else if (tabId === 'overview') renderOverview();
           else if (tabId === 'releasenotes') {
             if (_fb.db && _deployLogs.length === 0) loadDeployLogs();
@@ -16662,7 +16779,7 @@ function renderNotifList() {
             }
             renderHistory();
           }
-          else renderGantt();
+          // (기타 탭: schedule이 이미 위에서 처리되므로 여기는 도달 안 함)
         };
       });
 
@@ -17016,6 +17133,8 @@ function renderNotifList() {
     window.saveIssue = saveIssue;
     window.deleteIssue = deleteIssue;
     window.addIssueToBundle = addIssueToBundle;
+    window.closeIssueToBundleModal = closeIssueToBundleModal;
+    window.createNewBundleFromIssue = createNewBundleFromIssue;
     window.addIssueComment = addIssueComment;
     window.handleFileAttachment = handleFileAttachment;
     window.addAttachment = addAttachment;

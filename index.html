@@ -17052,6 +17052,10 @@ function renderNotifList() {
           chartHeader.style.top = hdrTop + 'px';
           chartHeader.style.left = chartArea.getBoundingClientRect().left + 'px';
           chartHeader.style.width = chartArea.offsetWidth + 'px';
+
+          // position:fixed 상태에서 scrollLeft 동기화 유지
+          var gs = document.getElementById('ganttScroll');
+          if (gs) chartHeader.scrollLeft = gs.scrollLeft;
         }
 
         function stick(appHeaderBottom, toolbarH, headerH) {
@@ -17059,6 +17063,10 @@ function renderNotifList() {
           var namesCol = document.querySelector('.gantt-names');
           var chartArea = document.querySelector('.gantt-chart-area');
           var schedRect = scheduleTab.getBoundingClientRect();
+
+          // sticky 전환 전 scrollLeft 보존 (position:fixed로 바뀌면 리셋됨)
+          var gs = document.getElementById('ganttScroll');
+          var savedScroll = gs ? gs.scrollLeft : 0;
 
           // Toolbar
           toolbar.classList.add('is-sticky');
@@ -17084,10 +17092,17 @@ function renderNotifList() {
           chartHeader.style.width = chartArea.offsetWidth + 'px';
           chartSpacer.style.display = 'block';
           chartSpacer.style.height = headerH + 'px';
+
+          // position:fixed 전환 후 scrollLeft 복원
+          chartHeader.scrollLeft = savedScroll;
         }
 
         function unstick() {
           _stickyActive = false;
+          // unstick 전 scrollLeft 보존
+          var gs = document.getElementById('ganttScroll');
+          var savedScroll = gs ? gs.scrollLeft : 0;
+
           toolbar.classList.remove('is-sticky');
           toolbar.style.top = '';
           toolbar.style.left = '';
@@ -17105,6 +17120,9 @@ function renderNotifList() {
           chartHeader.style.left = '';
           chartHeader.style.width = '';
           chartSpacer.style.display = 'none';
+
+          // position:fixed 해제 후 scrollLeft 복원
+          chartHeader.scrollLeft = savedScroll;
         }
 
         var _rafPending = false;

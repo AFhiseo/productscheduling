@@ -13137,9 +13137,13 @@ function renderDeployBundles() {
     }
 
     /* ========== GANTT CALCULATIONS ========== */
+    var _isRenderingGantt = false; // 렌더링 중 scroll sync 억제 플래그
     function renderGantt() {
       // 성능 가드: 스케줄 탭이 아니면 스킵
       if (state.currentTab !== 'schedule') return;
+
+      // 렌더링 시작: scroll sync 이벤트가 header를 0으로 리셋하지 않도록 차단
+      _isRenderingGantt = true;
 
       // Recalculate gantt range dynamically
       recalcGanttRange();
@@ -13148,9 +13152,14 @@ function renderDeployBundles() {
       const ganttBars = document.getElementById('ganttBars');
       const ganttHeader = document.getElementById('ganttHeader');
       const ganttScrollEl = document.getElementById('ganttScroll');
+      const barsContainerEl = document.getElementById('barsContainer');
 
       // 스크롤 위치 보존: innerHTML 비울 때 scrollLeft가 0으로 리셋되는 버그 방지
       var _savedScrollLeft = ganttScrollEl ? ganttScrollEl.scrollLeft : -1;
+
+      // bars 영역의 최소 너비를 미리 확보하여 innerHTML 비워도 scrollWidth가 유지됨
+      var preCalcWidth = TOTAL_DAYS * DAY_WIDTH * (state.zoom || 1);
+      if (barsContainerEl) barsContainerEl.style.minWidth = preCalcWidth + 'px';
 
       namesScroll.innerHTML = '';
       ganttBars.innerHTML = '';
@@ -13334,6 +13343,13 @@ function renderDeployBundles() {
           gs.scrollLeft = _scrollTarget;
           gh.scrollLeft = _scrollTarget;
         }
+
+        // barsContainer의 임시 minWidth 제거 (실제 bars 콘텐츠가 너비를 결정하도록)
+        var bc = document.getElementById('barsContainer');
+        if (bc) bc.style.minWidth = '';
+
+        // 렌더링 완료: scroll sync 다시 활성화
+        _isRenderingGantt = false;
       });
     }
 
@@ -16875,16 +16891,20 @@ function renderNotifList() {
           else if (tabId === 'team') renderTeam();
           else if (tabId === 'schedule') {
             renderGantt();
-            // 스케줄 탭 전환 시 오늘 날짜 위치로 스크롤 (1월로 리셋되는 버그 방지)
+            // 스케줄 탭 전환 시 추가 안전장치: renderGantt의 RAF 이후에 한번 더 확인
             setTimeout(function() {
+              if (_isRenderingGantt) return; // renderGantt가 아직 RAF 완료 전이면 충돌 방지
               var gs = document.getElementById('ganttScroll');
-              if (gs && typeof daysSinceStart === 'function' && typeof DAY_WIDTH !== 'undefined') {
-                var todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1);
-                gs.scrollLeft = Math.max(0, todayOffset - 100);
-                var gh = document.querySelector('.gantt-header');
-                if (gh) gh.scrollLeft = gs.scrollLeft;
+              var gh = document.getElementById('ganttHeaderEl');
+              if (gs && gh && typeof daysSinceStart === 'function' && typeof DAY_WIDTH !== 'undefined') {
+                // renderGantt의 RAF가 이미 올바른 위치를 설정했으므로, 0인 경우에만 보정
+                if (gs.scrollLeft < 10) {
+                  var todayOffset = daysSinceStart(TODAY) * DAY_WIDTH * (state.zoom || 1);
+                  gs.scrollLeft = Math.max(0, todayOffset - 100);
+                  gh.scrollLeft = gs.scrollLeft;
+                }
               }
-            }, 60);
+            }, 100);
           }
           else if (tabId === 'overview') renderOverview();
           else if (tabId === 'releasenotes') {
@@ -16963,10 +16983,12 @@ function renderNotifList() {
       };
 
       // Sync scroll between header and bars (horizontal)
+      // _isRenderingGantt 플래그로 렌더링 중 scroll 이벤트가 header를 0으로 리셋하는 것을 방지
       const ganttScroll = document.getElementById('ganttScroll');
       const ganttHeader = document.querySelector('.gantt-header');
       if (ganttScroll && ganttHeader) {
         ganttScroll.addEventListener('scroll', () => {
+          if (_isRenderingGantt) return; // 렌더링 중엔 sync 무시
           ganttHeader.scrollLeft = ganttScroll.scrollLeft;
         });
       }

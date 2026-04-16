@@ -14523,22 +14523,23 @@ function renderDeployBundles() {
         p.score = Math.round(((p.impact + p.urgency + p.dependency) / 3 - p.complexity * 0.1) * 10) / 10;
       }
       p.memo = document.getElementById('detailMemo') ? document.getElementById('detailMemo').value : (p.memo || '');
-      // Save links
+      // Save links — 편집 중인 input만 반영, read-only 링크는 유지
       var oldLinkCount = (p.links || []).length;
-      const linkTypes = document.querySelectorAll('.link-type-select');
-      const linkUrls = document.querySelectorAll('.link-url-input');
-      p.links = [];
-      linkTypes.forEach((sel, i) => {
-        const url = linkUrls[i].value.trim();
-        if (url) {
-          let type = sel.value;
-          if (type === '__custom__') {
-            const customInput = sel.parentElement.querySelector('.link-custom-type');
-            type = customInput ? customInput.value.trim() || '기타' : '기타';
-          }
-          p.links.push({ type, url });
+      if (!p.links) p.links = [];
+      document.querySelectorAll('.link-type-select').forEach(function(sel) {
+        var idx = parseInt(sel.getAttribute('data-link-idx'));
+        if (isNaN(idx)) return;
+        var urlInput = sel.parentElement.querySelector('.link-url-input');
+        var url = urlInput ? urlInput.value.trim() : '';
+        var type = sel.value;
+        if (type === '__custom__') {
+          var customInput = sel.parentElement.querySelector('.link-custom-type');
+          type = customInput ? customInput.value.trim() || '기타' : '기타';
         }
+        p.links[idx] = { type: type, url: url };
       });
+      // URL이 비어있는 링크 제거
+      p.links = p.links.filter(function(link) { return link && link.url && link.url.trim(); });
       // 변경 이력 기록
       if (oldName !== p.name) pushHistory('수정', pid, '이름', oldName, p.name);
       if (oldTier !== p.tier) pushHistory('수정', pid, '티어', oldTier, p.tier);
@@ -14566,17 +14567,17 @@ function renderDeployBundles() {
     function addLink() {
       if (!state.selectedProject) return;
       if (!state.selectedProject.links) state.selectedProject.links = [];
-      // 현재 입력값을 state에 반영
-      var linkTypes = document.querySelectorAll('.link-type-select');
-      var linkUrls = document.querySelectorAll('.link-url-input');
-      state.selectedProject.links = [];
-      linkTypes.forEach(function(sel, i) {
+      // 편집 중인 input만 state에 반영 (read-only 링크는 그대로 유지)
+      document.querySelectorAll('.link-type-select').forEach(function(sel) {
+        var idx = parseInt(sel.getAttribute('data-link-idx'));
+        if (isNaN(idx) || !state.selectedProject.links[idx]) return;
         var type = sel.value;
         if (type === '__custom__') {
           var ci = sel.parentElement.querySelector('.link-custom-type');
           type = ci ? ci.value.trim() || '기타' : '기타';
         }
-        state.selectedProject.links.push({ type: type, url: linkUrls[i].value });
+        var urlInput = sel.parentElement.querySelector('.link-url-input');
+        state.selectedProject.links[idx] = { type: type, url: urlInput ? urlInput.value : '' };
       });
       var newIdx = state.selectedProject.links.length;
       state.selectedProject.links.push({ type: '기획서', url: '' });
@@ -14608,30 +14609,35 @@ function renderDeployBundles() {
 
     function removeLink(idx) {
       if (!state.selectedProject || !state.selectedProject.links) return;
-      // 현재 입력값을 state에 반영
-      var linkTypes = document.querySelectorAll('.link-type-select');
-      var linkUrls = document.querySelectorAll('.link-url-input');
-      state.selectedProject.links = [];
-      linkTypes.forEach(function(sel, i) {
+      // 편집 중인 input만 state에 반영 (read-only 링크는 그대로 유지)
+      document.querySelectorAll('.link-type-select').forEach(function(sel) {
+        var linkIdx = parseInt(sel.getAttribute('data-link-idx'));
+        if (isNaN(linkIdx) || !state.selectedProject.links[linkIdx]) return;
         var type = sel.value;
         if (type === '__custom__') {
           var ci = sel.parentElement.querySelector('.link-custom-type');
           type = ci ? ci.value.trim() || '기타' : '기타';
         }
-        state.selectedProject.links.push({ type: type, url: linkUrls[i].value });
+        var urlInput = sel.parentElement.querySelector('.link-url-input');
+        state.selectedProject.links[linkIdx] = { type: type, url: urlInput ? urlInput.value : '' };
       });
       // DOM에서 해당 행만 제거
       var row = document.querySelector('[data-link-row="' + idx + '"]');
       if (row) row.remove();
       state.selectedProject.links.splice(idx, 1);
-      // data-link-idx 재정렬
+      // data-link-idx 재정렬 (read-only 행은 input이 없으므로 null 체크)
       document.querySelectorAll('.link-row').forEach(function(r, i) {
         r.setAttribute('data-link-row', i);
-        r.querySelector('.link-type-select').setAttribute('data-link-idx', i);
-        r.querySelector('.link-custom-type').setAttribute('data-link-idx', i);
-        r.querySelector('.link-url-input').setAttribute('data-link-idx', i);
+        var ts = r.querySelector('.link-type-select');
+        if (ts) ts.setAttribute('data-link-idx', i);
+        var ct = r.querySelector('.link-custom-type');
+        if (ct) ct.setAttribute('data-link-idx', i);
+        var ui = r.querySelector('.link-url-input');
+        if (ui) ui.setAttribute('data-link-idx', i);
         var delBtn = r.querySelector('button[title="삭제"]');
         if (delBtn) delBtn.setAttribute('onclick', 'removeLink(' + i + ')');
+        var editBtn = r.querySelector('button[title="수정"]');
+        if (editBtn) editBtn.setAttribute('onclick', 'editLinkInline(' + i + ')');
       });
     }
 

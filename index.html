@@ -14523,23 +14523,9 @@ function renderDeployBundles() {
         p.score = Math.round(((p.impact + p.urgency + p.dependency) / 3 - p.complexity * 0.1) * 10) / 10;
       }
       p.memo = document.getElementById('detailMemo') ? document.getElementById('detailMemo').value : (p.memo || '');
-      // Save links — 편집 중인 input만 반영, read-only 링크는 유지
+      // Save links — DOM의 모든 .link-row에서 수집 (read-only + input 모두)
       var oldLinkCount = (p.links || []).length;
-      if (!p.links) p.links = [];
-      document.querySelectorAll('.link-type-select').forEach(function(sel) {
-        var idx = parseInt(sel.getAttribute('data-link-idx'));
-        if (isNaN(idx)) return;
-        var urlInput = sel.parentElement.querySelector('.link-url-input');
-        var url = urlInput ? urlInput.value.trim() : '';
-        var type = sel.value;
-        if (type === '__custom__') {
-          var customInput = sel.parentElement.querySelector('.link-custom-type');
-          type = customInput ? customInput.value.trim() || '기타' : '기타';
-        }
-        p.links[idx] = { type: type, url: url };
-      });
-      // URL이 비어있는 링크 제거
-      p.links = p.links.filter(function(link) { return link && link.url && link.url.trim(); });
+      p.links = _collectLinksFromDOM();
       // 변경 이력 기록
       if (oldName !== p.name) pushHistory('수정', pid, '이름', oldName, p.name);
       if (oldTier !== p.tier) pushHistory('수정', pid, '티어', oldTier, p.tier);
@@ -14555,6 +14541,35 @@ function renderDeployBundles() {
       if (state.currentTab === 'projects') renderProjects();
     }
 
+    // 모든 .link-row에서 링크 데이터 수집 (read-only 행 + input 행 모두 지원)
+    function _collectLinksFromDOM() {
+      var links = [];
+      document.querySelectorAll('.link-row').forEach(function(row) {
+        var sel = row.querySelector('.link-type-select');
+        var urlInput = row.querySelector('.link-url-input');
+        if (sel && urlInput) {
+          // input 편집 모드
+          var type = sel.value;
+          if (type === '__custom__') {
+            var ci = row.querySelector('.link-custom-type');
+            type = ci ? ci.value.trim() || '기타' : '기타';
+          }
+          var url = urlInput.value.trim();
+          if (url) links.push({ type: type, url: url });
+        } else {
+          // read-only 모드: state에서 해당 인덱스 링크 유지
+          var idx = parseInt(row.getAttribute('data-link-row'));
+          if (!isNaN(idx) && state.selectedProject && state.selectedProject.links && state.selectedProject.links[idx]) {
+            var existing = state.selectedProject.links[idx];
+            if (existing.url && existing.url.trim()) {
+              links.push({ type: existing.type, url: existing.url });
+            }
+          }
+        }
+      });
+      return links;
+    }
+
     function _buildLinkRowHTML(idx) {
       return '<div class="link-row" data-link-row="' + idx + '" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">' +
         '<select class="detail-input link-type-select" data-link-idx="' + idx + '" style="width:90px;flex-shrink:0;font-size:12px;padding:4px 6px;" onchange="var ci=this.parentElement.querySelector(\'.link-custom-type\');if(ci)ci.style.display=this.value===\'__custom__\'?\'block\':\'none\';">' +
@@ -14567,18 +14582,18 @@ function renderDeployBundles() {
     function addLink() {
       if (!state.selectedProject) return;
       if (!state.selectedProject.links) state.selectedProject.links = [];
-      // 편집 중인 input만 state에 반영 (read-only 링크는 그대로 유지)
-      document.querySelectorAll('.link-type-select').forEach(function(sel) {
-        var idx = parseInt(sel.getAttribute('data-link-idx'));
-        if (isNaN(idx) || !state.selectedProject.links[idx]) return;
-        var type = sel.value;
-        if (type === '__custom__') {
-          var ci = sel.parentElement.querySelector('.link-custom-type');
-          type = ci ? ci.value.trim() || '기타' : '기타';
+      // DOM에서 현재 모든 링크 수집 후 state 갱신
+      var currentLinks = _collectLinksFromDOM();
+      // 아직 URL 미입력 상태인 input 행도 보존
+      document.querySelectorAll('.link-row').forEach(function(row) {
+        var urlInput = row.querySelector('.link-url-input');
+        if (urlInput && !urlInput.value.trim()) {
+          var sel = row.querySelector('.link-type-select');
+          var type = sel ? sel.value : '기획서';
+          currentLinks.push({ type: type, url: '' });
         }
-        var urlInput = sel.parentElement.querySelector('.link-url-input');
-        state.selectedProject.links[idx] = { type: type, url: urlInput ? urlInput.value : '' };
       });
+      state.selectedProject.links = currentLinks;
       var newIdx = state.selectedProject.links.length;
       state.selectedProject.links.push({ type: '기획서', url: '' });
       // DOM에 새 행만 추가 (패널 전체를 다시 그리지 않음)
@@ -14609,18 +14624,6 @@ function renderDeployBundles() {
 
     function removeLink(idx) {
       if (!state.selectedProject || !state.selectedProject.links) return;
-      // 편집 중인 input만 state에 반영 (read-only 링크는 그대로 유지)
-      document.querySelectorAll('.link-type-select').forEach(function(sel) {
-        var linkIdx = parseInt(sel.getAttribute('data-link-idx'));
-        if (isNaN(linkIdx) || !state.selectedProject.links[linkIdx]) return;
-        var type = sel.value;
-        if (type === '__custom__') {
-          var ci = sel.parentElement.querySelector('.link-custom-type');
-          type = ci ? ci.value.trim() || '기타' : '기타';
-        }
-        var urlInput = sel.parentElement.querySelector('.link-url-input');
-        state.selectedProject.links[linkIdx] = { type: type, url: urlInput ? urlInput.value : '' };
-      });
       // DOM에서 해당 행만 제거
       var row = document.querySelector('[data-link-row="' + idx + '"]');
       if (row) row.remove();
@@ -16707,21 +16710,8 @@ function renderDeployBundles() {
       var score = Math.round(((state.selectedProject.impact + state.selectedProject.urgency + state.selectedProject.dependency) / 3 - state.selectedProject.complexity * 0.1) * 10) / 10;
       state.selectedProject.score = score;
       state.selectedProject.bizScore = score;
-      // Save links (커스텀 타입 처리 포함)
-      var linkTypes = document.querySelectorAll('.link-type-select');
-      var linkUrls = document.querySelectorAll('.link-url-input');
-      state.selectedProject.links = [];
-      linkTypes.forEach(function(sel, i) {
-        var url = linkUrls[i].value.trim();
-        if (url) {
-          var type = sel.value;
-          if (type === '__custom__') {
-            var customInput = sel.parentElement.querySelector('.link-custom-type');
-            type = customInput ? customInput.value.trim() || '기타' : '기타';
-          }
-          state.selectedProject.links.push({ type: type, url: url });
-        }
-      });
+      // Save links — DOM의 모든 .link-row에서 수집
+      state.selectedProject.links = _collectLinksFromDOM();
       // serviceTypes는 체크박스 onchange에서 이미 state.selectedProject.serviceTypes에 저장됨
       if (!state.selectedProject.serviceTypes) state.selectedProject.serviceTypes = [];
 

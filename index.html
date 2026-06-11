@@ -4868,6 +4868,10 @@
           if (typeof updateUserHeader === 'function') updateUserHeader();
         }
         if (state.currentTab === 'team' && typeof renderTeam === 'function') renderTeam();
+      }, function(err) {
+        // 권한 거부 등으로 리스너가 취소된 경우 — 로그인 후 재등록 가능하게 가드 해제
+        _teamV2Watching = false;
+        console.warn('[Team] teamV2 리스너 취소:', err && err.message);
       });
     }
     // 중복 멤버 자동 병합: 같은 이메일의 auto_ 멤버를 기존 멤버로 흡수
@@ -5117,6 +5121,7 @@
         _authReady = true;
         if (user) {
           console.log('Auth: user signed in -', user.email);
+          var _handleAuthedUser = function(user) {
           if (user.email && _isEmailAllowed(user.email)) {
             state.currentUser = {
               uid: user.uid,
@@ -5220,6 +5225,21 @@
             firebase.auth().signOut();
             showLoginScreen();
             showLoginError('접근 권한이 없습니다. aboutfishing.kr 계정 또는 허용된 계정으로 로그인해주세요.');
+          }
+          }; // _handleAuthedUser 끝
+
+          if (!_teamLoadedFromFB && _fb.db && !_fb._settingsRetried) {
+            // 익명 상태에서 settings/projects 읽기가 규칙(auth != null)에 의해 거부된 케이스.
+            // 로그인 토큰이 생겼으니 리스너를 재등록하고 설정을 다시 불러온 뒤 진행한다.
+            _fb._settingsRetried = true;
+            console.warn('[Auth] 팀 설정 미로딩 — 로그인 토큰으로 재시도');
+            try { if (_fb.ref) _fb.ref.off('value'); } catch(e) {}
+            try { dbRef('settings/deployVersion').off('value'); } catch(e) {}
+            try { dbRef('.info/connected').off('value'); } catch(e) {}
+            _startFirebaseSync();
+            _loadSettingsFromFirebase(function() { _handleAuthedUser(user); });
+          } else {
+            _handleAuthedUser(user);
           }
         } else {
           console.log('Auth: no user, showing login');

@@ -3805,6 +3805,7 @@
             </button>
             <div id="adminMenu" style="display:none;position:absolute;top:100%;right:0;background:white;border:1px solid #e5e7eb;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.12);z-index:300;min-width:130px;margin-top:4px;overflow:hidden;">
               <button id="memberMgmtBtn" onclick="openMemberManagement();toggleAdminMenu()" style="display:block;width:100%;padding:9px 14px;text-align:left;font-size:12px;border:none;background:white;cursor:pointer;color:#374151;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">👥 팀원 관리</button>
+              <button onclick="openMediaSettings();toggleAdminMenu()" style="display:block;width:100%;padding:9px 14px;text-align:left;font-size:12px;border:none;background:white;cursor:pointer;color:#374151;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">🖼 미디어 저장소 설정</button>
               <button id="serviceMgmtBtn" onclick="openServiceTypeManagement();toggleAdminMenu()" style="display:block;width:100%;padding:9px 14px;text-align:left;font-size:12px;border:none;background:white;cursor:pointer;color:#374151;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">⚙️ 서비스 관리</button>
             </div>
           </div>
@@ -4812,14 +4813,97 @@
     const TEAM = [
       { id: 'seo', name: '서현일', role: 'CPO (PM겸임)', color: '#6366f1', email: 'hiseo@aboutfishing.kr' },
       { id: 'koo', name: '구범모', role: '서비스기획/PM', color: '#8b5cf6', email: 'bmkoo@aboutfishing.kr' },
-      { id: 'kim_hc', name: '김현철', role: 'CDO', color: '#a855f7', email: '' },
+      { id: 'kim_hc', name: '김현철', role: 'CDO', color: '#a855f7', email: 'hckim@aboutfishing.kr' },
       { id: 'jung', name: '정지섭', role: '웹 프론트엔드', color: '#06b6d4', email: 'jsjung@aboutfishing.kr' },
       { id: 'shin', name: '신진섭', role: '웹/앱 프론트엔드', color: '#0891b2', email: 'jsshin@aboutfishing.kr' },
       { id: 'choi', name: '최상수', role: '백엔드/인프라', color: '#10b981', email: 'sschoi@aboutfishing.kr' },
-      { id: 'kang', name: '강상배', role: '백엔드/인프라', color: '#059669', email: 'sbkang@aboutfishing.kr' },
+      { id: 'kang', name: '강상배', role: '백엔드/인프라', color: '#059669', email: 'sangbaekang@aboutfishing.kr' },
       { id: 'song', name: '송창석', role: '웹 프론트엔드', color: '#0ea5e9', email: 'songcs0329@gmail.com' },
-      { id: 'kim_cr', name: '김채린', role: 'QA', color: '#f43f5e', email: '' }
+      { id: 'kim_cr', name: '김채린', role: 'QA', color: '#f43f5e', email: 'crkim@aboutfishing.kr' }
     ];
+
+    // === teamV2: 팀원 데이터 저장 구조 (id 키 객체) ===
+    // 기존 settings/team(배열 전체 set)은 stale 클라이언트가 전체를 덮어써서
+    // 권한/이메일이 계속 초기화되는 버그가 있었음 → 멤버별 경로 단위로만 쓴다.
+    var _teamLoadedFromFB = false;   // Firebase에서 팀 데이터를 실제로 받아왔는지
+    var _teamV2Watching = false;
+    var CORE_TEAM_IDS = ['seo', 'koo', 'kim_hc', 'jung', 'shin', 'choi', 'kang', 'song', 'kim_cr'];
+    function _teamSort(arr) {
+      return arr.sort(function(a, b) { return (a.order !== undefined ? a.order : 999) - (b.order !== undefined ? b.order : 999); });
+    }
+    function _applyTeamArr(arr) {
+      TEAM.length = 0;
+      _teamSort(arr).forEach(function(m) { if (m && m.id) TEAM.push(m); });
+      _ensurePermissionField();
+      localStorage.setItem('af_team', JSON.stringify(TEAM));
+    }
+    function _teamToObj() {
+      var o = {};
+      TEAM.forEach(function(m, i) { m.order = i; o[m.id] = m; });
+      return o;
+    }
+    function _migrateTeamToV2() {
+      if (!_fb.db || !_teamLoadedFromFB) return;
+      dbRef('settings/teamV2').once('value', function(snap) {
+        if (snap.val()) return; // 이미 존재 — 마이그레이션 불필요
+        dbRef('settings/teamV2').set(_teamToObj());
+        console.log('[Team] settings/team → settings/teamV2 마이그레이션 완료');
+      });
+    }
+    function _watchTeamV2() {
+      if (_teamV2Watching || !_fb.db) return;
+      _teamV2Watching = true;
+      dbRef('settings/teamV2').on('value', function(snap) {
+        var d = snap.val();
+        if (!d || typeof d !== 'object') return;
+        var arr = Object.keys(d).map(function(k) { return d[k]; }).filter(Boolean);
+        if (!arr.length) return;
+        _applyTeamArr(arr);
+        _teamLoadedFromFB = true;
+        // 권한 변경이 실시간 반영되도록 UI 갱신
+        if (state.currentUser && typeof _applyReadOnlyUI === 'function') {
+          var linked = _getLinkedMember(state.currentUser.email);
+          if (linked) { state.currentUser.memberId = linked.id; state.currentUser.memberName = linked.name; }
+          _applyReadOnlyUI();
+          if (typeof updateUserHeader === 'function') updateUserHeader();
+        }
+        if (state.currentTab === 'team' && typeof renderTeam === 'function') renderTeam();
+      });
+    }
+    // 중복 멤버 자동 병합: 같은 이메일의 auto_ 멤버를 기존 멤버로 흡수
+    function _dedupeTeamByEmail() {
+      if (!_teamLoadedFromFB || !_fb.db || !state.currentUser) return;
+      var byEmail = {};
+      TEAM.forEach(function(m) {
+        var e = (m.email || '').toLowerCase().trim();
+        if (!e) return;
+        if (!byEmail[e]) byEmail[e] = [];
+        byEmail[e].push(m);
+      });
+      Object.keys(byEmail).forEach(function(e) {
+        var list = byEmail[e];
+        if (list.length < 2) return;
+        // keeper: auto_/member_ 가 아닌 정식 멤버 우선
+        var keeper = list.find(function(m) { return m.id.indexOf('auto_') !== 0 && m.id.indexOf('member_') !== 0; }) || list[0];
+        list.forEach(function(dup) {
+          if (dup.id === keeper.id) return;
+          if (dup.permission === 'write' && keeper.permission !== 'write') {
+            keeper.permission = 'write';
+            dbRef('settings/teamV2/' + keeper.id + '/permission').set('write');
+          }
+          if (dup.uid && !keeper.uid) {
+            keeper.uid = dup.uid;
+            dbRef('settings/teamV2/' + keeper.id + '/uid').set(dup.uid);
+          }
+          var idx = TEAM.indexOf(dup);
+          if (idx >= 0) TEAM.splice(idx, 1);
+          dbRef('settings/teamV2/' + dup.id).remove();
+          dbRef('presence/' + dup.id).remove();
+          console.log('[Team] 중복 멤버 병합:', dup.id, '→', keeper.id, '(' + e + ')');
+        });
+      });
+      localStorage.setItem('af_team', JSON.stringify(TEAM));
+    }
 
     // 로그인 허용 예외 이메일 목록 (aboutfishing.kr 외)
     var _allowedEmails = ['songcs0329@gmail.com'];
@@ -4828,7 +4912,7 @@
     }
     function _saveAllowedEmails() {
       localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails));
-      if (_fb.db) _fb.db.ref('settings/allowedEmails').set(_allowedEmails);
+      if (_fb.db) dbRef('settings/allowedEmails').set(_allowedEmails);
     }
 
     // === 권한 시스템: read(읽기전용) / write(읽기+쓰기) ===
@@ -4871,12 +4955,12 @@
         data.email = state.currentUser.email || '';
         data.displayName = state.currentUser.displayName || '';
       }
-      _fb.db.ref('presence/' + memberId).update(data);
+      dbRef('presence/' + memberId).update(data);
     }
 
     function _loadPresence() {
       if (!_fb.db) return;
-      _fb.db.ref('presence').on('value', function(snap) {
+      dbRef('presence').on('value', function(snap) {
         _memberPresence = snap.val() || {};
         if (state.currentTab === 'team') renderTeam();
       });
@@ -4891,7 +4975,7 @@
     // 강제 로그아웃 (세션 만료) 시스템
     function _revokeSession(memberId) {
       if (!_fb.db) return;
-      _fb.db.ref('presence/' + memberId).update({ revoked: Date.now() });
+      dbRef('presence/' + memberId).update({ revoked: Date.now() });
       _showToast('세션 만료 처리됨');
     }
 
@@ -4899,12 +4983,12 @@
       if (!_fb.db || !state.currentUser || !state.currentUser.memberId) return;
       var myId = state.currentUser.memberId;
       // 실시간으로 revoked 감지
-      _fb.db.ref('presence/' + myId + '/revoked').on('value', function(snap) {
+      dbRef('presence/' + myId + '/revoked').on('value', function(snap) {
         var revokedAt = snap.val();
         if (revokedAt && revokedAt > (state.currentUser._loginTime || 0)) {
           // 내 세션이 만료됨 → 강제 로그아웃
           alert('관리자에 의해 세션이 만료되었습니다. 다시 로그인해주세요.');
-          _fb.db.ref('presence/' + myId + '/revoked').off();
+          dbRef('presence/' + myId + '/revoked').off();
           logoutUser();
         }
       });
@@ -5044,8 +5128,23 @@
             // TEAM 멤버 자동 연동
             var linked = _getLinkedMember(user.email);
             var _isNewMember = false;
-            if (!linked) {
-              // TEAM에 없는 신규 직원 → 읽기 권한으로 자동 등록
+            if (!linked && !_teamLoadedFromFB) {
+              // ⚠ 팀 데이터를 Firebase에서 받지 못한 상태 (타임아웃/오류).
+              // 이 상태에서 등록/쓰기를 하면 운영 팀 데이터를 오염시키므로
+              // 게스트(읽기전용, 저장 안 함)로만 진입시킨다.
+              console.warn('[Auth] 팀 데이터 미로딩 — 게스트 모드로 진입 (DB에 아무것도 쓰지 않음)');
+              linked = {
+                id: 'guest_' + user.uid.substring(0, 8),
+                name: user.displayName || user.email.split('@')[0],
+                role: '게스트 (팀 데이터 로딩 실패 — 새로고침 해주세요)',
+                color: '#9ca3af',
+                email: user.email.toLowerCase(),
+                permission: 'read',
+                _guest: true
+              };
+              _showToast('팀 데이터를 불러오지 못해 읽기전용으로 접속했습니다. 새로고침 해주세요.', 4000, 'error');
+            } else if (!linked) {
+              // TEAM에 없는 신규 직원 → 읽기 권한으로 자동 등록 (해당 멤버 노드만 추가)
               _isNewMember = true;
               var _newId = 'auto_' + Date.now();
               var _newName = user.displayName || user.email.split('@')[0];
@@ -5055,19 +5154,18 @@
                 role: '신규 접속자',
                 color: '#9ca3af',
                 email: user.email.toLowerCase(),
-                permission: 'read'
+                permission: 'read',
+                board: false,
+                order: TEAM.length
               };
               TEAM.push(_newMember);
-              // TEAM 데이터 Firebase + localStorage 즉시 저장
               localStorage.setItem('af_team', JSON.stringify(TEAM));
               if (_fb.db) {
-                _fb.db.ref('settings/team').set(TEAM);
+                dbRef('settings/teamV2/' + _newId).set(_newMember); // ← 전체 set 금지, 본인 노드만
               }
-              _saveAllowedEmails(); // 허용 이메일 동기화
               linked = _newMember;
-              // Firebase에 신규 접속 알림 기록
               if (_fb.db) {
-                _fb.db.ref('notifications/newMembers').push({
+                dbRef('notifications/newMembers').push({
                   name: _newName,
                   email: user.email,
                   timestamp: new Date().toISOString()
@@ -5077,21 +5175,23 @@
             }
             state.currentUser.memberId = linked.id;
             state.currentUser.memberName = linked.name;
-            // Firebase UID를 TEAM 멤버에 저장 (권한 동기화용)
-            if (!linked.uid || linked.uid !== user.uid) {
+            // Firebase UID를 TEAM 멤버에 저장 (권한 동기화용) — 본인 uid 필드만 갱신
+            if (!linked._guest && (!linked.uid || linked.uid !== user.uid)) {
               linked.uid = user.uid;
               localStorage.setItem('af_team', JSON.stringify(TEAM));
               if (_fb.db) {
-                _fb.db.ref('settings/team').set(TEAM);
+                dbRef('settings/teamV2/' + linked.id + '/uid').set(user.uid);
               }
             }
+            // 같은 이메일로 중복 등록된 멤버 자동 병합 (예: 강상배 이메일 불일치로 생긴 auto_ 멤버)
+            try { _dedupeTeamByEmail(); } catch(e) { console.warn('dedupe fail', e); }
             // userPermissions 경로 동기화 (Firebase 보안 규칙용)
             if (_fb.db) {
               var perm = linked.permission || 'read';
               if (perm === 'write') {
-                _fb.db.ref('settings/userPermissions/' + user.uid).set(true);
+                dbRef('settings/userPermissions/' + user.uid).set(true);
               } else {
-                _fb.db.ref('settings/userPermissions/' + user.uid).remove();
+                dbRef('settings/userPermissions/' + user.uid).remove();
               }
             }
             _updatePresence(linked.id, true);
@@ -5393,7 +5493,7 @@
         '<h3>필터 & 검색</h3><p>상태/프로덕트/심각도/검색어 필터 조합 가능. 활성 필터는 칩으로 표시되며 개별 또는 전체 초기화 가능. "고급 필터 ▾"를 펼치면 결함 타입, 우선순위, 배포 상태 필터도 사용 가능합니다.</p><p>검색창에 키워드 입력 시 카드 내 매칭 텍스트가 <mark style="background:#fef08a;">하이라이트</mark> 됩니다. 단축키: <span class="sc">/</span></p>' +
         '<h3>일괄 처리</h3><p>이슈 카드의 체크박스로 여러 이슈를 선택 후 "상태 변경" 또는 "담당자 변경" 일괄 처리 가능합니다.</p>' +
         '<h3>이슈 상세 패널</h3><p>이슈 카드 클릭 시 우측에 상세 패널이 열립니다. 제목 클릭으로 인라인 수정, 상태 드롭다운으로 즉시 변경, 코멘트 스레드 확인/작성 가능합니다. 이슈 ID 옆 "복사" 버튼으로 ID를 클립보드에 복사합니다.</p>' +
-        '<h3>코멘트 입력 (v1.17 개선)</h3><p>코멘트 입력 영역이 Linear/GitHub 스타일로 개편되었습니다. 입력창에 텍스트를 입력하면 "등록" 버튼이 활성화되며, <span class="sc">Enter</span>로 전송, <span class="sc">Shift+Enter</span>로 줄바꿈합니다. 글자수 카운터(0/500)가 하단에 표시되며 400자 초과 시 경고 색상으로 변경됩니다.</p><ul><li><strong>파일 첨부 (v1.17)</strong> — "📎 첨부" 버튼으로 이미지 또는 동영상을 코멘트에 직접 첨부 가능합니다 (2MB 이하)</li><li><strong>@mention 자동완성 (v1.17)</strong> — @ 기호 입력 후 팀원 이름 검색 시 드롭다운에서 팀원을 선택하면 해당 팀원에게 자동 알림 발송</li></ul>' +
+        '<h3>코멘트 입력 (v1.17 개선)</h3><p>코멘트 입력 영역이 Linear/GitHub 스타일로 개편되었습니다. 입력창에 텍스트를 입력하면 "등록" 버튼이 활성화되며, <span class="sc">Enter</span>로 전송, <span class="sc">Shift+Enter</span>로 줄바꿈합니다. 글자수 카운터(0/500)가 하단에 표시되며 400자 초과 시 경고 색상으로 변경됩니다.</p><ul><li><strong>파일 첨부 (v1.17)</strong> — "📎 첨부" 버튼으로 이미지 또는 동영상을 코멘트에 직접 첨부 가능합니다 (미디어 저장소 연동 시 원본 화질, 최대 100MB)</li><li><strong>@mention 자동완성 (v1.17)</strong> — @ 기호 입력 후 팀원 이름 검색 시 드롭다운에서 팀원을 선택하면 해당 팀원에게 자동 알림 발송</li></ul>' +
         '<h3>기한 표시</h3><ul><li><strong>⚠️ 기한 초과</strong> — 기한이 지난 이슈 (빨강)</li><li><strong>🔥 D-N</strong> — 3일 이내 (주황)</li><li><strong>D-N</strong> — 7일 이내 (노랑)</li></ul>' +
         '<h3>키보드 단축키</h3>' +
         '<table><thead><tr><th>단축키</th><th>기능</th></tr></thead><tbody>' +
@@ -5643,7 +5743,7 @@
       state.projects.forEach(function(proj) {
         var path = 'chats/project/' + proj.id;
         // Get last message
-        _fb.db.ref(path).orderByChild('timestamp').limitToLast(1).once('value', function(snap) {
+        dbRef(path).orderByChild('timestamp').limitToLast(1).once('value', function(snap) {
           snap.forEach(function(child) {
             var msg = child.val();
             if (msg) {
@@ -5655,7 +5755,7 @@
           // Count unread
           var lastRead = _roomState[proj.id].lastRead;
           if (lastRead > 0) {
-            _fb.db.ref(path).orderByChild('timestamp').startAt(lastRead + 1).once('value', function(unreadSnap) {
+            dbRef(path).orderByChild('timestamp').startAt(lastRead + 1).once('value', function(unreadSnap) {
               var count = 0;
               var hasMention = false;
               unreadSnap.forEach(function(c) {
@@ -5675,7 +5775,7 @@
         });
 
         // Live listener for new messages in each room
-        var liveRef = _fb.db.ref(path).orderByChild('timestamp').startAt(Date.now());
+        var liveRef = dbRef(path).orderByChild('timestamp').startAt(Date.now());
         var listener = liveRef.on('child_added', function(snap) {
           var msg = snap.val();
           if (!msg) return;
@@ -5923,7 +6023,7 @@
       messagesEl.innerHTML = '';
 
       var path = 'chats/issue/' + issueId;
-      var initRef = _fb.db.ref(path).orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
+      var initRef = dbRef(path).orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
       initRef.once('value', function(snapshot) {
         var msgs = [];
         snapshot.forEach(function(child) { msgs.push(Object.assign({ key: child.key }, child.val())); });
@@ -5931,7 +6031,7 @@
         setTimeout(function() { messagesEl.scrollTop = messagesEl.scrollHeight; }, 50);
       });
 
-      var liveRef = _fb.db.ref(path).orderByChild('timestamp').startAt(Date.now());
+      var liveRef = dbRef(path).orderByChild('timestamp').startAt(Date.now());
       var listener = liveRef.on('child_added', function(snap) {
         var msg = snap.val();
         if (msg) appendChatMessage(msg, 'issueChatMessages');
@@ -6029,7 +6129,7 @@
       messagesEl.innerHTML = '';
       _chatPage.globalOldest = null;
 
-      var initRef = _fb.db.ref('chats/global').orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
+      var initRef = dbRef('chats/global').orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
       initRef.once('value', function(snapshot) {
         var msgs = [];
         snapshot.forEach(function(child) { msgs.push({ key: child.key, ...child.val() }); });
@@ -6037,7 +6137,7 @@
         msgs.forEach(function(msg) { appendChatMessage(msg, 'globalChatMessages'); });
       });
 
-      var liveRef = _fb.db.ref('chats/global').orderByChild('timestamp').startAt(Date.now());
+      var liveRef = dbRef('chats/global').orderByChild('timestamp').startAt(Date.now());
       var listener = liveRef.on('child_added', function(snap) {
         var msg = snap.val();
         if (msg) {
@@ -6050,7 +6150,7 @@
       messagesEl.onscroll = function() {
         if (messagesEl.scrollTop < 40 && !_chatPage.globalLoading && _chatPage.globalOldest) {
           _chatPage.globalLoading = true;
-          var olderRef = _fb.db.ref('chats/global').orderByChild('timestamp').endAt(_chatPage.globalOldest - 1).limitToLast(CHAT_PAGE_SIZE);
+          var olderRef = dbRef('chats/global').orderByChild('timestamp').endAt(_chatPage.globalOldest - 1).limitToLast(CHAT_PAGE_SIZE);
           olderRef.once('value', function(snapshot) {
             var msgs = [];
             snapshot.forEach(function(child) { msgs.push({ key: child.key, ...child.val() }); });
@@ -6080,7 +6180,7 @@
       _chatPage.projectOldest = null;
 
       var path = 'chats/project/' + projId;
-      var initRef = _fb.db.ref(path).orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
+      var initRef = dbRef(path).orderByChild('timestamp').limitToLast(CHAT_PAGE_SIZE);
       initRef.once('value', function(snapshot) {
         var msgs = [];
         snapshot.forEach(function(child) { msgs.push({ key: child.key, ...child.val() }); });
@@ -6088,7 +6188,7 @@
         msgs.forEach(function(msg) { appendChatMessage(msg, 'projectChatMessages'); });
       });
 
-      var liveRef = _fb.db.ref(path).orderByChild('timestamp').startAt(Date.now());
+      var liveRef = dbRef(path).orderByChild('timestamp').startAt(Date.now());
       var listener = liveRef.on('child_added', function(snap) {
         var msg = snap.val();
         if (msg) {
@@ -6108,7 +6208,7 @@
       messagesEl.onscroll = function() {
         if (messagesEl.scrollTop < 40 && !_chatPage.projectLoading && _chatPage.projectOldest) {
           _chatPage.projectLoading = true;
-          var olderRef = _fb.db.ref(path).orderByChild('timestamp').endAt(_chatPage.projectOldest - 1).limitToLast(CHAT_PAGE_SIZE);
+          var olderRef = dbRef(path).orderByChild('timestamp').endAt(_chatPage.projectOldest - 1).limitToLast(CHAT_PAGE_SIZE);
           olderRef.once('value', function(snapshot) {
             var msgs = [];
             snapshot.forEach(function(child) { msgs.push({ key: child.key, ...child.val() }); });
@@ -6238,7 +6338,7 @@
         timestamp: firebase.database.ServerValue.TIMESTAMP
       };
 
-      _fb.db.ref(path).push(msg).then(function() {
+      dbRef(path).push(msg).then(function() {
         textEl.value = '';
       }).catch(function(err) {
         console.error('Chat send error:', err);
@@ -6517,13 +6617,13 @@
           localStorage.setItem('af_adminMode', 'true');
           // 어드민 비밀번호로 인증된 사용자 → 자동으로 쓰기 권한 부여 (부트스트랩)
           if (_fb.db && state.currentUser && state.currentUser.uid) {
-            _fb.db.ref('settings/userPermissions/' + state.currentUser.uid).set(true);
+            dbRef('settings/userPermissions/' + state.currentUser.uid).set(true);
             // 현재 사용자의 TEAM 멤버 권한도 write로 업데이트
             var linked = _getLinkedMember(state.currentUser.email);
             if (linked && linked.permission !== 'write') {
               linked.permission = 'write';
               localStorage.setItem('af_team', JSON.stringify(TEAM));
-              _fb.db.ref('settings/team').set(TEAM);
+              if (!linked._guest) dbRef('settings/teamV2/' + linked.id + '/permission').set('write');
             }
           }
           _showToast('관리자 모드 활성화', 2000, 'success');
@@ -6580,6 +6680,7 @@
                   '<input type="text" value="' + m.role + '" style="width:130px;padding:4px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:12px;color:#6b7280;" data-member-field="role" data-member-idx="' + i + '">' +
                   '<input type="color" value="' + m.color + '" style="width:28px;height:28px;border:none;cursor:pointer;" data-member-field="color" data-member-idx="' + i + '">' +
                   '<button onclick="_togglePermission(' + i + ')" style="cursor:pointer;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap;' + permBtnStyle + '" title="클릭하여 권한 변경">' + permLabel + '</button>' +
+                  '<label style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#6b7280;cursor:pointer;white-space:nowrap;" title="팀 탭(멤버별 할당 프로젝트 보드)에 이 멤버를 표시할지 여부 — 플랫폼개발팀만 켜두세요"><input type="checkbox" data-member-field="board" data-member-idx="' + i + '"' + (_isOnBoard(m) ? ' checked' : '') + '> 팀보드</label>' +
                   (isAutoMember ? '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-weight:600;">신규</span>' : '') +
                 '</div>' +
                 '<div style="display:flex;gap:6px;align-items:center;">' +
@@ -6618,6 +6719,65 @@
       document.body.appendChild(overlay);
     }
 
+    function openMediaSettings() {
+      if (!state.adminMode) { alert('관리자 모드에서만 사용 가능합니다.'); return; }
+      var existing = document.getElementById('mediaSettingsOverlay');
+      if (existing) existing.remove();
+      var overlay = document.createElement('div');
+      overlay.className = 'modal-overlay show';
+      overlay.id = 'mediaSettingsOverlay';
+      overlay.onclick = function(e) { if (e.target === overlay) { overlay.remove(); _unlockBodyScroll(); } };
+      _lockBodyScroll();
+      var modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.style.maxWidth = '520px';
+      var statusHTML = _mediaConfigured()
+        ? '<div style="font-size:12px;color:#15803d;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:12px;">✅ Cloudinary 연동 활성 — 사진/동영상이 원본 화질로 업로드됩니다 (최대 100MB)</div>'
+        : '<div style="font-size:12px;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;margin-bottom:12px;">⚠️ 미연동 — 현재는 Firebase RTDB(base64)에 저장되어 이미지는 압축되고 동영상은 8MB 제한이 있습니다</div>';
+      modal.innerHTML = '<h3 style="margin-bottom:12px;font-size:16px;font-weight:700;">🖼 미디어 저장소 설정 (Cloudinary)</h3>' +
+        statusHTML +
+        '<div style="font-size:12px;color:#6b7280;line-height:1.6;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;margin-bottom:12px;">' +
+          '<b>설정 방법 (5분, 무료 25GB):</b><br>' +
+          '1. <a href="https://cloudinary.com/users/register_free" target="_blank" style="color:#6366f1;">cloudinary.com</a> 무료 가입 (카드 등록 불필요)<br>' +
+          '2. Dashboard에서 <b>Cloud Name</b> 복사 → 아래 입력<br>' +
+          '3. Settings → Upload → <b>Upload presets</b> → Add upload preset → Signing Mode를 <b>Unsigned</b>로 생성 → preset 이름 복사 → 아래 입력<br>' +
+          '4. 저장하면 모든 팀원에게 즉시 적용됩니다' +
+        '</div>' +
+        '<div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Cloud Name</label>' +
+        '<input type="text" id="mediaCloudName" value="' + _escHtml((_mediaConfig && _mediaConfig.cloudName) || '') + '" placeholder="예: aboutfishing" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;box-sizing:border-box;"></div>' +
+        '<div style="margin-bottom:16px;"><label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Upload Preset (Unsigned)</label>' +
+        '<input type="text" id="mediaUploadPreset" value="' + _escHtml((_mediaConfig && _mediaConfig.uploadPreset) || '') + '" placeholder="예: af_dashboard" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;box-sizing:border-box;"></div>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button onclick="saveMediaSettings()" class="btn" style="font-size:13px;background:#10b981;">저장</button>' +
+          '<button onclick="clearMediaSettings()" class="btn btn-secondary" style="font-size:13px;color:#dc2626;">연동 해제</button>' +
+          '<button onclick="document.getElementById(\'mediaSettingsOverlay\').remove();_unlockBodyScroll();" class="btn btn-secondary" style="font-size:13px;">닫기</button>' +
+        '</div>';
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+    }
+    function saveMediaSettings() {
+      var cn = ((document.getElementById('mediaCloudName') || {}).value || '').trim();
+      var up = ((document.getElementById('mediaUploadPreset') || {}).value || '').trim();
+      if (!cn || !up) { _showToast('Cloud Name과 Upload Preset을 모두 입력해주세요', 2500, 'error'); return; }
+      var cfg = { cloudName: cn, uploadPreset: up, updated: new Date().toISOString(), updatedBy: (typeof _getCurrentMemberName === 'function') ? _getCurrentMemberName() : '' };
+      if (_fb.db) dbRef('settings/mediaConfig').set(cfg);
+      _mediaConfig = cfg;
+      document.getElementById('mediaSettingsOverlay')?.remove();
+      _unlockBodyScroll();
+      _showToast('미디어 저장소 설정이 저장되었습니다 — 전 팀원에게 즉시 적용', 2500, 'success');
+    }
+    function clearMediaSettings() {
+      if (!confirm('Cloudinary 연동을 해제할까요? 기존 업로드된 파일 링크는 유지됩니다.')) return;
+      if (_fb.db) dbRef('settings/mediaConfig').remove();
+      _mediaConfig = null;
+      document.getElementById('mediaSettingsOverlay')?.remove();
+      _unlockBodyScroll();
+      _showToast('미디어 저장소 연동이 해제되었습니다', 2000);
+    }
+    window.openMediaSettings = openMediaSettings;
+    window.saveMediaSettings = saveMediaSettings;
+    window.clearMediaSettings = clearMediaSettings;
+
     function _addAllowedEmail() {
       var input = document.getElementById('newAllowedEmail');
       var email = (input.value || '').trim().toLowerCase();
@@ -6651,12 +6811,17 @@
     function _togglePermission(idx) {
       if (!TEAM[idx]) return;
       TEAM[idx].permission = (TEAM[idx].permission === 'write') ? 'read' : 'write';
+      // 즉시 영속화 — "저장"을 안 누르고 닫아도 권한이 유지되도록
+      localStorage.setItem('af_team', JSON.stringify(TEAM));
+      if (_fb.db && _teamLoadedFromFB) {
+        dbRef('settings/teamV2/' + TEAM[idx].id + '/permission').set(TEAM[idx].permission);
+      }
       // Firebase userPermissions 동기화
       if (_fb.db && TEAM[idx].uid) {
         if (TEAM[idx].permission === 'write') {
-          _fb.db.ref('settings/userPermissions/' + TEAM[idx].uid).set(true);
+          dbRef('settings/userPermissions/' + TEAM[idx].uid).set(true);
         } else {
-          _fb.db.ref('settings/userPermissions/' + TEAM[idx].uid).remove();
+          dbRef('settings/userPermissions/' + TEAM[idx].uid).remove();
         }
       }
       // UI 즉시 갱신
@@ -6674,8 +6839,13 @@
 
     function removeMember(idx) {
       if (!confirm(TEAM[idx].name + ' 팀원을 삭제하시겠습니까?')) return;
+      var _removed = TEAM[idx];
       TEAM.splice(idx, 1);
       localStorage.setItem('af_team', JSON.stringify(TEAM));
+      if (_fb.db && _teamLoadedFromFB && _removed) {
+        dbRef('settings/teamV2/' + _removed.id).remove();
+        dbRef('presence/' + _removed.id).remove();
+      }
       document.getElementById('memberMgmtOverlay')?.remove();
       openMemberManagement();
       renderAll();
@@ -6685,7 +6855,9 @@
       document.querySelectorAll('[data-member-field]').forEach(input => {
         const idx = parseInt(input.dataset.memberIdx);
         const field = input.dataset.memberField;
-        if (TEAM[idx]) TEAM[idx][field] = input.value.trim();
+        if (!TEAM[idx]) return;
+        if (input.type === 'checkbox') TEAM[idx][field] = input.checked;
+        else TEAM[idx][field] = input.value.trim();
       });
       // 이메일이 새로 연결된 경우 허용 목록에 자동 추가 (aboutfishing.kr 외)
       TEAM.forEach(function(m) {
@@ -6696,15 +6868,19 @@
       });
       localStorage.setItem('af_team', JSON.stringify(TEAM));
       if (_fb.db) {
-        _fb.db.ref('settings/team').set(TEAM);
-        _fb.db.ref('settings/allowedEmails').set(_allowedEmails);
+        if (!_teamLoadedFromFB) {
+          _showToast('팀 데이터가 서버에서 로딩되지 않아 저장할 수 없습니다. 새로고침 후 다시 시도해주세요.', 3500, 'error');
+          return;
+        }
+        dbRef('settings/teamV2').set(_teamToObj());
+        dbRef('settings/allowedEmails').set(_allowedEmails);
         // 팀원별 userPermissions 동기화 (Firebase 보안 규칙에서 사용)
         TEAM.forEach(function(m) {
           if (!m.uid) return; // UID 없는 멤버는 다음 로그인 시 자동 동기화
           if (m.permission === 'write') {
-            _fb.db.ref('settings/userPermissions/' + m.uid).set(true);
+            dbRef('settings/userPermissions/' + m.uid).set(true);
           } else {
-            _fb.db.ref('settings/userPermissions/' + m.uid).remove();
+            dbRef('settings/userPermissions/' + m.uid).remove();
           }
         });
       }
@@ -6764,7 +6940,7 @@
       _saveHistoryToLocal();
       // Firebase에 저장 시도
       if (_fb.db) {
-        _fb.db.ref('history/changes').push(entry).then(function() {
+        dbRef('history/changes').push(entry).then(function() {
           console.log('[History] Firebase write OK');
           _historyFbOk = true;
         }).catch(function(err) {
@@ -6790,7 +6966,7 @@
       }
       // 2) Firebase 리스너 등록 (데이터 있으면 덮어씀)
       if (_fb.db) {
-        _fb.db.ref('history/changes').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+        dbRef('history/changes').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
           var data = snap.val();
           if (data) {
             var fbHistory = [];
@@ -6848,7 +7024,7 @@
       var dismissed = _getNewMemberDismissed();
       // 최근 7일 이내 신규 접속만
       var cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      _fb.db.ref('notifications/newMembers').orderByChild('timestamp').startAt(cutoff).on('child_added', function(snap) {
+      dbRef('notifications/newMembers').orderByChild('timestamp').startAt(cutoff).on('child_added', function(snap) {
         var data = snap.val();
         if (!data) return;
         _notifiedNewMembers[snap.key] = data;
@@ -6885,7 +7061,7 @@
       _saveAccessToLocal();
       // Firebase에 저장 시도
       if (_fb.db) {
-        _fb.db.ref('history/access').push(entry).then(function() {
+        dbRef('history/access').push(entry).then(function() {
           console.log('[Access] Firebase write OK');
           _accessFbOk = true;
         }).catch(function(err) {
@@ -6912,7 +7088,7 @@
       }
       // 2) Firebase 리스너 등록
       if (!_fb.db) return;
-      _fb.db.ref('history/access').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+      dbRef('history/access').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
         var data = snap.val();
         if (data) {
           var fbAccess = [];
@@ -6948,7 +7124,7 @@
       _deployLogs.push(entry);
       try { localStorage.setItem(_LS_DEPLOY_KEY, JSON.stringify(_deployLogs.slice(-200))); } catch(e) {}
       if (_fb.db) {
-        _fb.db.ref('history/deploy').push(entry).then(function() {
+        dbRef('history/deploy').push(entry).then(function() {
           console.log('[Deploy] Firebase write OK');
         }).catch(function(err) {
           console.error('[Deploy] Firebase write FAIL:', err);
@@ -6984,7 +7160,7 @@
 
     function _autoSeedReleaseNotes(existingData) {
       if (!_fb.db) return;
-      var ref = _fb.db.ref('history/deploy');
+      var ref = dbRef('history/deploy');
       var user = state.currentUser ? (state.currentUser.displayName || state.currentUser.email) : 'System';
       var email = state.currentUser ? state.currentUser.email : '';
       // 기존 버전 목록 수집
@@ -7014,11 +7190,11 @@
       // 시드 체크: once로 1회만 실행 (on 리스너와 분리하여 무한루프 방지)
       if (!_seedChecked) {
         _seedChecked = true;
-        _fb.db.ref('history/deploy').once('value', function(seedSnap) {
+        dbRef('history/deploy').once('value', function(seedSnap) {
           _autoSeedReleaseNotes(seedSnap.val());
         });
       }
-      _fb.db.ref('history/deploy').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
+      dbRef('history/deploy').orderByChild('timestamp').limitToLast(200).on('value', function(snap) {
         var data = snap.val();
         if (data) {
           var arr = [];
@@ -7125,6 +7301,76 @@
     /* ========== STORAGE (localStorage + Firebase 비동기) ========== */
     let _fb = { available: false, db: null, ref: null, debounce: null, skipNext: false };
 
+    // === 환경 분리 (테스트베드) ===
+    // ?env=staging 으로 접속하면 Firebase RTDB의 staging/ 경로만 읽고 쓴다.
+    // 운영 데이터(루트 경로)는 절대 건드리지 않는다.
+    var AF_ENV = (function() {
+      try {
+        var p = new URLSearchParams(window.location.search).get('env');
+        if (p === 'staging' || p === 'test') return 'staging';
+      } catch(e) {}
+      return 'prod';
+    })();
+    var AF_DB_PREFIX = (AF_ENV === 'staging') ? 'staging/' : '';
+    function dbRef(path) {
+      if (!_fb.db) return null;
+      if (path && path.charAt(0) === '.') return _fb.db.ref(path); // .info 등 시스템 경로는 프리픽스 제외
+      if (!path) return AF_DB_PREFIX ? _fb.db.ref('staging') : _fb.db.ref();
+      return _fb.db.ref(AF_DB_PREFIX + path);
+    }
+    // staging 모드: localStorage 키 분리 (운영 로컬 캐시 오염 방지)
+    if (AF_ENV === 'staging') {
+      (function() {
+        var _g = Storage.prototype.getItem, _s = Storage.prototype.setItem, _r = Storage.prototype.removeItem;
+        function _k(key) { return (typeof key === 'string' && (key.indexOf('af_') === 0 || key.indexOf('qa_') === 0)) ? 'stg_' + key : key; }
+        Storage.prototype.getItem = function(key) { return _g.call(this, _k(key)); };
+        Storage.prototype.setItem = function(key, v) { return _s.call(this, _k(key), v); };
+        Storage.prototype.removeItem = function(key) { return _r.call(this, _k(key)); };
+      })();
+    }
+    // staging 배너 + 운영 데이터 복사 도구
+    function _initStagingUI() {
+      if (AF_ENV !== 'staging') return;
+      var bar = document.createElement('div');
+      bar.id = 'stagingBar';
+      bar.style.cssText = 'position:fixed;bottom:16px;left:16px;z-index:99999;display:flex;align-items:center;gap:10px;background:#7c2d12;color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+      bar.innerHTML = '🧪 테스트베드 (staging) — 운영 데이터와 분리됨' +
+        ' <button onclick="_stagingCopyProdData()" style="border:none;background:#fff;color:#7c2d12;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;">운영 데이터 복사</button>' +
+        ' <button onclick="_stagingClearData()" style="border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;">초기화</button>';
+      document.body.appendChild(bar);
+      document.title = '[TEST] ' + document.title;
+    }
+    function _stagingCopyProdData() {
+      if (AF_ENV !== 'staging' || !_fb.db) return;
+      if (!confirm('운영 데이터를 스테이징으로 복사할까요?\n기존 스테이징 데이터는 덮어씌워집니다. (운영 데이터는 읽기만 하며 변경되지 않습니다)')) return;
+      var paths = ['projects', 'issues', 'deployBundles', 'settings', 'history'];
+      var done = 0, failed = false;
+      _showToast('운영 데이터 복사 중...', 3000);
+      paths.forEach(function(p) {
+        _fb.db.ref(p).once('value', function(snap) { // 운영(루트) 경로 직접 read — write는 staging으로만
+          var v = snap.val();
+          var op = (v === null) ? _fb.db.ref('staging/' + p).remove() : _fb.db.ref('staging/' + p).set(v);
+          op.then(function() {
+            done++;
+            if (done === paths.length && !failed) {
+              _showToast('운영 데이터 복사 완료 — 새로고침합니다', 2000, 'success');
+              setTimeout(function() { location.reload(); }, 1200);
+            }
+          }).catch(function(err) { failed = true; console.error('staging copy fail:', err); _showToast('복사 실패: ' + err.message, 3000, 'error'); });
+        });
+      });
+    }
+    function _stagingClearData() {
+      if (AF_ENV !== 'staging' || !_fb.db) return;
+      if (!confirm('스테이징 데이터를 모두 삭제할까요? (운영 데이터는 영향 없음)')) return;
+      _fb.db.ref('staging').remove().then(function() {
+        _showToast('스테이징 데이터 초기화 완료', 2000, 'success');
+        setTimeout(function() { location.reload(); }, 1000);
+      });
+    }
+    window._stagingCopyProdData = _stagingCopyProdData;
+    window._stagingClearData = _stagingClearData;
+
     function saveProjects() {
       // 1) 항상 localStorage에 저장 (즉시, 안전)
       localStorage.setItem('af_projects', JSON.stringify(state.projects));
@@ -7144,7 +7390,7 @@
           // 배포 버전 타임스탬프 업데이트
           var now = new Date();
           var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-          _fb.db.ref('settings/deployVersion').set(vStr);
+          dbRef('settings/deployVersion').set(vStr);
           _updateDeployVersion(vStr);
         }).catch(function(err) {
           console.error('Firebase 저장 실패:', err);
@@ -7220,10 +7466,13 @@
           appId: "1:964218421788:web:5909fce52b6d4e6d4855d9"
         });
         _fb.db = firebase.database();
-        _fb.ref = _fb.db.ref('projects');
+        _fb.ref = dbRef('projects');
         _fb.auth = firebase.auth();
+        // 로그인 세션 유지: 브라우저를 닫아도 유지되도록 명시적 LOCAL persistence 설정
+        try { _fb.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e) { console.warn('persistence:', e); }); } catch(e) {}
         _fb.available = true;
         console.log('Firebase initialized OK');
+        if (AF_ENV === 'staging') { try { _initStagingUI(); } catch(e) { console.warn(e); } }
         _startFirebaseSync();
         _loadSettingsFromFirebase(function() {
           console.log('Settings loaded, starting auth check');
@@ -7238,7 +7487,7 @@
 
     function _startFirebaseSync() {
       // 연결 상태 모니터
-      _fb.db.ref('.info/connected').on('value', function(snap) {
+      dbRef('.info/connected').on('value', function(snap) {
         if (snap.val() === true) {
           _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
         } else {
@@ -7247,7 +7496,7 @@
       });
 
       // 배포 버전 실시간 동기화 — 모든 사용자가 같은 버전 표시
-      _fb.db.ref('settings/deployVersion').on('value', function(snap) {
+      dbRef('settings/deployVersion').on('value', function(snap) {
         var v = snap.val();
         if (v) {
           _updateDeployVersion(v);
@@ -7255,7 +7504,7 @@
           // Firebase에 버전 정보가 없으면 현재 시간으로 초기화
           var now = new Date();
           var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-          _fb.db.ref('settings/deployVersion').set(vStr);
+          dbRef('settings/deployVersion').set(vStr);
         }
       });
 
@@ -7278,6 +7527,7 @@
             if (!p.assignments) p.assignments = JSON.parse(JSON.stringify(_emptyAssign));
             else { ['plan','design','front','back','qa'].forEach(function(ph) { if (!p.assignments[ph]) p.assignments[ph] = []; }); }
             if (!p.links) p.links = [];
+            if (!p.tasks) p.tasks = []; else if (!Array.isArray(p.tasks)) p.tasks = Object.keys(p.tasks).map(function(k) { return p.tasks[k]; });
             if (!p.serviceTypes) p.serviceTypes = [];
             if (!p.status) p.status = '대기';
           });
@@ -7319,26 +7569,45 @@
         }
       }
       // 서비스 타입
-      _fb.db.ref('settings/serviceTypes').once('value', function(snap) {
+      dbRef('settings/serviceTypes').once('value', function(snap) {
         var data = snap.val();
         if (data && Array.isArray(data) && data.length > 0) {
           localStorage.setItem('af_service_types', JSON.stringify(data));
         }
         _loaded.serviceTypes = true; _checkDone();
       });
-      // 팀원 정보
-      _fb.db.ref('settings/team').once('value', function(snap) {
+      // 팀원 정보 — teamV2(객체) 우선, 없으면 레거시 settings/team(배열) → 1회 마이그레이션
+      dbRef('settings/teamV2').once('value', function(snap) {
         var data = snap.val();
-        if (data && Array.isArray(data) && data.length > 0) {
-          TEAM.length = 0;
-          data.forEach(function(m) { TEAM.push(m); });
-          _ensurePermissionField();
-          localStorage.setItem('af_team', JSON.stringify(TEAM));
+        if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+          _applyTeamArr(Object.keys(data).map(function(k) { return data[k]; }).filter(Boolean));
+          _teamLoadedFromFB = true;
+          _loaded.team = true; _checkDone();
+          _watchTeamV2();
+        } else {
+          dbRef('settings/team').once('value', function(snap2) {
+            var legacy = snap2.val();
+            if (legacy && Array.isArray(legacy) && legacy.length > 0) {
+              _applyTeamArr(legacy);
+              _teamLoadedFromFB = true;
+              _migrateTeamToV2();
+            } else if (legacy === null) {
+              // DB가 완전히 빈 경우(신규 환경) — 하드코딩 디폴트가 유효한 시드
+              _teamLoadedFromFB = true;
+            }
+            _loaded.team = true; _checkDone();
+            _watchTeamV2();
+          }, function() { _loaded.team = true; _checkDone(); });
         }
-        _loaded.team = true; _checkDone();
+      }, function() { _loaded.team = true; _checkDone(); });
+      // 미디어 저장소 설정 (Cloudinary) — 실시간 반영
+      dbRef('settings/mediaConfig').on('value', function(snap) {
+        var v = snap.val();
+        _mediaConfig = (v && v.cloudName && v.uploadPreset) ? v : null;
+        if (_mediaConfig) console.log('[Media] Cloudinary 연동 활성:', _mediaConfig.cloudName);
       });
       // 허용 이메일 목록
-      _fb.db.ref('settings/allowedEmails').once('value', function(snap) {
+      dbRef('settings/allowedEmails').once('value', function(snap) {
         var data = snap.val();
         if (data && Array.isArray(data) && data.length > 0) {
           _allowedEmails = data;
@@ -7385,7 +7654,7 @@
       }
       // 2) Firebase 리스너 등록
       if (_fb.db) {
-        _fb.db.ref('issues').on('value', function(snap) {
+        dbRef('issues').on('value', function(snap) {
           var data = snap.val();
           if (data) {
             // Firebase에서 로드된 이슈 데이터 정규화 (배열 필드 복원)
@@ -7430,7 +7699,7 @@
         } catch(e) {}
       }
       if (_fb.db) {
-        _fb.db.ref('deployBundles').on('value', function(snap) {
+        dbRef('deployBundles').on('value', function(snap) {
           var data = snap.val();
           if (data) {
             var fbBundles = [];
@@ -7946,7 +8215,7 @@
       if (_fb.db && _hasWritePermission()) {
         var updateObj = {};
         updateObj['issues/' + issueData.id] = issueData;
-        _fb.db.ref().update(updateObj).catch(function(err) {
+        dbRef().update(updateObj).catch(function(err) {
           console.error('[Issues] Firebase write error:', err);
         });
       }
@@ -8183,7 +8452,7 @@
       btn.style.animation = 'spin 0.5s linear';
       // Re-fetch from Firebase if connected
       if (_fb && _fb.db) {
-        _fb.db.ref('issues').once('value').then(function(snap) {
+        dbRef('issues').once('value').then(function(snap) {
           var data = snap.val();
           if (data) {
             // Firebase 배열 필드 정규화 (loadIssues와 동일한 처리)
@@ -8920,7 +9189,7 @@ function renderIssues() {
       if (_fb.db) {
         var updateObj = {};
         updateObj['issues/' + iss.id] = iss;
-        _fb.db.ref().update(updateObj).catch(function(err) { console.error('[Issues] Firebase error:', err); });
+        dbRef().update(updateObj).catch(function(err) { console.error('[Issues] Firebase error:', err); });
       }
     }
 
@@ -9523,7 +9792,7 @@ function renderIssues() {
               var iss = _issues.find(function(i) { return i.id === id; });
               if (iss) updateObj['issues/' + id] = iss;
             });
-            _fb.db.ref().update(updateObj);
+            dbRef().update(updateObj);
           }
           _selectedIssues = {};
           document.body.removeChild(overlay);
@@ -9582,7 +9851,7 @@ function renderIssues() {
             var iss = _issues.find(function(i) { return i.id === id; });
             if (iss) updateObj['issues/' + id] = iss;
           });
-          _fb.db.ref().update(updateObj);
+          dbRef().update(updateObj);
         }
         _selectedIssues = {}; document.body.removeChild(overlay); updateBulkBar(); renderIssues();
         _showToast('담당자가 해제되었습니다');
@@ -9612,7 +9881,7 @@ function renderIssues() {
               var iss = _issues.find(function(i) { return i.id === id; });
               if (iss) updateObj['issues/' + id] = iss;
             });
-            _fb.db.ref().update(updateObj);
+            dbRef().update(updateObj);
           }
           _selectedIssues = {}; document.body.removeChild(overlay); updateBulkBar(); renderIssues();
           _showToast(count + '개 이슈를 ' + member.name + '에게 배정했습니다');
@@ -9640,7 +9909,7 @@ function renderIssues() {
         _issues = _issues.filter(function(i) { return i.id !== issueId; });
         // Firebase에서도 삭제 (개별 삭제와 동일한 방식)
         if (_fb && _fb.db) {
-          _fb.db.ref('issues/' + issueId).remove().catch(function(err) {
+          dbRef('issues/' + issueId).remove().catch(function(err) {
             console.error('[Issues] BulkDelete Firebase error:', err);
           });
         }
@@ -9677,7 +9946,7 @@ function renderIssues() {
 
     function copyIssueLink() {
       if (!_currentIssueId) return;
-      var link = window.location.href.split('?')[0] + '?issue=' + _currentIssueId;
+      var link = window.location.origin + window.location.pathname + '?issue=' + _currentIssueId;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(link).then(function() {
           _showToast('이슈 링크가 복사되었습니다', 2000, 'success');
@@ -9967,6 +10236,27 @@ function renderIssues() {
       });
 
       panel.appendChild(quickBar);
+
+      // ── 포함된 배포: 이 이슈가 어느 배포 번들에 묶여 나갔는지 ──
+      (function() {
+        var inBundles = (_deployBundles || []).filter(function(b) { return (b.issues || []).indexOf(iss.id) !== -1; });
+        var depSec = document.createElement('div');
+        depSec.style.cssText = 'margin:0 0 12px;padding:10px 12px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;';
+        var bStatusMap = { planning: '준비중', ready: '배포준비', deployed: '배포완료', cancelled: '취소' };
+        var bStatusColor = { planning: '#f59e0b', ready: '#3b82f6', deployed: '#10b981', cancelled: '#9ca3af' };
+        var rows = inBundles.map(function(b) {
+          var sc = bStatusColor[b.status] || '#6b7280';
+          return '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border:1px solid #e5e7eb;border-radius:6px;margin-top:6px;cursor:pointer;" ' +
+            'onclick="closeIssueDetail();setTimeout(function(){openDeployBundleDetail(\'' + b.id + '\');},250);" title="배포 상세 열기">' +
+            '<span style="font-size:10px;font-weight:700;background:' + sc + '22;color:' + sc + ';padding:2px 8px;border-radius:8px;flex-shrink:0;">' + (bStatusMap[b.status] || b.status) + '</span>' +
+            (b.environment ? '<span style="font-size:10px;font-weight:700;color:#7c3aed;background:#ede9fe;padding:2px 6px;border-radius:4px;flex-shrink:0;">🌐 ' + _escHtml(b.environment) + '</span>' : '') +
+            '<span style="flex:1;font-size:12px;font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(b.title) + '</span>' +
+            '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (b.targetDate || '') + '</span></div>';
+        }).join('');
+        depSec.innerHTML = '<div style="font-size:12px;font-weight:700;color:#5b21b6;">🚀 포함된 배포 <span style="font-weight:600;color:#7c3aed;">' + inBundles.length + '건</span></div>' +
+          (rows || '<div style="font-size:11px;color:#9ca3af;margin-top:6px;">아직 배포 번들에 포함되지 않았습니다. 상단 "📦 배포에 추가" 버튼으로 연결할 수 있습니다.</div>');
+        panel.appendChild(depSec);
+      })();
 
       // Service | Project
       var metaGrid3 = document.createElement('div');
@@ -10690,6 +10980,19 @@ function renderIssues() {
         // 공통 파일 처리 함수 (파일 선택 + 드래그앤드랍 모두 사용)
         function _handleCommentFile(file, issId) {
           if (!file) return;
+          // Cloudinary 연동 시: 이미지/동영상 모두 원본 화질 업로드 (최대 100MB)
+          if (_mediaConfigured() && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
+            if (file.size > _MAX_CLOUD_SIZE) {
+              _showToast('파일은 100MB 이하만 첨부 가능합니다 (현재 ' + (file.size / 1048576).toFixed(1) + 'MB)', 3000, 'error');
+              return;
+            }
+            _uploadMediaWithProgress(file, function(att) {
+              if (!att) return;
+              _commentAttachments.push(att);
+              _renderCommentAttachPreview(issId);
+            });
+            return;
+          }
           if (file.type.startsWith('image/')) {
             var reader = new FileReader();
             reader.onload = function(ev) {
@@ -10702,9 +11005,9 @@ function renderIssues() {
             };
             reader.readAsDataURL(file);
           } else if (file.type.startsWith('video/')) {
-            var MAX_VIDEO = 15 * 1024 * 1024; // 15MB
+            var MAX_VIDEO = _MAX_FALLBACK_VIDEO; // base64 폴백 한도
             if (file.size > MAX_VIDEO) {
-              _showToast('동영상은 15MB 이하만 첨부 가능합니다 (현재 ' + (file.size/1024/1024).toFixed(1) + 'MB)', 3000, 'error');
+              _showToast('동영상은 ' + (MAX_VIDEO / 1048576) + 'MB 이하만 첨부 가능합니다. 관리자 메뉴 "미디어 저장소 설정" 연동 시 100MB까지 가능합니다 (현재 ' + (file.size/1024/1024).toFixed(1) + 'MB)', 4000, 'error');
               return;
             }
             _showToast('동영상 처리 중...', 1200);
@@ -10880,7 +11183,7 @@ function renderIssues() {
       _saveIssuesToLocal();
 
       if (_fb.db) {
-        _fb.db.ref('issues/' + _currentIssueId).remove().catch(function(err) {
+        dbRef('issues/' + _currentIssueId).remove().catch(function(err) {
           console.error('[Issues] Delete error:', err);
         });
       }
@@ -10928,7 +11231,7 @@ function renderIssues() {
                   if (!bundle.issues) bundle.issues = [];
                   bundle.issues.push(_currentIssueId);
                   _saveDeployBundlesToLocal();
-                  if (_fb.db) { _fb.db.ref('deployBundles/' + bundle.id + '/issues').set(bundle.issues); }
+                  if (_fb.db) { dbRef('deployBundles/' + bundle.id + '/issues').set(bundle.issues); }
                   closeIssueToBundleModal();
                   _showToast('"' + bundle.title + '" 배포에 이슈가 추가되었습니다');
                 };
@@ -10970,7 +11273,7 @@ function renderIssues() {
       if (_fb.db) {
         _fbDeploySkipNext = true;
         var obj = {}; obj['deployBundles/' + newBundle.id] = newBundle;
-        _fb.db.ref().update(obj);
+        dbRef().update(obj);
       }
       closeIssueToBundleModal();
       _showToast('새 배포 "' + bundleTitle + '"에 이슈가 추가되었습니다');
@@ -11085,40 +11388,114 @@ function renderIssues() {
       _showToast(mentioned.length > 0 ? '댓글 등록 + @멘션 알림 ' + mentioned.length + '건 발송' : '댓글이 추가되었습니다');
     }
 
+    // ═══════════ 미디어 저장소 (Cloudinary) ═══════════
+    // RTDB에 base64로 넣던 방식은 용량 한계(이미지 압축 필수, 동영상 2MB)가 있어
+    // Cloudinary 무료 플랜(25GB)으로 원본 화질 그대로 업로드하고 URL만 RTDB에 저장한다.
+    // 관리자 메뉴 → "미디어 저장소 설정"에서 cloudName/uploadPreset 입력 시 자동 활성화.
+    var _mediaConfig = null;
+    function _mediaConfigured() {
+      return !!(_mediaConfig && _mediaConfig.cloudName && _mediaConfig.uploadPreset);
+    }
+    var _MAX_CLOUD_SIZE = 100 * 1024 * 1024;   // Cloudinary 연동 시 100MB
+    var _MAX_FALLBACK_VIDEO = 8 * 1024 * 1024; // 미연동 시 RTDB base64 폴백 8MB
+    function _setUploadProgress(pct, name) {
+      var el = document.getElementById('afUploadProgress');
+      if (pct >= 100 || pct < 0) { if (el) el.remove(); return; }
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'afUploadProgress';
+        el.style.cssText = 'position:fixed;bottom:60px;right:16px;z-index:999999;background:#1f2937;color:#fff;padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,0.3);min-width:200px;';
+        document.body.appendChild(el);
+      }
+      el.innerHTML = '📤 ' + _escHtml(name || '파일') + ' 업로드 중<div style="margin-top:6px;height:5px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden;"><div style="width:' + pct + '%;height:100%;background:#34d399;border-radius:3px;transition:width 0.2s;"></div></div><div style="margin-top:3px;font-size:10px;color:#9ca3af;text-align:right;">' + pct + '%</div>';
+    }
+    function _uploadToCloudinary(file, cb, onProgress) {
+      var url = 'https://api.cloudinary.com/v1_1/' + encodeURIComponent(_mediaConfig.cloudName) + '/auto/upload';
+      var fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', _mediaConfig.uploadPreset);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable && onProgress) onProgress(Math.min(99, Math.round(e.loaded / e.total * 100)));
+      };
+      xhr.onload = function() {
+        try {
+          var res = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && res.secure_url) cb(null, res);
+          else cb(new Error((res.error && res.error.message) || ('HTTP ' + xhr.status)));
+        } catch(e) { cb(e); }
+      };
+      xhr.onerror = function() { cb(new Error('네트워크 오류')); };
+      xhr.send(fd);
+    }
+    function _uploadMediaWithProgress(file, done) {
+      var type = file.type.startsWith('video/') ? 'video' : 'image';
+      _setUploadProgress(0, file.name);
+      _uploadToCloudinary(file, function(err, res) {
+        _setUploadProgress(-1);
+        if (err) {
+          console.error('[Media] upload fail:', err);
+          _showToast('업로드 실패: ' + err.message + ' — 관리자 메뉴의 미디어 저장소 설정을 확인해주세요', 4000, 'error');
+          done(null);
+          return;
+        }
+        var att = {
+          type: type, data: res.secure_url, name: file.name, size: file.size,
+          cloud: true, id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+        };
+        if (type === 'video' && res.secure_url.indexOf('/video/upload/') !== -1) {
+          att.thumb = res.secure_url.replace('/video/upload/', '/video/upload/so_0.5,w_320,c_scale/').replace(/\.[^/.]+$/, '.jpg');
+        }
+        _showToast('업로드 완료 — 원본 화질 유지 (' + (file.size / 1048576).toFixed(1) + 'MB)', 2000, 'success');
+        done(att);
+      }, function(pct) { _setUploadProgress(pct, file.name); });
+    }
+
     function handleFileAttachment(files) {
       if (!_hasWritePermission()) return;
 
       Array.from(files).forEach(function(file) {
-        if (file.type.startsWith('image/')) {
+        var isImage = file.type.startsWith('image/');
+        var isVideo = file.type.startsWith('video/');
+        if (!isImage && !isVideo) { _showToast('이미지/동영상 파일만 첨부 가능합니다', 2000, 'error'); return; }
+        function pushAtt(att) {
+          if (!att) return;
+          if (_targetAttachmentContext === 'create') {
+            _createIssueAttachments.push(att);
+            renderCreateAttachments();
+          } else {
+            addAttachment(att);
+          }
+        }
+        // 1) Cloudinary 연동 시 — 원본 화질 업로드 (최대 100MB)
+        if (_mediaConfigured()) {
+          if (file.size > _MAX_CLOUD_SIZE) {
+            _showToast('파일은 100MB 이하만 업로드 가능합니다 (현재 ' + (file.size / 1048576).toFixed(1) + 'MB)', 3000, 'error');
+            return;
+          }
+          _uploadMediaWithProgress(file, pushAtt);
+          return;
+        }
+        // 2) 폴백 — RTDB base64 (미디어 저장소 미설정 시)
+        if (isImage) {
           var reader = new FileReader();
           reader.onload = function(e) {
             _compressImage(e.target.result, function(compressed) {
-              var att = { type: 'image', data: compressed, name: file.name, size: file.size, id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2,4) };
-              if (_targetAttachmentContext === 'create') {
-                _createIssueAttachments.push(att);
-                renderCreateAttachments();
-              } else {
-                addAttachment(att);
-              }
+              pushAtt({ type: 'image', data: compressed, name: file.name, size: file.size, id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4) });
             });
           };
           reader.readAsDataURL(file);
-        } else if (file.type.startsWith('video/')) {
-          if (file.size > 2000000) {
-            _showToast('동영상은 2MB 이하만 업로드 가능합니다');
+        } else {
+          if (file.size > _MAX_FALLBACK_VIDEO) {
+            _showToast('동영상은 ' + (_MAX_FALLBACK_VIDEO / 1048576) + 'MB 이하만 가능합니다. 관리자 메뉴에서 "미디어 저장소 설정"을 연동하면 100MB까지 원본 화질로 업로드할 수 있어요.', 4500, 'error');
             return;
           }
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var att = { type: 'video', data: e.target.result, name: file.name, size: file.size, id: 'att_' + Date.now() };
-            if (_targetAttachmentContext === 'create') {
-              _createIssueAttachments.push(att);
-              renderCreateAttachments();
-            } else {
-              addAttachment(att);
-            }
+          var vreader = new FileReader();
+          vreader.onload = function(e) {
+            pushAtt({ type: 'video', data: e.target.result, name: file.name, size: file.size, id: 'att_' + Date.now() });
           };
-          reader.readAsDataURL(file);
+          vreader.readAsDataURL(file);
         }
       });
     }
@@ -11595,7 +11972,7 @@ function renderIssues() {
         _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + bundle.id] = bundle;
-        _fb.db.ref().update(updateObj).catch(function(err) {
+        dbRef().update(updateObj).catch(function(err) {
           console.error('[DeployBundles] Firebase error:', err);
         });
       }
@@ -11635,7 +12012,7 @@ function renderIssues() {
         _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + newBundle.id] = newBundle;
-        _fb.db.ref().update(updateObj).catch(function(err) {
+        dbRef().update(updateObj).catch(function(err) {
           console.error('[DeployBundles] Copy error:', err);
         });
       }
@@ -11749,7 +12126,7 @@ function renderIssues() {
 
       _deployBundles.unshift(bundle);
       _saveDeployBundlesToLocal();
-      if (_fb.db) { _fbDeploySkipNext = true; var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; _fb.db.ref().update(_obj1).catch(function(err){console.error(err);}); }
+      if (_fb.db) { _fbDeploySkipNext = true; var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; dbRef().update(_obj1).catch(function(err){console.error(err);}); }
       _addNotification('배포 번들 등록: ' + bundle.title, 'success');
 
       // Reset + close
@@ -11765,7 +12142,7 @@ function renderIssues() {
       bundle.status = newStatus;
       bundle.updated = new Date().toISOString();
       _saveDeployBundlesToLocal();
-      if (_fb.db) { var _obj2={}; _obj2['deployBundles/'+bundle.id]=bundle; _fb.db.ref().update(_obj2).catch(function(err){console.error(err);}); }
+      if (_fb.db) { var _obj2={}; _obj2['deployBundles/'+bundle.id]=bundle; dbRef().update(_obj2).catch(function(err){console.error(err);}); }
       _addNotification('배포 상태 변경: ' + bundle.title + ' → ' + ({planning:'준비중',ready:'배포준비',deployed:'배포완료',cancelled:'취소'}[newStatus]||newStatus), 'success');
       renderDeployBundles();
     }
@@ -11894,10 +12271,10 @@ function renderDeployBundles() {
         card.onmouseout = function() { this.style.boxShadow = ''; this.style.transform = ''; };
         card.onclick = function() { openDeployBundleDetail(bundle.id); };
 
-        // D-day 계산
+        // D-day 계산 — 배포완료/취소된 번들에는 기한초과를 표시하지 않는다
         var dday = '';
         var ddayColor = '#10b981';
-        if (bundle.targetDate) {
+        if (bundle.targetDate && bundle.status !== 'deployed' && bundle.status !== 'cancelled') {
           var diff = Math.ceil((new Date(bundle.targetDate) - new Date()) / (1000 * 60 * 60 * 24));
           if (diff < 0) { dday = '기한초과 ' + Math.abs(diff) + '일'; ddayColor = '#dc2626'; }
           else if (diff === 0) { dday = 'D-Day'; ddayColor = '#dc2626'; }
@@ -11918,6 +12295,14 @@ function renderDeployBundles() {
         statusBadge.style.cssText = 'font-size:11px;font-weight:700;background:' + sc + '22;color:' + sc + ';padding:3px 10px;border-radius:12px;border:1px solid ' + sc + '44;';
         statusBadge.textContent = statusMap[bundle.status] || bundle.status;
         topBar.appendChild(statusBadge);
+        if (bundle.environment) {
+          var envBadge = document.createElement('span');
+          var envColors = { '운영': ['#fef2f2', '#dc2626', '#fca5a5'], '스테이지': ['#fffbeb', '#b45309', '#fcd34d'], '개발': ['#eff6ff', '#2563eb', '#bfdbfe'] };
+          var ec = envColors[bundle.environment] || ['#f3f4f6', '#374151', '#d1d5db'];
+          envBadge.style.cssText = 'font-size:10px;font-weight:700;background:' + ec[0] + ';color:' + ec[1] + ';padding:3px 8px;border-radius:4px;border:1px solid ' + ec[2] + ';margin-left:6px;';
+          envBadge.textContent = '🌐 ' + bundle.environment;
+          topBar.insertBefore(envBadge, statusBadge.nextSibling);
+        }
         if (dday) {
           var ddayBadge = document.createElement('span');
           ddayBadge.style.cssText = 'font-size:11px;font-weight:700;color:' + ddayColor + ';';
@@ -12060,6 +12445,21 @@ function renderDeployBundles() {
           '</div>' +
         '</div>';
 
+      // 공유 링크 버튼 (딥링크 — 전사 공유용)
+      (function() {
+        var flexRow = hdr.firstElementChild;
+        if (flexRow) {
+          var lb = document.createElement('button');
+          lb.textContent = '🔗 링크';
+          lb.title = '이 배포의 공유 링크 복사 (링크 진입 시 이 모달이 자동으로 열립니다)';
+          lb.style.cssText = 'background:none;border:1.5px solid #e5e7eb;border-radius:6px;padding:3px 8px;font-size:11px;color:#6b7280;cursor:pointer;flex-shrink:0;height:fit-content;';
+          lb.onmouseover = function() { this.style.borderColor = '#6366f1'; this.style.color = '#6366f1'; };
+          lb.onmouseout = function() { this.style.borderColor = '#e5e7eb'; this.style.color = '#6b7280'; };
+          lb.onclick = function(e) { e.stopPropagation(); copyDeployLink(bundle.id); };
+          flexRow.appendChild(lb);
+        }
+      })();
+
       // 상태 전환 버튼
       var transitionBar = document.createElement('div');
       transitionBar.style.cssText = 'display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;';
@@ -12104,7 +12504,7 @@ function renderDeployBundles() {
           if (!_hasWritePermission()) { _checkWritePermission(); return; }
           bundle.status = t.next;
           _saveDeployBundlesToLocal();
-          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']=t.next; _fb.db.ref().update(o); }
+          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']=t.next; dbRef().update(o); }
           renderDeployBundles();
           openDeployBundleDetail(bundle.id);
           _showToast('배포 상태가 "'+statusMap[t.next]+'"으로 변경되었습니다');
@@ -12133,7 +12533,7 @@ function renderDeployBundles() {
           if (prevStatus === bundle.status) return;
           bundle.status = prevStatus;
           _saveDeployBundlesToLocal();
-          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']=prevStatus; _fb.db.ref().update(o); }
+          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']=prevStatus; dbRef().update(o); }
           renderDeployBundles();
           openDeployBundleDetail(bundle.id);
           _showToast('배포 상태가 "'+statusMap[prevStatus]+'"으로 변경되었습니다');
@@ -12149,7 +12549,7 @@ function renderDeployBundles() {
           if (!_hasWritePermission()) { _checkWritePermission(); return; }
           bundle.status = 'cancelled';
           _saveDeployBundlesToLocal();
-          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']='cancelled'; _fb.db.ref().update(o); }
+          if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/status']='cancelled'; dbRef().update(o); }
           renderDeployBundles();
           openDeployBundleDetail(bundle.id);
           _showToast('배포가 취소되었습니다');
@@ -12308,7 +12708,7 @@ function renderDeployBundles() {
       noteArea.oninput = function() {
         bundle.notes = this.value;
         _saveDeployBundlesToLocal();
-        if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/notes']=this.value; _fb.db.ref().update(o); }
+        if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/notes']=this.value; dbRef().update(o); }
       };
       noteSec.appendChild(noteHdr);
       noteSec.appendChild(noteArea);
@@ -12329,7 +12729,7 @@ function renderDeployBundles() {
         if (!confirm('"' + bundle.title + '" 배포 번들을 삭제하시겠습니까?')) return;
         _deployBundles = _deployBundles.filter(function(b){ return b.id!==bundle.id; });
         _saveDeployBundlesToLocal();
-        if (_fb.db) _fb.db.ref('deployBundles/'+bundle.id).remove();
+        if (_fb.db) dbRef('deployBundles/'+bundle.id).remove();
         document.getElementById('deployBundleOverlay').style.display='none';
         modal.classList.remove('open');
         renderDeployBundles();
@@ -14225,21 +14625,59 @@ function renderDeployBundles() {
       return m ? m[1] : null;
     }
     function _handleDeepLink() {
+      // 1) ?issue=ISS-xxx — 이슈 상세 패널 자동 오픈 (전사 공유용)
+      // 2) ?deploy=DEP-xxx — 배포 번들 상세 자동 오픈
+      // 3) #project=Pxx — 프로젝트 상세 (기존)
+      var params = null;
+      try { params = new URLSearchParams(window.location.search); } catch(e) {}
+      var issueId = params ? params.get('issue') : null;
+      var deployId = params ? params.get('deploy') : null;
+
+      function _retry(checkFn, openFn, maxAttempts) {
+        var attempts = 0;
+        (function tryOpen() {
+          if (checkFn()) { openFn(); }
+          else if (attempts < (maxAttempts || 15)) { attempts++; setTimeout(tryOpen, 400); }
+        })();
+      }
+
+      if (issueId) {
+        _retry(
+          function() { return _issues.some(function(i) { return i.id === issueId; }); },
+          function() {
+            _switchToTab('issues');
+            setTimeout(function() { openIssueDetail(issueId); }, 200);
+          });
+        return;
+      }
+      if (deployId) {
+        _retry(
+          function() { return _deployBundles.some(function(b) { return b.id === deployId; }); },
+          function() {
+            _switchToTab('deploy');
+            setTimeout(function() { openDeployBundleDetail(deployId); }, 200);
+          });
+        return;
+      }
       var pid = _getHashProjectId();
       if (!pid) return;
-      // 프로젝트가 로드될 때까지 약간의 지연
-      var attempts = 0;
-      function tryOpen() {
-        var proj = state.projects.find(function(p) { return p.id === pid; });
-        if (proj) {
-          openDetailPanel(pid);
-        } else if (attempts < 10) {
-          attempts++;
-          setTimeout(tryOpen, 300);
-        }
-      }
-      tryOpen();
+      _retry(
+        function() { return state.projects.some(function(p) { return p.id === pid; }); },
+        function() { openDetailPanel(pid); });
     }
+    // 메인 탭 전환 헬퍼 (딥링크용)
+    function _switchToTab(tabId) {
+      var btn = document.querySelector('.tab[data-tab="' + tabId + '"]');
+      if (btn) btn.click();
+    }
+    // 배포 번들 공유 링크 복사
+    function copyDeployLink(bundleId) {
+      var url = window.location.origin + window.location.pathname + '?deploy=' + bundleId;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() { _showToast('배포 공유 링크가 복사되었습니다', 2000, 'success'); }).catch(function() { _fallbackCopyLink(url); });
+      } else { _fallbackCopyLink(url); }
+    }
+    window.copyDeployLink = copyDeployLink;
     function copyProjectLink(projectId) {
       var url = window.location.origin + window.location.pathname + '#project=' + projectId;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -14260,6 +14698,207 @@ function renderDeployBundles() {
       ta.select();
       try { document.execCommand('copy'); _showToast('링크가 복사되었습니다', 2000, 'success'); } catch(e) { _showToast('복사 실패 — URL을 직접 복사해주세요', 2000, 'error'); }
       document.body.removeChild(ta);
+    }
+
+    // ═══════════ 프로젝트 Task 시스템 ═══════════
+    // 프로젝트마다 여러 Task를 등록하고, Task별 담당자/작업기간/상태를 관리한다.
+    var _TASK_STATUS_META = { todo: ['대기', '#9ca3af'], doing: ['진행중', '#3b82f6'], done: ['완료', '#10b981'] };
+    function _isOnBoard(m) {
+      if (typeof m.board === 'boolean') return m.board;
+      return CORE_TEAM_IDS.indexOf(m.id) !== -1; // 기본: 플랫폼개발팀 9명만 표시
+    }
+    function _findProjectById(pid) { return state.projects.find(function(p) { return p.id === pid; }); }
+    function _taskBadgeHTML(p) {
+      if (!p.tasks || !p.tasks.length) return '';
+      var done = p.tasks.filter(function(t) { return t.status === 'done'; }).length;
+      var color = done === p.tasks.length ? '#10b981' : '#6366f1';
+      return ' <span style="font-size:10px;font-weight:700;color:' + color + ';background:' + color + '15;border:1px solid ' + color + '33;border-radius:8px;padding:1px 6px;vertical-align:middle;" title="Task ' + done + '/' + p.tasks.length + ' 완료">✓ ' + done + '/' + p.tasks.length + '</span>';
+    }
+    function _projectTasksHTML(p) {
+      if (!p.tasks) p.tasks = [];
+      var canEdit = _hasWritePermission();
+      var doneCount = p.tasks.filter(function(t) { return t.status === 'done'; }).length;
+      var pct = p.tasks.length ? Math.round(doneCount / p.tasks.length * 100) : 0;
+      var todayD = new Date(); todayD.setHours(0, 0, 0, 0);
+      var rows = p.tasks.map(function(t) {
+        var m = _TASK_STATUS_META[t.status] || _TASK_STATUS_META.todo;
+        var names = (t.assignees || []).map(function(id) {
+          var tm = TEAM.find(function(x) { return x.id === id; });
+          return tm ? '<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#374151;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:1px 6px;flex-shrink:0;"><span style="width:6px;height:6px;border-radius:50%;background:' + tm.color + ';"></span>' + tm.name + '</span>' : '';
+        }).join(' ');
+        var period = (t.start || t.end) ? '<span style="font-size:10px;color:#6b7280;flex-shrink:0;">' + (t.start ? t.start.slice(5).replace('-', '.') : '') + '~' + (t.end ? t.end.slice(5).replace('-', '.') : '') + '</span>' : '';
+        var overdueBadge = '';
+        if (t.status !== 'done' && t.end) {
+          var endD = new Date(t.end + 'T00:00:00');
+          if (endD < todayD) overdueBadge = '<span style="font-size:9px;font-weight:700;color:#dc2626;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;padding:1px 5px;flex-shrink:0;">기한초과</span>';
+        }
+        var statusBtn = canEdit
+          ? '<button onclick="cycleProjectTaskStatus(\'' + p.id + '\',\'' + t.id + '\')" title="클릭하여 상태 변경 (대기→진행중→완료)" style="border:1px solid ' + m[1] + '44;background:' + m[1] + '18;color:' + m[1] + ';font-size:10px;font-weight:700;border-radius:10px;padding:2px 8px;cursor:pointer;flex-shrink:0;">' + m[0] + '</button>'
+          : '<span style="border:1px solid ' + m[1] + '44;background:' + m[1] + '18;color:' + m[1] + ';font-size:10px;font-weight:700;border-radius:10px;padding:2px 8px;flex-shrink:0;">' + m[0] + '</span>';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;margin-top:6px;flex-wrap:wrap;">' +
+          statusBtn +
+          '<span style="flex:1;min-width:120px;font-size:12px;color:' + (t.status === 'done' ? '#9ca3af' : '#1f2937') + ';' + (t.status === 'done' ? 'text-decoration:line-through;' : '') + '">' + _escHtml(t.title) + '</span>' +
+          names + period + overdueBadge +
+          (canEdit
+            ? '<span style="flex-shrink:0;"><button onclick="editProjectTaskUI(\'' + p.id + '\',\'' + t.id + '\')" style="border:none;background:none;cursor:pointer;font-size:11px;color:#9ca3af;padding:2px;" title="수정">✏️</button>' +
+              '<button onclick="deleteProjectTask(\'' + p.id + '\',\'' + t.id + '\')" style="border:none;background:none;cursor:pointer;font-size:14px;color:#ef4444;padding:2px;" title="삭제">×</button></span>'
+            : '') +
+        '</div>';
+      }).join('');
+      return '<div id="ptaskSection" style="margin-top:16px;padding:12px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:13px;font-weight:700;color:#1f2937;">📋 Task</span>' +
+          '<span style="font-size:11px;color:#6b7280;">' + doneCount + '/' + p.tasks.length + ' 완료</span>' +
+          (p.tasks.length ? '<div style="flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin:0 4px;"><div style="width:' + pct + '%;height:100%;background:#10b981;border-radius:3px;"></div></div>' : '<div style="flex:1;"></div>') +
+          (canEdit ? '<button class="write-only-ui" onclick="addProjectTaskUI(\'' + p.id + '\')" style="border:none;background:#eef2ff;color:#6366f1;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;flex-shrink:0;">+ Task 추가</button>' : '') +
+        '</div>' +
+        '<div id="ptaskFormSlot"></div>' +
+        (rows || '<div style="font-size:11px;color:#9ca3af;margin-top:8px;">등록된 Task가 없습니다.' + (canEdit ? ' "+ Task 추가"로 작업을 나눠 등록하세요.' : '') + '</div>') +
+      '</div>';
+    }
+    function _renderTaskForm(p, task) {
+      var slot = document.getElementById('ptaskFormSlot');
+      if (!slot) return;
+      var checkboxes = TEAM.filter(_isOnBoard).map(function(m) {
+        var checked = task && (task.assignees || []).indexOf(m.id) !== -1 ? ' checked' : '';
+        return '<label style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#374151;background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:3px 8px;cursor:pointer;"><input type="checkbox" class="ptask-assignee" value="' + m.id + '"' + checked + ' style="accent-color:' + m.color + ';">' + m.name + '</label>';
+      }).join('');
+      slot.innerHTML = '<div style="margin-top:8px;padding:10px;background:#fff;border:1.5px solid #c7d2fe;border-radius:8px;">' +
+        '<input type="text" id="ptaskTitle" placeholder="Task 제목 (예: 결제 모듈 API 연동)" value="' + (task ? _escHtml(task.title) : '') + '" style="width:100%;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;margin-bottom:8px;box-sizing:border-box;">' +
+        '<div style="font-size:10px;font-weight:700;color:#6b7280;margin-bottom:4px;">담당자</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' + checkboxes + '</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+          '<label style="font-size:11px;color:#6b7280;">작업기간</label>' +
+          '<input type="date" id="ptaskStart" value="' + ((task && task.start) || '') + '" style="padding:4px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;">' +
+          '<span style="color:#9ca3af;">~</span>' +
+          '<input type="date" id="ptaskEnd" value="' + ((task && task.end) || '') + '" style="padding:4px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;">' +
+          '<div style="flex:1;"></div>' +
+          '<button onclick="saveProjectTask(\'' + p.id + '\'' + (task ? ',\'' + task.id + '\'' : '') + ')" style="border:none;background:#6366f1;color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer;">저장</button>' +
+          '<button onclick="_refreshTaskSectionById(\'' + p.id + '\')" style="border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;">취소</button>' +
+        '</div></div>';
+      var ti = document.getElementById('ptaskTitle');
+      if (ti) ti.focus();
+    }
+    function _refreshTaskSectionById(pid) {
+      var p = _findProjectById(pid);
+      if (!p) return;
+      var sec = document.getElementById('ptaskSection');
+      if (sec) sec.outerHTML = _projectTasksHTML(p);
+    }
+    function _persistProjectTasks(p) {
+      try { localStorage.setItem('af_projects', JSON.stringify(state.projects)); } catch(e) {}
+      if (_fb.db) {
+        dbRef('projects/' + p.id + '/tasks').set(p.tasks || []).catch(function(e) {
+          console.error('[Tasks] save fail', e);
+          _showToast('Task 저장 실패: ' + e.message, 3000, 'error');
+        });
+      }
+    }
+    window.addProjectTaskUI = function(pid) {
+      if (!_checkWritePermission()) return;
+      var p = _findProjectById(pid);
+      if (p) _renderTaskForm(p, null);
+    };
+    window.editProjectTaskUI = function(pid, tid) {
+      if (!_checkWritePermission()) return;
+      var p = _findProjectById(pid);
+      if (!p) return;
+      var t = (p.tasks || []).find(function(x) { return x.id === tid; });
+      if (t) _renderTaskForm(p, t);
+    };
+    window.saveProjectTask = function(pid, tid) {
+      if (!_checkWritePermission()) return;
+      var p = _findProjectById(pid);
+      if (!p) return;
+      var title = ((document.getElementById('ptaskTitle') || {}).value || '').trim();
+      if (!title) { _showToast('Task 제목을 입력해주세요', 2000, 'error'); return; }
+      var start = (document.getElementById('ptaskStart') || {}).value || '';
+      var end = (document.getElementById('ptaskEnd') || {}).value || '';
+      if (start && end && start > end) { _showToast('종료일이 시작일보다 빠릅니다', 2000, 'error'); return; }
+      var assignees = [].slice.call(document.querySelectorAll('.ptask-assignee:checked')).map(function(c) { return c.value; });
+      if (!p.tasks) p.tasks = [];
+      if (tid) {
+        var t = p.tasks.find(function(x) { return x.id === tid; });
+        if (t) {
+          t.title = title; t.start = start; t.end = end; t.assignees = assignees;
+          t.updated = new Date().toISOString();
+          pushHistory('수정', pid, 'Task', '', title);
+        }
+      } else {
+        p.tasks.push({
+          id: 'T' + Date.now().toString(36) + Math.random().toString(36).substr(2, 3),
+          title: title, assignees: assignees, start: start, end: end,
+          status: 'todo', created: new Date().toISOString(),
+          createdBy: (typeof _getCurrentMemberName === 'function') ? _getCurrentMemberName() : ''
+        });
+        pushHistory('수정', pid, 'Task 추가', '', title);
+      }
+      _persistProjectTasks(p);
+      _refreshTaskSectionById(pid);
+      _showToast('Task가 저장되었습니다', 1500, 'success');
+    };
+    window.cycleProjectTaskStatus = function(pid, tid) {
+      if (!_checkWritePermission()) return;
+      var p = _findProjectById(pid);
+      if (!p) return;
+      var t = (p.tasks || []).find(function(x) { return x.id === tid; });
+      if (!t) return;
+      var order = ['todo', 'doing', 'done'];
+      t.status = order[(order.indexOf(t.status || 'todo') + 1) % 3];
+      t.updated = new Date().toISOString();
+      _persistProjectTasks(p);
+      _refreshTaskSectionById(pid);
+    };
+    window.deleteProjectTask = function(pid, tid) {
+      if (!_checkWritePermission()) return;
+      var p = _findProjectById(pid);
+      if (!p || !p.tasks) return;
+      var t = p.tasks.find(function(x) { return x.id === tid; });
+      if (!t) return;
+      if (!confirm('Task "' + t.title + '"를 삭제할까요?')) return;
+      p.tasks = p.tasks.filter(function(x) { return x.id !== tid; });
+      pushHistory('수정', pid, 'Task 삭제', '', t.title);
+      _persistProjectTasks(p);
+      _refreshTaskSectionById(pid);
+    };
+    window._refreshTaskSectionById = _refreshTaskSectionById;
+
+    // ═══════════ 프로젝트 연관 이슈/배포 섹션 ═══════════
+    function _projectLinkedHTML(p) {
+      var relIssues = (_issues || []).filter(function(iss) { return _getProjectIds(iss).indexOf(p.id) !== -1; });
+      var relBundles = (_deployBundles || []).filter(function(b) { return (b.projects || []).indexOf(p.id) !== -1; });
+      var sevColors = { Block: '#ef4444', Major: '#f97316', Minor: '#3b82f6', Trivial: '#9ca3af' };
+      var bStatusMap = { planning: '준비중', ready: '배포준비', deployed: '배포완료', cancelled: '취소' };
+      var bStatusColor = { planning: '#f59e0b', ready: '#3b82f6', deployed: '#10b981', cancelled: '#9ca3af' };
+      var issRows = relIssues.slice(0, 30).map(function(iss) {
+        return '<div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:#fff;border:1px solid #e5e7eb;border-radius:6px;margin-top:5px;cursor:pointer;" onclick="openIssueDetail(\'' + iss.id + '\')" title="이슈 상세 열기">' +
+          '<span style="width:7px;height:7px;border-radius:50%;background:' + (sevColors[iss.severity] || '#9ca3af') + ';flex-shrink:0;"></span>' +
+          '<span style="font-size:10px;font-weight:700;color:#6b7280;flex-shrink:0;">' + iss.id + '</span>' +
+          '<span style="flex:1;font-size:11px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(iss.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (iss.status || '') + '</span></div>';
+      }).join('');
+      var bunRows = relBundles.map(function(b) {
+        var sc = bStatusColor[b.status] || '#6b7280';
+        return '<div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:#fff;border:1px solid #e5e7eb;border-radius:6px;margin-top:5px;cursor:pointer;" onclick="goToDeployBundle(\'' + b.id + '\')" title="배포 상세 열기">' +
+          '<span style="font-size:10px;font-weight:700;background:' + sc + '22;color:' + sc + ';padding:1px 7px;border-radius:8px;flex-shrink:0;">' + (bStatusMap[b.status] || b.status) + '</span>' +
+          (b.environment ? '<span style="font-size:10px;font-weight:700;color:#7c3aed;background:#ede9fe;padding:1px 5px;border-radius:4px;flex-shrink:0;">' + _escHtml(b.environment) + '</span>' : '') +
+          '<span style="flex:1;font-size:11px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(b.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (b.targetDate || '') + '</span></div>';
+      }).join('');
+      return '<div style="margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px;">' +
+        '<div style="padding:10px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;">' +
+          '<div style="font-size:12px;font-weight:700;color:#92400e;">🐛 연관 이슈 <span style="font-weight:600;">' + relIssues.length + '건</span></div>' +
+          '<div style="max-height:180px;overflow-y:auto;">' + (issRows || '<div style="font-size:11px;color:#9ca3af;margin-top:5px;">연결된 이슈가 없습니다.</div>') + '</div>' +
+          (relIssues.length > 30 ? '<div style="font-size:10px;color:#9ca3af;margin-top:4px;">외 ' + (relIssues.length - 30) + '건 — 이슈 탭에서 확인</div>' : '') +
+        '</div>' +
+        '<div style="padding:10px 12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;">' +
+          '<div style="font-size:12px;font-weight:700;color:#065f46;">🚀 연관 배포 <span style="font-weight:600;">' + relBundles.length + '건</span></div>' +
+          '<div style="max-height:140px;overflow-y:auto;">' + (bunRows || '<div style="font-size:11px;color:#9ca3af;margin-top:5px;">연결된 배포가 없습니다. 배포 번들 생성 시 이 프로젝트를 선택하면 여기에 표시됩니다.</div>') + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+    function _projectExtraSectionsHTML(p) {
+      return _projectTasksHTML(p) + _projectLinkedHTML(p);
     }
 
     function openDetailPanel(projectId) {
@@ -14445,6 +15084,9 @@ function renderDeployBundles() {
           <button onclick="addLink()" style="border: 1px dashed #d1d5db; background: #fafbfc; color: #6b7280; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; margin-top: 4px;">+ 링크 추가</button>
         </div>
       `;
+
+      // Task + 연관 이슈/배포 섹션
+      try { body.insertAdjacentHTML('beforeend', _projectExtraSectionsHTML(p)); } catch(e) { console.warn('[Detail] extra sections:', e); }
 
       panel.classList.add('open');
       document.getElementById('panelBackdrop').classList.add('open');
@@ -14651,11 +15293,11 @@ function renderDeployBundles() {
     }
     function _saveServiceTypes(arr) {
       localStorage.setItem('af_service_types', JSON.stringify(arr));
-      if (_fb.db) _fb.db.ref('settings/serviceTypes').set(arr);
+      if (_fb.db) dbRef('settings/serviceTypes').set(arr);
     }
     function _loadServiceTypesFromFirebase() {
       if (!_fb.db) return;
-      _fb.db.ref('settings/serviceTypes').on('value', function(snap) {
+      dbRef('settings/serviceTypes').on('value', function(snap) {
         var data = snap.val();
         if (data && Array.isArray(data) && data.length > 0) {
           localStorage.setItem('af_service_types', JSON.stringify(data));
@@ -15442,7 +16084,7 @@ function renderDeployBundles() {
       var idx = ls.findIndex(function(i) { return i.id === issueId; });
       if (idx >= 0) ls[idx] = iss; else ls.push(iss);
       localStorage.setItem(_LS_ISSUES_KEY, JSON.stringify(ls));
-      if (_fb.db) _fb.db.ref('issues/' + issueId).update({ scheduleStart: startVal, scheduleEnd: endVal, updated: iss.updated });
+      if (_fb.db) dbRef('issues/' + issueId).update({ scheduleStart: startVal, scheduleEnd: endVal, updated: iss.updated });
 
       document.getElementById('issueSchedulePopup')?.remove();
       pushHistory('수정', issueId, '이슈 일정', '', startVal + '~' + endVal);
@@ -15461,7 +16103,7 @@ function renderDeployBundles() {
       var idx = ls.findIndex(function(i) { return i.id === issueId; });
       if (idx >= 0) ls[idx] = iss;
       localStorage.setItem(_LS_ISSUES_KEY, JSON.stringify(ls));
-      if (_fb.db) _fb.db.ref('issues/' + issueId).update({ scheduleStart: null, scheduleEnd: null, updated: iss.updated });
+      if (_fb.db) dbRef('issues/' + issueId).update({ scheduleStart: null, scheduleEnd: null, updated: iss.updated });
 
       document.getElementById('issueSchedulePopup')?.remove();
       _showToast('이슈 일정이 초기화되었습니다');
@@ -15643,7 +16285,7 @@ function renderDeployBundles() {
           <tr>
             <td>${idx + 1}</td>
             <td><span class="tier-badge tier-${p.tier}">${p.tier === 'CONTINUOUS' ? '지속' : p.tier}</span></td>
-            <td><span class="project-name-link" onclick="openDetailPanel('${p.id}')">${p.name}</span>${(p.serviceTypes||[]).map(function(st){return ' '+serviceTagHTML(st);}).join('')}</td>
+            <td><span class="project-name-link" onclick="openDetailPanel('${p.id}')">${p.name}</span>${_taskBadgeHTML(p)}${(p.serviceTypes||[]).map(function(st){return ' '+serviceTagHTML(st);}).join('')}</td>
             <td class="phase-cell" onclick="openEditModal('${p.id}','plan')">${renderPhaseCell(p, 'plan')}</td>
             <td class="phase-cell" onclick="openEditModal('${p.id}','design')">${renderPhaseCell(p, 'design')}</td>
             <td class="phase-cell" onclick="openEditModal('${p.id}','front')">${renderPhaseCell(p, 'front')}</td>
@@ -15676,7 +16318,7 @@ function renderDeployBundles() {
       const container = document.getElementById('teamCards');
       container.innerHTML = '';
 
-      TEAM.forEach(member => {
+      TEAM.filter(_isOnBoard).forEach(member => {
         const assigned = state.projects
           .flatMap(p => ['plan', 'design', 'front', 'back', 'qa'].map(ph => ({
             project: p,
@@ -15735,6 +16377,29 @@ function renderDeployBundles() {
             phaseChips + '</div>';
         });
 
+        // 멤버에게 할당된 Task (프로젝트 다중 Task)
+        var memberTasks = [];
+        state.projects.forEach(function(p) {
+          (p.tasks || []).forEach(function(t) {
+            if ((t.assignees || []).indexOf(member.id) !== -1) memberTasks.push({ p: p, t: t });
+          });
+        });
+        var memberTasksDone = memberTasks.filter(function(x) { return x.t.status === 'done'; }).length;
+        var memberTasksHTML = '';
+        if (memberTasks.length > 0) {
+          memberTasksHTML = '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;">' +
+            '<div style="font-size:10px;font-weight:700;color:#6b7280;margin-bottom:4px;">📋 Task ' + memberTasksDone + '/' + memberTasks.length + ' 완료</div>' +
+            memberTasks.slice(0, 6).map(function(x) {
+              var tm = _TASK_STATUS_META[x.t.status] || _TASK_STATUS_META.todo;
+              return '<div style="display:flex;align-items:center;gap:5px;padding:2px 0;cursor:pointer;" onclick="openDetailPanel(\'' + x.p.id + '\')" title="' + x.p.id + ' 상세 열기">' +
+                '<span style="width:6px;height:6px;border-radius:50%;background:' + tm[1] + ';flex-shrink:0;"></span>' +
+                '<span style="font-size:10px;color:' + (x.t.status === 'done' ? '#9ca3af' : '#374151') + ';' + (x.t.status === 'done' ? 'text-decoration:line-through;' : '') + 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(x.t.title) + '</span>' +
+                '<span style="font-size:9px;color:#9ca3af;flex-shrink:0;">' + x.p.id + '</span></div>';
+            }).join('') +
+            (memberTasks.length > 6 ? '<div style="font-size:9px;color:#9ca3af;">외 ' + (memberTasks.length - 6) + '건</div>' : '') +
+          '</div>';
+        }
+
         // 접속 상태
         var presence = _memberPresence[member.id];
         var isOnline = presence && presence.online;
@@ -15768,6 +16433,7 @@ function renderDeployBundles() {
           </div>
           <div style="margin-bottom:10px;">${miniGanttHTML}</div>
           <div style="max-height:160px;overflow-y:auto;">${projectListHTML || '<div style="font-size:11px;color:#9ca3af;padding:8px 0;">할당된 안건 없음</div>'}</div>
+          ${memberTasksHTML}
         `;
         container.appendChild(card);
       });
@@ -15999,7 +16665,7 @@ function renderDeployBundles() {
       state.history = [];
       localStorage.removeItem(_LS_HISTORY_KEY);
       localStorage.removeItem('af_history'); // legacy key
-      if (_fb.db) _fb.db.ref('history/changes').remove();
+      if (_fb.db) dbRef('history/changes').remove();
       renderHistory();
       _showToast('변경 이력이 초기화되었습니다');
     }

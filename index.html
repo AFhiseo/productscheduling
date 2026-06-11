@@ -6734,7 +6734,11 @@
       var statusHTML = _mediaConfigured()
         ? '<div style="font-size:12px;color:#15803d;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin-bottom:12px;">✅ Cloudinary 연동 활성 — 사진/동영상이 원본 화질로 업로드됩니다 (최대 100MB)</div>'
         : '<div style="font-size:12px;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;margin-bottom:12px;">⚠️ 미연동 — 현재는 Firebase RTDB(base64)에 저장되어 이미지는 압축되고 동영상은 8MB 제한이 있습니다</div>';
+      var envLine = (typeof AF_ENV !== 'undefined' && AF_ENV === 'staging')
+        ? '<div style="font-size:11px;font-weight:700;color:#7c2d12;background:#ffedd5;border:1px solid #fdba74;border-radius:6px;padding:6px 10px;margin-bottom:10px;">🧪 현재 스테이징(테스트) 환경 — 이 설정은 스테이징에만 저장됩니다. 운영에 적용하려면 일반 URL에서 다시 저장하세요.</div>'
+        : '<div style="font-size:11px;color:#6b7280;margin-bottom:10px;">현재 환경: <b>운영</b> — 저장 시 전 팀원에게 적용됩니다.</div>';
       modal.innerHTML = '<h3 style="margin-bottom:12px;font-size:16px;font-weight:700;">🖼 미디어 저장소 설정 (Cloudinary)</h3>' +
+        envLine +
         statusHTML +
         '<div style="font-size:12px;color:#6b7280;line-height:1.6;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 12px;margin-bottom:12px;">' +
           '<b>설정 방법 (5분, 무료 25GB):</b><br>' +
@@ -6760,16 +6764,32 @@
       var up = ((document.getElementById('mediaUploadPreset') || {}).value || '').trim();
       if (!cn || !up) { _showToast('Cloud Name과 Upload Preset을 모두 입력해주세요', 2500, 'error'); return; }
       var cfg = { cloudName: cn, uploadPreset: up, updated: new Date().toISOString(), updatedBy: (typeof _getCurrentMemberName === 'function') ? _getCurrentMemberName() : '' };
-      if (_fb.db) dbRef('settings/mediaConfig').set(cfg);
-      _mediaConfig = cfg;
-      document.getElementById('mediaSettingsOverlay')?.remove();
-      _unlockBodyScroll();
-      _showToast('미디어 저장소 설정이 저장되었습니다 — 전 팀원에게 즉시 적용', 2500, 'success');
+      if (!_fb.db) { _showToast('Firebase 연결이 없습니다 — 새로고침 후 다시 시도해주세요', 3000, 'error'); return; }
+      _showToast('저장 중...', 1500);
+      // 저장 후 서버에서 다시 읽어 실제 반영 여부를 검증한다 (쓰기 거부가 조용히 무시되는 문제 방지)
+      dbRef('settings/mediaConfig').set(cfg).then(function() {
+        return dbRef('settings/mediaConfig').once('value');
+      }).then(function(snap) {
+        var v = snap.val();
+        if (v && v.cloudName === cfg.cloudName && v.uploadPreset === cfg.uploadPreset) {
+          _mediaConfig = v;
+          try { localStorage.setItem('af_media_config', JSON.stringify(v)); } catch(e) {}
+          document.getElementById('mediaSettingsOverlay')?.remove();
+          _unlockBodyScroll();
+          _showToast('✅ 저장 완료 — 서버 반영까지 확인했습니다. 전 팀원에게 즉시 적용됩니다', 3000, 'success');
+        } else {
+          _showToast('⚠️ 저장은 보냈지만 서버에서 값이 확인되지 않습니다. Firebase 규칙(settings 쓰기 권한)을 확인해주세요', 4500, 'error');
+        }
+      }).catch(function(err) {
+        console.error('[Media] save fail:', err);
+        _showToast('❌ 저장 실패: ' + ((err && err.message) || err) + ' — Firebase 규칙에서 쓰기가 거부되었을 수 있습니다', 4500, 'error');
+      });
     }
     function clearMediaSettings() {
       if (!confirm('Cloudinary 연동을 해제할까요? 기존 업로드된 파일 링크는 유지됩니다.')) return;
       if (_fb.db) dbRef('settings/mediaConfig').remove();
       _mediaConfig = null;
+      try { localStorage.removeItem('af_media_config'); } catch(e) {}
       document.getElementById('mediaSettingsOverlay')?.remove();
       _unlockBodyScroll();
       _showToast('미디어 저장소 연동이 해제되었습니다', 2000);
@@ -7604,7 +7624,13 @@
       dbRef('settings/mediaConfig').on('value', function(snap) {
         var v = snap.val();
         _mediaConfig = (v && v.cloudName && v.uploadPreset) ? v : null;
-        if (_mediaConfig) console.log('[Media] Cloudinary 연동 활성:', _mediaConfig.cloudName);
+        try {
+          if (_mediaConfig) localStorage.setItem('af_media_config', JSON.stringify(_mediaConfig));
+          else localStorage.removeItem('af_media_config');
+        } catch(e) {}
+        console.log('[Media] settings/mediaConfig 수신:', _mediaConfig ? _mediaConfig.cloudName : '(없음)');
+      }, function(err) {
+        console.error('[Media] settings/mediaConfig 읽기 거부:', err && err.message);
       });
       // 허용 이메일 목록
       dbRef('settings/allowedEmails').once('value', function(snap) {
@@ -11393,6 +11419,7 @@ function renderIssues() {
     // Cloudinary 무료 플랜(25GB)으로 원본 화질 그대로 업로드하고 URL만 RTDB에 저장한다.
     // 관리자 메뉴 → "미디어 저장소 설정"에서 cloudName/uploadPreset 입력 시 자동 활성화.
     var _mediaConfig = null;
+    try { _mediaConfig = JSON.parse(localStorage.getItem('af_media_config') || 'null'); } catch(e) {}
     function _mediaConfigured() {
       return !!(_mediaConfig && _mediaConfig.cloudName && _mediaConfig.uploadPreset);
     }

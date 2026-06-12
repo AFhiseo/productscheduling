@@ -3790,6 +3790,9 @@
           <!-- 채팅 버튼 -->
           <button class="btn btn-secondary" id="chatToggleBtn" title="채팅" onclick="toggleChatPanel()" style="font-size:15px;padding:5px 8px;display:none;position:relative;">💬<span class="chat-badge" id="chatBadge">0</span></button>
           <!-- 알림 버튼 -->
+          <div id="globalSearchBtn" onclick="openGlobalSearch()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition:all 0.15s;" title="전역 검색 (Ctrl/Cmd+K) — 프로젝트·이슈·배포·팀원 통합 검색" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+            <span style="font-size:15px;">🔍</span>
+          </div>
           <div id="notifBell" onclick="toggleNotifPanel()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition:all 0.15s;" title="알림" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
             <span style="font-size:16px;">🔔</span>
             <span id="notifBadge" style="display:none;position:absolute;top:-1px;right:-1px;background:#ef4444;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1;"></span>
@@ -7382,21 +7385,35 @@
     }
     function _stagingCopyProdData() {
       if (AF_ENV !== 'staging' || !_fb.db) return;
+      if (!state.currentUser) { alert('로그인 후에 복사할 수 있습니다. (Firebase 규칙상 로그인 필요)'); return; }
       if (!confirm('운영 데이터를 스테이징으로 복사할까요?\n기존 스테이징 데이터는 덮어씌워집니다. (운영 데이터는 읽기만 하며 변경되지 않습니다)')) return;
-      var paths = ['projects', 'issues', 'deployBundles', 'settings', 'history'];
-      var done = 0, failed = false;
+      var paths = ['projects', 'issues', 'deployBundles', 'settings', 'history', 'chats'];
+      var results = [];
       _showToast('운영 데이터 복사 중...', 3000);
+      function _done() {
+        if (results.length !== paths.length) return;
+        var fails = results.filter(function(r) { return !r.ok; });
+        if (fails.length === 0) {
+          _showToast('운영 데이터 복사 완료 (' + paths.length + '개 경로) — 새로고침합니다', 2000, 'success');
+          setTimeout(function() { location.reload(); }, 1200);
+        } else {
+          var detail = fails.map(function(f) { return '· ' + f.p + ' (' + f.stage + '): ' + f.msg; }).join('\n');
+          console.error('[Staging] 복사 실패:', fails);
+          alert('운영 데이터 복사 실패 ' + fails.length + '건:\n\n' + detail + '\n\n' +
+            'PERMISSION_DENIED인 경우 → Firebase 콘솔 > Realtime Database > 규칙에\n' +
+            'RTDB_규칙_업데이트_20260611.json 내용(staging 읽기/쓰기 허용 포함)이 게시되었는지 확인해주세요.');
+        }
+      }
       paths.forEach(function(p) {
-        _fb.db.ref(p).once('value', function(snap) { // 운영(루트) 경로 직접 read — write는 staging으로만
+        // 운영(루트) 경로는 읽기만, 쓰기는 staging/ 으로만
+        _fb.db.ref(p).once('value').then(function(snap) {
           var v = snap.val();
           var op = (v === null) ? _fb.db.ref('staging/' + p).remove() : _fb.db.ref('staging/' + p).set(v);
-          op.then(function() {
-            done++;
-            if (done === paths.length && !failed) {
-              _showToast('운영 데이터 복사 완료 — 새로고침합니다', 2000, 'success');
-              setTimeout(function() { location.reload(); }, 1200);
-            }
-          }).catch(function(err) { failed = true; console.error('staging copy fail:', err); _showToast('복사 실패: ' + err.message, 3000, 'error'); });
+          return op.then(function() { results.push({ p: p, ok: true }); _done(); })
+            .catch(function(err) { results.push({ p: p, ok: false, stage: '쓰기', msg: (err && err.message) || err }); _done(); });
+        }).catch(function(err) {
+          results.push({ p: p, ok: false, stage: '읽기', msg: (err && err.message) || err });
+          _done();
         });
       });
     }
@@ -8889,10 +8906,11 @@ function renderIssues() {
         }
 
         if (_issueViewMode === 'my-issues') {
-          var myUid = state.currentUser ? state.currentUser.uid : null;
-          if (!myUid) return false;
+          // 버그수정: assignees/verifier에는 TEAM memberId가 저장됨 (uid 아님)
+          var myMid = state.currentUser ? state.currentUser.memberId : null;
+          if (!myMid) return false;
           var myAssignees = _getAssigneeIds(iss);
-          if (myAssignees.indexOf(myUid) === -1 && iss.verifier !== myUid) return false;
+          if (myAssignees.indexOf(myMid) === -1 && iss.verifier !== myMid) return false;
         }
 
         if (_issueViewMode === 'bookmarks') {
@@ -8918,10 +8936,10 @@ function renderIssues() {
           created.getDate() === today.getDate();
       }).length;
 
-      // 내 이슈 계산
-      var myUid = state.currentUser ? state.currentUser.uid : null;
-      var myIssues = myUid ? _issues.filter(function(i) {
-        return i.assignee === myUid || i.verifier === myUid;
+      // 내 이슈 계산 (버그수정: memberId 기준 + 다중 담당자 지원)
+      var myMid2 = state.currentUser ? state.currentUser.memberId : null;
+      var myIssues = myMid2 ? _issues.filter(function(i) {
+        return _getAssigneeIds(i).indexOf(myMid2) !== -1 || i.verifier === myMid2;
       }).length : 0;
 
       document.getElementById('summaryOpen').textContent = open;
@@ -9057,9 +9075,9 @@ function renderIssues() {
 
       // Group if needed
       if (_issueViewMode === 'my-issues' && _issueDisplay === 'card') {
-        var myUid = state.currentUser ? state.currentUser.uid : null;
-        var myAssigned = filtered.filter(function(i) { return i.assignee === myUid; });
-        var myVerify = filtered.filter(function(i) { return i.verifier === myUid && i.assignee !== myUid; });
+        var myUid = state.currentUser ? state.currentUser.memberId : null; // 버그수정: memberId 기준
+        var myAssigned = filtered.filter(function(i) { return _getAssigneeIds(i).indexOf(myUid) !== -1; });
+        var myVerify = filtered.filter(function(i) { return i.verifier === myUid && _getAssigneeIds(i).indexOf(myUid) === -1; });
 
         if (myAssigned.length > 0) {
           var h1 = document.createElement('div');
@@ -12087,6 +12105,41 @@ function renderIssues() {
       _deployBundles.forEach(function(bundle) {
         var card = document.createElement('div');
         card.className = 'deploy-bundle-card';
+        card.style.cursor = 'pointer';
+        card.title = '클릭하여 상세 보기';
+        card.onclick = function() { openDeployBundleDetail(bundle.id); };
+        card.onmouseover = function() { this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'; };
+        card.onmouseout = function() { this.style.boxShadow = ''; };
+
+        var statusMap2 = { planning: '준비중', ready: '배포준비', deployed: '배포완료', cancelled: '취소' };
+        var statusColor2 = { planning: '#f59e0b', ready: '#3b82f6', deployed: '#10b981', cancelled: '#9ca3af' };
+        var sc2 = statusColor2[bundle.status] || '#6b7280';
+
+        // 상단: 상태칩 + 환경태그 + D-day (배포 탭 카드와 동일 규칙)
+        var topBar2 = document.createElement('div');
+        topBar2.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;';
+        var stChip = document.createElement('span');
+        stChip.style.cssText = 'font-size:10px;font-weight:700;background:' + sc2 + '22;color:' + sc2 + ';padding:2px 8px;border-radius:10px;border:1px solid ' + sc2 + '44;';
+        stChip.textContent = statusMap2[bundle.status] || bundle.status;
+        topBar2.appendChild(stChip);
+        if (bundle.environment) {
+          var envColors2 = { '운영': ['#fef2f2', '#dc2626', '#fca5a5'], '스테이지': ['#fffbeb', '#b45309', '#fcd34d'], '개발': ['#eff6ff', '#2563eb', '#bfdbfe'] };
+          var ec2 = envColors2[bundle.environment] || ['#f3f4f6', '#374151', '#d1d5db'];
+          var envChip = document.createElement('span');
+          envChip.style.cssText = 'font-size:10px;font-weight:700;background:' + ec2[0] + ';color:' + ec2[1] + ';padding:2px 7px;border-radius:4px;border:1px solid ' + ec2[2] + ';';
+          envChip.textContent = '🌐 ' + bundle.environment;
+          topBar2.appendChild(envChip);
+        }
+        // D-day — 배포완료/취소에는 기한초과를 표시하지 않는다 (배포 탭과 동일 규칙)
+        if (bundle.targetDate && bundle.status !== 'deployed' && bundle.status !== 'cancelled') {
+          var diff2 = Math.ceil((new Date(bundle.targetDate) - new Date()) / 86400000);
+          var ddChip = document.createElement('span');
+          var ddColor = diff2 < 0 ? '#dc2626' : diff2 <= 3 ? '#ef4444' : diff2 <= 7 ? '#f59e0b' : '#10b981';
+          ddChip.style.cssText = 'font-size:10px;font-weight:700;color:' + ddColor + ';margin-left:auto;';
+          ddChip.textContent = diff2 < 0 ? '기한초과 ' + Math.abs(diff2) + '일' : diff2 === 0 ? 'D-Day' : 'D-' + diff2;
+          topBar2.appendChild(ddChip);
+        }
+        card.appendChild(topBar2);
 
         var title = document.createElement('div');
         title.className = 'deploy-bundle-card-title';
@@ -12095,20 +12148,14 @@ function renderIssues() {
 
         var date = document.createElement('div');
         date.className = 'deploy-bundle-card-date';
-        date.textContent = new Date(bundle.targetDate).toLocaleDateString('ko-KR');
+        date.textContent = bundle.targetDate ? new Date(bundle.targetDate).toLocaleDateString('ko-KR') : '날짜 미정';
         card.appendChild(date);
-
-        var statusMap2 = {planning:'준비중',ready:'배포준비',deployed:'배포완료',cancelled:'취소'};
-        var status = document.createElement('span');
-        status.className = 'deploy-bundle-card-status bundle-status-' + bundle.status;
-        status.textContent = statusMap2[bundle.status] || bundle.status;
-        card.appendChild(status);
 
         var meta = document.createElement('div');
         meta.style.fontSize = '11px';
         meta.style.color = '#6b7280';
         meta.style.marginTop = '8px';
-        meta.innerHTML = '프로젝트: ' + bundle.projects.length + ' | 이슈: ' + bundle.issues.length;
+        meta.innerHTML = '프로젝트 ' + (bundle.projects || []).length + '건 · 이슈 ' + (bundle.issues || []).length + '건';
         card.appendChild(meta);
 
         container.appendChild(card);
@@ -12504,6 +12551,34 @@ function renderDeployBundles() {
           lb.onmouseout = function() { this.style.borderColor = '#e5e7eb'; this.style.color = '#6b7280'; };
           lb.onclick = function(e) { e.stopPropagation(); copyDeployLink(bundle.id); };
           flexRow.appendChild(lb);
+          if (_hasWritePermission()) {
+            var eb = document.createElement('button');
+            eb.textContent = '✏️ 수정';
+            eb.title = '제목 / 배포 목표일 / 배포 환경 수정';
+            eb.style.cssText = 'background:none;border:1.5px solid #e5e7eb;border-radius:6px;padding:3px 8px;font-size:11px;color:#6b7280;cursor:pointer;flex-shrink:0;height:fit-content;margin-left:4px;';
+            eb.onmouseover = function() { this.style.borderColor = '#6366f1'; this.style.color = '#6366f1'; };
+            eb.onmouseout = function() { this.style.borderColor = '#e5e7eb'; this.style.color = '#6b7280'; };
+            eb.onclick = function(e) {
+              e.stopPropagation();
+              var ex = document.getElementById('bundleEditForm');
+              if (ex) { ex.remove(); return; }
+              var f = document.createElement('div');
+              f.id = 'bundleEditForm';
+              f.style.cssText = 'margin-top:10px;padding:10px;background:#f9fafb;border:1.5px solid #c7d2fe;border-radius:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;';
+              var envOpts = ['', '운영', '스테이지', '개발'].map(function(o) {
+                return '<option value="' + o + '"' + ((bundle.environment || '') === o ? ' selected' : '') + '>' + (o || '환경 선택...') + '</option>';
+              }).join('');
+              f.innerHTML =
+                '<input id="bundleEditTitle" type="text" value="' + _escHtml(bundle.title) + '" placeholder="배포 제목" style="flex:1;min-width:160px;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;">' +
+                '<input id="bundleEditDate" type="date" value="' + (bundle.targetDate || '') + '" style="padding:5px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;">' +
+                '<select id="bundleEditEnv" style="padding:5px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;">' + envOpts + '</select>' +
+                '<button onclick="_saveBundleEdit(\'' + bundle.id + '\')" style="border:none;background:#6366f1;color:#fff;font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer;">저장</button>';
+              hdr.appendChild(f);
+              var ti = document.getElementById('bundleEditTitle');
+              if (ti) ti.focus();
+            };
+            flexRow.appendChild(eb);
+          }
         }
       })();
 
@@ -14725,6 +14800,30 @@ function renderDeployBundles() {
       } else { _fallbackCopyLink(url); }
     }
     window.copyDeployLink = copyDeployLink;
+    // 배포 번들 인라인 수정 저장 (제목/목표일/환경)
+    window._saveBundleEdit = function(bundleId) {
+      if (!_checkWritePermission()) return;
+      var bundle = _deployBundles.find(function(b) { return b.id === bundleId; });
+      if (!bundle) return;
+      var t = ((document.getElementById('bundleEditTitle') || {}).value || '').trim();
+      if (!t) { _showToast('배포 제목을 입력해주세요', 2000, 'error'); return; }
+      bundle.title = t;
+      bundle.targetDate = (document.getElementById('bundleEditDate') || {}).value || '';
+      bundle.environment = (document.getElementById('bundleEditEnv') || {}).value || '';
+      bundle.updated = new Date().toISOString();
+      _saveDeployBundlesToLocal();
+      if (_fb.db) {
+        var o = {};
+        o['deployBundles/' + bundle.id + '/title'] = bundle.title;
+        o['deployBundles/' + bundle.id + '/targetDate'] = bundle.targetDate;
+        o['deployBundles/' + bundle.id + '/environment'] = bundle.environment;
+        o['deployBundles/' + bundle.id + '/updated'] = bundle.updated;
+        dbRef().update(o).catch(function(err) { console.error('[Bundle] edit save fail:', err); _showToast('저장 실패: ' + err.message, 3000, 'error'); });
+      }
+      renderDeployBundles();
+      openDeployBundleDetail(bundle.id);
+      _showToast('배포 정보가 수정되었습니다', 2000, 'success');
+    };
     function copyProjectLink(projectId) {
       var url = window.location.origin + window.location.pathname + '#project=' + projectId;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -16744,12 +16843,431 @@ function renderDeployBundles() {
       } catch(e) { console.warn('[P0AutoAlert] error:', e); }
     }
 
+    /* ═══════════ 전역 검색 (Ctrl/Cmd+K) ═══════════ */
+    function openGlobalSearch() {
+      var ov = document.getElementById('globalSearchOverlay');
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'globalSearchOverlay';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:100000;display:none;align-items:flex-start;justify-content:center;padding-top:9vh;';
+        ov.innerHTML =
+          '<div style="width:600px;max-width:92vw;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;">' +
+            '<div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #e5e7eb;">' +
+              '<span style="font-size:14px;">🔍</span>' +
+              '<input id="globalSearchInput" type="text" placeholder="프로젝트, 이슈, 배포, 팀원 검색... (ESC 닫기)" style="flex:1;border:none;outline:none;font-size:14px;color:#1f2937;" autocomplete="off">' +
+              '<span style="font-size:10px;color:#9ca3af;border:1px solid #e5e7eb;border-radius:4px;padding:2px 6px;">Ctrl+K</span>' +
+            '</div>' +
+            '<div id="globalSearchResults" style="max-height:54vh;overflow-y:auto;padding:6px;"></div>' +
+          '</div>';
+        document.body.appendChild(ov);
+        ov.onclick = function(e) { if (e.target === ov) closeGlobalSearch(); };
+        var inp = ov.querySelector('#globalSearchInput');
+        var deb = null;
+        inp.oninput = function() { clearTimeout(deb); var v = this.value; deb = setTimeout(function() { _renderGlobalSearchResults(v); }, 150); };
+        inp.onkeydown = function(e) {
+          if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeGlobalSearch(); }
+          else if (e.key === 'Enter') {
+            var first = document.querySelector('#globalSearchResults [data-gs]');
+            if (first) first.click();
+          }
+        };
+      }
+      ov.style.display = 'flex';
+      var input = document.getElementById('globalSearchInput');
+      input.value = '';
+      _renderGlobalSearchResults('');
+      setTimeout(function() { input.focus(); }, 50);
+    }
+    function closeGlobalSearch() {
+      var ov = document.getElementById('globalSearchOverlay');
+      if (ov) ov.style.display = 'none';
+    }
+    function _gsRow(type, id, icon, title, meta, metaColor) {
+      return '<div data-gs="1" onclick="_gsJump(\'' + type + '\',\'' + id + '\')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;" onmouseover="this.style.background=\'#f3f4f6\'" onmouseout="this.style.background=\'transparent\'">' +
+        '<span style="font-size:13px;flex-shrink:0;">' + icon + '</span>' +
+        '<span style="flex:1;font-size:13px;color:#1f2937;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + title + '</span>' +
+        (meta ? '<span style="font-size:11px;color:' + (metaColor || '#9ca3af') + ';flex-shrink:0;font-weight:600;">' + meta + '</span>' : '') +
+      '</div>';
+    }
+    function _gsSection(label, rowsHtml) {
+      if (!rowsHtml) return '';
+      return '<div style="font-size:10px;font-weight:700;color:#9ca3af;padding:8px 10px 2px;text-transform:uppercase;letter-spacing:0.05em;">' + label + '</div>' + rowsHtml;
+    }
+    function _renderGlobalSearchResults(query) {
+      var box = document.getElementById('globalSearchResults');
+      if (!box) return;
+      var q = (query || '').trim().toLowerCase();
+      if (!q) {
+        box.innerHTML = '<div style="padding:18px;text-align:center;font-size:12px;color:#9ca3af;">키워드를 입력하세요 — 프로젝트 이름, 이슈 제목/ID, 배포 제목, 팀원 이름까지 한 번에 검색됩니다</div>';
+        return;
+      }
+      function hit(s) { return s && String(s).toLowerCase().indexOf(q) !== -1; }
+      var pj = state.projects.filter(function(p) { return hit(p.name) || hit(p.id); }).slice(0, 8)
+        .map(function(p) { return _gsRow('project', p.id, '📁', '<b style="color:#6366f1;">' + p.id + '</b> ' + _escHtml(p.name), p.status); }).join('');
+      var is = (_issues || []).filter(function(i) { return hit(i.title) || hit(i.id); }).slice(0, 8)
+        .map(function(i) {
+          var sevC = { Block: '#ef4444', Major: '#f97316', Minor: '#3b82f6', Trivial: '#9ca3af' }[i.severity] || '#9ca3af';
+          return _gsRow('issue', i.id, '🐛', '<b style="color:' + sevC + ';">' + i.id + '</b> ' + _escHtml(i.title), i.status, i.status === '완료' ? '#10b981' : '#6b7280');
+        }).join('');
+      var dp = (_deployBundles || []).filter(function(b) { return hit(b.title) || hit(b.id); }).slice(0, 6)
+        .map(function(b) {
+          var sm = { planning: '준비중', ready: '배포준비', deployed: '배포완료', cancelled: '취소' };
+          return _gsRow('deploy', b.id, '🚀', _escHtml(b.title) + (b.environment ? ' <span style="font-size:10px;color:#7c3aed;">[' + _escHtml(b.environment) + ']</span>' : ''), (sm[b.status] || b.status) + (b.targetDate ? ' · ' + b.targetDate : ''));
+        }).join('');
+      var tm = TEAM.filter(function(m) { return hit(m.name) || hit(m.role); }).slice(0, 5)
+        .map(function(m) { return _gsRow('member', m.id, '👤', _escHtml(m.name) + ' <span style="color:#9ca3af;font-size:11px;">' + _escHtml(m.role) + '</span>', m.permission === 'write' ? '쓰기' : '읽기'); }).join('');
+      var html = _gsSection('프로젝트', pj) + _gsSection('이슈', is) + _gsSection('배포', dp) + _gsSection('팀원', tm);
+      box.innerHTML = html || '<div style="padding:18px;text-align:center;font-size:12px;color:#9ca3af;">"' + _escHtml(query) + '" 검색 결과가 없습니다</div>';
+    }
+    function _gsJump(type, id) {
+      closeGlobalSearch();
+      if (type === 'project') { _switchToTab('projects'); setTimeout(function() { openDetailPanel(id); }, 150); }
+      else if (type === 'issue') { _switchToTab('issues'); setTimeout(function() { openIssueDetail(id); }, 200); }
+      else if (type === 'deploy') { _switchToTab('deploy'); setTimeout(function() { openDeployBundleDetail(id); }, 200); }
+      else if (type === 'member') { _switchToTab('team'); }
+    }
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); openGlobalSearch(); }
+    });
+    window.openGlobalSearch = openGlobalSearch;
+    window.closeGlobalSearch = closeGlobalSearch;
+    window._gsJump = _gsJump;
+
+    /* ═══════════ 개요 모드: 전사 / 내 업무 / 서비스 360 ═══════════ */
+    var _overviewMode = 'all';
+    var _overviewService = null;
+    try { _overviewMode = localStorage.getItem('af_overview_mode') || 'all'; _overviewService = localStorage.getItem('af_overview_service'); } catch(e) {}
+    window._setOverviewMode = function(m) {
+      _overviewMode = m;
+      try { localStorage.setItem('af_overview_mode', m); } catch(e) {}
+      renderOverview();
+    };
+    window._setOverviewService = function(s) {
+      _overviewService = s;
+      try { localStorage.setItem('af_overview_service', s); } catch(e) {}
+      renderOverview();
+    };
+    function _overviewToggleHTML() {
+      function btn(mode, label) {
+        var on = _overviewMode === mode;
+        return '<button onclick="_setOverviewMode(\'' + mode + '\')" style="padding:7px 16px;border-radius:8px;border:1px solid ' + (on ? '#6366f1' : '#e5e7eb') + ';background:' + (on ? '#6366f1' : '#fff') + ';color:' + (on ? '#fff' : '#6b7280') + ';font-size:12px;font-weight:700;cursor:pointer;">' + label + '</button>';
+      }
+      return '<div style="display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">' +
+        btn('all', '🏢 전사') + btn('me', '👤 내 업무') + btn('service', '🧩 서비스 360') +
+        '<span style="font-size:11px;color:#9ca3af;margin-left:6px;">' +
+        (_overviewMode === 'me' ? '내가 담당한 프로젝트·Task·이슈·배포만 모아 봅니다' : _overviewMode === 'service' ? '서비스 단위로 프로젝트·이슈·배포를 한 화면에' : 'Ctrl+K로 어디서든 전역 검색') +
+        '</span></div>';
+    }
+    function _ovSection(title, count, inner, accent) {
+      return '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:12px;">' +
+        '<div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:8px;">' + title +
+        (count !== null ? ' <span style="color:' + (accent || '#6366f1') + ';">' + count + '</span>' : '') + '</div>' +
+        inner + '</div>';
+    }
+    var _OV_EMPTY = '<div style="font-size:12px;color:#9ca3af;padding:6px 0;">해당 항목이 없습니다</div>';
+    function _ovDday(dateStr, doneLike) {
+      if (!dateStr || doneLike) return '';
+      var t = new Date(); t.setHours(0,0,0,0);
+      var d = Math.ceil((new Date(dateStr + 'T00:00:00') - t) / 86400000);
+      if (d < 0) return '<span style="font-size:10px;font-weight:700;color:#dc2626;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;padding:1px 6px;">초과 ' + (-d) + 'd</span>';
+      if (d === 0) return '<span style="font-size:10px;font-weight:700;color:#dc2626;">D-Day</span>';
+      if (d <= 3) return '<span style="font-size:10px;font-weight:700;color:#ef4444;">D-' + d + '</span>';
+      if (d <= 7) return '<span style="font-size:10px;font-weight:700;color:#f59e0b;">D-' + d + '</span>';
+      return '<span style="font-size:10px;color:#9ca3af;">D-' + d + '</span>';
+    }
+
+    /* ─────────── T1. 내 업무 홈 ─────────── */
+    function _renderMyWorkHTML() {
+      var me = state.currentUser ? state.currentUser.memberId : null;
+      var meObj = me ? TEAM.find(function(m) { return m.id === me; }) : null;
+      if (!me || !meObj) return '<div style="text-align:center;color:#9ca3af;padding:50px 0;font-size:13px;">멤버 연동 정보가 없습니다. 다시 로그인해주세요.</div>';
+
+      // 담당 프로젝트 페이즈
+      var myPhases = [];
+      state.projects.forEach(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return;
+        ['plan','design','front','back','qa'].forEach(function(ph) {
+          var d = p.phases && p.phases[ph];
+          if (d && d.start && p.assignments && p.assignments[ph] && p.assignments[ph].indexOf(me) !== -1) {
+            myPhases.push({ p: p, ph: ph, d: d });
+          }
+        });
+      });
+      myPhases.sort(function(a, b) { return (a.d.end || '9999') < (b.d.end || '9999') ? -1 : 1; });
+
+      // 담당 Task
+      var myTasks = [];
+      state.projects.forEach(function(p) {
+        (p.tasks || []).forEach(function(t) { if ((t.assignees || []).indexOf(me) !== -1) myTasks.push({ p: p, t: t }); });
+      });
+      myTasks.sort(function(a, b) {
+        if ((a.t.status === 'done') !== (b.t.status === 'done')) return a.t.status === 'done' ? 1 : -1;
+        return (a.t.end || '9999') < (b.t.end || '9999') ? -1 : 1;
+      });
+
+      // 담당/검증 이슈
+      var sevC = { Block: '#ef4444', Major: '#f97316', Minor: '#3b82f6', Trivial: '#9ca3af' };
+      var myAssigned = (_issues || []).filter(function(i) { return i.status !== '완료' && _getAssigneeIds(i).indexOf(me) !== -1; });
+      var myVerify = (_issues || []).filter(function(i) { return i.status !== '완료' && i.verifier === me && _getAssigneeIds(i).indexOf(me) === -1; });
+      function issueDl(i) { return i.deadline || '9999'; }
+      myAssigned.sort(function(a, b) { return issueDl(a) < issueDl(b) ? -1 : 1; });
+      myVerify.sort(function(a, b) { return issueDl(a) < issueDl(b) ? -1 : 1; });
+
+      // 내 이슈가 포함된 배포
+      var myIssueIds = {};
+      (_issues || []).forEach(function(i) { if (_getAssigneeIds(i).indexOf(me) !== -1 || i.verifier === me) myIssueIds[i.id] = true; });
+      var myBundles = (_deployBundles || []).filter(function(b) {
+        if (b.status === 'cancelled') return false;
+        return (b.issues || []).some(function(id) { return myIssueIds[id]; });
+      });
+
+      // 이번 주 마감 카운트
+      var weekEnd = Date.now() + 7 * 86400000;
+      var dueSoon = 0, overdueCnt = 0;
+      var todayD = new Date(); todayD.setHours(0,0,0,0);
+      function chkDue(dateStr) {
+        if (!dateStr) return;
+        var t = new Date(dateStr + 'T00:00:00').getTime();
+        if (t < todayD.getTime()) overdueCnt++;
+        else if (t < weekEnd) dueSoon++;
+      }
+      myPhases.forEach(function(x) { chkDue(x.d.end); });
+      myTasks.forEach(function(x) { if (x.t.status !== 'done') chkDue(x.t.end); });
+      myAssigned.forEach(function(i) { chkDue(i.deadline); });
+
+      // 상단 KPI
+      var kpi = '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;">' +
+        [['진행 프로젝트', myPhases.length, '#6366f1'],
+         ['담당 이슈', myAssigned.length, '#f97316'],
+         ['검증 대기', myVerify.length, '#8b5cf6'],
+         ['내 Task', myTasks.filter(function(x) { return x.t.status !== 'done'; }).length, '#06b6d4'],
+         ['기한초과', overdueCnt, overdueCnt > 0 ? '#dc2626' : '#10b981']]
+        .map(function(k) {
+          return '<div style="background:#fff;border:1px solid ' + (k[0] === '기한초과' && overdueCnt > 0 ? '#fca5a5' : '#e5e7eb') + ';border-radius:8px;padding:12px;text-align:center;">' +
+            '<div style="font-size:22px;font-weight:800;color:' + k[2] + ';">' + k[1] + '</div>' +
+            '<div style="font-size:11px;color:#6b7280;margin-top:2px;">' + k[0] + '</div></div>';
+        }).join('') + '</div>';
+
+      var hello = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
+        '<div style="width:34px;height:34px;border-radius:50%;background:' + meObj.color + ';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;">' + meObj.name.substring(0, 1) + '</div>' +
+        '<div><div style="font-size:15px;font-weight:800;color:#1f2937;">' + meObj.name + '님의 업무 보드</div>' +
+        '<div style="font-size:11px;color:#9ca3af;">' + _escHtml(meObj.role) + ' · 이번 주 마감 ' + dueSoon + '건' + (overdueCnt ? ' · <b style="color:#dc2626;">기한초과 ' + overdueCnt + '건</b>' : '') + '</div></div></div>';
+
+      var phaseRows = myPhases.slice(0, 12).map(function(x) {
+        return '<div onclick="openDetailPanel(\'' + x.p.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;background:' + (PHASE_COLORS[x.ph] || '#6b7280') + ';color:#fff;flex-shrink:0;">' + (PHASE_SHORT[x.ph] || x.ph) + '</span>' +
+          '<span style="font-size:10px;font-weight:700;color:#6366f1;flex-shrink:0;">' + x.p.id + '</span>' +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(x.p.name) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (x.d.start || '').slice(5) + '~' + (x.d.end || '').slice(5) + '</span> ' +
+          _ovDday(x.d.end, false) + '</div>';
+      }).join('');
+
+      var taskRows = myTasks.slice(0, 12).map(function(x) {
+        var tm = _TASK_STATUS_META[x.t.status] || _TASK_STATUS_META.todo;
+        return '<div onclick="openDetailPanel(\'' + x.p.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;background:' + tm[1] + '18;color:' + tm[1] + ';border:1px solid ' + tm[1] + '44;flex-shrink:0;">' + tm[0] + '</span>' +
+          '<span style="flex:1;font-size:12px;color:' + (x.t.status === 'done' ? '#9ca3af' : '#374151') + ';' + (x.t.status === 'done' ? 'text-decoration:line-through;' : '') + 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(x.t.title) + '</span>' +
+          '<span style="font-size:9px;color:#9ca3af;flex-shrink:0;">' + x.p.id + '</span> ' +
+          _ovDday(x.t.end, x.t.status === 'done') + '</div>';
+      }).join('');
+
+      function issueRow(i) {
+        return '<div onclick="openIssueDetail(\'' + i.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="width:7px;height:7px;border-radius:50%;background:' + (sevC[i.severity] || '#9ca3af') + ';flex-shrink:0;"></span>' +
+          '<span style="font-size:10px;font-weight:700;color:#6b7280;flex-shrink:0;">' + i.id + '</span>' +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(i.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (i.status || '') + '</span> ' +
+          _ovDday(i.deadline, false) + '</div>';
+      }
+      var bundleSm = { planning: '준비중', ready: '배포준비', deployed: '배포완료' };
+      var bundleSc = { planning: '#f59e0b', ready: '#3b82f6', deployed: '#10b981' };
+      var bundleRows = myBundles.slice(0, 8).map(function(b) {
+        var sc = bundleSc[b.status] || '#6b7280';
+        return '<div onclick="goToDeployBundle(\'' + b.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:10px;font-weight:700;background:' + sc + '22;color:' + sc + ';padding:1px 7px;border-radius:8px;flex-shrink:0;">' + (bundleSm[b.status] || b.status) + '</span>' +
+          (b.environment ? '<span style="font-size:10px;font-weight:700;color:#7c3aed;flex-shrink:0;">' + _escHtml(b.environment) + '</span>' : '') +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(b.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (b.targetDate || '') + '</span></div>';
+      }).join('');
+
+      return hello + kpi +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+          '<div>' +
+            _ovSection('📁 담당 프로젝트', myPhases.length, phaseRows || _OV_EMPTY) +
+            _ovSection('📋 내 Task', myTasks.length, taskRows || _OV_EMPTY, '#06b6d4') +
+          '</div>' +
+          '<div>' +
+            _ovSection('🐛 담당 이슈', myAssigned.length, myAssigned.slice(0, 10).map(issueRow).join('') || _OV_EMPTY, '#f97316') +
+            _ovSection('🔍 검증할 이슈 (QA)', myVerify.length, myVerify.slice(0, 8).map(issueRow).join('') || _OV_EMPTY, '#8b5cf6') +
+            _ovSection('🚀 내 이슈가 포함된 배포', myBundles.length, bundleRows || _OV_EMPTY, '#10b981') +
+          '</div>' +
+        '</div>';
+    }
+
+    /* ─────────── T3. 서비스 360 ─────────── */
+    function _renderService360HTML() {
+      var svc = _overviewService || SERVICE_TYPES[0];
+      if (SERVICE_TYPES.indexOf(svc) === -1) svc = SERVICE_TYPES[0];
+      var sel = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">' +
+        SERVICE_TYPES.map(function(s) {
+          var on = s === svc;
+          var c = getServiceColor(s);
+          return '<button onclick="_setOverviewService(\'' + s + '\')" style="padding:5px 12px;border-radius:14px;border:1px solid ' + (on ? c.color : '#e5e7eb') + ';background:' + (on ? c.bg : '#fff') + ';color:' + (on ? c.color : '#9ca3af') + ';font-size:11px;font-weight:700;cursor:pointer;">' + s + '</button>';
+        }).join('') + '</div>';
+
+      var svcIssues = (_issues || []).filter(function(i) { return (_getServiceIds(i) || []).indexOf(svc) !== -1; });
+      var openIssues = svcIssues.filter(function(i) { return i.status !== '완료'; });
+      var blocks = openIssues.filter(function(i) { return i.severity === 'Block'; }).length;
+      var majors = openIssues.filter(function(i) { return i.severity === 'Major'; }).length;
+      var svcProjects = state.projects.filter(function(p) { return (p.serviceTypes || []).indexOf(svc) !== -1; });
+      var activeProjects = svcProjects.filter(function(p) { return p.status !== '완료' && p.status !== 'Deprecated'; });
+      var svcIssueIds = {}; svcIssues.forEach(function(i) { svcIssueIds[i.id] = true; });
+      var svcProjIds = {}; svcProjects.forEach(function(p) { svcProjIds[p.id] = true; });
+      var svcBundles = (_deployBundles || []).filter(function(b) {
+        if (b.status === 'cancelled') return false;
+        return (b.issues || []).some(function(id) { return svcIssueIds[id]; }) || (b.projects || []).some(function(id) { return svcProjIds[id]; });
+      });
+      var upcoming = svcBundles.filter(function(b) { return b.status !== 'deployed'; }).length;
+
+      var kpi = '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;">' +
+        [['진행 프로젝트', activeProjects.length, '#6366f1'],
+         ['미해결 이슈', openIssues.length, openIssues.length ? '#f97316' : '#10b981'],
+         ['Block', blocks, blocks ? '#dc2626' : '#10b981'],
+         ['Major', majors, majors ? '#f97316' : '#10b981'],
+         ['예정 배포', upcoming, '#10b981']]
+        .map(function(k) {
+          return '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
+            '<div style="font-size:22px;font-weight:800;color:' + k[2] + ';">' + k[1] + '</div>' +
+            '<div style="font-size:11px;color:#6b7280;margin-top:2px;">' + k[0] + '</div></div>';
+        }).join('') + '</div>';
+
+      var sevC = { Block: '#ef4444', Major: '#f97316', Minor: '#3b82f6', Trivial: '#9ca3af' };
+      var issueRows = openIssues.sort(function(a, b) {
+        var so = { Block: 0, Major: 1, Minor: 2, Trivial: 3 };
+        return (so[a.severity] !== undefined ? so[a.severity] : 9) - (so[b.severity] !== undefined ? so[b.severity] : 9);
+      }).slice(0, 14).map(function(i) {
+        return '<div onclick="openIssueDetail(\'' + i.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:9px;font-weight:700;color:#fff;background:' + (sevC[i.severity] || '#9ca3af') + ';padding:1px 6px;border-radius:3px;flex-shrink:0;">' + (i.severity || '-') + '</span>' +
+          '<span style="font-size:10px;font-weight:700;color:#6b7280;flex-shrink:0;">' + i.id + '</span>' +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(i.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (i.status || '') + '</span></div>';
+      }).join('');
+
+      var projRows = svcProjects.slice(0, 12).map(function(p) {
+        var tierColor = TIER_COLORS[p.tier] || '#6b7280';
+        return '<div onclick="openDetailPanel(\'' + p.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:9px;font-weight:700;color:' + tierColor + ';flex-shrink:0;">' + p.id + '</span>' +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(p.name) + '</span>' +
+          (typeof _taskBadgeHTML === 'function' ? _taskBadgeHTML(p) : '') +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + p.status + '</span>' +
+          (p.deployDate ? '<span style="font-size:10px;color:#6b7280;flex-shrink:0;">배포 ' + p.deployDate.slice(5) + '</span>' : '') + '</div>';
+      }).join('');
+
+      var bundleSm = { planning: '준비중', ready: '배포준비', deployed: '배포완료' };
+      var bundleSc = { planning: '#f59e0b', ready: '#3b82f6', deployed: '#10b981' };
+      var bundleRows = svcBundles.slice(0, 8).map(function(b) {
+        var sc = bundleSc[b.status] || '#6b7280';
+        return '<div onclick="goToDeployBundle(\'' + b.id + '\')" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<span style="font-size:10px;font-weight:700;background:' + sc + '22;color:' + sc + ';padding:1px 7px;border-radius:8px;flex-shrink:0;">' + (bundleSm[b.status] || b.status) + '</span>' +
+          (b.environment ? '<span style="font-size:10px;font-weight:700;color:#7c3aed;flex-shrink:0;">' + _escHtml(b.environment) + '</span>' : '') +
+          '<span style="flex:1;font-size:12px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + _escHtml(b.title) + '</span>' +
+          '<span style="font-size:10px;color:#9ca3af;flex-shrink:0;">' + (b.targetDate || '') + '</span></div>';
+      }).join('');
+
+      return sel + kpi +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+          '<div>' + _ovSection('🐛 ' + svc + ' 미해결 이슈', openIssues.length, issueRows || _OV_EMPTY, '#f97316') + '</div>' +
+          '<div>' +
+            _ovSection('📁 관련 프로젝트', svcProjects.length, projRows || _OV_EMPTY) +
+            _ovSection('🚀 관련 배포', svcBundles.length, bundleRows || _OV_EMPTY, '#10b981') +
+          '</div>' +
+        '</div>';
+    }
+
+    /* ─────────── T4. 주간 경영 브리핑 ─────────── */
+    function _renderWeeklyBriefingHTML() {
+      var now = Date.now(), week = 7 * 86400000;
+      var todayD = new Date(); todayD.setHours(0, 0, 0, 0);
+      var newIssues = 0, resolved7 = 0, overdueOpen = 0;
+      (_issues || []).forEach(function(i) {
+        var c = i.created ? new Date(i.created).getTime() : 0;
+        if (c && now - c < week) newIssues++;
+        if (i.status === '완료') {
+          var u = i.updated ? new Date(i.updated).getTime() : c;
+          if (u && now - u < week) resolved7++;
+        } else if (i.deadline) {
+          if (new Date(i.deadline + 'T23:59:59').getTime() < now) overdueOpen++;
+        }
+      });
+      var deploysWeek = (_deployBundles || []).filter(function(b) {
+        if (!b.targetDate || b.status === 'deployed' || b.status === 'cancelled') return false;
+        var t = new Date(b.targetDate + 'T00:00:00').getTime();
+        return t >= todayD.getTime() && t < todayD.getTime() + week;
+      }).length;
+
+      // 주간 스냅샷 비교 (지난주 마지막 값 대비 ▲▼)
+      var d0 = new Date();
+      var oneJan = new Date(d0.getFullYear(), 0, 1);
+      var wk = d0.getFullYear() + '-W' + Math.ceil((((d0 - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+      var prev = null;
+      try {
+        var cur = JSON.parse(localStorage.getItem('af_brief_cur') || 'null');
+        if (cur && cur.week !== wk) localStorage.setItem('af_brief_prev', JSON.stringify(cur));
+        localStorage.setItem('af_brief_cur', JSON.stringify({ week: wk, values: { n: newIssues, r: resolved7, o: overdueOpen, d: deploysWeek } }));
+        var pv = JSON.parse(localStorage.getItem('af_brief_prev') || 'null');
+        if (pv) prev = pv.values;
+      } catch(e) {}
+      function delta(curV, key, goodUp) {
+        if (!prev || prev[key] === undefined) return '';
+        var df = curV - prev[key];
+        if (!df) return '';
+        var up = df > 0;
+        var good = goodUp ? up : !up;
+        return ' <span style="font-size:10px;font-weight:700;color:' + (good ? '#10b981' : '#dc2626') + ';">' + (up ? '▲' : '▼') + Math.abs(df) + '</span>';
+      }
+      function cell(label, val, color, deltaHtml, jump, sub) {
+        return '<div onclick="_briefJump(\'' + jump + '\')" style="flex:1;min-width:120px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;cursor:pointer;" onmouseover="this.style.borderColor=\'#c7d2fe\'" onmouseout="this.style.borderColor=\'#e5e7eb\'" title="클릭하여 이동">' +
+          '<div style="font-size:10px;color:#9ca3af;font-weight:600;">' + label + '</div>' +
+          '<div style="font-size:19px;font-weight:800;color:' + color + ';line-height:1.3;">' + val + deltaHtml + '</div>' +
+          (sub ? '<div style="font-size:9px;color:#bcbcbc;">' + sub + '</div>' : '') + '</div>';
+      }
+      var p26 = state.projects.find(function(p) { return p.id === 'P26'; });
+      var ddayCell = '';
+      if (p26) {
+        var dl = Math.ceil((parseLocalDate('2026-08-15') - todayD) / 86400000);
+        ddayCell = cell('P26 경량화 데드라인', 'D-' + dl, dl <= 21 ? '#dc2626' : '#6366f1', '', 'p26', '2026-08-15 하드 데드라인');
+      }
+      return '<div style="background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #c7d2fe;border-radius:10px;padding:12px;margin-bottom:14px;">' +
+        '<div style="font-size:12px;font-weight:800;color:#4338ca;margin-bottom:8px;">📊 주간 브리핑 <span style="font-weight:600;color:#818cf8;font-size:10px;">최근 7일 · 지난주 대비 ▲▼ · 클릭 시 해당 탭 이동</span></div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          cell('신규 이슈', newIssues, '#6366f1', delta(newIssues, 'n', false), 'issues', '') +
+          cell('해결 완료', resolved7, '#10b981', delta(resolved7, 'r', true), 'issues', '') +
+          cell('기한초과 미해결', overdueOpen, overdueOpen ? '#dc2626' : '#10b981', delta(overdueOpen, 'o', false), 'overdue', '') +
+          cell('이번 주 배포 예정', deploysWeek, '#0891b2', delta(deploysWeek, 'd', true), 'deploys', '') +
+          ddayCell +
+        '</div></div>';
+    }
+    window._briefJump = function(kind) {
+      if (kind === 'overdue') {
+        _switchToTab('issues');
+        setTimeout(function() { var b = document.getElementById('qfc-overdue'); if (typeof quickFilterIssues === 'function') quickFilterIssues('overdue', b); }, 250);
+      } else if (kind === 'deploys') { _switchToTab('deploy'); }
+      else if (kind === 'p26') { var p = state.projects.find(function(x) { return x.id === 'P26'; }); if (p) openDetailPanel('P26'); }
+      else { _switchToTab('issues'); }
+    };
+
     function renderOverview() {
       try {
       var all = state.projects;
       if (!all || all.length === 0) {
         var el = document.getElementById('overviewContent');
         if (el) el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:60px 0;font-size:14px;">프로젝트 데이터 로딩 중...</div>';
+        return;
+      }
+      // 개요 모드 분기: 내 업무 / 서비스 360은 별도 렌더
+      if (_overviewMode === 'me' || _overviewMode === 'service') {
+        var _ovEl = document.getElementById('overviewContent');
+        if (_ovEl) _ovEl.innerHTML = _overviewToggleHTML() + (_overviewMode === 'me' ? _renderMyWorkHTML() : _renderService360HTML());
         return;
       }
       var today = new Date(); today.setHours(0,0,0,0);
@@ -16859,6 +17377,8 @@ function renderDeployBundles() {
       var progressPct = totalPhases > 0 ? Math.round((completedPhases / totalPhases) * 100) : 0;
 
       var html = '';
+      html += _overviewToggleHTML();
+      try { html += _renderWeeklyBriefingHTML(); } catch(e) { console.warn('[Brief]', e); }
       // ROW 1: KPI 카드 (한 줄 컴팩트)
       html += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px;">';
       html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
@@ -17037,8 +17557,9 @@ function renderDeployBundles() {
         '</div></div>';
 
       // 내 담당 이슈
+      var _myMid = state.currentUser ? state.currentUser.memberId : null; // 버그수정: memberId 기준
       var myAssigned = _issues.filter(function(i) {
-        return (i.assignee === (state.currentUser ? state.currentUser.uid : null) || i.verifier === (state.currentUser ? state.currentUser.uid : null)) && i.status !== '완료';
+        return (_getAssigneeIds(i).indexOf(_myMid) !== -1 || i.verifier === _myMid) && i.status !== '완료';
       }).length;
       html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;">' +
         '<div style="font-size:11px;color:#6b7280;margin-bottom:4px;">내 담당 이슈</div>' +
@@ -17872,6 +18393,9 @@ function renderNotifList() {
         }
         // ESC - Close modals/panels in priority order
         if (e.key === 'Escape') {
+          // 전역검색 오버레이 (최우선 — 뒤 패널 이중 닫힘 방지)
+          var _gsOv = document.getElementById('globalSearchOverlay');
+          if (_gsOv && _gsOv.style.display !== 'none') { closeGlobalSearch(); return; }
           // Lightbox
           var lightbox = document.getElementById('lightboxOverlay');
           if (lightbox && lightbox.classList.contains('open')) { closeLightbox(); return; }

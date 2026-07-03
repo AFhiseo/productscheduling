@@ -7669,6 +7669,11 @@
       }, function(err) {
         console.error('[Media] settings/mediaConfig 읽기 거부:', err && err.message);
       });
+      // 이슈 템플릿 (실시간 공유)
+      dbRef('settings/issueTemplates').on('value', function(snap) {
+        _issueTemplates = snap.val() || {};
+        _refreshTemplateSelect();
+      }, function(err) { console.warn('[Template] load fail:', err && err.message); });
       // 허용 이메일 목록
       dbRef('settings/allowedEmails').once('value', function(snap) {
         var data = snap.val();
@@ -7846,6 +7851,100 @@
 
     var _createIssueAttachments = [];
 
+    /* ═══════════ 이슈 템플릿 (노션 스타일 프리셋) ═══════════ */
+    // settings/issueTemplates 에 저장 — 쓰기 권한자(QA 등)가 만들고 전 팀원이 사용
+    var _issueTemplates = {};
+    var _TPL_SIMPLE_FIELDS = ['title', 'type', 'severity', 'priority', 'environment', 'defectType', 'buildCategory', 'verifier', 'precondition', 'testSteps', 'expectedResult', 'actualResult'];
+    var _TPL_MC_FIELDS = ['platforms', 'projectIds', 'serviceTypes', 'assignees', 'references'];
+    function _setMcValues(id, values) {
+      var optsDiv = document.getElementById('mc_opts_' + id);
+      if (!optsDiv) return;
+      values = values || [];
+      optsDiv.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
+        cb.checked = values.indexOf(cb.value) !== -1;
+      });
+      if (typeof _mcUpdateChipsFromDOM === 'function') _mcUpdateChipsFromDOM(id);
+    }
+    function _refreshTemplateSelect() {
+      var sel = document.getElementById('issueTemplateSelect');
+      if (!sel) return;
+      var cur = sel.value;
+      sel.innerHTML = '<option value="">템플릿 선택...</option>';
+      Object.keys(_issueTemplates).forEach(function(tid) {
+        var t = _issueTemplates[tid];
+        if (!t || !t.name) return;
+        var opt = document.createElement('option');
+        opt.value = tid;
+        opt.textContent = t.name + (t.createdBy ? ' (' + t.createdBy + ')' : '');
+        sel.appendChild(opt);
+      });
+      if (cur && _issueTemplates[cur]) sel.value = cur;
+    }
+    function applyIssueTemplate() {
+      var sel = document.getElementById('issueTemplateSelect');
+      if (!sel || !sel.value) return;
+      var t = _issueTemplates[sel.value];
+      if (!t || !t.fields) { _showToast('템플릿 데이터를 찾을 수 없습니다', 2000, 'error'); return; }
+      var f = t.fields;
+      _TPL_SIMPLE_FIELDS.forEach(function(k) {
+        var el = document.getElementById('createIssue_' + k);
+        if (el && f[k] !== undefined && f[k] !== null) el.value = f[k];
+      });
+      _TPL_MC_FIELDS.forEach(function(k) {
+        if (f[k] && f[k].length) _setMcValues('create_' + k, f[k]);
+      });
+      _showToast('📋 템플릿 "' + t.name + '" 적용됨', 1800, 'success');
+    }
+    function saveIssueTemplateFromForm() {
+      if (!_checkWritePermission()) return;
+      var name = prompt('템플릿 이름을 입력하세요 (예: 앱 크래시 리포트)');
+      if (!name || !name.trim()) return;
+      name = name.trim();
+      var fields = {};
+      _TPL_SIMPLE_FIELDS.forEach(function(k) {
+        var el = document.getElementById('createIssue_' + k);
+        if (el && el.value) fields[k] = el.value;
+      });
+      _TPL_MC_FIELDS.forEach(function(k) {
+        var vals = _getMcValues('create_' + k);
+        if (vals.length) fields[k] = vals;
+      });
+      var tid = 'tpl_' + Date.now().toString(36);
+      var tpl = {
+        name: name,
+        fields: fields,
+        createdBy: (typeof _getCurrentMemberName === 'function') ? _getCurrentMemberName() : '',
+        created: new Date().toISOString()
+      };
+      _issueTemplates[tid] = tpl;
+      _refreshTemplateSelect();
+      var _tplSel = document.getElementById('issueTemplateSelect');
+      if (_tplSel) _tplSel.value = tid;
+      if (_fb.db) {
+        dbRef('settings/issueTemplates/' + tid).set(tpl).then(function() {
+          _showToast('✅ 템플릿 "' + name + '" 저장 완료 — 전 팀원이 사용 가능', 2500, 'success');
+        }).catch(function(err) {
+          console.error('[Template] save fail:', err);
+          _showToast('템플릿 저장 실패: ' + err.message + ' — Firebase 규칙에 settings/issueTemplates 쓰기 허용이 필요합니다', 4500, 'error');
+        });
+      }
+    }
+    function deleteIssueTemplate() {
+      if (!_checkWritePermission()) return;
+      var sel = document.getElementById('issueTemplateSelect');
+      if (!sel || !sel.value) { _showToast('삭제할 템플릿을 먼저 선택해주세요', 2000, 'error'); return; }
+      var t = _issueTemplates[sel.value];
+      if (!confirm('템플릿 "' + (t ? t.name : sel.value) + '"을(를) 삭제할까요?')) return;
+      var tid = sel.value;
+      delete _issueTemplates[tid];
+      if (_fb.db) dbRef('settings/issueTemplates/' + tid).remove();
+      _refreshTemplateSelect();
+      _showToast('템플릿이 삭제되었습니다', 1800);
+    }
+    window.applyIssueTemplate = applyIssueTemplate;
+    window.saveIssueTemplateFromForm = saveIssueTemplateFromForm;
+    window.deleteIssueTemplate = deleteIssueTemplate;
+
     function createIssue() {
       if (!_hasWritePermission()) { _checkWritePermission(); return; }
       _createIssueAttachments = [];
@@ -7853,6 +7952,17 @@
       var form = document.getElementById('createIssueForm');
       form.innerHTML = '';
       _targetAttachmentContext = 'create';
+
+      // ── 템플릿 바 (노션 스타일 프리셋) ──
+      var tplBar = document.createElement('div');
+      tplBar.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:12px;padding:8px 10px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;flex-wrap:wrap;';
+      tplBar.innerHTML =
+        '<span style="font-size:11px;font-weight:700;color:#5b21b6;flex-shrink:0;">📋 템플릿</span>' +
+        '<select id="issueTemplateSelect" class="issue-form-select" style="flex:1;min-width:140px;font-size:12px;" onchange="applyIssueTemplate()" title="선택하면 폼에 즉시 적용됩니다"><option value="">템플릿 선택...</option></select>' +
+        '<button type="button" onclick="saveIssueTemplateFromForm()" title="현재 폼 입력값을 템플릿으로 저장" style="border:1px solid #c4b5fd;background:#fff;color:#6d28d9;font-size:11px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;flex-shrink:0;">💾 현재 폼을 템플릿으로</button>' +
+        '<button type="button" onclick="deleteIssueTemplate()" title="선택된 템플릿 삭제" style="border:1px solid #e5e7eb;background:#fff;color:#9ca3af;font-size:11px;padding:5px 8px;border-radius:6px;cursor:pointer;flex-shrink:0;">🗑</button>';
+      form.appendChild(tplBar);
+      setTimeout(_refreshTemplateSelect, 0);
 
       var _addFieldToSection = function(section, labelText, fieldId, fieldType, isRequired, options) {
         var group = document.createElement('div');
@@ -8135,7 +8245,7 @@
       refGrp.appendChild(refLbl);
       refGrp.appendChild(_buildMcSelect('create_references',
         TEAM.map(function(m){return{v:m.id,l:m.name,color:m.color,sub:m.role};}),
-        _DEV_TEAM_IDS,
+        _DEV_TEAM_IDS.concat(TEAM.some(function(m){ return m.id === 'koo'; }) ? ['koo'] : []),
         {placeholder:'참조자 선택...'}));
       rowRefDl.appendChild(refGrp);
       var dlGrp = document.createElement('div');
@@ -8159,23 +8269,34 @@
 
       _addFieldToSection(detailSection, '사전조건', 'createIssue_precondition', 'textarea', false);
       _addFieldToSection(detailSection, '확인절차', 'createIssue_testSteps', 'textarea', false);
-      _addRowToSection(detailSection, [
-        { label: '예상결과', id: 'createIssue_expectedResult', type: 'text', required: false },
-        { label: '실제결과', id: 'createIssue_actualResult', type: 'text', required: false }
-      ]);
+      _addFieldToSection(detailSection, '예상결과', 'createIssue_expectedResult', 'textarea', false);
+      _addFieldToSection(detailSection, '실제결과', 'createIssue_actualResult', 'textarea', false);
 
       form.appendChild(detailSection);
 
-      document.getElementById('createIssueModal').addEventListener('paste', function(e) {
-        var items = e.clipboardData.items;
-        for (var i = 0; i < items.length; i++) {
-          if (items[i].type.indexOf('image') !== -1) {
-            var file = items[i].getAsFile();
-            _targetAttachmentContext = 'create';
-            handleFileAttachment([file]);
+      // paste 리스너는 1회만 바인딩 (모달을 열 때마다 중첩 등록되어 이미지가 N개씩 붙던 버그 수정)
+      var _cim = document.getElementById('createIssueModal');
+      if (!_cim._pasteBound) {
+        _cim._pasteBound = true;
+        _cim.addEventListener('paste', function(e) {
+          var items = e.clipboardData.items;
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+              var file = items[i].getAsFile();
+              _targetAttachmentContext = 'create';
+              handleFileAttachment([file]);
+            }
           }
+        });
+      }
+
+      // 프로젝트 필터가 걸려 있으면 새 이슈의 프로젝트로 자동 선택 (QA 요청)
+      setTimeout(function() {
+        var _pfSel = document.getElementById('issueProjectFilter');
+        if (_pfSel && _pfSel.value && _getMcValues('create_projectIds').length === 0) {
+          _setMcValues('create_projectIds', [_pfSel.value]);
         }
-      });
+      }, 60);
 
       // Auto-focus title
       setTimeout(function() {
@@ -8804,7 +8925,51 @@
       }
     }
 
-function renderIssues() {
+function _persistIssueFilters() {
+      try {
+        var o = {};
+        ['issueStatusFilter','issueServiceFilter','issueSeverityFilter','issueDefectTypeFilter','issuePriorityFilter','issueBundleFilter','issueProjectFilter'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) o[id] = el.value;
+        });
+        var si = document.getElementById('issueSearchInput');
+        if (si) o.search = si.value;
+        localStorage.setItem('af_issue_filters', JSON.stringify(o));
+      } catch(e) {}
+    }
+    var _issueFiltersRestored = false;
+    function _restoreIssueFilters() {
+      var saved = null;
+      try { saved = JSON.parse(localStorage.getItem('af_issue_filters') || 'null'); } catch(e) {}
+      if (!saved) { _issueFiltersRestored = true; return; }
+      // 프로젝트 옵션이 준비 전이면 프로젝트 필터만 보류하고 나머지는 즉시 복원
+      var _projReady = !(saved.issueProjectFilter && (!state.projects || state.projects.length === 0));
+      var pf = document.getElementById('issueProjectFilter');
+      if (pf && pf.options.length <= 1) {
+        (state.projects || []).forEach(function(p) {
+          var opt = document.createElement('option');
+          opt.value = p.id; opt.textContent = p.name;
+          pf.appendChild(opt);
+        });
+      }
+      if (typeof _refreshIssueServiceFilter === 'function') _refreshIssueServiceFilter();
+      ['issueStatusFilter','issueServiceFilter','issueSeverityFilter','issueDefectTypeFilter','issuePriorityFilter','issueBundleFilter','issueProjectFilter'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el || saved[id] === undefined) return;
+        if (id === 'issueProjectFilter' && !_projReady) return; // 옵션 준비 후 다음 렌더에서 복원
+        el.value = saved[id];
+        if (el.value !== saved[id]) el.value = ''; // 옵션에 없는 값 방어
+      });
+      var si = document.getElementById('issueSearchInput');
+      if (si && saved.search) si.value = saved.search;
+      _issueFiltersRestored = _projReady; // 프로젝트 필터까지 복원 완료 시에만 저장 모드 전환
+      if (typeof _updateFilterBadge === 'function') _updateFilterBadge();
+    }
+
+    function renderIssues() {
+      // 필터 저장/복원 — 첫 렌더에서 복원, 이후엔 변경사항 저장 (QA: 필터가 계속 초기화되던 문제)
+      if (!_issueFiltersRestored) { _restoreIssueFilters(); }
+      else { _persistIssueFilters(); }
       // 프로젝트 필터 옵션 동적 채우기
       var projFilterEl = document.getElementById('issueProjectFilter');
       if (projFilterEl && projFilterEl.options.length <= 1) {
@@ -10774,7 +10939,15 @@ function renderIssues() {
           } else if (att.type === 'video') {
             var vid = document.createElement('video');
             vid.src = att.data;
+            vid.muted = true;
+            vid.preload = 'metadata';
+            vid.style.cursor = 'pointer';
+            vid.onclick = function() { showLightbox(att); };
             thumb.appendChild(vid);
+            var vplay = document.createElement('span');
+            vplay.textContent = '▶';
+            vplay.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:16px;pointer-events:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.7));';
+            thumb.appendChild(vplay);
           }
           if (canEdit) {
             var removeBtn = document.createElement('button');
@@ -10912,14 +11085,24 @@ function renderIssues() {
                 var img = document.createElement('img');
                 img.src = att.data;
                 img.style.cssText = 'max-width:120px;max-height:80px;border-radius:4px;cursor:pointer;border:1px solid #e5e7eb;object-fit:cover;';
-                img.onclick = function() { showLightbox(att.data); };
+                img.onclick = function() { showLightbox(att); };
                 comAttachWrap.appendChild(img);
               } else if (att.type === 'video') {
+                var vidWrap = document.createElement('div');
+                vidWrap.style.cssText = 'position:relative;display:inline-block;';
                 var vid = document.createElement('video');
                 vid.src = att.data;
                 vid.controls = true;
-                vid.style.cssText = 'max-width:180px;max-height:100px;border-radius:4px;';
-                comAttachWrap.appendChild(vid);
+                vid.preload = 'metadata';
+                vid.style.cssText = 'max-width:180px;max-height:100px;border-radius:4px;display:block;';
+                vidWrap.appendChild(vid);
+                var expandBtn = document.createElement('button');
+                expandBtn.textContent = '⤢ 크게';
+                expandBtn.title = '크게 보기';
+                expandBtn.style.cssText = 'position:absolute;top:4px;right:4px;border:none;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;cursor:pointer;';
+                expandBtn.onclick = function(e) { e.stopPropagation(); try { vid.pause(); } catch(err) {} showLightbox(att); };
+                vidWrap.appendChild(expandBtn);
+                comAttachWrap.appendChild(vidWrap);
               }
             });
             commEl.appendChild(comAttachWrap);
@@ -11174,18 +11357,22 @@ function renderIssues() {
         });
       }, 0);
 
-      // Add paste listener
-      document.getElementById('issueDetailPanel').addEventListener('paste', function(e) {
-        if (!canEdit) return;
-        var items = e.clipboardData.items;
-        for (var i = 0; i < items.length; i++) {
-          if (items[i].type.indexOf('image') !== -1) {
-            var file = items[i].getAsFile();
-            _targetAttachmentContext = 'detail';
-            handleFileAttachment([file]);
+      // Add paste listener — 1회만 바인딩 (열 때마다 중첩 등록되어 첨부가 N개씩 붙던 버그 수정)
+      var _idp = document.getElementById('issueDetailPanel');
+      if (!_idp._pasteBound) {
+        _idp._pasteBound = true;
+        _idp.addEventListener('paste', function(e) {
+          if (!_hasWritePermission()) return;
+          var items = e.clipboardData.items;
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+              var file = items[i].getAsFile();
+              _targetAttachmentContext = 'detail';
+              handleFileAttachment([file]);
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     function closeIssueDetail() {
@@ -11364,6 +11551,13 @@ function renderIssues() {
             el.value = original[f];
           }
         });
+        // 멀티셀렉트 필드 복사 (프로젝트가 사라지던 문제 수정)
+        _setMcValues('create_projectIds', original.projectIds && original.projectIds.length ? original.projectIds : (original.projectId ? [original.projectId] : []));
+        _setMcValues('create_serviceTypes', original.serviceTypes && original.serviceTypes.length ? original.serviceTypes : (original.serviceType ? [original.serviceType] : []));
+        _setMcValues('create_platforms', original.platforms && original.platforms.length ? original.platforms : (original.platform ? [original.platform] : []));
+        _setMcValues('create_assignees', original.assignees && original.assignees.length ? original.assignees : (original.assignee ? [original.assignee] : []));
+        if (original.references && original.references.length) _setMcValues('create_references', original.references);
+        if (original.relatedIssues && original.relatedIssues.length) _setMcValues('create_relatedIssues', original.relatedIssues);
         // 제목에 "[복사]" 접두어
         var titleEl = document.getElementById('createIssue_title');
         if (titleEl) titleEl.value = '[복사] ' + (original.title || '');
@@ -11706,23 +11900,39 @@ function renderIssues() {
     }
 
     function showLightbox(att) {
+      // 문자열(URL/dataURL)로 호출되는 레거시 케이스 방어
+      if (typeof att === 'string') {
+        var _isVid = att.indexOf('data:video') === 0 || att.indexOf('/video/upload/') !== -1 || /\.(mp4|webm|mov|m4v)(\?|$)/i.test(att);
+        att = { type: _isVid ? 'video' : 'image', data: att };
+      }
+      if (!att || !att.data) return;
       var overlay = document.getElementById('lightboxOverlay');
       var content = document.getElementById('lightboxContent');
       content.innerHTML = '<button class="lightbox-close" onclick="closeLightbox()">×</button>';
-      if (att.type === 'image') {
-        var img = document.createElement('img');
-        img.src = att.data;
-        content.appendChild(img);
-      } else if (att.type === 'video') {
+      if (att.type === 'video') {
         var vid = document.createElement('video');
         vid.src = att.data;
         vid.controls = true;
+        vid.autoplay = true;
+        vid.playsInline = true;
+        vid.style.cssText = 'width:min(1100px,88vw);max-height:85vh;background:#000;border-radius:6px;display:block;';
         content.appendChild(vid);
+        setTimeout(function() { try { var p = vid.play(); if (p && p.catch) p.catch(function() {}); } catch(e) {} }, 60);
+      } else {
+        var img = document.createElement('img');
+        img.src = att.data;
+        content.appendChild(img);
       }
       overlay.classList.add('open');
     }
 
+
     function closeLightbox() {
+      var content = document.getElementById('lightboxContent');
+      if (content) {
+        var v = content.querySelector('video');
+        if (v) { try { v.pause(); v.src = ''; } catch(e) {} }
+      }
       document.getElementById('lightboxOverlay').classList.remove('open');
     }
 

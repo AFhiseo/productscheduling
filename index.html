@@ -3897,6 +3897,142 @@
     .grid-line.day { background: #F5F5F8; }
     .grid-line.week { background: #EBEBF0; }
 
+
+    /* ═══════════ v12 앱 셸: 좌측 사이드바 · 홈 · 모바일 하단 탭바 ═══════════ */
+    #afSide { display: none; }
+    body.af-v12 #afSide { display: flex; position: fixed; left: 0; top: 0; bottom: 0; width: 232px; z-index: 30; background: #fff; border-right: 1px solid #E7E7E7; flex-direction: column; padding: 18px 12px 14px; box-sizing: border-box; }
+    body.af-v12 .container { padding-left: 232px; }
+    .afs-logo { display: flex; align-items: center; gap: 8px; padding: 2px 10px 18px; }
+    .afs-logo svg { height: 24px; width: auto; }
+    .afs-logo span { font-size: 11px; font-weight: 700; color: #6433DF; background: #F3F0FF; border-radius: 6px; padding: 2px 6px; }
+    .afs-label { font-size: 11px; font-weight: 700; color: #AAAAAA; letter-spacing: 0.04em; padding: 14px 12px 6px; }
+    body.af-v12 #afSide .tabs { display: flex; flex-direction: column; gap: 2px; padding: 0; border: none; background: none; }
+    body.af-v12 #afSide .tab { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #555; }
+    body.af-v12 #afSide .tab .afs-ic { width: 18px; height: 18px; flex-shrink: 0; color: #919191; transition: color var(--m-feedback) var(--e-out), transform var(--m-feedback) var(--e-enter); }
+    body.af-v12 #afSide .tab:hover { background: #F7F8FC !important; color: #1A1A1A; }
+    body.af-v12 #afSide .tab:hover .afs-ic { transform: translateX(2px); }
+    body.af-v12 #afSide .tab.active { background: #F3F0FF !important; color: #32008C !important; }
+    body.af-v12 #afSide .tab.active .afs-ic { color: #32008C; }
+    body.af-v12 #afSide .tab.active::after { left: -12px; right: auto; top: 8px; bottom: 8px; width: 3px; height: auto; border-radius: 0 3px 3px 0; animation: afSideLine var(--m-enter) var(--e-enter); }
+    @keyframes afSideLine { from { transform: scaleY(0.2); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+    .afs-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; border-top: 1px solid #F3F3F3; padding-top: 10px; }
+    .afs-foot button { display: flex; align-items: center; gap: 10px; border: none; background: none; text-align: left; padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; color: #767676; cursor: pointer; }
+    .afs-foot button:hover { background: #F7F8FC; color: #1A1A1A; }
+    .afs-foot svg { width: 16px; height: 16px; }
+    /* 상단 바: 페이지 제목 + 기존 컨트롤 */
+    body.af-v12 .header { padding: 14px 28px 0; background: #fff; }
+    body.af-v12 .header-title .af-logo-text { display: none; }
+    #afPageTitle { display: none; }
+    body.af-v12 #afPageTitle { display: block; font-size: 22px; font-weight: 800; color: #1A1A1A; letter-spacing: -0.03em; margin-right: 6px; }
+    body.af-v12 #afPageTitle.afpt-in { animation: afRiseInSm var(--m-enter) var(--e-enter); }
+    body.af-v12 .header-top { margin-bottom: 12px; }
+    body.af-v12 .qa-status-bar { margin: 0 -28px; padding: 8px 28px; }
+
+    /* ── 홈 ── */
+    .afh { max-width: 1320px; margin: 0 auto; padding: 28px 32px 80px; box-sizing: border-box; }
+    #home { min-width: 0; max-width: 100%; overflow-x: hidden; flex: 1 1 auto; }
+    .afh { width: 100%; min-width: 0; }
+    .afh-grid > *, .afh-card, .afh-hero > div, .afh-kpi { min-width: 0; }
+    .afh-tl { overflow: hidden; }
+    .afh-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+    .afh-hello { font-size: 28px; font-weight: 800; color: #1A1A1A; letter-spacing: -0.04em; line-height: 1.25; }
+    .afh-hello b { color: #32008C; }
+    .afh-sub { font-size: 14px; color: #767676; margin-top: 6px; }
+    .afh-sub em { font-style: normal; color: #EE0005; font-weight: 700; }
+    .afh-quick { display: flex; gap: 8px; }
+    .afh-quick button { border: 1px solid #E7E7E7; background: #fff; color: #363636; font-size: 13px; font-weight: 700; padding: 9px 14px; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .afh-quick button.pri { background: #32008C; border-color: #32008C; color: #fff; }
+    .afh-quick button:hover { transform: translateY(-1px); }
+    .afh-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .afh-kpi { position: relative; background: #fff; border: 1px solid #EBEBF0; border-radius: 16px; padding: 18px 18px 16px; cursor: pointer; overflow: hidden; transition: transform var(--m-feedback) var(--e-enter), box-shadow var(--m-feedback) var(--e-out), border-color var(--m-feedback) var(--e-out); }
+    .afh-kpi:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(50,0,140,0.10); border-color: #D9CCFA; }
+    .afh-kpi .k-ic { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .afh-kpi .k-ic svg { width: 18px; height: 18px; }
+    .afh-kpi .k-num { font-size: 36px; font-weight: 800; letter-spacing: -0.04em; color: #1A1A1A; line-height: 1; }
+    .afh-kpi .k-lbl { font-size: 13px; font-weight: 600; color: #767676; margin-top: 8px; }
+    .afh-kpi .k-hint { font-size: 12px; color: #AAAAAA; margin-top: 2px; }
+    .afh-kpi.hot { border-color: #FFD0D1; }
+    .afh-kpi.hot .k-num { color: #EE0005; }
+    .afh-card { background: #fff; border: 1px solid #EBEBF0; border-radius: 16px; padding: 18px 20px; }
+    .afh-card-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .afh-card-h h3 { margin: 0; font-size: 16px; font-weight: 800; color: #1A1A1A; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+    .afh-card-h h3 small { font-size: 12px; font-weight: 700; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 1px 8px; }
+    .afh-link { border: none; background: none; color: #6433DF; font-size: 13px; font-weight: 700; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+    .afh-link:hover { background: #F3F0FF; }
+    .afh-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; margin-top: 14px; }
+    .afh-grid3 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .afh-list { display: flex; flex-direction: column; }
+    .afh-row { display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-bottom: 1px solid #F3F3F3; cursor: pointer; border-radius: 8px; transition: background var(--m-feedback) var(--e-out); }
+    .afh-row:last-child { border-bottom: none; }
+    .afh-row:hover { background: #F7F8FC; }
+    .afh-row .r-main { flex: 1; min-width: 0; }
+    .afh-row .r-t { font-size: 14px; font-weight: 600; color: #1A1A1A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .afh-row.done .r-t { color: #AAAAAA; text-decoration: line-through; }
+    .afh-row .r-s { font-size: 12px; color: #919191; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .afh-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #6433DF; flex-shrink: 0; cursor: pointer; }
+    .afh-badge { font-size: 11px; font-weight: 800; border-radius: 6px; padding: 2px 7px; flex-shrink: 0; }
+    .afh-dday { font-size: 12px; font-weight: 800; flex-shrink: 0; color: #767676; }
+    .afh-dday.urgent { color: #FF4C14; } .afh-dday.over { color: #EE0005; }
+    .afh-empty { padding: 26px 8px; text-align: center; color: #AAAAAA; font-size: 13px; }
+    .afh-empty b { display: block; color: #363636; font-size: 14px; margin-bottom: 4px; }
+    /* 홈 타임라인 간트 */
+    .afh-tl { position: relative; }
+    .afh-tl-head, .afh-tl-row { display: grid; grid-template-columns: 220px 1fr; align-items: center; }
+    .afh-tl-head { font-size: 11px; font-weight: 700; color: #AAAAAA; height: 26px; }
+    .afh-tl-weeks { position: relative; height: 26px; }
+    .afh-tl-weeks span { position: absolute; top: 6px; transform: translateX(-50%); white-space: nowrap; }
+    .afh-tl-row { height: 40px; border-top: 1px solid #F3F3F3; cursor: pointer; border-radius: 8px; }
+    .afh-tl-row:hover { background: #F7F8FC; }
+    .afh-tl-name { display: flex; align-items: center; gap: 6px; min-width: 0; padding-right: 10px; }
+    .afh-tl-name .af-pid { font-size: 10px; }
+    .afh-tl-name b { font-size: 13px; font-weight: 700; color: #1A1A1A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .afh-tl-track { position: relative; height: 100%; }
+    .afh-tl-bar { position: absolute; top: 11px; height: 18px; border-radius: 6px; display: flex; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); }
+    .afh-tl-bar i { display: block; height: 100%; }
+    .afh-tl-dep { position: absolute; top: 9px; width: 10px; height: 10px; margin-left: -5px; transform: rotate(45deg); background: #FF4C14; border: 2px solid #fff; box-shadow: 0 0 0 1px #FF4C14; }
+    .afh-tl-grid { position: absolute; left: 220px; right: 0; top: 26px; bottom: 0; pointer-events: none; }
+    .afh-tl-grid i { position: absolute; top: 0; bottom: 0; width: 1px; background: #F3F3F3; }
+    .afh-tl-today { position: absolute; top: 20px; bottom: 0; width: 2px; background: #6433DF; pointer-events: none; z-index: 2; }
+    .afh-tl-weeks .afh-tl-todaylbl { top: 3px; font-size: 10px; font-weight: 800; color: #fff; background: #6433DF; border-radius: 999px; padding: 1px 7px; z-index: 3; }
+    .afh-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: #767676; }
+    .afh-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+
+    /* 클래식 화면에서 새 화면으로 돌아가는 버튼 */
+    body.af-v12 #afPageTitle { white-space: nowrap; flex-shrink: 0; }
+    body.af-v12 .header-title { flex-shrink: 0; white-space: nowrap; }
+    body.af-v12 .header-top { gap: 12px; flex-wrap: wrap; row-gap: 8px; }
+    body.af-v12 .header-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; min-width: 0; }
+    body.af-v12 #floatingAddProjectBtn { left: 252px !important; right: auto !important; }
+    @media (max-width: 1180px) { body.af-v12 #deployVersion { display: none; } }
+    #afUiBack { display: none; }
+    body.af-classic #afUiBack { display: inline-flex; }
+
+    /* ── 태블릿·모바일: 사이드바 → 하단 탭바 ── */
+    @media (max-width: 900px) {
+      body.af-v12 .container { padding-left: 0; padding-bottom: 68px; }
+      body.af-v12 #afSide { top: auto; right: 0; width: auto; height: 64px; flex-direction: row; padding: 0 4px; border-right: none; border-top: 1px solid #E7E7E7; box-shadow: 0 -6px 18px rgba(26,26,26,0.06); }
+      body.af-v12 .afs-logo, body.af-v12 .afs-label, body.af-v12 .afs-foot { display: none; }
+      body.af-v12 #afSide .tabs { flex-direction: row; overflow-x: auto; gap: 0; width: 100%; scrollbar-width: none; }
+      body.af-v12 #afSide .tabs::-webkit-scrollbar { display: none; }
+      body.af-v12 #afSide .tab { flex-direction: column; gap: 3px; min-width: 64px; flex: 1 0 64px; padding: 9px 4px 7px; font-size: 11px; text-align: center; justify-content: center; border-radius: 10px; }
+      body.af-v12 #afSide .tab.active::after { left: 22%; right: 22%; top: 0; bottom: auto; width: auto; height: 3px; border-radius: 0 0 3px 3px; }
+      body.af-v12 .header { padding: 10px 14px 0; }
+      body.af-v12 .qa-status-bar { margin: 0 -14px; padding: 6px 14px; }
+      body.af-v12 #afPageTitle { font-size: 18px; }
+      body.af-v12 #floatingAddProjectBtn { bottom: 80px !important; left: 16px !important; }
+      body.af-v12 #afInstallBanner { bottom: 76px !important; }
+      body.af-v12 #afWhatsNew { bottom: 76px; }
+      .afh { padding: 18px 14px 40px; }
+      .afh-hello { font-size: 22px; }
+      .afh-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+      .afh-kpi .k-num { font-size: 28px; }
+      .afh-grid { grid-template-columns: 1fr; }
+      .afh-tl-head, .afh-tl-row { grid-template-columns: 120px 1fr; }
+      .afh-tl-grid { left: 120px; }
+      .afh-tl-name .af-pid { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .afh-kpi:hover, .afh-quick button:hover { transform: none; } }
+
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
     #afUpdateBar button { border: none; background: #6433DF; color: #fff; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
@@ -4131,6 +4267,7 @@
       </div>
       <!-- Tabs -->
       <div class="tabs">
+        <button class="tab" data-tab="home">홈</button>
         <button class="tab active" data-tab="schedule">스케줄</button>
         <button class="tab" data-tab="projects">프로젝트</button>
         <button class="tab" data-tab="issues">이슈</button>
@@ -4162,6 +4299,8 @@
 
     <!-- Content -->
     <div class="content">
+      <!-- Tab 0: Home (v12) -->
+      <div class="tab-content" id="home"><div id="afHome" class="afh"></div></div>
       <!-- Tab 1: Schedule -->
       <div class="tab-content active" id="schedule">
         <div class="gantt-toolbar" id="ganttToolbar">
@@ -4546,6 +4685,21 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v12</span>
+              <span class="rn-version-title">새 화면 — 왼쪽 메뉴 · 홈 대시보드 · 모바일 하단 탭</span>
+              <span class="rn-version-date">2026-10-15</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>상단 탭 → 왼쪽 메뉴(아이콘+이름), 상단에 지금 보는 화면 이름</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>홈: 오늘 확인할 일, 내 Task(체크로 완료), 위험 이슈, 이번 주 배포, 지표 카드</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>홈 진행 타임라인: 오늘 기준 2주 전~7주 후 프로젝트를 단계 색으로 표시, 배포일 마커, 전체 간트로 이동</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>휴대폰·좁은 창에서는 앱처럼 하단 탭바</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>예전 화면이 필요하면 왼쪽 아래 [이전 화면으로] — 데이터는 같고 언제든 다시 전환</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v11.2</span>
               <span class="rn-version-title">어바웃피싱 앱 톤 디자인</span>
@@ -19764,6 +19918,8 @@ function renderNotifList() {
       });
     }
     function _afStaggerTab(tabId) {
+      try { if (typeof _afUpdatePageTitle === 'function') _afUpdatePageTitle(); } catch(e) {}
+      if (tabId === 'home') { _afHomeSig = ''; _afRenderHome(true); return; }
       try { _afCountUp(document.getElementById(tabId)); } catch(e) {}
       if (tabId === 'schedule') { _afGanttSweep(); return; }
       var sel = {
@@ -19826,6 +19982,294 @@ function renderNotifList() {
       });
     }
     window._afCountUp = _afCountUp;
+
+    /* ═══════════ v12 앱 셸 ═══════════ */
+    var AF_NAV = {
+      home: ['홈', '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>'],
+      schedule: ['스케줄', '<path d="M3 5h8"/><path d="M7 10h10"/><path d="M5 15h7"/><path d="M11 20h9"/>'],
+      projects: ['프로젝트', '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>'],
+      issues: ['이슈', '<path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3 3 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M17.47 9c1.93-.2 3.53-1.9 3.53-4"/><path d="M6 13H2"/><path d="M22 13h-4"/>'],
+      deploy: ['배포', '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>'],
+      team: ['팀', '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'],
+      overview: ['개요', '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>'],
+      history: ['이력', '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'],
+      releasenotes: ['릴리즈', '<path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="M12 22a10 10 0 1 0 0-20"/><path d="m9 12 2 2 4-4"/>']
+    };
+    function _afSvg(path, cls) { return '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>'; }
+    var _afUiMode = 'v12';
+    try { if (localStorage.getItem('af_ui') === 'classic') _afUiMode = 'classic'; } catch(e) {}
+    function _afSetUi(mode) { try { localStorage.setItem('af_ui', mode); } catch(e) {} location.reload(); }
+    window._afSetUi = _afSetUi;
+
+    function _afBuildShell() {
+      if (document.getElementById('afSide')) return;
+      var tabs = document.querySelector('.header .tabs') || document.querySelector('.tabs');
+      var title = document.querySelector('.header-title');
+      if (!tabs || !title) return;
+      if (_afUiMode === 'classic') {
+        document.body.classList.add('af-classic');
+        var hc = document.querySelector('.header-controls');
+        if (hc && !document.getElementById('afUiBack')) {
+          var b = document.createElement('button'); b.id = 'afUiBack'; b.type = 'button';
+          b.textContent = '새 화면으로'; b.onclick = function() { _afSetUi('v12'); };
+          b.style.cssText = 'border:1px solid #D9CCFA;background:#F3F0FF;color:#32008C;font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer;';
+          hc.insertBefore(b, hc.firstChild);
+        }
+        return;
+      }
+      document.body.classList.add('af-v12');
+      var side = document.createElement('aside');
+      side.id = 'afSide';
+      side.setAttribute('aria-label', '메뉴');
+      var logo = title.querySelector('.af-logo-svg');
+      side.innerHTML = '<div class="afs-logo">' + (logo ? logo.outerHTML : '<b>AboutFishing</b>') + '<span>QA</span></div><div class="afs-label">워크스페이스</div>';
+      // 기존 탭 버튼(이벤트 포함)을 그대로 옮김
+      [].forEach.call(tabs.querySelectorAll('.tab'), function(t) {
+        var meta = AF_NAV[t.dataset.tab];
+        if (meta && !t.querySelector('.afs-ic')) { t.insertAdjacentHTML('afterbegin', _afSvg(meta[1], 'afs-ic')); }
+        t.setAttribute('title', meta ? meta[0] : t.textContent);
+      });
+      side.appendChild(tabs);
+      var foot = document.createElement('div');
+      foot.className = 'afs-foot';
+      foot.innerHTML =
+        '<button type="button" onclick="openManual()">' + _afSvg('<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>') + '사용법</button>' +
+        '<button type="button" onclick="openAppInstall()">' + _afSvg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>') + '앱 설치 · 알림</button>' +
+        '<button type="button" onclick="_afSetUi(\'classic\')" title="예전 상단 탭 화면으로 보기 (데이터는 같음)">' + _afSvg('<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>') + '이전 화면으로</button>';
+      side.appendChild(foot);
+      document.body.appendChild(side);
+      // 페이지 제목
+      var pt = document.createElement('div');
+      pt.id = 'afPageTitle';
+      title.insertBefore(pt, title.firstChild);
+      _afUpdatePageTitle();
+      side.addEventListener('click', function(e) { if (e.target.closest('.tab')) setTimeout(_afUpdatePageTitle, 0); });
+    }
+    function _afUpdatePageTitle() {
+      var pt = document.getElementById('afPageTitle'); if (!pt) return;
+      var cur = (typeof state !== 'undefined' && state.currentTab) || 'schedule';
+      var label = (AF_NAV[cur] || [cur])[0];
+      if (pt.textContent === label) return;
+      pt.textContent = label;
+      pt.classList.remove('afpt-in'); void pt.offsetWidth; pt.classList.add('afpt-in');
+    }
+    window._afUpdatePageTitle = _afUpdatePageTitle;
+
+    /* ── 홈 대시보드 ── */
+    function _afDateOnly(s) { if (!s) return null; var d = new Date(String(s).slice(0, 10) + 'T00:00:00'); return isNaN(d) ? null : d; }
+    function _afDday(s) {
+      var d = _afDateOnly(s); if (!d) return { t: '', c: '' };
+      var t0 = new Date(); t0.setHours(0,0,0,0);
+      var n = Math.round((d - t0) / 86400000);
+      if (n < 0) return { t: 'D+' + (-n), c: 'over' };
+      if (n === 0) return { t: 'D-DAY', c: 'urgent' };
+      return { t: 'D-' + n, c: n <= 2 ? 'urgent' : '' };
+    }
+    function _afProjSpan(p) {
+      var st = null, en = null;
+      ['plan','design','front','back','qa'].forEach(function(ph) {
+        var d = p.phases && p.phases[ph]; if (!d) return;
+        var a = _afDateOnly(d.start), b = _afDateOnly(d.end);
+        if (a && (!st || a < st)) st = a;
+        if (b && (!en || b > en)) en = b;
+      });
+      return { st: st, en: en };
+    }
+    function _afHomeData() {
+      var me = state.currentUser ? state.currentUser.memberId : null;
+      var meObj = me ? TEAM.find(function(m) { return m.id === me; }) : null;
+      var t0 = new Date(); t0.setHours(0,0,0,0);
+      var wk = new Date(t0.getTime() + 7 * 86400000);
+      var myTasks = [];
+      state.projects.forEach(function(p) {
+        (p.tasks || []).forEach(function(t) { if (me && (t.assignees || []).indexOf(me) !== -1) myTasks.push({ p: p, t: t }); });
+      });
+      myTasks.sort(function(a, b) {
+        if ((a.t.status === 'done') !== (b.t.status === 'done')) return a.t.status === 'done' ? 1 : -1;
+        return (a.t.end || '9999') < (b.t.end || '9999') ? -1 : 1;
+      });
+      var open = (_issues || []).filter(function(i) { return i && i.status !== '완료'; });
+      var risk = open.filter(function(i) { return i.severity === 'Block' || i.severity === 'Major'; });
+      risk.sort(function(a, b) {
+        if (a.severity !== b.severity) return a.severity === 'Block' ? -1 : 1;
+        return (a.deadline || '9999') < (b.deadline || '9999') ? -1 : 1;
+      });
+      var deploys = (_deployBundles || []).filter(function(b) {
+        if (!b || b.status === 'cancelled' || b.status === 'deployed') return false;
+        var d = _afDateOnly(b.targetDate); return !d || d < wk;
+      }).sort(function(a, b) { return (a.targetDate || '9999') < (b.targetDate || '9999') ? -1 : 1; });
+      var active = state.projects.filter(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return false;
+        var sp = _afProjSpan(p); return sp.st && sp.en && sp.st <= t0 && sp.en >= t0;
+      });
+      var myOpenIssues = me ? open.filter(function(i) { return _getAssigneeIds(i).indexOf(me) !== -1; }) : [];
+      return { me: me, meObj: meObj, myTasks: myTasks, risk: risk, deploys: deploys, active: active, myOpenIssues: myOpenIssues, open: open };
+    }
+    function _afGoTab(id) { var t = document.querySelector('.tab[data-tab="' + id + '"]'); if (t) t.click(); }
+    window._afGoTab = _afGoTab;
+
+    function _afTimelineHTML() {
+      var t0 = new Date(); t0.setHours(0,0,0,0);
+      var from = new Date(t0.getTime() - 14 * 86400000), days = 63;
+      var to = new Date(from.getTime() + days * 86400000);
+      var pct = function(d) { return Math.max(0, Math.min(100, (d - from) / (to - from) * 100)); };
+      var rows = state.projects.filter(function(p) {
+        if (p.status === '완료' || p.status === 'Deprecated') return false;
+        var sp = _afProjSpan(p); return sp.st && sp.en && sp.en >= from && sp.st <= to;
+      });
+      var tierRank = { CRITICAL: 0, TIER1: 1, TIER2: 2, TIER3: 3, TIER4: 4, CONTINUOUS: 5 };
+      rows.sort(function(a, b) { var r = (tierRank[a.tier] || 9) - (tierRank[b.tier] || 9); return r || (_afProjSpan(a).st - _afProjSpan(b).st); });
+      var total = rows.length; rows = rows.slice(0, 12);
+      var weeks = '', grid = '';
+      for (var i = 0; i <= days; i += 7) {
+        var d = new Date(from.getTime() + i * 86400000), x = i / days * 100;
+        if (Math.abs(i - 14) > 2) weeks += '<span style="left:' + x + '%">' + (d.getMonth() + 1) + '/' + d.getDate() + '</span>';
+        grid += '<i style="left:calc(' + x + '% * (1))"></i>';
+      }
+      var body = rows.map(function(p) {
+        var sp = _afProjSpan(p);
+        var L = pct(sp.st), R = pct(new Date(sp.en.getTime() + 86400000));
+        var spanMs = (sp.en - sp.st) + 86400000;
+        // 페이즈별 구간을 바 안에 색으로 표시 (현재 진행 페이즈를 한눈에)
+        var segs = ['plan','design','front','back','qa'].map(function(ph) {
+          var dd = p.phases && p.phases[ph]; if (!dd) return '';
+          var a = _afDateOnly(dd.start), b = _afDateOnly(dd.end); if (!a || !b) return '';
+          var w = ((b - a) + 86400000) / spanMs * 100, l = (a - sp.st) / spanMs * 100;
+          return '<i title="' + PHASE_LABELS[ph] + ' ' + dd.start + ' ~ ' + dd.end + '" style="position:absolute;left:' + l + '%;width:' + w + '%;background:' + PHASE_COLORS[ph] + ';opacity:.92"></i>';
+        }).join('');
+        var dep = _afDateOnly(p.deployDate);
+        var depHTML = dep && dep >= from && dep <= to ? '<span class="afh-tl-dep" style="left:' + pct(dep) + '%" title="배포 ' + p.deployDate + '"></span>' : '';
+        return '<div class="afh-tl-row" onclick="openDetailPanel(\'' + _escHtml(p.id) + '\')" title="' + _escHtml(p.name) + '">' +
+          '<div class="afh-tl-name"><span class="af-pid">' + _escHtml(p.id) + '</span><b>' + _escHtml(p.name) + '</b></div>' +
+          '<div class="afh-tl-track"><div class="afh-tl-bar" style="left:' + L + '%;width:' + Math.max(0.8, R - L) + '%;background:' + (TIER_COLORS[p.tier] || '#919191') + '22">' + segs + '</div>' + depHTML + '</div></div>';
+      }).join('');
+      var todayX = pct(t0);
+      var legend = ['plan','design','front','back','qa'].map(function(ph) { return '<span><i style="background:' + PHASE_COLORS[ph] + '"></i>' + PHASE_LABELS[ph] + '</span>'; }).join('') + '<span><i style="background:#FF4C14;transform:rotate(45deg);border-radius:1px"></i>배포</span>';
+      return '<div class="afh-card" style="margin-top:14px">' +
+        '<div class="afh-card-h"><h3>진행 타임라인 <small>' + total + '</small></h3><div style="display:flex;align-items:center;gap:14px"><div class="afh-legend">' + legend + '</div><button class="afh-link" onclick="_afGoTab(\'schedule\')">전체 간트 →</button></div></div>' +
+        (rows.length ? '<div class="afh-tl"><div class="afh-tl-head"><div>프로젝트 (2주 전 ~ 7주 후)</div><div class="afh-tl-weeks">' + weeks + '<span class="afh-tl-todaylbl" style="left:' + todayX + '%">오늘</span></div></div>' +
+          '<div style="position:relative">' + body +
+          '<div class="afh-tl-grid" style="top:0">' + grid + '<div class="afh-tl-today" style="left:' + todayX + '%;top:0"></div></div></div>' +
+          (total > rows.length ? '<div style="text-align:center;padding-top:10px"><button class="afh-link" onclick="_afGoTab(\'schedule\')">외 ' + (total - rows.length) + '개 프로젝트 전체 간트에서 보기</button></div>' : '') + '</div>'
+          : '<div class="afh-empty"><b>이 기간에 진행 중인 프로젝트가 없습니다</b>스케줄에서 일정을 등록하면 여기에 보입니다</div>') +
+      '</div>';
+    }
+
+    var _afHomeSig = '';
+    function _afRenderHome(force) {
+      var el = document.getElementById('afHome'); if (!el) return;
+      if (!state || !state.projects) return;
+      var D = _afHomeData();
+      var sig = JSON.stringify([D.me, state.projects.length, D.myTasks.map(function(x) { return x.t.id + x.t.status + x.t.end; }), D.risk.map(function(i) { return i.id + i.status; }), D.deploys.map(function(b) { return b.id + b.status + b.targetDate; }), D.active.length, (_issues || []).length]);
+      if (!force && sig === _afHomeSig && el.innerHTML) return;
+      var first = !_afHomeSig;
+      _afHomeSig = sig;
+      var name = D.meObj ? D.meObj.name : ((state.currentUser && state.currentUser.displayName) || '');
+      var now = new Date();
+      var dstr = (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + ['일','월','화','수','목','금','토'][now.getDay()] + '요일';
+      var openTasks = D.myTasks.filter(function(x) { return x.t.status !== 'done'; });
+      var overdue = openTasks.filter(function(x) { return _afDday(x.t.end).c === 'over'; }).length;
+      var todo = openTasks.length + D.myOpenIssues.length;
+      var hero = '<div class="afh-hero"><div><div class="afh-hello">' + (name ? '<b>' + _escHtml(name) + '</b>님, ' : '') + '오늘 확인할 일 ' + todo + '건</div>' +
+        '<div class="afh-sub">' + dstr + ' · 내 Task ' + openTasks.length + '건 · 담당 이슈 ' + D.myOpenIssues.length + '건' + (overdue ? ' · <em>기한초과 ' + overdue + '건</em>' : '') + '</div></div>' +
+        '<div class="afh-quick">' + (_hasWritePermission() ? '<button class="pri" onclick="_afGoTab(\'issues\');setTimeout(function(){var q=document.querySelector(\'.qc-title-input\');if(q)q.focus();},300)">＋ 이슈 등록</button>' : '') +
+        '<button onclick="openGlobalSearch()">검색 <span style="color:#AAAAAA;font-weight:600">⌘K</span></button></div></div>';
+      function kpi(ic, bg, fg, num, lbl, hint, onclick, hot) {
+        return '<div class="afh-kpi' + (hot ? ' hot' : '') + '" role="button" tabindex="0" onclick="' + onclick + '" onkeydown="if(event.key===\'Enter\')this.click()">' +
+          '<div class="k-ic" style="background:' + bg + ';color:' + fg + '">' + _afSvg(ic) + '</div>' +
+          '<div class="k-num">' + num + '</div><div class="k-lbl">' + lbl + '</div><div class="k-hint">' + hint + '</div></div>';
+      }
+      var blockCnt = D.risk.filter(function(i) { return i.severity === 'Block'; }).length;
+      var kpis = '<div class="afh-kpis">' +
+        kpi('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', '#F3F0FF', '#32008C', openTasks.length + D.myOpenIssues.length, '내 할 일', 'Task ' + openTasks.length + ' · 이슈 ' + D.myOpenIssues.length + (overdue ? ' · 기한초과 ' + overdue : ''), "document.getElementById('afhTasks').scrollIntoView({behavior:'smooth',block:'center'})", overdue > 0) +
+        kpi('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>', '#FFF1F1', '#EE0005', D.risk.length, '미해결 Block·Major', 'Block ' + blockCnt + '건', "_afGoTab('issues')", blockCnt > 0) +
+        kpi(AF_NAV.deploy[1], '#FFF4EE', '#FF4C14', D.deploys.length, '이번 주 배포 예정', '준비·대기 중인 번들', "_afGoTab('deploy')", false) +
+        kpi(AF_NAV.schedule[1], '#EEF6FF', '#2563eb', D.active.length, '진행 중 프로젝트', '오늘 일정에 걸린 프로젝트', "_afGoTab('schedule')", false) +
+      '</div>';
+      var taskRows = D.myTasks.slice(0, 7).map(function(x) {
+        var dd = _afDday(x.t.end), done = x.t.status === 'done';
+        return '<div class="afh-row' + (done ? ' done' : '') + '" onclick="openDetailPanel(\'' + _escHtml(x.p.id) + '\')">' +
+          '<input type="checkbox"' + (done ? ' checked' : '') + ' aria-label="완료 표시" onclick="event.stopPropagation()" onchange="_afToggleTaskDone(\'' + _escHtml(x.p.id) + '\',\'' + _escHtml(x.t.id) + '\',this.checked);setTimeout(function(){_afRenderHome(true)},50)">' +
+          '<div class="r-main"><div class="r-t">' + _escHtml(x.t.title) + '</div><div class="r-s">' + _escHtml(x.p.id + ' ' + x.p.name) + (x.t.end ? ' · ~' + _escHtml(x.t.end.slice(5).replace('-', '/')) : '') + '</div></div>' +
+          (done ? '' : '<span class="afh-dday ' + dd.c + '">' + dd.t + '</span>') + '</div>';
+      }).join('');
+      var sevC2 = { Block: ['#FFF1F1', '#EE0005'], Major: ['#FFF4EE', '#FF4C14'], Minor: ['#EEF6FF', '#2563eb'], Trivial: ['#F3F3F3', '#767676'] };
+      var myIssueRows = D.myOpenIssues.slice().sort(function(a, b) { return (a.deadline || '9999') < (b.deadline || '9999') ? -1 : 1; }).slice(0, Math.max(3, 8 - D.myTasks.slice(0, 7).length)).map(function(i) {
+        var dd = _afDday(i.deadline), c = sevC2[i.severity] || sevC2.Trivial;
+        return '<div class="afh-row" onclick="openIssueDetail(\'' + _escHtml(i.id) + '\')">' +
+          '<span class="afh-badge" style="background:' + c[0] + ';color:' + c[1] + '">이슈</span>' +
+          '<div class="r-main"><div class="r-t">' + _escHtml(i.title || i.id) + '</div><div class="r-s">' + _escHtml(i.id) + ' · ' + _escHtml(i.severity || '') + ' · ' + _escHtml(i.status || '') + '</div></div>' +
+          (dd.t ? '<span class="afh-dday ' + dd.c + '">' + dd.t + '</span>' : '') + '</div>';
+      }).join('');
+      var tasksCard = '<div class="afh-card" id="afhTasks"><div class="afh-card-h"><h3>내 할 일 <small>' + (openTasks.length + D.myOpenIssues.length) + '</small></h3><button class="afh-link" onclick="_afGoTab(\'overview\')">내 업무 전체 →</button></div>' +
+        '<div class="afh-list">' + ((taskRows + myIssueRows) || '<div class="afh-empty"><b>지금 맡은 일이 없습니다</b>프로젝트 Task나 이슈의 담당자로 지정되면 여기에 모입니다</div>') + '</div>' +
+        (D.myTasks.length ? '' : '<div style="margin-top:10px;padding:10px 12px;background:#F7F8FC;border-radius:10px;font-size:12px;color:#767676">팁: 프로젝트 상세 → <b style="color:#32008C">Task</b>에서 할 일을 쪼개고 담당자를 지정하면 이곳과 간트에 진행률이 보입니다.</div>') + '</div>';
+      var sevC = { Block: ['#FFF1F1', '#EE0005'], Major: ['#FFF4EE', '#FF4C14'] };
+      var riskRows = D.risk.slice(0, 6).map(function(i) {
+        var dd = _afDday(i.deadline), c = sevC[i.severity];
+        return '<div class="afh-row" onclick="openIssueDetail(\'' + _escHtml(i.id) + '\')">' +
+          '<span class="afh-badge" style="background:' + c[0] + ';color:' + c[1] + '">' + i.severity + '</span>' +
+          '<div class="r-main"><div class="r-t">' + _escHtml(i.title || i.id) + '</div><div class="r-s">' + _escHtml(i.id) + ' · ' + _escHtml(i.status || '') + '</div></div>' +
+          (dd.t ? '<span class="afh-dday ' + dd.c + '">' + dd.t + '</span>' : '') + '</div>';
+      }).join('');
+      var riskCard = '<div class="afh-card"><div class="afh-card-h"><h3>위험 이슈 <small>' + D.risk.length + '</small></h3><button class="afh-link" onclick="_afGoTab(\'issues\')">이슈 전체 →</button></div>' +
+        '<div class="afh-list">' + (riskRows || '<div class="afh-empty"><b>미해결 Block·Major 이슈가 없습니다</b>좋습니다!</div>') + '</div></div>';
+      var depRows = D.deploys.slice(0, 5).map(function(b) {
+        var dd = _afDday(b.targetDate);
+        return '<div class="afh-row" onclick="_afGoTab(\'deploy\');setTimeout(function(){try{openDeployBundleDetail(\'' + _escHtml(b.id) + '\')}catch(e){}},250)">' +
+          '<span class="afh-badge" style="background:#F3F0FF;color:#6433DF">' + _escHtml(b.environment === 'production' || b.environment === '운영' ? '운영' : (b.environment || '배포')) + '</span>' +
+          '<div class="r-main"><div class="r-t">' + _escHtml(b.title || b.id) + '</div><div class="r-s">' + (b.targetDate ? _escHtml(b.targetDate) : '날짜 미정') + '</div></div>' +
+          (dd.t ? '<span class="afh-dday ' + dd.c + '">' + dd.t + '</span>' : '') + '</div>';
+      }).join('');
+      var depCard = '<div class="afh-card"><div class="afh-card-h"><h3>이번 주 배포 <small>' + D.deploys.length + '</small></h3><button class="afh-link" onclick="_afGoTab(\'deploy\')">배포 전체 →</button></div>' +
+        '<div class="afh-list">' + (depRows || '<div class="afh-empty"><b>7일 안에 예정된 배포가 없습니다</b></div>') + '</div></div>';
+      el.innerHTML = hero + kpis + '<div class="afh-grid">' + tasksCard + '<div class="afh-grid3">' + riskCard + depCard + '</div></div>' + _afTimelineHTML();
+      if (!_afReducedMotion()) {
+        _afStagger(el.querySelectorAll('.afh-kpi'));
+        if (first) {
+          [].forEach.call(el.querySelectorAll('.afh-tl-bar'), function(b, i) {
+            if (b.animate) b.animate([{ clipPath: 'inset(0 100% 0 0 round 6px)' }, { clipPath: 'inset(0 0 0 0 round 6px)' }], { duration: 620, delay: 120 + i * 40, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' });
+          });
+          [].forEach.call(el.querySelectorAll('.k-num'), function(n) { n.classList.add('stat-value-afh'); });
+          try { _afCountUpEls(el.querySelectorAll('.k-num')); } catch(e) {}
+        }
+      }
+    }
+    window._afRenderHome = _afRenderHome;
+    function _afCountUpEls(els) {
+      [].forEach.call(els, function(el) {
+        var target = parseInt(el.textContent, 10); if (!(target > 0)) return;
+        var t0 = performance.now();
+        (function step(now) { var k = Math.min(1, (now - t0) / 700), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(target * e); if (k < 1) requestAnimationFrame(step); else el.textContent = target; })(t0);
+      });
+    }
+    // 데이터가 바뀌면 홈만 조용히 갱신 (입력 중엔 건드리지 않음)
+    setInterval(function() {
+      try {
+        if (state.currentTab !== 'home') return;
+        var ae = document.activeElement; if (ae && document.getElementById('afHome').contains(ae) && ae.tagName === 'INPUT') return;
+        _afRenderHome(false);
+      } catch(e) {}
+    }, 3000);
+
+    function _afStartShell() {
+      try { _afBuildShell(); } catch(e) { console.warn('[v12] shell', e); return; }
+      if (_afUiMode !== 'v12') return;
+      // 기존 탭 핸들러가 붙은 뒤 홈으로 시작 (딥링크가 있으면 그대로 둠)
+      var tries = 0;
+      var t = setInterval(function() {
+        tries++;
+        var home = document.querySelector('.tab[data-tab="home"]');
+        if (home && home.onclick && typeof state !== 'undefined' && state.projects && state.projects.length) {
+          clearInterval(t);
+          var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&]install=1/.test(location.search);
+          if (!deep && state.currentTab === 'schedule') home.click();
+          _afUpdatePageTitle();
+        } else if (tries > 60) clearInterval(t);
+      }, 200);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _afStartShell); else setTimeout(_afStartShell, 0);
+
     setTimeout(function() { try { _afCountUp(document.querySelector('.qa-status-bar')); } catch(e) {} }, 3500);
     // 첫 화면(스케줄)도 데이터가 그려진 뒤 1회 재생
     (function() {
@@ -19840,7 +20284,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v11.2';
+    var AF_BUILD = 'v12';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -19879,6 +20323,7 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>새 화면</b> — 왼쪽 메뉴 + 홈(오늘 할 일·위험 이슈·이번 주 배포·진행 타임라인). 예전 화면은 왼쪽 아래 [이전 화면으로]</li>' +
           '<li><b>프로젝트 Task</b> — 프로젝트 상세 요약 바로 아래. 제목 입력 후 Enter 또는 [추가]</li>' +
           '<li><b>Task 담당자</b> — 줄의 "+ 담당자"를 눌러 여러 명 지정, 지정되면 알림</li>' +
           '<li><b>디자인</b> — 어바웃피싱 앱 톤: 보라 밑줄 탭·둥근 카드·큰 숫자·선 아이콘, 간트 바 차오름 모션</li>' +

@@ -3773,6 +3773,10 @@
     .af-tk-bar { flex: 1; height: 6px; background: var(--af-surface); border-radius: 3px; overflow: hidden; }
     .af-tk-bar > div { height: 100%; background: var(--af-accent); border-radius: 3px; transition: width var(--m-enter) var(--e-enter); }
     .af-tk-quick input { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px dashed var(--af-accent-line); border-radius: 8px; font-size: 13px; background: var(--af-surface-2); transition: border-color var(--m-feedback) var(--e-out), background var(--m-feedback) var(--e-out); }
+    .af-tk-quick { display: flex; gap: 6px; }
+    .af-tk-quick input { flex: 1; min-width: 0; }
+    .af-tk-quick-add { flex-shrink: 0; border: none; background: var(--af-cta); color: #fff; font-size: 12px; font-weight: 700; padding: 0 14px; border-radius: 8px; cursor: pointer; }
+    .af-tk-quick-add:hover { background: var(--af-cta-hover); }
     .af-tk-quick input:focus { outline: none; border-style: solid; border-color: var(--af-accent); background: #fff; }
     .af-tk-list { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
     .af-tk-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--af-line); border-radius: 10px; background: #fff; flex-wrap: wrap; transition: background var(--m-feedback) var(--e-out), border-color var(--m-feedback) var(--e-out); }
@@ -3815,6 +3819,17 @@
     .af-tk-pop-row .rl { color: var(--af-sub); font-size: 11px; margin-left: auto; }
     .af-tk-pop-f { padding: 6px; border-top: 1px solid var(--af-surface); margin-top: 4px; text-align: right; }
     .af-tk-pop-done { border: none; background: var(--af-cta); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
+
+    /* 새 버전 안내 */
+    #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
+    #afUpdateBar button { border: none; background: #6433DF; color: #fff; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+    @keyframes afBannerDown { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    #afWhatsNew { position: fixed; right: 20px; bottom: 20px; z-index: 10055; width: 320px; max-width: calc(100vw - 24px); background: #fff; border: 1px solid #D9CCFA; border-radius: 14px; box-shadow: 0 10px 28px rgba(26,26,26,0.14); padding: 14px 16px; font-size: 13px; color: #363636; animation: afRiseIn var(--m-sheet) var(--e-enter); }
+    #afWhatsNew .afwn-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #32008C; font-size: 14px; }
+    #afWhatsNew .afwn-h button { border: none; background: none; cursor: pointer; color: #919191; font-size: 14px; min-width: 28px; min-height: 28px; border-radius: 6px; }
+    #afWhatsNew ul { margin: 0 0 12px; padding-left: 18px; line-height: 1.6; }
+    #afWhatsNew li b { color: #1A1A1A; }
+    .afwn-go { width: 100%; border: none; background: #32008C; color: #fff; font-weight: 700; font-size: 13px; padding: 9px; border-radius: 8px; cursor: pointer; }
 
     /* ═══ v11 모션 (aboutfishing-all 10장 토큰) ═══ */
     @keyframes afRiseInSm { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
@@ -4454,6 +4469,20 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v11.1</span>
+              <span class="rn-version-title">Task 추가 안정화 · 새 버전 안내</span>
+              <span class="rn-version-date">2026-10-15</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>한글로 Task 제목을 쓰고 Enter를 누르면 추가되지 않던 문제 — 조합이 끝난 뒤 1건만 추가</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>Task 입력칸 옆 [추가] 버튼, 추가되면 확인 메시지 표시, 저장 실패 시 이유 안내</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 버전이 배포되면 화면 위에 "새로고침" 안내 — 예전 화면이 남아 있는 문제 방지</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 버전을 처음 열면 바뀐 내용 안내 카드 1회 표시</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v11</span>
               <span class="rn-version-title">프로젝트 Task 담당자 관리 · 어바웃피싱 디자인 · 전 화면 UX 점검</span>
@@ -15519,7 +15548,8 @@ function renderDeployBundles() {
         '</div>';
       }).join('');
       var quick = canEdit
-        ? '<div class="af-tk-quick"><input type="text" id="ptaskQuick" placeholder="+ Task 추가 (제목 입력 후 Enter)" title="담당자·기간은 추가한 뒤 줄에서 지정합니다" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229){event.preventDefault();_afQuickAddTask(\'' + q(p.id) + '\',this);}" aria-label="새 Task 제목"></div>'
+        ? '<div class="af-tk-quick"><input type="text" id="ptaskQuick" placeholder="Task 제목 입력 후 Enter 또는 [추가]" title="담당자·기간은 추가한 뒤 줄에서 지정합니다" onkeydown="_afTaskQuickKey(event,\'' + q(p.id) + '\',this)" aria-label="새 Task 제목">' +
+          '<button type="button" class="af-tk-quick-add" onclick="_afQuickAddTask(\'' + q(p.id) + '\',document.getElementById(\'ptaskQuick\'))">추가</button></div>'
         : '';
       return '<div id="ptaskSection" class="af-tk-section">' +
         '<div class="af-tk-head">' +
@@ -15533,11 +15563,29 @@ function renderDeployBundles() {
       '</div>';
     }
     // 빠른 추가: 제목만으로 즉시 등록
+    // Enter 처리: 한글 조합 중 Enter(크롬·사파리 차이)도 조합이 끝난 값으로 1번만 추가
+    function _afTaskQuickKey(e, pid, input) {
+      if (e.key !== 'Enter' && e.keyCode !== 13) return;
+      e.preventDefault();
+      if (e.isComposing || e.keyCode === 229) {
+        setTimeout(function() { _afQuickAddTask(pid, input); }, 60);
+        return;
+      }
+      _afQuickAddTask(pid, input);
+    }
+    window._afTaskQuickKey = _afTaskQuickKey;
+    var _afLastTaskAdd = { key: '', at: 0 };
     function _afQuickAddTask(pid, input) {
       if (!_checkWritePermission()) return;
       var p = _findProjectById(pid);
       var title = (input && input.value || '').trim();
-      if (!p || !title) return;
+      if (!p) { _showToast('프로젝트를 찾지 못했습니다. 새로고침 후 다시 시도해주세요.', 3000, 'error'); return; }
+      if (!title) { if (input) input.focus(); return; }
+      // 같은 Enter가 두 번 들어와도(한글 입력) 1건만 추가
+      var dupKey = pid + '|' + title;
+      if (_afLastTaskAdd.key === dupKey && Date.now() - _afLastTaskAdd.at < 800) return;
+      _afLastTaskAdd = { key: dupKey, at: Date.now() };
+      if (input) input.value = '';
       if (!p.tasks) p.tasks = [];
       p.tasks.push({
         id: 'T' + Date.now().toString(36) + Math.random().toString(36).substr(2, 3),
@@ -15547,6 +15595,7 @@ function renderDeployBundles() {
       });
       pushHistory('수정', pid, 'Task 추가', '', title);
       _persistProjectTasks(p);
+      _showToast('✓ Task 추가: ' + title, 1600, 'success');
       _refreshTaskSectionById(pid);
       var ni = document.getElementById('ptaskQuick'); if (ni) ni.focus();
       var rowsEl = document.querySelectorAll('#ptaskSection .af-tk-row');
@@ -15643,7 +15692,7 @@ function renderDeployBundles() {
       if (_fb.db) {
         dbRef('projects/' + p.id + '/tasks').set(p.tasks || []).catch(function(e) {
           console.error('[Tasks] save fail', e);
-          _showToast('Task 저장 실패: ' + e.message, 3000, 'error');
+          _showToast('Task 저장 실패: ' + (e && e.code === 'PERMISSION_DENIED' ? '쓰기 권한이 없습니다' : e.message), 4000, 'error');
         });
       }
     }
@@ -19646,6 +19695,55 @@ function renderNotifList() {
       }
     }
     window._afStaggerTab = _afStaggerTab;
+
+    /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
+    var AF_BUILD = 'v11.1';
+    function _afReloadToBuild(b) {
+      try {
+        var u = new URL(location.href);
+        u.searchParams.set('_v', b || String(Date.now()));
+        location.replace(u.toString());
+      } catch(e) { location.reload(); }
+    }
+    window._afReloadToBuild = _afReloadToBuild;
+    function _afShowUpdateBar(newBuild) {
+      if (document.getElementById('afUpdateBar')) return;
+      var bar = document.createElement('div');
+      bar.id = 'afUpdateBar';
+      bar.setAttribute('role', 'status');
+      bar.innerHTML = '<span>새 버전(' + _escHtml(newBuild) + ')이 배포됐어요</span>' +
+        '<button type="button" onclick="_afReloadToBuild(\'' + _escHtml(newBuild) + '\')">새로고침</button>';
+      document.body.appendChild(bar);
+    }
+    function _afCheckBuild() {
+      try {
+        fetch(location.pathname + '?vc=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.ok ? r.text() : ''; }).then(function(t) {
+          var m = t && t.match(/var AF_BUILD = '([^']+)'/);
+          if (m && m[1] && m[1] !== AF_BUILD) _afShowUpdateBar(m[1]);
+        }).catch(function() {});
+      } catch(e) {}
+    }
+    setTimeout(_afCheckBuild, 8000);
+    setInterval(_afCheckBuild, 10 * 60 * 1000);
+    document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible') _afCheckBuild(); });
+    // 새 버전을 처음 열었을 때 1회: 무엇이 바뀌었는지 안내
+    function _afWhatsNewOnce() {
+      var seen = null;
+      try { seen = localStorage.getItem('af_seen_build'); localStorage.setItem('af_seen_build', AF_BUILD); } catch(e) { return; }
+      if (seen === AF_BUILD) return;
+      var card = document.createElement('div');
+      card.id = 'afWhatsNew';
+      card.innerHTML =
+        '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
+        '<ul>' +
+          '<li><b>프로젝트 Task</b> — 프로젝트 상세 요약 바로 아래. 제목 입력 후 Enter 또는 [추가]</li>' +
+          '<li><b>Task 담당자</b> — 줄의 "+ 담당자"를 눌러 여러 명 지정, 지정되면 알림</li>' +
+          '<li><b>디자인</b> — 어바웃피싱 보라·Pretendard 글꼴·선 아이콘·화면 전환 모션</li>' +
+        '</ul>' +
+        '<button type="button" class="afwn-go" onclick="document.getElementById(\'afWhatsNew\').remove();var t=document.querySelector(\'.tab[data-tab=releasenotes]\');if(t)t.click();">전체 변경 내역 보기</button>';
+      document.body.appendChild(card);
+    }
+    setTimeout(function() { if (state && state.currentUser) _afWhatsNewOnce(); else setTimeout(function() { if (state && state.currentUser) _afWhatsNewOnce(); }, 6000); }, 2500);
     // 설치 전용 공유 링크: 주소에 ?install=1 → 로그인 직후 설치 창을 바로 띄움 (구글챗 등에 공유용)
     var _afInstallLinkMode = (function() { try { return new URLSearchParams(location.search).get('install') === '1'; } catch(e) { return false; } })();
     var _afInstallLinkTries = 0;

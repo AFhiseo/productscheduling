@@ -3706,6 +3706,74 @@
       flex-shrink: 0;
     }
     .st-csv-btn:hover { border-color: #9ca3af; color: #374151; }
+
+    /* ═══ aboutfishing-all 적용: 아이콘 · 접근성 · 모션 토큰 ═══ */
+    :root {
+      --m-press: 120ms; --m-feedback: 180ms; --m-exit: 180ms; --m-enter: 280ms; --m-sheet: 320ms;
+      --e-out: ease-out; --e-exit: cubic-bezier(0.4,0,1,1); --e-enter: cubic-bezier(0.16,1,0.3,1);
+    }
+    .af-ic { display: inline-flex; width: 1.1em; height: 1.1em; vertical-align: -0.17em; flex-shrink: 0; pointer-events: none; }
+    .af-ic svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+    .af-ic + .af-ic-gap { margin-left: 0.15em; }
+    /* 키보드 포커스 표시 (마우스 클릭엔 표시 안 함) */
+    :focus-visible { outline: 2px solid #6366f1 !important; outline-offset: 2px; border-radius: 4px; }
+    /* 누름 반응 (press 토큰) */
+    button, .btn, .tab, .qf-chip, .deploy-inline-action { transition: transform var(--m-press) var(--e-out), background-color var(--m-feedback) var(--e-out), color var(--m-feedback) var(--e-out), border-color var(--m-feedback) var(--e-out), box-shadow var(--m-feedback) var(--e-out); }
+    button:active:not(:disabled), .btn:active, .tab:active, .qf-chip:active, .deploy-inline-action:active { transform: scale(0.98); }
+    /* 모달 등장 (enter 토큰) */
+    @keyframes afFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes afRiseIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .modal-overlay.show { animation: afFadeIn var(--m-feedback) var(--e-out); }
+    .modal-overlay.show > .modal { animation: afRiseIn var(--m-enter) var(--e-enter); }
+    #globalSearchOverlay > div, #afInstallBanner { animation: afRiseIn var(--m-enter) var(--e-enter); }
+    /* 동작 줄이기: 공간 이동·애니메이션을 끄고 최종 상태를 바로 표시 */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+
+    /* ═══ 반응형 보강 (v10.2) — 창 폭이 줄어도 잘리거나 찌그러지지 않게 ═══ */
+    #syncStatus { white-space: nowrap; }
+    @media (max-width: 1200px) {
+      .header-top { flex-wrap: wrap; row-gap: 8px; }
+      .header-controls { flex-wrap: wrap; row-gap: 6px; justify-content: flex-end; }
+      .smart-toolbar { flex-wrap: wrap; row-gap: 6px; }
+      .quick-capture-bar { flex-wrap: wrap; row-gap: 6px; }
+      .quick-capture-bar .qc-title-input { flex: 1 1 260px; min-width: 200px; }
+    }
+    @media (max-width: 760px) {
+      /* 2단 → 1단, KPI 5~6칸 → 3칸 */
+      #overviewContent [style*="grid-template-columns:1fr 1fr"], #detailBody [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+      #overviewContent [style*="repeat(6,1fr)"], #overviewContent [style*="repeat(5,1fr)"] { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+      #overviewContent [style*="repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 900px) {
+      .issue-detail-panel { width: 100vw; right: -100vw; border-left: none; }
+      .issue-detail-panel.open { right: 0; }
+      .modal { max-width: 94vw !important; }
+      .header-controls select { max-width: 140px; }
+      .quick-capture-bar .qc-select { flex: 0 1 auto; }
+    }
+    @media (max-width: 600px) {
+      .quick-capture-bar .qc-title-input { flex-basis: 100%; min-width: 0; }
+      .quick-capture-bar .qc-submit-btn, .quick-capture-bar .qc-more-btn { flex: 1 1 auto; }
+      .header-controls select { max-width: 110px; font-size: 12px; }
+      #afInstallBanner { left: 12px; right: 12px; transform: none; bottom: 12px; }
+      #globalSearchOverlay { padding-top: 4vh !important; }
+      .deploy-bundle-modal { width: 96%; max-height: 90vh; }
+      /* 터치 영역 보강 */
+      .qf-chip, .tab { min-height: 36px; }
+      /* 헤더 검색창 한 줄 전체, 왼쪽 정렬 */
+      .header-controls { justify-content: flex-start; }
+      .header-controls .search-input { flex: 1 1 100%; width: 100% !important; min-width: 0; }
+      /* 이슈 요약바·패널 버튼 줄바꿈 깨짐 방지 */
+      .issue-summary-bar { flex-wrap: wrap; row-gap: 6px; }
+      .issue-detail-panel button { white-space: nowrap; }
+    }
+    @media (max-width: 480px) {
+      #overviewContent [style*="repeat(6,1fr)"], #overviewContent [style*="repeat(5,1fr)"] { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+    }
+    /* 간트 프로젝트 이름 영역의 작은 버튼(+ 일정 등) 세로 깨짐 방지 — 모든 폭 */
+    .name-row button { white-space: nowrap; flex-shrink: 0; }
   </style>
   <!-- Firebase SDK (정적 로딩) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -17475,7 +17543,9 @@ function renderDeployBundles() {
       var ddayCell = '';
       if (p26) {
         var dl = Math.ceil((parseLocalDate('2026-08-15') - todayD) / 86400000);
-        ddayCell = cell('P26 경량화 데드라인', 'D-' + dl, dl <= 21 ? '#dc2626' : '#6366f1', '', 'p26', '2026-08-15 하드 데드라인');
+        ddayCell = dl >= 0
+          ? cell('P26 경량화 데드라인', 'D-' + dl, dl <= 21 ? '#dc2626' : '#6366f1', '', 'p26', '2026-08-15 하드 데드라인')
+          : cell('P26 경량화 데드라인', 'D+' + (-dl), '#9ca3af', '', 'p26', '2026-08-15 데드라인 지남');
       }
       return '<div style="background:linear-gradient(135deg,#eef2ff,#faf5ff);border:1px solid #c7d2fe;border-radius:10px;padding:12px;margin-bottom:14px;">' +
         '<div style="font-size:12px;font-weight:800;color:#4338ca;margin-bottom:8px;">📊 주간 브리핑 <span style="font-weight:600;color:#818cf8;font-size:10px;">최근 7일 · 지난주 대비 ▲▼ · 클릭 시 해당 탭 이동</span></div>' +
@@ -17628,7 +17698,7 @@ function renderDeployBundles() {
       html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
         '<div style="font-size:10px;color:#9ca3af;">완료 / 연기</div><div style="font-size:18px;font-weight:700;"><span style="color:#10b981;">' + completed + '</span> / <span style="color:#9ca3af;">' + delayed + '</span></div></div>';
       html += '<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:12px;text-align:center;">' +
-        '<div style="font-size:10px;color:#dc2626;font-weight:600;">P26 D-Day</div><div style="font-size:24px;font-weight:800;color:#dc2626;">D-' + Math.max(0, daysLeft) + '</div></div>';
+        '<div style="font-size:10px;color:#dc2626;font-weight:600;">P26 D-Day</div><div style="font-size:24px;font-weight:800;color:' + (daysLeft >= 0 ? '#dc2626' : '#9ca3af') + ';">' + (daysLeft >= 0 ? 'D-' + daysLeft : 'D+' + (-daysLeft)) + '</div>' + (daysLeft < 0 ? '<div style="font-size:9px;color:#9ca3af;">데드라인 지남</div>' : '') + '</div>';
       html += '<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:12px;text-align:center;">' +
         '<div style="font-size:10px;color:#9ca3af;">전체 진행률</div><div style="font-size:18px;font-weight:800;color:#2563eb;">' + progressPct + '%</div>' +
         '<div style="height:4px;background:#e5e7eb;border-radius:2px;margin-top:4px;"><div style="height:100%;width:' + progressPct + '%;background:#2563eb;border-radius:2px;"></div></div></div>';
@@ -18913,6 +18983,191 @@ function renderNotifList() {
     }
     window._afBannerInstall = _afBannerInstall;
     window._afBannerLater = _afBannerLater;
+
+    /* ═══════════ 아이콘 레이어: 이모지 → 선 SVG (aboutfishing 디자인 규칙: 이모지 아이콘 금지) ═══════════
+     * 화면에 그려진 글자 속 이모지만 SVG로 바꿔 보여준다. 코드·저장 데이터는 그대로다.
+     * 입력창·선택창·채팅/코멘트 본문(사용자 작성 내용)은 건드리지 않는다.
+     * 원복: localStorage.setItem('af_icon_mode','emoji') 후 새로고침
+     */
+    var AF_ICON_PATHS = {
+      check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+      msg: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+      alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+      rocket: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+      bug: '<path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3 3 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>',
+      clipboard: '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+      ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+      bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+      belloff: '<path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"/><path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="m2 2 20 20"/>',
+      lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      unlock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+      user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+      users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+      zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+      link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+      search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+      folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+      trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+      calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+      pencil: '<path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/>',
+      download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+      upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+      globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+      package: '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/>',
+      clip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+      flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+      chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+      trend: '<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+      octagon: '<path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.31 2a2 2 0 0 1 1.42.59l4.68 4.68A2 2 0 0 1 22 8.69v6.62a2 2 0 0 1-.59 1.42l-4.68 4.68a2 2 0 0 1-1.42.59H8.69a2 2 0 0 1-1.42-.59l-4.68-4.68A2 2 0 0 1 2 15.31V8.69a2 2 0 0 1 .59-1.42l4.68-4.68A2 2 0 0 1 8.69 2z"/>',
+      flask: '<path d="M10 2v7.53a2 2 0 0 1-.21.9L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.07-10.12A2 2 0 0 1 14 9.53V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>',
+      plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+      book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+      image: '<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
+      star: '<path d="M11.53 2.3a.53.53 0 0 1 .95 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.76a.53.53 0 0 1 .3.9l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .29-.91l5.17-.75a2.12 2.12 0 0 0 1.6-1.16z"/>',
+      target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+      refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+      phone: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+      bot: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
+      apple: '<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>',
+      file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+      wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+      gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+      clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+      shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+      keyboard: '<path d="M10 8h.01"/><path d="M12 12h.01"/><path d="M14 8h.01"/><path d="M16 12h.01"/><path d="M18 8h.01"/><path d="M6 8h.01"/><path d="M7 16h10"/><path d="M8 12h.01"/><rect width="20" height="16" x="2" y="4" rx="2"/>',
+      xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+      megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+      save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+      smile: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>',
+      square: '<rect width="18" height="18" x="3" y="3" rx="2"/>',
+      building: '<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/>',
+      puzzle: '<path d="M15.39 4.39a1 1 0 0 0 1.68-.47 2.5 2.5 0 1 1 3.01 3.01 1 1 0 0 0-.47 1.68l1.68 1.68a2.41 2.41 0 0 1 0 3.41l-1.68 1.69a1 1 0 0 1-1.68-.47 2.5 2.5 0 1 0-3.01 3.01 1 1 0 0 1 .47 1.68l-1.68 1.68a2.41 2.41 0 0 1-3.41 0l-1.69-1.68a1 1 0 0 0-1.68.47 2.5 2.5 0 1 1-3.01-3.01 1 1 0 0 0 .47-1.68l-1.68-1.68a2.41 2.41 0 0 1 0-3.41l1.68-1.69a1 1 0 0 1 1.68.47 2.5 2.5 0 1 0 3.01-3.01 1 1 0 0 1-.47-1.68l1.68-1.68a2.41 2.41 0 0 1 3.41 0z"/>'
+    };
+    // 이모지 → [아이콘, 색(없으면 글자색 상속)]
+    var AF_EMOJI_MAP = {
+      '✅': ['check', '#10b981'], '💬': ['msg'], '⚠️': ['alert', '#f59e0b'], '⚠': ['alert', '#f59e0b'], '🚀': ['rocket'], '🐛': ['bug'],
+      '📋': ['clipboard'], '🚫': ['ban', '#dc2626'], '🔔': ['bell'], '🔕': ['belloff'], '🔒': ['lock'], '🔐': ['lock'], '🔓': ['unlock'],
+      '👤': ['user'], '👥': ['users'], '⚡': ['zap'], '🔗': ['link'], '🔍': ['search'], '📁': ['folder'], '🗑️': ['trash'], '🗑': ['trash'],
+      '📅': ['calendar'], '🗓': ['calendar'], '✏️': ['pencil'], '📲': ['download'], '📤': ['upload'], '🌐': ['globe'], '📦': ['package'], '📎': ['clip'],
+      '🔥': ['flame', '#f97316'], '📊': ['chart'], '📈': ['trend'], '🚨': ['octagon', '#dc2626'], '🧪': ['flask'], '➕': ['plus'],
+      '📖': ['book'], '🖼️': ['image'], '🖼': ['image'], '⭐': ['star', '#f59e0b'], '🎯': ['target'], '🔄': ['refresh'], '🔁': ['refresh'],
+      '📱': ['phone'], '🍎': ['apple'], '🤖': ['bot'], '📝': ['file'], '🔨': ['wrench'], '⚙️': ['gear'], '⚙': ['gear'], '⏰': ['clock'], '🕐': ['clock'],
+      '🛡️': ['shield'], '🛡': ['shield'], '⌨️': ['keyboard'], '⌨': ['keyboard'], '❌': ['xcircle', '#dc2626'], '📢': ['megaphone'], '💾': ['save'],
+      '😊': ['smile'], '⬜': ['square'], '🏢': ['building'], '🧩': ['puzzle'],
+      '🔴': ['dot', '#ef4444'], '🔵': ['dot', '#3b82f6'], '🟢': ['dot', '#10b981'], '🟣': ['dot', '#8b5cf6'], '🟠': ['dot', '#f97316'], '⚪': ['dot', '#d1d5db'], '⚫': ['dot', '#374151']
+    };
+    var _afIconRe = (function() {
+      var keys = Object.keys(AF_EMOJI_MAP).sort(function(a, b) { return b.length - a.length; });
+      return new RegExp('(' + keys.map(function(k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\uFE0F?', 'g');
+    })();
+    function _afIconSvg(emoji) {
+      var base = emoji.replace(/\uFE0F/g, '');
+      var m = AF_EMOJI_MAP[emoji] || AF_EMOJI_MAP[base];
+      if (!m) return null;
+      var color = m[1] || 'currentColor';
+      var body = m[0] === 'dot'
+        ? '<circle cx="12" cy="12" r="5.5" fill="' + color + '" stroke="none"/>'
+        : AF_ICON_PATHS[m[0]];
+      if (!body) return null;
+      var span = document.createElement('span');
+      span.className = 'af-ic';
+      span.setAttribute('aria-hidden', 'true');
+      span.setAttribute('data-emoji', base);
+      span.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+      return span;
+    }
+    // 사용자가 작성한 내용·입력 요소는 제외
+    var _AF_SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1, NOSCRIPT: 1, CODE: 1, PRE: 1, svg: 1, SVG: 1 };
+    var _AF_SKIP_SELECTOR = '.comment-text, .chat-bubble, .chat-text, .chat-message-text, [contenteditable="true"], [data-noicon]';
+    function _afShouldSkip(el) {
+      if (!el || el.nodeType !== 1) return true;
+      if (_AF_SKIP_TAGS[el.tagName]) return true;
+      if (el.closest && el.closest(_AF_SKIP_SELECTOR)) return true;
+      if (el.namespaceURI && el.namespaceURI.indexOf('svg') !== -1) return true;
+      return false;
+    }
+    function _afIconizeText(node) {
+      var text = node.nodeValue;
+      if (!text) return;
+      _afIconRe.lastIndex = 0;
+      if (!_afIconRe.test(text)) return;
+      var parent = node.parentNode;
+      if (!parent || _afShouldSkip(parent)) return;
+      _afIconRe.lastIndex = 0;
+      var frag = document.createDocumentFragment();
+      var last = 0, m, replaced = false;
+      while ((m = _afIconRe.exec(text)) !== null) {
+        var svg = _afIconSvg(m[0]);
+        if (!svg) continue;
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        frag.appendChild(svg);
+        last = m.index + m[0].length;
+        replaced = true;
+      }
+      if (!replaced) return;
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      parent.replaceChild(frag, node);
+      // 아이콘만 있는 버튼: 스크린리더용 이름 보강 (title 재사용)
+      var host = parent.closest ? parent.closest('button, [onclick], [role="button"]') : null;
+      if (host && !host.getAttribute('aria-label') && host.getAttribute('title') && !(host.textContent || '').trim()) {
+        host.setAttribute('aria-label', host.getAttribute('title'));
+      }
+    }
+    function _afStripOptionEmoji(opt) {
+      var t = opt.text;
+      _afIconRe.lastIndex = 0;
+      if (!t || !_afIconRe.test(t)) return;
+      _afIconRe.lastIndex = 0;
+      opt.text = t.replace(_afIconRe, '').replace(/^\s+/, '');
+    }
+    function _afIconizeTree(root) {
+      if (!root) return;
+      if (root.nodeType === 3) { _afIconizeText(root); return; }
+      if (root.nodeType !== 1) return;
+      if (root.tagName === 'OPTION') { _afStripOptionEmoji(root); return; }
+      if (root.tagName === 'SELECT') { [].forEach.call(root.options || [], _afStripOptionEmoji); return; }
+      if (_afShouldSkip(root)) return;
+      [].forEach.call(root.querySelectorAll ? root.querySelectorAll('option') : [], _afStripOptionEmoji);
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var nodes = [], n;
+      while ((n = walker.nextNode())) {
+        _afIconRe.lastIndex = 0;
+        if (_afIconRe.test(n.nodeValue)) nodes.push(n);
+      }
+      nodes.forEach(_afIconizeText);
+    }
+    var _afIconMode = 'svg';
+    try { if (localStorage.getItem('af_icon_mode') === 'emoji') _afIconMode = 'emoji'; } catch(e) {}
+    var _afIconErrors = 0, _afIconPending = [], _afIconScheduled = false, _afIconObserver = null;
+    function _afIconFlush() {
+      _afIconScheduled = false;
+      var list = _afIconPending; _afIconPending = [];
+      try {
+        list.forEach(function(n) { if (n.isConnected !== false) _afIconizeTree(n); });
+      } catch(e) {
+        console.warn('[Icons] 변환 오류 — 이모지 표시로 유지:', e);
+        if (++_afIconErrors >= 3 && _afIconObserver) { _afIconObserver.disconnect(); _afIconObserver = null; }
+      }
+    }
+    function _afStartIconLayer() {
+      if (_afIconMode !== 'svg' || !document.body || !window.MutationObserver) return;
+      try { _afIconizeTree(document.body); } catch(e) { console.warn('[Icons] 초기 변환 오류:', e); return; }
+      _afIconObserver = new MutationObserver(function(muts) {
+        for (var i = 0; i < muts.length; i++) {
+          var mu = muts[i];
+          if (mu.type === 'characterData') _afIconPending.push(mu.target);
+          else for (var j = 0; j < mu.addedNodes.length; j++) _afIconPending.push(mu.addedNodes[j]);
+        }
+        if (!_afIconScheduled && _afIconPending.length) {
+          _afIconScheduled = true;
+          (window.requestAnimationFrame || setTimeout)(_afIconFlush);
+        }
+      });
+      _afIconObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _afStartIconLayer);
+    else setTimeout(_afStartIconLayer, 0);
+    window._afIconizeTree = _afIconizeTree;
     // 설치 전용 공유 링크: 주소에 ?install=1 → 로그인 직후 설치 창을 바로 띄움 (구글챗 등에 공유용)
     var _afInstallLinkMode = (function() { try { return new URLSearchParams(location.search).get('install') === '1'; } catch(e) { return false; } })();
     var _afInstallLinkTries = 0;
@@ -19003,6 +19258,7 @@ function renderNotifList() {
             '대시보드(앱)가 실행 중이면 최소화하거나 다른 작업 중에도 알림이 옵니다. 완전히 종료한 상태에서는 오지 않으니 Dock에 띄워두세요.' +
           '</div>' +
           notifBtns + deniedHelp +
+          '<div id="afNotifTestResult" style="display:none;margin-top:10px;font-size:11px;line-height:1.7;color:#374151;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;"></div>' +
         '</div>' +
         '<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
           '<button onclick="copyInstallLink()" title="구글챗 등에 공유하면 링크로 들어온 팀원에게 로그인 직후 설치 창이 바로 뜹니다" style="border:1px solid #c7d2fe;background:#fff;color:#4338ca;font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;">🔗 팀원용 설치 링크 복사</button>' +
@@ -19039,7 +19295,42 @@ function renderNotifList() {
       } catch(e) {}
     }
     function _afTestNotif() {
-      showBrowserNotification('🔔 AF 대시보드 알림 테스트', '알림이 정상적으로 설정되었습니다.', 'af-test', { action: 'none' });
+      var tag = 'af-test-' + Date.now();  // 매번 새 태그 — 같은 태그면 조용히 교체되어 안 보일 수 있음
+      var title = 'AF 대시보드 알림 테스트';
+      var body = '이 알림이 보이면 설정이 끝났습니다.';
+      function report(ok, detail) {
+        var box = document.getElementById('afNotifTestResult');
+        if (!box) return;
+        box.style.display = 'block';
+        box.innerHTML = ok
+          ? '<b style="color:#15803d;">브라우저가 알림을 보냈어요.</b> 화면 오른쪽 위에 알림이 안 보였다면 맥 설정이 막고 있는 거예요:<br>' +
+            '1) <b>시스템 설정 → 알림 → 「Google Chrome」</b>(「Google Chrome (Alerts)」가 있으면 그것도) <b>알림 허용</b>, 스타일은 <b>배너</b> 또는 <b>알림</b> — 맥에서는 설치한 앱의 알림도 크롬 이름으로 와요<br>' +
+            '2) 같은 화면의 알림 스타일이 <b>「없음」</b>이면 알림 센터(시계 클릭)에만 조용히 쌓여요 → <b>「배너」</b>로 변경<br>3) 메뉴 막대의 <b>집중 모드(방해 금지)</b>가 켜져 있으면 끄기<br>4) 다시 테스트'
+          : '<b style="color:#dc2626;">알림을 보내지 못했어요.</b> ' + detail;
+      }
+      if (!('Notification' in window)) { report(false, '이 브라우저는 알림을 지원하지 않아요. Chrome을 사용해주세요.'); return; }
+      if (Notification.permission !== 'granted') { report(false, '알림 권한이 허용되지 않았어요. 주소창 왼쪽 자물쇠 → 사이트 설정 → 알림 "허용" 후 새로고침해주세요.'); return; }
+      var done = function(viaSW) {
+        report(true);
+        try { _showToast('알림을 보냈어요' + (viaSW ? '' : ' (기본 방식)'), 2000, 'success'); } catch(e) {}
+      };
+      try {
+        if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+          navigator.serviceWorker.getRegistration().then(function(reg) {
+            if (reg && reg.showNotification) {
+              return reg.showNotification(title, { body: body, icon: 'icons/icon-192.png', tag: tag, requireInteraction: false, data: { action: 'none' } })
+                .then(function() { done(true); });
+            }
+            new Notification(title, { body: body, icon: 'icons/icon-192.png', tag: tag });
+            done(false);
+          }).catch(function(err) {
+            try { new Notification(title, { body: body, tag: tag }); done(false); } catch(e2) { report(false, (err && err.message) || String(err)); }
+          });
+        } else {
+          new Notification(title, { body: body, icon: 'icons/icon-192.png', tag: tag });
+          done(false);
+        }
+      } catch(e) { report(false, e.message); }
     }
     window.openAppInstall = openAppInstall;
     window.closeAppInstall = closeAppInstall;

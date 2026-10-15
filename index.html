@@ -4425,7 +4425,7 @@
         <!-- ===== CYCLE 9: 빠른 이슈 캡처 바 ===== -->
         <div class="quick-capture-bar write-only-ui" id="quickCaptureBar">
           <span class="qc-icon">🐛</span>
-          <input class="qc-title-input" id="qc_title" placeholder="이슈 제목 입력 후 Enter 또는 등록 버튼... (N키로 상세 모달)" onkeydown="if(event.key==='Enter')quickCaptureSubmit()" oninput="document.getElementById('qc_submitBtn').disabled=!this.value.trim()">
+          <input class="qc-title-input" id="qc_title" placeholder="이슈 제목 입력 후 Enter 또는 등록 버튼... (N키로 상세 모달)" onkeydown="if(event.key==='Enter'){if(event.isComposing||event.keyCode===229){setTimeout(function(){if(document.getElementById('qc_title').value.trim())quickCaptureSubmit();},60);}else quickCaptureSubmit();}" oninput="document.getElementById('qc_submitBtn').disabled=!this.value.trim()">
           <select class="qc-select" id="qc_severity" title="심각도">
             <option value="Major">⚠️ Major</option>
             <option value="Block">🚫 Block</option>
@@ -4685,6 +4685,30 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v12.1</span>
+              <span class="rn-version-title">데이터 안전 — 전 화면 생성·조회·수정·삭제 점검</span>
+              <span class="rn-version-date">2026-10-15</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>동시에 여러 명이 편집해도 서로의 수정이 지워지지 않음 — 저장할 때 내가 바꾼 칸만 기록 (안건·이슈·배포 공통)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>되돌리기(Ctrl+Z)가 그 사이 다른 사람이 만든 안건·수정을 지우던 문제 — 내가 바꾼 것만 되돌림</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>두 사람이 동시에 새 안건·이슈·배포를 등록하면 같은 번호로 한쪽이 사라지던 문제 — 번호가 겹치면 자동으로 다음 번호 사용</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>같은 날 배포 번들을 2개 이상 만들면 앞 번들이 덮어써지던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>다른 사람이 지운 이슈·배포가 내 화면에 남거나 다시 살아나던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>이슈 상태·담당 변경이 그 사이 달린 댓글·첨부를 지우던 문제, 상세 저장이 다른 사람의 변경을 되돌리던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>안건명에 큰따옴표(")가 있으면 저장할 때마다 이름이 잘리던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>서버 데이터를 받기 전 저장하면 기본 데이터로 덮어쓸 수 있던 위험 차단</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>팀원 관리: 다른 관리자 작업과 겹치면 팀원 정보가 엉뚱한 사람에게 저장되던 문제, 저장 후 창이 안 닫히던 오류</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>외부 허용 이메일·서비스 종류를 오래된 목록으로 덮어쓰던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>일괄 담당자 변경이 반영 안 되던 문제, 전체 선택이 필터를 무시하고 모든 이슈를 고르던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>프로필 사진이 없는 계정은 채팅이 안 되던 문제, 표에서 상태 변경 시 이력이 두 번 남던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>아무것도 안 바꾸고 저장하면 기록하지 않음, 저장 실패 시 이유 안내, 한글 입력 Enter 중복 방지, 이슈 우선순위 0(긴급) 선택지</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>읽기 권한은 일괄 변경·삭제·메모 수정 차단, 첨부 삭제 전 확인</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v12</span>
               <span class="rn-version-title">새 화면 — 왼쪽 메뉴 · 홈 대시보드 · 모바일 하단 탭</span>
@@ -5463,6 +5487,8 @@
             keeper.uid = dup.uid;
             dbRef('settings/teamV2/' + keeper.id + '/uid').set(dup.uid);
           }
+          // 자동 등록(auto_/member_) 중복만 정리 — 정식 팀원은 절대 지우지 않음
+          if (dup.id.indexOf('auto_') !== 0 && dup.id.indexOf('member_') !== 0) { console.warn('[Team] 정식 팀원 이메일 중복 — 자동 삭제하지 않음:', dup.id, keeper.id); return; }
           var idx = TEAM.indexOf(dup);
           if (idx >= 0) TEAM.splice(idx, 1);
           dbRef('settings/teamV2/' + dup.id).remove();
@@ -5480,7 +5506,7 @@
     }
     function _saveAllowedEmails() {
       localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails));
-      if (_fb.db) dbRef('settings/allowedEmails').set(_allowedEmails);
+      // DB 기록은 _afAllowedEmailTx 로만 (목록 통째 덮어쓰기 금지)
     }
 
     // === 권한 시스템: read(읽기전용) / write(읽기+쓰기) ===
@@ -7284,6 +7310,7 @@
 
     function openMemberManagement() {
       if (!state.adminMode) { alert('관리자 모드에서만 사용 가능합니다.'); return; }
+      window._afMemberIds = TEAM.map(function(m) { return m.id; });
       _clearNewMemberBadge();
       const existing = document.getElementById('memberMgmtOverlay');
       if (existing) { existing.remove(); _unlockBodyScroll(); }
@@ -7446,7 +7473,7 @@
       if (!email || !email.includes('@')) { _showToast('유효한 이메일을 입력해주세요'); return; }
       if (_allowedEmails.some(function(e) { return e.toLowerCase() === email; })) { _showToast('이미 추가된 이메일입니다'); return; }
       _allowedEmails.push(email);
-      _saveAllowedEmails();
+      _afAllowedEmailTx('add', email);
       openMemberManagement();
       _showToast(email + ' 추가됨');
     }
@@ -7454,7 +7481,7 @@
     function _removeAllowedEmail(idx) {
       if (!confirm((_allowedEmails[idx] || '') + ' 의 로그인 허용을 해제할까요?\n해제하면 이 계정은 바로 로그인할 수 없습니다.')) return;
       var removed = _allowedEmails.splice(idx, 1);
-      _saveAllowedEmails();
+      _afAllowedEmailTx('remove', removed[0]);
       openMemberManagement();
       _showToast((removed[0] || '') + ' 제거됨');
     }
@@ -7470,6 +7497,7 @@
     }
 
     function _togglePermission(idx) {
+      var _m = _afMemberAt(idx); if (!_m) return; idx = TEAM.indexOf(_m);
       if (!TEAM[idx]) return;
       TEAM[idx].permission = (TEAM[idx].permission === 'write') ? 'read' : 'write';
       // 즉시 영속화 — "저장"을 안 누르고 닫아도 권한이 유지되도록
@@ -7498,6 +7526,7 @@
     }
 
     function removeMember(idx) {
+      var _m = _afMemberAt(idx); if (!_m) return; idx = TEAM.indexOf(_m);
       if (!confirm(TEAM[idx].name + ' 팀원을 삭제하시겠습니까?')) return;
       var _removed = TEAM[idx];
       TEAM.splice(idx, 1);
@@ -7512,7 +7541,8 @@
 
     function saveMemberChanges() {
       document.querySelectorAll('[data-member-field]').forEach(input => {
-        const idx = parseInt(input.dataset.memberIdx);
+        const _mm = _afMemberAt(parseInt(input.dataset.memberIdx));
+        const idx = _mm ? TEAM.indexOf(_mm) : -1;
         const field = input.dataset.memberField;
         if (!TEAM[idx]) return;
         if (input.type === 'checkbox') TEAM[idx][field] = input.checked;
@@ -7522,7 +7552,7 @@
       TEAM.forEach(function(m) {
         if (m.email && !m.email.endsWith('@aboutfishing.kr') && !_allowedEmails.some(function(e) { return e.toLowerCase() === m.email.toLowerCase(); })) {
           _allowedEmails.push(m.email.toLowerCase());
-          _saveAllowedEmails();
+          _afAllowedEmailTx('add', m.email.toLowerCase());
         }
       });
       localStorage.setItem('af_team', JSON.stringify(TEAM));
@@ -7531,8 +7561,14 @@
           _showToast('팀 데이터가 서버에서 로딩되지 않아 저장할 수 없습니다. 새로고침 후 다시 시도해주세요.', 3500, 'error');
           return;
         }
-        dbRef('settings/teamV2').set(_teamToObj());
-        dbRef('settings/allowedEmails').set(_allowedEmails);
+        // 이메일 중복 확인 (같은 이메일 두 명이면 로그인 연결이 꼬임)
+        var _seen = {}, _dup = null;
+        TEAM.forEach(function(m) { var e = (m.email || '').toLowerCase().trim(); if (!e) return; if (_seen[e]) _dup = e; _seen[e] = 1; });
+        if (_dup) { alert('같은 이메일이 두 명에게 입력되어 있습니다: ' + _dup + '\n고친 뒤 다시 저장해주세요.'); return; }
+        // 팀원 노드별로만 갱신 (전체 덮어쓰기 금지 — 그 사이 다른 관리자가 지운 팀원을 되살리지 않음)
+        var _objs = _teamToObj(), _u = {};
+        TEAM.forEach(function(m) { if (_objs[m.id]) _u['settings/teamV2/' + m.id] = JSON.parse(JSON.stringify(_objs[m.id])); });
+        dbRef().update(_u).catch(function(err) { _showToast('팀원 저장 실패: ' + err.message, 4000, 'error'); });
         // 팀원별 userPermissions 동기화 (Firebase 보안 규칙에서 사용)
         TEAM.forEach(function(m) {
           if (!m.uid) return; // UID 없는 멤버는 다음 로그인 시 자동 동기화
@@ -7592,7 +7628,8 @@
         uid: state.currentUser ? state.currentUser.uid : ''
       };
       var proj = state.projects.find(function(p) { return p.id === projectId; });
-      if (proj) entry.projectName = proj.name;
+      if (proj) entry.projectName = proj.name || '';
+      Object.keys(entry).forEach(function(k) { if (entry[k] === undefined) entry[k] = null; });
       console.log('[History] push:', action, projectId, field, '| fb:', !!_fb.db);
       // 로컬 캐시에 즉시 추가
       state.history.push(entry);
@@ -7974,8 +8011,18 @@
     function dbRef(path) {
       if (!_fb.db) return null;
       if (path && path.charAt(0) === '.') return _fb.db.ref(path); // .info 등 시스템 경로는 프리픽스 제외
-      if (!path) return AF_DB_PREFIX ? _fb.db.ref('staging') : _fb.db.ref();
-      return _fb.db.ref(AF_DB_PREFIX + path);
+      if (!path) return _afWrapRef(AF_DB_PREFIX ? _fb.db.ref('staging') : _fb.db.ref());
+      return _afWrapRef(_fb.db.ref(AF_DB_PREFIX + path));
+    }
+    function _afNoUndef(v) { return (v === undefined) ? null : (v && typeof v === 'object') ? JSON.parse(JSON.stringify(v)) : v; }
+    function _afWrapRef(r) {
+      try {
+        ['set', 'push', 'update'].forEach(function(m) {
+          var orig = r[m]; if (typeof orig !== 'function') return;
+          r[m] = function(v) { var args = [].slice.call(arguments); if (args.length) args[0] = (m === 'push' && v === undefined) ? undefined : _afNoUndef(v); return orig.apply(r, args); };
+        });
+      } catch(e) {}
+      return r;
     }
     // staging 모드: localStorage 키 분리 (운영 로컬 캐시 오염 방지)
     if (AF_ENV === 'staging') {
@@ -8044,6 +8091,315 @@
     window._stagingCopyProdData = _stagingCopyProdData;
     window._stagingClearData = _stagingClearData;
 
+
+    /* ═══════════ 안전 쓰기 계층 (v12.1) ═══════════
+     * 원칙: ① 서버에서 받은 값(기준본)과 비교해 "내가 바꾼 칸만" 쓴다
+     *       ② 화면이 들고 있는 객체는 실시간 갱신 때 같은 객체에 덮어써서(참조 유지) 오래된 객체로 저장되는 일을 막는다
+     *       ③ 새 항목은 "비어 있을 때만" 생성(transaction) — 같은 번호 동시 생성 시 번호를 올려 재시도
+     *       ④ 서버에서 삭제된 항목은 되살리지 않는다
+     *       ⑤ 서버 데이터를 받기 전에는 안건을 저장하지 않는다 */
+    var _afBase = { projects: {}, issues: {}, deployBundles: {} };
+    var _afPending = { projects: {}, issues: {}, deployBundles: {} };
+    var _afGone = { projects: {}, issues: {}, deployBundles: {} };
+    var _afMyWrites = {};           // 안건: 내가 마지막으로 쓴 값 (되돌리기 판단용)
+    var _afMyCreatedP = {};         // 내가 만든 안건
+    var _afMyDeletedP = {};         // 내가 지운 안건 (원본)
+    var _afDeleteP = {};            // 다음 저장 때 지울 안건
+    var _afTaskShape = {};          // 서버 tasks 저장 형태 (arr|obj)
+    var _AF_DEEP = { phases: 1, assignments: 1 };
+    var _AF_ARR_MERGE = { comments: 1, attachments: 1 };
+    function _afClone(v) { return v === undefined ? undefined : JSON.parse(JSON.stringify(v)); }
+    function _afJ(v) { return JSON.stringify(v === undefined ? null : v); }
+    function _afEmpty(v) { return v == null || v === '' || (Array.isArray(v) && v.length === 0) || (typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0); }
+    function _afSame(a, b) { var ea = _afEmpty(a), eb = _afEmpty(b); if (ea || eb) return ea && eb; return _afJ(a) === _afJ(b); }
+    function _afIsObj(v) { return !!v && typeof v === 'object' && !Array.isArray(v); }
+    function _afClean(v) { return JSON.parse(JSON.stringify(v === undefined ? null : v, function(k, x) { return (k === '_editing' || x === undefined) ? undefined : x; })); }
+    function _afMergeInPlace(t, src) {
+      Object.keys(t).forEach(function(k) { if (!(k in src)) delete t[k]; });
+      Object.keys(src).forEach(function(k) {
+        var sv = src[k], tv = t[k];
+        if (_afIsObj(sv) && _afIsObj(tv)) _afMergeInPlace(tv, sv);
+        else if (Array.isArray(sv) && Array.isArray(tv)) { tv.length = 0; sv.forEach(function(x) { tv.push(x); }); }
+        else t[k] = sv;
+      });
+      return t;
+    }
+    // 서버 목록을 기존 화면 객체에 합침 (같은 id면 같은 객체 유지) + 기준본 갱신
+    function _afMergeList(coll, oldArr, fresh) {
+      var byId = {};
+      (oldArr || []).forEach(function(o) { if (o && o.id && !byId[o.id]) byId[o.id] = o; });
+      var base = {};
+      var out = [];
+      (fresh || []).forEach(function(f) {
+        if (!f || !f.id || base[f.id]) return;
+        base[f.id] = _afClone(f);
+        var o = byId[f.id];
+        // 내가 같은 번호로 생성 중인 항목: 내 객체를 그대로 유지 (확정 전까지 서버 값으로 덮지 않음, 같은 번호 두 개를 만들지 않음)
+        if (o && _afPending[coll][f.id]) { out.push(o); return; }
+        if (o && o !== f) { _afMergeInPlace(o, f); out.push(o); } else out.push(f);
+      });
+      Object.keys(_afBase[coll]).forEach(function(id) { if (!base[id]) _afGone[coll][id] = true; });
+      Object.keys(base).forEach(function(id) { delete _afGone[coll][id]; });
+      (oldArr || []).forEach(function(o) { if (o && o.id && _afPending[coll][o.id] && out.indexOf(o) === -1) out.push(o); });
+      _afBase[coll] = base;
+      return out;
+    }
+    // 오래된 객체(src)에서 바뀐 칸만 최신 객체(live)에 옮김 — 다른 사람이 바꾼 칸은 건드리지 않음
+    function _afApply3Way(coll, live, src) {
+      var base = _afBase[coll][live.id] || {};
+      var keys = {}; Object.keys(src).forEach(function(k) { keys[k] = 1; });
+      Object.keys(keys).forEach(function(k) {
+        if (_afJ(src[k]) !== _afJ(base[k]) && _afJ(live[k]) === _afJ(base[k])) live[k] = _afClone(src[k]);
+      });
+    }
+    function _afItemKey(x) { return x && typeof x === 'object' ? (x.id || x.timestamp || JSON.stringify(x)) : String(x); }
+    // 엔티티(이슈·배포번들) 하나의 변경분 계산
+    function _afEntityPatch(coll, live, base, out, txs) {
+      var pre = coll + '/' + live.id + '/';
+      var keys = {}; Object.keys(live).forEach(function(k) { keys[k] = 1; }); Object.keys(base).forEach(function(k) { keys[k] = 1; });
+      Object.keys(keys).forEach(function(k) {
+        if (k.charAt(0) === '_') return;
+        var a = live[k], b = base[k];
+        if (_afSame(a, b)) return;
+        if (_AF_ARR_MERGE[k] && coll === 'issues' && (Array.isArray(a) || a == null) && (Array.isArray(b) || b == null)) {
+          var bm = {}; (b || []).forEach(function(x) { if (x) bm[_afItemKey(x)] = x; });
+          var am = {}; (a || []).forEach(function(x) { if (x) am[_afItemKey(x)] = x; });
+          var adds = [], mods = {}, dels = {};
+          Object.keys(am).forEach(function(key) { if (!bm[key]) adds.push(am[key]); else if (_afJ(am[key]) !== _afJ(bm[key])) mods[key] = am[key]; });
+          Object.keys(bm).forEach(function(key) { if (!am[key]) dels[key] = true; });
+          txs.push({ path: pre + k, adds: adds, mods: mods, dels: dels });
+        } else {
+          out[pre + k] = (a === undefined) ? null : _afClean(a);
+        }
+      });
+    }
+    function _afRunArrayTx(tx) {
+      return dbRef(tx.path).transaction(function(cur) {
+        var arr = cur ? (Array.isArray(cur) ? cur.filter(function(x) { return x != null; }) : Object.keys(cur).map(function(k) { return cur[k]; })) : [];
+        arr = arr.filter(function(x) { return !tx.dels[_afItemKey(x)]; }).map(function(x) { var key = _afItemKey(x); return tx.mods[key] ? _afClean(tx.mods[key]) : x; });
+        var have = {}; arr.forEach(function(x) { have[_afItemKey(x)] = 1; });
+        tx.adds.forEach(function(x) { if (!have[_afItemKey(x)]) arr.push(_afClean(x)); });
+        return arr;
+      });
+    }
+    function _afNextId(id, taken) {
+      var m = String(id).match(/^(.*?)(\d+)$/);
+      if (!m) return id + '-2';
+      var n = parseInt(m[2], 10), w = m[2].length, cand;
+      do { n++; cand = m[1] + String(n).padStart(w, '0'); } while (taken(cand));
+      return cand;
+    }
+    // 새 항목: 비어 있을 때만 생성. 이미 있으면 번호를 올려 다시 시도
+    function _afClaimCreate(coll, obj, tries) {
+      tries = tries || 0;
+      _afPending[coll][obj.id] = true;
+      var written = null;
+      return dbRef(coll + '/' + obj.id).transaction(function(cur) { if (cur === null) { written = _afClean(obj); return written; } return undefined; }).then(function(r) {
+        if (r && r.committed) {
+          delete _afPending[coll][obj.id];
+          _afBase[coll][obj.id] = _afClone(written || _afClean(obj));
+          if (coll === 'projects') _afMyCreatedP[obj.id] = true;
+          // 생성 확정 전에 고친 내용이 있으면 이어서 저장
+          setTimeout(function() {
+            try {
+              if (coll === 'projects') _afFlushProjects();
+              else { var o = {}; o[coll + '/' + obj.id] = obj; _afSafeUpdate(o).catch(function() {}); }
+            } catch(e) {}
+          }, 0);
+          return obj.id;
+        }
+        if (tries > 20) { delete _afPending[coll][obj.id]; _showToast('번호 발급에 실패했습니다. 새로고침 후 다시 시도해주세요.', 4000, 'error'); return null; }
+        var old = obj.id;
+        var list = coll === 'projects' ? state.projects : coll === 'issues' ? _issues : _deployBundles;
+        delete _afPending[coll][old];
+        obj.id = _afNextId(old, function(c) { return !!_afBase[coll][c] || list.some(function(x) { return x !== obj && x.id === c; }); });
+        if (coll === 'issues' && _currentIssueId === old) _currentIssueId = obj.id;
+        _showToast('다른 사람과 같은 번호여서 ' + old + ' → ' + obj.id + ' 로 등록했습니다', 3500, 'info');
+        return _afClaimCreate(coll, obj, tries + 1);
+      }).catch(function(err) {
+        delete _afPending[coll][obj.id];
+        _showToast('저장 실패: ' + (err && err.code === 'PERMISSION_DENIED' ? '쓰기 권한이 없습니다' : (err && err.message)), 4000, 'error');
+      });
+    }
+    // 이슈·배포번들 저장: {'issues/ID': 객체} 형태를 받아 바뀐 칸만 기록
+    function _afSafeUpdate(updateObj) {
+      var out = {}, txs = [], creates = [];
+      Object.keys(updateObj).forEach(function(key) {
+        var m = key.match(/^(issues|deployBundles)\/([^\/]+)$/);
+        var val = updateObj[key];
+        if (!m || !_afIsObj(val)) { out[key] = val; return; }
+        var coll = m[1], id = m[2];
+        var list = coll === 'issues' ? _issues : _deployBundles;
+        var live = list.find(function(x) { return x && x.id === id; }) || val;
+        if (live !== val) _afApply3Way(coll, live, val);
+        var base = _afBase[coll][id];
+        if (!base) {
+          if (_afGone[coll][id]) { _showToast('다른 사용자가 삭제한 항목이라 저장하지 않았습니다 (' + id + ')', 3500, 'error'); return; }
+          if (!_afPending[coll][id]) creates.push([coll, live]);
+          return;
+        }
+        _afEntityPatch(coll, live, base, out, txs);
+        _afBase[coll][id] = _afClone(live);
+      });
+      var ps = [];
+      if (Object.keys(out).length) ps.push(dbRef().update(out));
+      txs.forEach(function(t) { ps.push(_afRunArrayTx(t)); });
+      creates.forEach(function(c) { ps.push(_afClaimCreate(c[0], c[1])); });
+      return Promise.all(ps).catch(function(err) {
+        _showToast('저장 실패: ' + (err && err.code === 'PERMISSION_DENIED' ? '쓰기 권한이 없습니다' : (err && err.message)), 4000, 'error');
+        throw err;
+      });
+    }
+    window._afSafeUpdate = _afSafeUpdate;
+    // 배열(번들의 이슈 목록 등)에 값 하나를 안전하게 추가
+    function _afArrayAppend(path, value) {
+      return dbRef(path).transaction(function(cur) {
+        var arr = cur ? (Array.isArray(cur) ? cur.filter(function(x) { return x != null; }) : Object.keys(cur).map(function(k) { return cur[k]; })) : [];
+        if (arr.indexOf(value) === -1) arr.push(value);
+        return arr;
+      });
+    }
+    function _afAddIssueToBundleSafe(bundleId, issueId) {
+      var b = _deployBundles.find(function(x) { return x.id === bundleId; });
+      if (b) { if (!b.issues) b.issues = []; if (b.issues.indexOf(issueId) === -1) b.issues.push(issueId); if (_afBase.deployBundles[bundleId]) _afBase.deployBundles[bundleId].issues = _afClone(b.issues); }
+      _saveDeployBundlesToLocal();
+      if (!_fb.db) return Promise.resolve();
+      return _afArrayAppend('deployBundles/' + bundleId + '/issues', issueId).catch(function(err) { _showToast('배포에 추가 실패: ' + err.message, 3500, 'error'); });
+    }
+    window._afAddIssueToBundleSafe = _afAddIssueToBundleSafe;
+
+    /* ── 안건 ── */
+    function _afTaskMap(arr) { var m = {}; (arr || []).forEach(function(t) { if (t && t.id) m[t.id] = t; }); return m; }
+    // a(목표) 와 b(기준) 의 차이를 경로별로 out 에 기록 (pre 접두)
+    function _afProjectPatch(a, b, out, pre, pid) {
+      var keys = {}; Object.keys(a || {}).forEach(function(k) { keys[k] = 1; }); Object.keys(b || {}).forEach(function(k) { keys[k] = 1; });
+      Object.keys(keys).forEach(function(k) {
+        if (k.charAt(0) === '_' || k === 'id') return;
+        var x = a ? a[k] : undefined, y = b ? b[k] : undefined;
+        if (_afSame(x, y)) return;
+        if (k === 'tasks') {
+          if (_afTaskShape[pid] === 'arr') { var all = {}; (x || []).forEach(function(t) { if (t && t.id) all[t.id] = _afClean(t); }); out[pre + 'tasks'] = Object.keys(all).length ? all : null; return; }
+          var xm = _afTaskMap(x), ym = _afTaskMap(y);
+          Object.keys(xm).forEach(function(tid) { if (_afJ(xm[tid]) !== _afJ(ym[tid])) out[pre + 'tasks/' + tid] = _afClean(xm[tid]); });
+          Object.keys(ym).forEach(function(tid) { if (!xm[tid]) out[pre + 'tasks/' + tid] = null; });
+        } else if (_AF_DEEP[k] && _afIsObj(x) && _afIsObj(y)) {
+          var sk = {}; Object.keys(x).forEach(function(q) { sk[q] = 1; }); Object.keys(y).forEach(function(q) { sk[q] = 1; });
+          Object.keys(sk).forEach(function(q) { if (_afJ(x[q]) !== _afJ(y[q])) out[pre + k + '/' + q] = x[q] === undefined ? null : _afClean(x[q]); });
+        } else {
+          out[pre + k] = x === undefined ? null : _afClean(x);
+        }
+      });
+    }
+    function _afFlushProjects() {
+      if (!_fb.db || !_fb.available) return;
+      if (!_fb.projectsLoaded) { _showToast('서버 데이터를 불러오는 중이라 저장하지 않았습니다. 잠시 후 다시 시도해주세요.', 3500, 'error'); return; }
+      if (!_hasWritePermission()) return;
+      var out = {}, creates = [], seen = {};
+      state.projects.forEach(function(p) {
+        if (!p || !p.id || seen[p.id]) return;
+        seen[p.id] = 1;
+        var base = _afBase.projects[p.id];
+        if (!base) { if (!_afGone.projects[p.id] && !_afPending.projects[p.id]) creates.push(p); return; }
+        _afProjectPatch(p, base, out, 'projects/' + p.id + '/', p.id);
+        _afBase.projects[p.id] = _afClone(p);
+      });
+      Object.keys(_afDeleteP).forEach(function(id) { out['projects/' + id] = null; delete _afDeleteP[id]; delete _afBase.projects[id]; _afGone.projects[id] = true; });
+      Object.keys(out).forEach(function(k) { _afMyWrites[k] = _afJ(out[k]); });
+      var ps = [];
+      if (Object.keys(out).length) ps.push(dbRef().update(out));
+      creates.forEach(function(p) { ps.push(_afClaimCreate('projects', p)); });
+      if (!ps.length) return;
+      Promise.all(ps).then(function() {
+        _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
+        var now = new Date();
+        var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        dbRef('settings/deployVersion').set(vStr);
+        _updateDeployVersion(vStr);
+      }).catch(function(err) {
+        console.error('Firebase 저장 실패:', err);
+        _updateSync('저장 실패', '#fee2e2', '#dc2626');
+        _showToast('저장 실패: ' + (err && err.code === 'PERMISSION_DENIED' ? '쓰기 권한이 없습니다' : (err && err.message)) + ' — 새로고침 후 다시 시도해주세요', 5000, 'error');
+      });
+    }
+    function _afGetPath(p, path) {
+      var parts = path.split('/');
+      if (parts[0] === 'tasks' && parts[1]) { var t = (p.tasks || []).find(function(x) { return x && x.id === parts[1]; }); return t === undefined ? null : t; }
+      var v = p; for (var i = 0; i < parts.length; i++) { v = v == null ? undefined : v[parts[i]]; }
+      return v === undefined ? null : v;
+    }
+    function _afSetPath(p, path, val) {
+      var parts = path.split('/');
+      if (parts[0] === 'tasks' && parts[1]) {
+        if (!p.tasks) p.tasks = [];
+        var i = p.tasks.findIndex(function(x) { return x && x.id === parts[1]; });
+        if (val == null) { if (i >= 0) p.tasks.splice(i, 1); } else if (i >= 0) p.tasks[i] = _afClone(val); else p.tasks.push(_afClone(val));
+        return;
+      }
+      var o = p; for (var j = 0; j < parts.length - 1; j++) { if (!_afIsObj(o[parts[j]])) o[parts[j]] = {}; o = o[parts[j]]; }
+      var last = parts[parts.length - 1];
+      if (val == null) delete o[last]; else o[last] = _afClone(val);
+    }
+    // 되돌리기/다시 실행: 내가 바꾼 칸만 복원 (그 사이 다른 사람이 바꾼 칸·새 안건은 유지)
+    function _afSafeRestore(snapJson) {
+      var snap = JSON.parse(snapJson), byId = {}, applied = 0, skipped = 0;
+      snap.forEach(function(p) { if (p && p.id) byId[p.id] = p; });
+      var curIds = {};
+      state.projects.slice().forEach(function(p) {
+        curIds[p.id] = 1;
+        var target = byId[p.id];
+        if (!target) {
+          if (_afMyCreatedP[p.id]) { _afDeleteP[p.id] = true; _afMyDeletedP[p.id] = _afClone(p); state.projects = state.projects.filter(function(x) { return x !== p; }); applied++; }
+          else skipped++;
+          return;
+        }
+        var patch = {};
+        _afProjectPatch(target, p, patch, '', p.id);
+        Object.keys(patch).forEach(function(path) {
+          var mine = _afMyWrites['projects/' + p.id + '/' + path];
+          if (mine !== undefined && mine === _afJ(_afGetPath(p, path))) { _afSetPath(p, path, patch[path]); applied++; }
+          else skipped++;
+        });
+      });
+      snap.forEach(function(t) {
+        if (!t || !t.id || curIds[t.id]) return;
+        if (_afMyDeletedP[t.id]) { state.projects.push(_afClone(_afMyDeletedP[t.id])); delete _afMyDeletedP[t.id]; delete _afGone.projects[t.id]; applied++; }
+        else skipped++;
+      });
+      return { applied: applied, skipped: skipped };
+    }
+    // 팀원 관리 모달: 화면에 그린 순서(인덱스) → 팀원 id
+    function _afMemberAt(idx) {
+      var ids = window._afMemberIds || TEAM.map(function(m) { return m.id; });
+      var id = ids[idx];
+      return id ? TEAM.find(function(m) { return m.id === id; }) : null;
+    }
+    // 외부 허용 이메일: 목록 전체 덮어쓰기 대신 추가/삭제만 (transaction)
+    function _afAllowedEmailTx(op, email) {
+      email = String(email || '').toLowerCase().trim();
+      if (!email) return Promise.resolve();
+      try { localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails)); } catch(e) {}
+      if (!_fb.db) return Promise.resolve();
+      return dbRef('settings/allowedEmails').transaction(function(cur) {
+        var arr = cur ? (Array.isArray(cur) ? cur.filter(function(x) { return x != null; }) : Object.keys(cur).map(function(k) { return cur[k]; })) : [];
+        var lc = arr.map(function(e) { return String(e).toLowerCase(); });
+        if (op === 'add') { if (lc.indexOf(email) === -1) arr.push(email); }
+        else arr = arr.filter(function(e) { return String(e).toLowerCase() !== email; });
+        return arr;
+      }).then(function(r) {
+        var v = r && r.snapshot ? r.snapshot.val() : null;
+        if (v) { _allowedEmails = (Array.isArray(v) ? v : Object.keys(v).map(function(k) { return v[k]; })).filter(Boolean); try { localStorage.setItem('af_allowed_emails', JSON.stringify(_allowedEmails)); } catch(e) {} }
+      }).catch(function(err) { _showToast('허용 이메일 저장 실패: ' + err.message, 4000, 'error'); });
+    }
+    function populateFilters() {
+      var mf = document.getElementById('memberFilter');
+      if (!mf) return;
+      var cur = mf.value;
+      mf.innerHTML = '<option value="">전체 멤버</option>';
+      TEAM.forEach(function(m) { var o = document.createElement('option'); o.value = m.id; o.textContent = m.name + ' (' + m.role + ')'; mf.appendChild(o); });
+      mf.value = cur;
+    }
+    var _afSvcLoaded = false;
+
     function saveProjects() {
       // 1) 항상 localStorage에 저장 (즉시, 안전)
       localStorage.setItem('af_projects', JSON.stringify(state.projects));
@@ -8051,25 +8407,9 @@
       recalcGanttRange();
       // 3) Update chat project selector
       populateChatProjectSelector();
-      // 4) Firebase 연결 시 동기화
+      // 4) Firebase: 바뀐 칸만 즉시 기록 (전체 덮어쓰기 금지)
       if (!_fb.available || !_fb.ref) return;
-      clearTimeout(_fb.debounce);
-      _fb.debounce = setTimeout(function() {
-        var obj = {};
-        state.projects.forEach(function(p) { obj[p.id] = p; });
-        _fb.skipNext = true;
-        _fb.ref.set(obj).then(function() {
-          _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
-          // 배포 버전 타임스탬프 업데이트
-          var now = new Date();
-          var vStr = now.getFullYear() + '.' + String(now.getMonth()+1).padStart(2,'0') + '.' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-          dbRef('settings/deployVersion').set(vStr);
-          _updateDeployVersion(vStr);
-        }).catch(function(err) {
-          console.error('Firebase 저장 실패:', err);
-          _updateSync('저장 실패', '#fee2e2', '#dc2626');
-        });
-      }, 500);
+      _afFlushProjects();
     }
 
     function _updateDeployVersion(v) {
@@ -8184,12 +8524,11 @@
       // 실시간 리스너 — 다른 사용자가 수정하면 반영
       _fb.ref.on('value', function(snapshot) {
         var data = snapshot.val();
-        if (_fb.skipNext) { _fb.skipNext = false; return; }
 
         if (data) {
           // Firebase에 데이터 있음 → 반영
-          var arr = Object.values(data).sort(function(a, b) {
-            return parseInt(a.id.replace('P', '')) - parseInt(b.id.replace('P', ''));
+          var arr = Object.keys(data).map(function(k) { var v = data[k]; if (v && typeof v === 'object' && !v.id) v.id = k; return v; }).filter(function(p) { return p && typeof p === 'object' && p.id; }).sort(function(a, b) {
+            return (parseInt(String(a.id).replace('P', '')) || 0) - (parseInt(String(b.id).replace('P', '')) || 0);
           });
           // 필수 필드 보정 (Firebase에서 빈 객체가 누락될 수 있음)
           var _emptyPhases = {plan:{start:'',end:''},design:{start:'',end:''},front:{start:'',end:''},back:{start:'',end:''},qa:{start:'',end:''}};
@@ -8200,13 +8539,15 @@
             if (!p.assignments) p.assignments = JSON.parse(JSON.stringify(_emptyAssign));
             else { ['plan','design','front','back','qa'].forEach(function(ph) { if (!p.assignments[ph]) p.assignments[ph] = []; }); }
             if (!p.links) p.links = [];
+            _afTaskShape[p.id] = Array.isArray(p.tasks) ? 'arr' : (p.tasks ? 'obj' : 'none');
             if (!p.tasks) p.tasks = []; else if (!Array.isArray(p.tasks)) p.tasks = Object.keys(p.tasks).map(function(k) { return p.tasks[k]; });
             if (!p.serviceTypes) p.serviceTypes = [];
             if (!p.status) p.status = '대기';
           });
           // 안전장치: Firebase 데이터가 비어있으면 무시
           if (arr.length > 0) {
-            state.projects = arr;
+            state.projects = _afMergeList('projects', state.projects, arr);
+            _fb.projectsLoaded = true;
             try { if (typeof _afCheckTaskNotifs === 'function') _afCheckTaskNotifs(arr); } catch(e) { console.warn('[Notif] task watch:', e); }
             localStorage.setItem('af_projects', JSON.stringify(arr));
             _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
@@ -8218,14 +8559,11 @@
             else if (state.currentTab === 'history') renderHistory();
           }
         } else {
-          // Firebase가 비어있으면 → 현재 로컬 데이터를 업로드
-          if (state.projects.length > 0) {
-            var obj = {};
-            state.projects.forEach(function(p) { obj[p.id] = p; });
-            _fb.skipNext = true;
-            _fb.ref.set(obj);
-          }
+          // Firebase가 비어 있음 → 로컬/기본 데이터를 절대 업로드하지 않음 (운영 덮어쓰기 방지)
+          state.projects = _afMergeList('projects', state.projects, []);
+          _fb.projectsLoaded = true;
           _updateSync('실시간 동기화', '#dcfce7', '#16a34a');
+          try { rerenderCurrentTab(); } catch(e) {}
         }
       }, function(error) {
         console.error('Firebase read fail:', error);
@@ -8360,14 +8698,17 @@
               }
             });
             // 로컬에만 있는 새 이슈 보존 (Firebase 쓰기 직후 타이밍 보호)
-            var fbIds = fbIssues.map(function(i) { return i.id; });
-            var localOnly = _issues.filter(function(i) { return fbIds.indexOf(i.id) === -1; });
-            _issues = fbIssues.concat(localOnly);
+            _issues = _afMergeList('issues', _issues, fbIssues);
+            var localOnly = _issues.filter(function(i) { return _afPending.issues[i.id]; });
             try { if (typeof _afCheckIssueNotifs === 'function') _afCheckIssueNotifs(fbIssues); } catch(e) { console.warn('[Notif] issue watch:', e); }
             console.log('[Issues] loaded from Firebase:', fbIssues.length, 'issues' + (localOnly.length ? ' +' + localOnly.length + ' local' : ''));
             _saveIssuesToLocal();
             if (state.currentTab === 'issues') renderIssues();
             setTimeout(_checkP0AutoAlerts, 500);
+          } else {
+            _issues = _afMergeList('issues', _issues, []);
+            _saveIssuesToLocal();
+            if (state.currentTab === 'issues') renderIssues();
           }
         });
       }
@@ -8405,9 +8746,8 @@
               }
             });
             // 로컬에만 있는 새 번들 보존 (Firebase 쓰기 직후 타이밍 보호)
-            var fbIds = fbBundles.map(function(b) { return b.id; });
-            var localOnly = _deployBundles.filter(function(b) { return fbIds.indexOf(b.id) === -1; });
-            _deployBundles = fbBundles.concat(localOnly);
+            _deployBundles = _afMergeList('deployBundles', _deployBundles, fbBundles);
+            var localOnly = _deployBundles.filter(function(b) { return _afPending.deployBundles[b.id]; });
             console.log('[DeployBundles] Firebase sync:', fbBundles.length, 'bundles' + (localOnly.length ? ' +' + localOnly.length + ' local' : ''));
             _saveDeployBundlesToLocal();
           }
@@ -8460,7 +8800,7 @@
       var maxSuffix = 0;
       _deployBundles.forEach(function(b) {
         if (b.id && b.id.startsWith('DEP-' + today)) {
-          var suffix = parseInt(b.id.substring(12));
+          var suffix = parseInt(b.id.substring(13), 10);
           if (!isNaN(suffix) && suffix > maxSuffix) maxSuffix = suffix;
         }
       });
@@ -8785,7 +9125,7 @@
       // Detail fields
       _addRowToSection(detailSection, [
         { label: '결함 타입', id: 'createIssue_defectType', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '데이터 에러', l: '데이터 에러' }, { v: '기능 에러', l: '기능 에러' }, { v: '이슈 아님', l: '이슈 아님' }, { v: '기능개선', l: '기능개선' }, { v: '기획 에러', l: '기획 에러' }, { v: '시스템 에러', l: '시스템 에러' }, { v: 'UI 에러', l: 'UI 에러' }] },
-        { label: '우선순위', id: 'createIssue_priority', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '1', l: '1(Critical)' }, { v: '2', l: '2(High)' }, { v: '3', l: '3(Medium)' }, { v: '4', l: '4(Low)' }] }
+        { label: '우선순위', id: 'createIssue_priority', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '0', l: '0(긴급·Block)' }, { v: '1', l: '1(Critical)' }, { v: '2', l: '2(High)' }, { v: '3', l: '3(Medium)' }, { v: '4', l: '4(Low)' }] }
       ]);
       _addRowToSection(detailSection, [
         { label: '배포환경', id: 'createIssue_environment', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: 'production', l: '운영' }, { v: 'staging', l: '스테이징' }, { v: 'development', l: '개발' }] },
@@ -9014,21 +9354,21 @@
 
     function saveIssueData(issueData) {
       try { if (typeof _afRecentLocalSaves === 'object' && issueData && issueData.id) _afRecentLocalSaves[issueData.id] = Date.now(); } catch(e) {}
-      var existingIdx = _issues.findIndex(function(i) { return i.id === issueData.id; });
-      if (existingIdx >= 0) {
-        _issues[existingIdx] = issueData;
-        _addNotification('이슈 업데이트: ' + issueData.title, 'info', issueData.id);
+      if (!issueData || !issueData.id) return;
+      var live = _issues.find(function(i) { return i.id === issueData.id; });
+      if (live) {
+        if (live !== issueData) _afApply3Way('issues', live, issueData);
+        _addNotification('이슈 업데이트: ' + live.title, 'info', live.id);
       } else {
-        _issues.push(issueData);
+        if (_afGone.issues[issueData.id]) { _showToast('다른 사용자가 삭제한 이슈라 저장하지 않았습니다 (' + issueData.id + ')', 3500, 'error'); return; }
+        _issues.push(issueData); live = issueData;
       }
       _saveIssuesToLocal();
 
       if (_fb.db && _hasWritePermission()) {
         var updateObj = {};
-        updateObj['issues/' + issueData.id] = issueData;
-        dbRef().update(updateObj).catch(function(err) {
-          console.error('[Issues] Firebase write error:', err);
-        });
+        updateObj['issues/' + live.id] = live;
+        _afSafeUpdate(updateObj).catch(function(err) { console.error('[Issues] Firebase write error:', err); });
       }
 
       if (state.currentTab === 'issues') renderIssues();
@@ -10026,7 +10366,8 @@ function _persistIssueFilters() {
       var cbs = document.querySelectorAll('#issuesContainer tbody input[type=checkbox]');
       cbs.forEach(function(cb) { cb.checked = masterCb.checked; });
       if (masterCb.checked) {
-        _issues.forEach(function(iss) { _selectedIssues[iss.id] = iss; });
+        // 화면에 보이는(필터 적용된) 이슈만 선택
+        (window._afLastIssueList || []).forEach(function(iss) { _selectedIssues[iss.id] = iss; });
       } else {
         _selectedIssues = {};
       }
@@ -10047,13 +10388,14 @@ function _persistIssueFilters() {
     }
 
     function saveIssueInline(iss) {
-      var idx = _issues.findIndex(function(i) { return i.id === iss.id; });
-      if (idx >= 0) _issues[idx] = iss;
+      if (!_hasWritePermission()) { _checkWritePermission(); return; }
+      var live = _issues.find(function(i) { return i.id === iss.id; });
+      if (live && live !== iss) _afApply3Way('issues', live, iss);
       _saveIssuesToLocal();
       if (_fb.db) {
         var updateObj = {};
-        updateObj['issues/' + iss.id] = iss;
-        dbRef().update(updateObj).catch(function(err) { console.error('[Issues] Firebase error:', err); });
+        updateObj['issues/' + iss.id] = live || iss;
+        _afSafeUpdate(updateObj).catch(function(err) { console.error('[Issues] Firebase error:', err); });
       }
     }
 
@@ -10616,6 +10958,7 @@ function _persistIssueFilters() {
     }
 
     function bulkUpdateIssueStatus() {
+      if (!_checkWritePermission()) return;
       var count = Object.keys(_selectedIssues).length;
       if (count === 0) return;
 
@@ -10656,7 +10999,7 @@ function _persistIssueFilters() {
               var iss = _issues.find(function(i) { return i.id === id; });
               if (iss) updateObj['issues/' + id] = iss;
             });
-            dbRef().update(updateObj);
+            _afSafeUpdate(updateObj).catch(function() {});
           }
           _selectedIssues = {};
           document.body.removeChild(overlay);
@@ -10680,6 +11023,7 @@ function _persistIssueFilters() {
     }
 
     function bulkUpdateIssueAssignee() {
+      if (!_checkWritePermission()) return;
       var count = Object.keys(_selectedIssues).length;
       if (count === 0) return;
 
@@ -10706,7 +11050,7 @@ function _persistIssueFilters() {
       unassignBtn.onclick = function() {
         Object.keys(_selectedIssues).forEach(function(id) {
           var iss = _issues.find(function(i) { return i.id === id; });
-          if (iss) { iss.assignee = ''; iss.updated = new Date().toISOString(); }
+          if (iss) { iss.assignee = ''; iss.assignees = []; iss.updated = new Date().toISOString(); }
         });
         _saveIssuesToLocal();
         if (_fb && _fb.db) {
@@ -10715,7 +11059,7 @@ function _persistIssueFilters() {
             var iss = _issues.find(function(i) { return i.id === id; });
             if (iss) updateObj['issues/' + id] = iss;
           });
-          dbRef().update(updateObj);
+          _afSafeUpdate(updateObj).catch(function() {});
         }
         _selectedIssues = {}; document.body.removeChild(overlay); updateBulkBar(); renderIssues();
         _showToast('담당자가 해제되었습니다');
@@ -10736,7 +11080,7 @@ function _persistIssueFilters() {
         btn.onclick = function() {
           Object.keys(_selectedIssues).forEach(function(id) {
             var iss = _issues.find(function(i) { return i.id === id; });
-            if (iss) { iss.assignee = member.id; iss.updated = new Date().toISOString(); }
+            if (iss) { iss.assignee = member.id; iss.assignees = [member.id]; iss.updated = new Date().toISOString(); }
           });
           _saveIssuesToLocal();
           if (_fb && _fb.db) {
@@ -10745,7 +11089,7 @@ function _persistIssueFilters() {
               var iss = _issues.find(function(i) { return i.id === id; });
               if (iss) updateObj['issues/' + id] = iss;
             });
-            dbRef().update(updateObj);
+            _afSafeUpdate(updateObj).catch(function() {});
           }
           _selectedIssues = {}; document.body.removeChild(overlay); updateBulkBar(); renderIssues();
           _showToast(count + '개 이슈를 ' + member.name + '에게 배정했습니다');
@@ -10766,9 +11110,10 @@ function _persistIssueFilters() {
     }
 
     function bulkDeleteIssues() {
+      if (!_checkWritePermission()) return;
       var ids = Object.keys(_selectedIssues);
       if (ids.length === 0) return;
-      if (!confirm(ids.length + '개의 이슈를 삭제하시겠습니까?')) return;
+      if (!confirm(ids.length + '개의 이슈를 삭제하시겠습니까?\n\n' + ids.slice(0, 10).join(', ') + (ids.length > 10 ? ' 외 ' + (ids.length - 10) + '건' : '') + '\n\n삭제하면 되돌릴 수 없습니다.')) return;
       ids.forEach(function(issueId) {
         _issues = _issues.filter(function(i) { return i.id !== issueId; });
         // Firebase에서도 삭제 (개별 삭제와 동일한 방식)
@@ -10851,6 +11196,12 @@ function _persistIssueFilters() {
     function openIssueDetail(issueId) {
       var iss = _issues.find(function(i) { return i.id === issueId; });
       if (!iss) return;
+      try {
+        if (window._issueDirty && _currentIssueId && _currentIssueId !== issueId && document.getElementById('issueDetailPanel').classList.contains('open')) {
+          if (!confirm('저장하지 않은 수정 내용이 있습니다. 저장하지 않고 다른 이슈로 이동할까요?')) return;
+          window._issueDirty = false;
+        }
+      } catch(e) {}
       var _keep = null;
       try {
         if (_currentIssueId === issueId && window._issueDirty && document.getElementById('issueDetailPanel').classList.contains('open')) {
@@ -10859,6 +11210,7 @@ function _persistIssueFilters() {
           ['detail_serviceTypes', 'detail_projectIds', 'detail_assignees', 'detail_platforms', 'detail_references', 'detail_relatedIssues'].forEach(function(f) { _keep.mc[f] = _getMcValues(f); });
         }
       } catch(e) { _keep = null; }
+      if (!_keep || !window._afIssueOrig || window._afIssueOrig.id !== issueId) window._afIssueOrig = JSON.parse(JSON.stringify(iss));
       window._issueDirty = false;
 
       document.body.style.overflow = 'hidden';
@@ -11030,7 +11382,7 @@ function _persistIssueFilters() {
       prioritySelect.className = 'issue-form-select';
       prioritySelect.disabled = !canEdit;
       prioritySelect.style.backgroundColor = !canEdit ? '#F3F3F3' : 'white';
-      [{ v: '', l: '선택...' }, { v: '1', l: '1(Critical)' }, { v: '2', l: '2(High)' }, { v: '3', l: '3(Medium)' }, { v: '4', l: '4(Low)' }].forEach(function(o) {
+      [{ v: '', l: '선택...' }, { v: '0', l: '0(긴급·Block)' }, { v: '1', l: '1(Critical)' }, { v: '2', l: '2(High)' }, { v: '3', l: '3(Medium)' }, { v: '4', l: '4(Low)' }].forEach(function(o) {
         var opt = document.createElement('option');
         opt.value = o.v;
         opt.textContent = o.l;
@@ -11795,6 +12147,8 @@ function _persistIssueFilters() {
         input.onkeydown = function(e) {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
+            var _ci = this;
+            if (e.isComposing || e.keyCode === 229) { setTimeout(function() { if (canWrite && _ci.value.trim()) addIssueComment(issueId); }, 60); return; }
             if (canWrite && this.value.trim()) addIssueComment(issueId);
           }
         };
@@ -12045,7 +12399,9 @@ function _persistIssueFilters() {
       if (!_currentIssueId) return;
 
       var iss = _issues.find(function(i) { return i.id === _currentIssueId; });
-      if (!iss) return;
+      if (!iss) { _showToast('다른 사용자가 삭제한 이슈입니다. 저장하지 않았습니다.', 3500, 'error'); return; }
+      var _afBeforeI = JSON.parse(JSON.stringify(iss));
+      var _afOrigI = (window._afIssueOrig && window._afIssueOrig.id === iss.id) ? window._afIssueOrig : _afBeforeI;
 
       iss.title = document.getElementById('issueDetail_title').value;
       iss.type = document.getElementById('issueDetail_type').value;
@@ -12074,9 +12430,24 @@ function _persistIssueFilters() {
       iss.expectedResult = document.getElementById('issueDetail_expectedResult').value;
       iss.actualResult = document.getElementById('issueDetail_actualResult').value;
       iss.resolution = document.getElementById('issueDetail_resolution').value;
+      // 내가 손대지 않은 칸은 최신값 유지 (그 사이 다른 사람이 바꾼 상태·담당자 등을 되돌리지 않음)
+      ['title','type','severity','priority','status','environment','platforms','platform','defectType','projectIds','projectId','serviceTypes','serviceType','buildCategory','assignees','assignee','verifier','references','relatedIssues','tcId','isRegression','deadline','precondition','testSteps','expectedResult','actualResult','resolution'].forEach(function(k) {
+        if (_afSame(iss[k], _afOrigI[k])) { if (_afBeforeI[k] === undefined) delete iss[k]; else iss[k] = _afBeforeI[k]; }
+      });
+      // 다중선택: 선택지에 없는 기존 값(삭제된 팀원·서비스 등)은 지우지 않고 유지
+      [['platforms','detail_platforms'],['projectIds','detail_projectIds'],['serviceTypes','detail_serviceTypes'],['assignees','detail_assignees'],['references','detail_references'],['relatedIssues','detail_relatedIssues']].forEach(function(f) {
+        var box = document.getElementById('mc_opts_' + f[1]); if (!box || !Array.isArray(iss[f[0]])) return;
+        var opts = {}; box.querySelectorAll('input[type=checkbox]').forEach(function(cb) { opts[cb.value] = 1; });
+        (_afOrigI[f[0]] || []).forEach(function(v) { if (!opts[v] && iss[f[0]].indexOf(v) === -1) iss[f[0]].push(v); });
+        if (_afSame(iss[f[0]], _afOrigI[f[0]])) iss[f[0]] = _afBeforeI[f[0]];
+      });
+      var _changed = Object.keys(iss).concat(Object.keys(_afBeforeI)).some(function(k) { return k !== 'updated' && !_afSame(iss[k], _afBeforeI[k]); });
+      if (!_changed) { window._afIssueOrig = null; closeIssueDetail(); _showToast('변경된 내용이 없습니다', 1500, 'info'); return; }
+      if (!String(iss.title || '').trim()) { iss.title = _afBeforeI.title; _showToast('제목은 비울 수 없어 이전 제목을 유지했습니다', 3000, 'error'); }
       iss.updated = new Date().toISOString();
 
       saveIssueData(iss);
+      window._afIssueOrig = null;
       closeIssueDetail();
       _showToast('이슈가 저장되었습니다');
     }
@@ -12136,10 +12507,7 @@ function _persistIssueFilters() {
             if (!alreadyIn) {
               item.onclick = (function(bundle) {
                 return function() {
-                  if (!bundle.issues) bundle.issues = [];
-                  bundle.issues.push(_currentIssueId);
-                  _saveDeployBundlesToLocal();
-                  if (_fb.db) { dbRef('deployBundles/' + bundle.id + '/issues').set(bundle.issues); }
+                  _afAddIssueToBundleSafe(bundle.id, _currentIssueId);
                   closeIssueToBundleModal();
                   _showToast('"' + bundle.title + '" 배포에 이슈가 추가되었습니다');
                 };
@@ -12181,7 +12549,7 @@ function _persistIssueFilters() {
       if (_fb.db) {
         _fbDeploySkipNext = true;
         var obj = {}; obj['deployBundles/' + newBundle.id] = newBundle;
-        dbRef().update(obj);
+        _afSafeUpdate(obj).catch(function() {});
       }
       closeIssueToBundleModal();
       _showToast('새 배포 "' + bundleTitle + '"에 이슈가 추가되었습니다');
@@ -12267,6 +12635,9 @@ function _persistIssueFilters() {
       if (!iss) return;
       var text = document.getElementById('newCommentText').value;
       if (!text.trim()) return;
+      if (!_hasWritePermission()) { _checkWritePermission(); return; }
+      if (addIssueComment._last && addIssueComment._last.k === issueId + text && Date.now() - addIssueComment._last.t < 1500) return;
+      addIssueComment._last = { k: issueId + text, t: Date.now() };
 
       if (!iss.comments) iss.comments = [];
       iss.comments.push({
@@ -12549,8 +12920,11 @@ function _persistIssueFilters() {
 
     function removeAttachment(idx) {
       if (!_currentIssueId) return;
+      if (!_hasWritePermission()) { _checkWritePermission(); return; }
       var iss = _issues.find(function(i) { return i.id === _currentIssueId; });
       if (!iss || !iss.attachments) return;
+      var _att = iss.attachments[idx];
+      if (!_att || !confirm('첨부 "' + (_att.name || '파일') + '"를 삭제할까요?')) return;
       iss.attachments.splice(idx, 1);
       saveIssueData(iss);
       openIssueDetail(_currentIssueId);
@@ -12864,6 +13238,7 @@ function _persistIssueFilters() {
     }
 
     function createDeployBundle() {
+      if (!_checkWritePermission()) return;
       var titleEl = document.getElementById('bundleTitle');
       var title = titleEl.value.trim();
       var titleErrorEl = document.getElementById('bundleTitleError');
@@ -12908,7 +13283,7 @@ function _persistIssueFilters() {
         _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + bundle.id] = bundle;
-        dbRef().update(updateObj).catch(function(err) {
+        _afSafeUpdate(updateObj).catch(function(err) {
           console.error('[DeployBundles] Firebase error:', err);
         });
       }
@@ -12948,7 +13323,7 @@ function _persistIssueFilters() {
         _fbDeploySkipNext = true; // Firebase on('value') 즉시응답으로 로컬 번들 유실 방지
         var updateObj = {};
         updateObj['deployBundles/' + newBundle.id] = newBundle;
-        dbRef().update(updateObj).catch(function(err) {
+        _afSafeUpdate(updateObj).catch(function(err) {
           console.error('[DeployBundles] Copy error:', err);
         });
       }
@@ -13091,7 +13466,7 @@ function _persistIssueFilters() {
 
       _deployBundles.unshift(bundle);
       _saveDeployBundlesToLocal();
-      if (_fb.db) { _fbDeploySkipNext = true; var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; dbRef().update(_obj1).catch(function(err){console.error(err);}); }
+      if (_fb.db) { _fbDeploySkipNext = true; var _obj1={}; _obj1['deployBundles/'+bundle.id]=bundle; _afSafeUpdate(_obj1).catch(function(err){console.error(err);}); }
       _addNotification('배포 번들 등록: ' + bundle.title, 'success');
 
       // Reset + close
@@ -13102,12 +13477,13 @@ function _persistIssueFilters() {
     }
 
     function changeDeployBundleStatus(bundleId, newStatus) {
+      if (!_checkWritePermission()) return;
       var bundle = _deployBundles.find(function(b) { return b.id === bundleId; });
       if (!bundle) return;
       bundle.status = newStatus;
       bundle.updated = new Date().toISOString();
       _saveDeployBundlesToLocal();
-      if (_fb.db) { var _obj2={}; _obj2['deployBundles/'+bundle.id]=bundle; dbRef().update(_obj2).catch(function(err){console.error(err);}); }
+      if (_fb.db) { var _obj2={}; _obj2['deployBundles/'+bundle.id]=bundle; _afSafeUpdate(_obj2).catch(function(err){console.error(err);}); }
       _addNotification('배포 상태 변경: ' + bundle.title + ' → ' + ({planning:'준비중',ready:'배포준비',deployed:'배포완료',cancelled:'취소'}[newStatus]||newStatus), 'success');
       renderDeployBundles();
     }
@@ -13700,10 +14076,19 @@ function renderDeployBundles() {
       noteArea.style.cssText = 'width:100%;min-height:80px;padding:8px;border:1px solid #E7E7E7;border-radius:8px;font-size:12px;font-family:inherit;resize:vertical;box-sizing:border-box;';
       noteArea.placeholder = '배포 관련 메모를 입력하세요...';
       noteArea.value = bundle.notes || '';
+      if (!_hasWritePermission()) { noteArea.readOnly = true; noteArea.placeholder = '읽기 권한은 메모를 수정할 수 없습니다'; }
       noteArea.oninput = function() {
+        if (!_hasWritePermission()) return;
         bundle.notes = this.value;
         _saveDeployBundlesToLocal();
-        if (_fb.db) { var o={}; o['deployBundles/'+bundle.id+'/notes']=this.value; dbRef().update(o); }
+        var _v = this.value;
+        clearTimeout(noteArea._t);
+        noteArea._t = setTimeout(function() {
+          if (!_fb.db || _afGone.deployBundles[bundle.id]) return;
+          if (_afBase.deployBundles[bundle.id]) _afBase.deployBundles[bundle.id].notes = _v;
+          var o = {}; o['deployBundles/' + bundle.id + '/notes'] = _v;
+          dbRef().update(o).catch(function(err) { _showToast('메모 저장 실패: ' + err.message, 3500, 'error'); });
+        }, 600);
       };
       noteSec.appendChild(noteHdr);
       noteSec.appendChild(noteArea);
@@ -15451,17 +15836,19 @@ function renderDeployBundles() {
 
     function undo() {
       if (undoStack.length === 0) return;
+      if (!_checkWritePermission()) return;
       redoStack.push(JSON.stringify(state.projects));
-      state.projects = JSON.parse(undoStack.pop());
+      var r = _afSafeRestore(undoStack.pop());
       saveProjects();
       rerenderCurrentTab();
-      _showToast('되돌리기 완료');
+      _showToast(r.skipped ? '되돌리기 완료 — 그 사이 다른 사람이 바꾼 ' + r.skipped + '곳은 유지했습니다' : '되돌리기 완료');
     }
 
     function redo() {
       if (redoStack.length === 0) return;
+      if (!_checkWritePermission()) return;
       undoStack.push(JSON.stringify(state.projects));
-      state.projects = JSON.parse(redoStack.pop());
+      _afSafeRestore(redoStack.pop());
       saveProjects();
       rerenderCurrentTab();
       _showToast('다시 실행 완료');
@@ -15935,7 +16322,8 @@ function renderDeployBundles() {
     function _persistProjectTasks(p) {
       try { if (typeof _afRecentTaskSaves === 'object' && p && p.id) _afRecentTaskSaves[p.id] = Date.now(); } catch(e) {}
       try { localStorage.setItem('af_projects', JSON.stringify(state.projects)); } catch(e) {}
-      if (_fb.db) {
+      if (_fb.db) { _afFlushProjects(); }
+      else if (_fb.db && false) {
         dbRef('projects/' + p.id + '/tasks').set(p.tasks || []).catch(function(e) {
           console.error('[Tasks] save fail', e);
           _showToast('Task 저장 실패: ' + (e && e.code === 'PERMISSION_DENIED' ? '쓰기 권한이 없습니다' : e.message), 4000, 'error');
@@ -16052,6 +16440,7 @@ function renderDeployBundles() {
     function openDetailPanel(projectId) {
       state.selectedProject = state.projects.find(p => p.id === projectId);
       if (!state.selectedProject) return;
+      window._afDetailOrig = JSON.parse(JSON.stringify(state.selectedProject));
       _setHash(projectId);
 
       const panel = document.getElementById('detailPanel');
@@ -16142,9 +16531,9 @@ function renderDeployBundles() {
           <div style="font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
             <span style="font-size: 15px;">&#9733;</span> 왜 중요한가
           </div>
-          <textarea id="detailDescInline" style="width:100%;min-height:60px;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:13px;color:#78350f;background:#fffef5;resize:vertical;line-height:1.6;font-family:inherit;">${p.desc || ''}</textarea>
+          <textarea id="detailDescInline" style="width:100%;min-height:60px;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:13px;color:#78350f;background:#fffef5;resize:vertical;line-height:1.6;font-family:inherit;">${_escHtml(p.desc || '')}</textarea>
           <div style="font-size: 12px; font-weight: 600; color: #92400e; margin: 8px 0 4px;">우선순위 근거</div>
-          <textarea id="detailRationaleInline" style="width:100%;min-height:50px;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:12px;color:#92400e;background:#fffef5;resize:vertical;line-height:1.5;font-family:inherit;">${p.rationale || ''}</textarea>
+          <textarea id="detailRationaleInline" style="width:100%;min-height:50px;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:12px;color:#92400e;background:#fffef5;resize:vertical;line-height:1.5;font-family:inherit;">${_escHtml(p.rationale || '')}</textarea>
         </div>
 
         <!-- 의존성 -->
@@ -16167,7 +16556,7 @@ function renderDeployBundles() {
         </div>
         <div class="detail-section">
           <label class="detail-label">이름</label>
-          <input type="text" class="detail-input" id="detailName" value="${p.name}">
+          <input type="text" class="detail-input" id="detailName" value="${_escHtml(p.name || '')}">
         </div>
         <div class="detail-section">
           <label class="detail-label">티어</label>
@@ -16196,7 +16585,7 @@ function renderDeployBundles() {
         </div>
         <div class="detail-section">
           <label class="detail-label">메모 / 코멘트</label>
-          <textarea class="detail-input" id="detailMemo" style="height: 80px;" placeholder="팀 메모, 이슈, 변경사항 등...">${p.memo || ''}</textarea>
+          <textarea class="detail-input" id="detailMemo" style="height: 80px;" placeholder="팀 메모, 이슈, 변경사항 등...">${_escHtml(p.memo || '')}</textarea>
         </div>
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #E7E7E7;">
           <label class="detail-label" style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -16225,7 +16614,7 @@ function renderDeployBundles() {
                 <option value="__custom__" ${!['기획서','Figma','PRD','API','TC','기타'].includes(link.type) && link.type ? 'selected' : ''}>직접입력</option>
               </select>
               <input type="text" class="detail-input link-custom-type" data-link-idx="${i}" value="${!['기획서','Figma','PRD','API','TC','기타','__custom__',''].includes(link.type) ? link.type : ''}" placeholder="타입명" style="width:70px;flex-shrink:0;font-size:12px;padding:4px 6px;display:${!['기획서','Figma','PRD','API','TC','기타',''].includes(link.type) && link.type ? 'block' : 'none'};">
-              <input type="text" class="detail-input link-url-input" data-link-idx="${i}" value="${link.url || ''}" placeholder="URL 입력" style="flex: 1; font-size: 12px; padding: 4px 8px;">
+              <input type="text" class="detail-input link-url-input" data-link-idx="${i}" value="${_escHtml(link.url || '')}" placeholder="URL 입력" style="flex: 1; font-size: 12px; padding: 4px 8px;">
               <button onclick="removeLink(${i})" style="border: none; background: none; color: #ef4444; cursor: pointer; font-size: 16px; padding: 2px 4px; flex-shrink: 0;" title="삭제">×</button>
             </div>`;
           }).join('')}
@@ -16293,10 +16682,14 @@ function renderDeployBundles() {
 
     function saveDetail() {
       if (!_checkWritePermission()) return;
-      pushUndo();
       if (!state.selectedProject) return;
-      var p = state.selectedProject;
+      var p = _findProjectById(state.selectedProject.id);
+      if (!p) { alert('다른 사용자가 삭제한 안건입니다. 저장하지 않았습니다.'); return; }
+      pushUndo();
+      state.selectedProject = p;
       var pid = p.id;
+      var _afBefore = JSON.parse(JSON.stringify(p));
+      var _afOrig = (window._afDetailOrig && window._afDetailOrig.id === pid) ? window._afDetailOrig : _afBefore;
       // 변경 전 값 캡처
       var oldName = p.name, oldTier = p.tier, oldDeploy = p.deployDate, oldStatus = p.status;
       var oldScore = p.score, oldMemo = p.memo || '';
@@ -16320,6 +16713,13 @@ function renderDeployBundles() {
       // Save links — DOM의 모든 .link-row에서 수집 (read-only + input 모두)
       var oldLinkCount = (p.links || []).length;
       p.links = _collectLinksFromDOM();
+      // 내가 손대지 않은 칸은 최신값 유지 (그 사이 다른 사람이 바꾼 내용을 되돌리지 않음)
+      var _sliderTouched = ['impact','urgency','complexity','dependency'].some(function(k) { return !_afSame(p[k], _afOrig[k] || 0) && !(_afOrig[k] == null && p[k] === 0); });
+      ['name','desc','rationale','tier','deployDate','status','impact','urgency','complexity','dependency','score','memo','links'].forEach(function(k) {
+        var untouched = (k === 'score') ? !_sliderTouched : (_afSame(p[k], _afOrig[k]) || (['impact','urgency','complexity','dependency'].indexOf(k) !== -1 && !_sliderTouched) || (k === 'links' && _afSame((p.links || []).length ? p.links : null, (_afOrig.links || []).length ? _afOrig.links : null)));
+        if (untouched) { if (_afBefore[k] === undefined) delete p[k]; else p[k] = _afBefore[k]; }
+      });
+      window._afDetailOrig = JSON.parse(JSON.stringify(p));
       // 변경 이력 기록
       if (oldName !== p.name) pushHistory('수정', pid, '이름', oldName, p.name);
       if (oldTier !== p.tier) pushHistory('수정', pid, '티어', oldTier, p.tier);
@@ -16444,12 +16844,14 @@ function renderDeployBundles() {
       return SERVICE_TYPES.slice();
     }
     function _saveServiceTypes(arr) {
+      if (_fb.db && !_afSvcLoaded) { _showToast('서비스 목록을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 3000, 'error'); return false; }
       localStorage.setItem('af_service_types', JSON.stringify(arr));
       if (_fb.db) dbRef('settings/serviceTypes').set(arr);
     }
     function _loadServiceTypesFromFirebase() {
       if (!_fb.db) return;
       dbRef('settings/serviceTypes').on('value', function(snap) {
+        _afSvcLoaded = true;
         var data = snap.val();
         if (data && Array.isArray(data) && data.length > 0) {
           localStorage.setItem('af_service_types', JSON.stringify(data));
@@ -16604,6 +17006,9 @@ function renderDeployBundles() {
       if (!state.selectedProject) return;
       if (!confirm(`${state.selectedProject.name}을 삭제하시겠습니까?`)) return;
       pushHistory('삭제', state.selectedProject.id, '안건', state.selectedProject.name, null);
+      pushUndo();
+      _afDeleteP[state.selectedProject.id] = true;
+      _afMyDeletedP[state.selectedProject.id] = JSON.parse(JSON.stringify(state.selectedProject));
       state.projects = state.projects.filter(p => p.id !== state.selectedProject.id);
       saveProjects();
       closeDetailPanel();
@@ -18718,6 +19123,7 @@ function renderDeployBundles() {
 
     function editDeployDate(projectId, td) {
       if (!_checkWritePermission()) return;
+      if (td && td.querySelector && td.querySelector('input')) return;
       const project = state.projects.find(p => p.id === projectId);
       if (!project) return;
       const input = document.createElement('input');
@@ -18728,8 +19134,9 @@ function renderDeployBundles() {
       td.appendChild(input);
       input.focus();
 
-      var oldDeploy = project.deployDate || '';
+      var oldDeploy = project.deployDate || '', _saved = false;
       const save = () => {
+        if (_saved) return; _saved = true;
         if (oldDeploy !== input.value) pushHistory('수정', projectId, '배포일', oldDeploy || '미설정', input.value || '미설정');
         project.deployDate = input.value;
         saveProjects();
@@ -18737,11 +19144,12 @@ function renderDeployBundles() {
         renderGantt();
       };
       input.onblur = save;
-      input.onkeydown = (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') renderProjects(); };
+      input.onkeydown = (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { _saved = true; renderProjects(); } };
     }
 
     function editStatus(projectId, td) {
       if (!_checkWritePermission()) return;
+      if (td && td.querySelector && td.querySelector('select')) return;
       const project = state.projects.find(p => p.id === projectId);
       if (!project) return;
       const sel = document.createElement('select');
@@ -18756,8 +19164,9 @@ function renderDeployBundles() {
       td.appendChild(sel);
       sel.focus();
 
-      var oldStatus = project.status;
+      var oldStatus = project.status, _saved = false;
       const save = () => {
+        if (_saved) return; _saved = true;
         if (oldStatus !== sel.value) pushHistory('수정', projectId, '상태', oldStatus, sel.value);
         project.status = sel.value;
         saveProjects();
@@ -18912,7 +19321,7 @@ function renderDeployBundles() {
                 <option value="__custom__" ${!['기획서','Figma','PRD','API','TC','기타'].includes(link.type) && link.type ? 'selected' : ''}>직접입력</option>
               </select>
               <input type="text" class="detail-input link-custom-type" data-link-idx="${i}" value="${!['기획서','Figma','PRD','API','TC','기타','__custom__',''].includes(link.type) ? link.type : ''}" placeholder="타입명" style="width:70px;flex-shrink:0;font-size:12px;padding:4px 6px;display:${!['기획서','Figma','PRD','API','TC','기타',''].includes(link.type) && link.type ? 'block' : 'none'};">
-              <input type="text" class="detail-input link-url-input" data-link-idx="${i}" value="${link.url || ''}" placeholder="URL 입력" style="flex: 1; font-size: 12px; padding: 4px 8px;">
+              <input type="text" class="detail-input link-url-input" data-link-idx="${i}" value="${_escHtml(link.url || '')}" placeholder="URL 입력" style="flex: 1; font-size: 12px; padding: 4px 8px;">
               <button onclick="removeLink(${i})" style="border: none; background: none; color: #ef4444; cursor: pointer; font-size: 16px; padding: 2px 4px; flex-shrink: 0;" title="삭제">×</button>
             </div>
           `).join('')}
@@ -20284,7 +20693,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v12';
+    var AF_BUILD = 'v12.1';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -20323,6 +20732,7 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>데이터 안전</b> — 여러 명이 동시에 편집해도 서로의 수정이 지워지지 않게 저장 방식을 바꿨습니다</li>' +
           '<li><b>새 화면</b> — 왼쪽 메뉴 + 홈(오늘 할 일·위험 이슈·이번 주 배포·진행 타임라인). 예전 화면은 왼쪽 아래 [이전 화면으로]</li>' +
           '<li><b>프로젝트 Task</b> — 프로젝트 상세 요약 바로 아래. 제목 입력 후 Enter 또는 [추가]</li>' +
           '<li><b>Task 담당자</b> — 줄의 "+ 담당자"를 눌러 여러 명 지정, 지정되면 알림</li>' +

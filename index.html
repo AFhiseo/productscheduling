@@ -6708,7 +6708,9 @@
       modal.style.overflow = 'auto';
       function renderMemberList() {
         _ensurePermissionField();
-        modal.innerHTML = '<h3 style="margin-bottom:16px;font-size:16px;font-weight:700;">팀원 관리</h3>' +
+        var _pwaCnt = TEAM.filter(function(mm) { return _memberPresence[mm.id] && _memberPresence[mm.id].pwaInstalled; }).length;
+        modal.innerHTML = '<h3 style="margin-bottom:6px;font-size:16px;font-weight:700;">팀원 관리</h3>' +
+          '<div style="font-size:11px;color:#6b7280;margin-bottom:14px;">📲 앱 설치 <b style="color:#4338ca;">' + _pwaCnt + '</b> / ' + TEAM.length + '명 <span style="color:#9ca3af;">(설치한 앱으로 한 번 이상 접속한 팀원 기준)</span></div>' +
           TEAM.map((m, i) => {
             var p = _memberPresence[m.id];
             var onlineDot = p && p.online ? '🟢' : '⚪';
@@ -6734,6 +6736,7 @@
                 '<div style="display:flex;gap:6px;align-items:center;">' +
                   '<input type="email" value="' + (m.email || '') + '" placeholder="Google 계정 이메일" style="flex:1;padding:3px 8px;border:1px solid #e5e7eb;border-radius:4px;font-size:11px;color:#6b7280;" data-member-field="email" data-member-idx="' + i + '">' +
                   '<span style="font-size:11px;white-space:nowrap;" title="접속 상태">' + onlineDot + '</span>' +
+                  (p && p.pwaInstalled ? '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:#eef2ff;color:#4338ca;font-weight:700;white-space:nowrap;" title="앱 설치함">📲 앱</span>' : '<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:#f3f4f6;color:#9ca3af;white-space:nowrap;" title="앱 미설치 (또는 아직 앱으로 접속 안 함)">앱 미설치</span>') +
                   (lastSeenStr ? '<span style="font-size:10px;color:#9ca3af;white-space:nowrap;">' + lastSeenStr + '</span>' : '') +
                   (p && p.online ? '<button onclick="_revokeSession(\'' + m.id + '\')" style="border:none;background:#fef2f2;color:#dc2626;cursor:pointer;font-size:10px;padding:2px 6px;border-radius:4px;white-space:nowrap;" title="이 사용자를 강제 로그아웃 시킵니다">세션 만료</button>' : '') +
                 '</div>' +
@@ -18810,10 +18813,15 @@ function renderNotifList() {
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       _afDeferredPrompt = e;
+      // 브라우저가 설치 제안을 한다 = 이 브라우저에는 앱이 설치돼 있지 않음 (삭제한 경우 포함)
+      try { localStorage.removeItem('af_pwa_installed'); } catch(err) {}
       _afUpdateInstallBtn();
+      setTimeout(_afMaybeShowInstallBanner, 1500);
     });
     window.addEventListener('appinstalled', function() {
       _afDeferredPrompt = null;
+      _afMarkInstalled();
+      _afHideInstallBanner();
       _afUpdateInstallBtn();
       try { _showToast('✅ 앱 설치 완료 — 응용 프로그램/Launchpad에서 "AF 대시보드"로 실행하세요', 4000, 'success'); } catch(e) {}
     });
@@ -18847,6 +18855,92 @@ function renderNotifList() {
       } catch(e) { console.warn('[PWA] init:', e); }
     })();
     setTimeout(_afUpdateInstallBtn, 0);
+
+    /* ─── 설치 여부 파악 & 미설치자 안내 ─── */
+    function _afIsInstalled() {
+      if (_afIsStandalone()) return true;
+      try { return localStorage.getItem('af_pwa_installed') === '1'; } catch(e) { return false; }
+    }
+    function _afMarkInstalled() {
+      try { localStorage.setItem('af_pwa_installed', '1'); } catch(e) {}
+      _afReportInstallState();
+    }
+    // 관리자가 팀원별 설치 여부를 볼 수 있도록 접속상태(presence)에 표시 — 기존 접속기록과 같은 update 방식
+    var _afInstallReported = false;
+    var _afReportTries = 0;
+    function _afReportInstallState() {
+      if (_afInstallReported) return;
+      if (!_fb.db || !state.currentUser || !state.currentUser.memberId) { if (_afReportTries++ < 40) setTimeout(_afReportInstallState, 3000); return; }
+      if (String(state.currentUser.memberId).indexOf('guest_') === 0) return;
+      _afInstallReported = true;
+      try {
+        var r = dbRef('presence/' + state.currentUser.memberId);
+        if (r) r.update({ pwaInstalled: true, pwaAt: Date.now() }).catch(function() { _afInstallReported = false; });
+      } catch(e) { _afInstallReported = false; }
+    }
+    function _afHideInstallBanner() {
+      var b = document.getElementById('afInstallBanner');
+      if (b) b.remove();
+    }
+    var _afBannerTries = 0;
+    function _afMaybeShowInstallBanner() {
+      if (document.getElementById('afInstallBanner')) return;
+      if (!state.currentUser) { if (_afBannerTries++ < 20) setTimeout(_afMaybeShowInstallBanner, 3000); return; } // 로그인 후에만
+      if (_afIsInstalled()) return;
+      var secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      if (!secure) return;
+      try { var snooze = parseInt(localStorage.getItem('af_pwa_banner_snooze') || '0', 10); if (snooze && Date.now() < snooze) return; } catch(e) {}
+      var kind = _afBrowserKind();
+      // 크롬/엣지는 브라우저가 설치 가능하다고 알려줄 때만, 사파리/iOS는 안내형으로 표시
+      if (!_afDeferredPrompt && kind !== 'safari' && kind !== 'ios') return;
+      var bar = document.createElement('div');
+      bar.id = 'afInstallBanner';
+      bar.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:12px;background:#1f2937;color:#fff;padding:12px 14px 12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.25);font-size:13px;max-width:calc(100vw - 32px);';
+      bar.innerHTML =
+        '<img src="icons/icon-192.png" alt="" style="width:34px;height:34px;border-radius:8px;flex-shrink:0;">' +
+        '<div style="line-height:1.45;"><b>대시보드를 앱으로 설치하세요</b><br><span style="font-size:11px;color:#cbd5e1;">Dock에서 바로 열고, 이슈 할당·멘션 알림을 받을 수 있어요</span></div>' +
+        '<button onclick="_afBannerInstall()" style="border:none;background:#6366f1;color:#fff;font-size:12px;font-weight:800;padding:8px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;flex-shrink:0;">설치하기</button>' +
+        '<button onclick="_afBannerLater()" title="7일 동안 보지 않기" style="border:none;background:transparent;color:#94a3b8;font-size:12px;padding:6px;cursor:pointer;white-space:nowrap;flex-shrink:0;">나중에</button>';
+      document.body.appendChild(bar);
+    }
+    function _afBannerInstall() {
+      _afHideInstallBanner();
+      if (_afDeferredPrompt) _afDoInstall(); else openAppInstall();
+    }
+    function _afBannerLater() {
+      try { localStorage.setItem('af_pwa_banner_snooze', String(Date.now() + 7 * 86400000)); } catch(e) {}
+      _afHideInstallBanner();
+    }
+    window._afBannerInstall = _afBannerInstall;
+    window._afBannerLater = _afBannerLater;
+    // 설치 전용 공유 링크: 주소에 ?install=1 → 로그인 직후 설치 창을 바로 띄움 (구글챗 등에 공유용)
+    var _afInstallLinkMode = (function() { try { return new URLSearchParams(location.search).get('install') === '1'; } catch(e) { return false; } })();
+    var _afInstallLinkTries = 0;
+    function _afHandleInstallLink() {
+      if (!_afInstallLinkMode) return;
+      if (_afIsStandalone()) { _afInstallLinkMode = false; return; }
+      if (!state.currentUser) { if (_afInstallLinkTries++ < 40) setTimeout(_afHandleInstallLink, 1500); return; }
+      _afInstallLinkMode = false;
+      // 주소에서 install 파라미터 제거 (새로고침해도 다시 뜨지 않게)
+      try { var u = new URL(location.href); u.searchParams.delete('install'); history.replaceState(null, '', u.pathname + (u.search || '') + u.hash); } catch(e) {}
+      _afHideInstallBanner();
+      if (_afIsInstalled()) { try { _showToast('이미 앱이 설치돼 있어요 — Dock/Launchpad에서 "AF 대시보드"를 실행하세요', 4000, 'info'); } catch(e) {} return; }
+      openAppInstall();
+    }
+    window.copyInstallLink = function() {
+      var url = location.origin + location.pathname + '?install=1';
+      try {
+        navigator.clipboard.writeText(url).then(function() { _showToast('설치 링크가 복사됐어요 — 구글챗에 붙여넣어 공유하세요', 2500, 'success'); })
+          .catch(function() { prompt('설치 링크를 복사하세요', url); });
+      } catch(e) { prompt('설치 링크를 복사하세요', url); }
+    };
+
+    // 앱(설치본)으로 실행 중이면 설치 완료로 기록, 아니면 로그인 후 미설치 안내
+    setTimeout(function() {
+      if (_afIsStandalone()) { _afMarkInstalled(); return; }
+      if (_afInstallLinkMode) _afHandleInstallLink();
+      else _afMaybeShowInstallBanner();
+    }, _afInstallLinkMode ? 1200 : 4000);
 
     function _afBrowserKind() {
       var ua = navigator.userAgent || '';
@@ -18910,7 +19004,8 @@ function renderNotifList() {
           '</div>' +
           notifBtns + deniedHelp +
         '</div>' +
-        '<div style="margin-top:16px;display:flex;justify-content:flex-end;">' +
+        '<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+          '<button onclick="copyInstallLink()" title="구글챗 등에 공유하면 링크로 들어온 팀원에게 로그인 직후 설치 창이 바로 뜹니다" style="border:1px solid #c7d2fe;background:#fff;color:#4338ca;font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;">🔗 팀원용 설치 링크 복사</button>' +
           '<button onclick="closeAppInstall()" class="btn btn-secondary" style="font-size:13px;">닫기</button>' +
         '</div>';
       overlay.appendChild(modal);

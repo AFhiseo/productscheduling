@@ -3820,6 +3820,83 @@
     .af-tk-pop-f { padding: 6px; border-top: 1px solid var(--af-surface); margin-top: 4px; text-align: right; }
     .af-tk-pop-done { border: none; background: var(--af-cta); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
 
+
+    /* ═══ v11.2 어바웃피싱 앱 톤 (표면·타이포·모션) — 배치 변경 없음 ═══ */
+    /* 헤더: 그림자 대신 1px 선, 검색은 회색 면 */
+    .header { box-shadow: none; padding: 12px 24px 0; border-bottom: none; }
+    .header-top { margin-bottom: 10px; }
+    .search-input { border: 1px solid transparent; background: #F3F3F3; border-radius: 10px; height: 36px; padding: 0 14px; transition: background var(--m-feedback) var(--e-out), border-color var(--m-feedback) var(--e-out); }
+    .search-input:focus { background: #fff; border-color: #6433DF; outline: none; }
+    .header-controls select, .gantt-toolbar select { border-radius: 10px; border-color: #E7E7E7; height: 36px; }
+    .btn, .btn-secondary { border-radius: 10px; }
+    .btn-secondary { border-color: #E7E7E7; }
+
+    /* 탭: 왼쪽 막대 → 아래 보라 밑줄 (앱 상단 탭과 같은 방식) */
+    .tabs { padding: 0 16px; gap: 4px; border-bottom: 1px solid #E7E7E7; }
+    .tab { position: relative; border-left: none !important; background: none !important; padding: 14px 14px 13px; font-size: 15px; font-weight: 600; color: #919191; letter-spacing: -0.02em; }
+    .tab:hover { color: #363636; }
+    .tab.active { color: #32008C !important; font-weight: 700; background: none !important; }
+    .tab.active::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: #32008C; transform-origin: center; animation: afTabLine var(--m-enter) var(--e-enter); }
+    @keyframes afTabLine { from { transform: scaleX(0.2); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+
+    /* 상단 지표 줄: 숫자를 또렷하게 */
+    .qa-status-bar { background: #fff; border-bottom: 1px solid #E7E7E7; padding: 8px 24px; gap: 24px; }
+    .qa-stat-val { font-size: 16px; color: #1A1A1A; letter-spacing: -0.02em; }
+    .qa-stat-label { font-size: 12px; }
+
+    /* 스케줄(간트): 흰 면 + 티어 띠는 옅은 보라, 바는 둥글게 */
+    .gantt-toolbar { padding: 10px 24px; height: 56px; }
+    .gantt-names-header, .gantt-header { background: #fff; }
+    .name-row.tier-header, .name-row.tier-header:hover, .bar-row.tier-header { background: #F7F8FC; border-bottom: 1px solid #E7E7E7; }
+    .name-row.tier-header { font-size: 12px; font-weight: 800; letter-spacing: 0.04em; min-height: 32px; }
+    .bar-row.tier-header { height: 32px; }
+    .name-row.row-even, .bar-row.row-even { background: #FBFBFB; }
+    .name-row:hover { background: #F3F0FF; }
+    .gantt-bar { border-radius: 8px; height: 28px; font-weight: 700; letter-spacing: -0.01em; transition: box-shadow var(--m-feedback) var(--e-out), filter var(--m-feedback) var(--e-out); }
+    .gantt-bar:hover { box-shadow: 0 6px 14px rgba(26,26,26,0.18); filter: saturate(1.08); }
+
+    /* 카드 공통: 모서리 14, 선 1px, 마우스 올리면 살짝 떠오름 */
+    .card, .stat-box, .deploy-bundle-card { border-radius: 14px !important; border-color: #EBEBF0 !important; }
+    .card, .deploy-bundle-card, .issue-card { transition: transform var(--m-feedback) var(--e-enter), box-shadow var(--m-feedback) var(--e-out), border-color var(--m-feedback) var(--e-out), background-color var(--m-feedback) var(--e-out) !important; }
+    .card:hover, .deploy-bundle-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(50,0,140,0.08) !important; border-color: #D9CCFA !important; }
+    .issue-card { border-radius: 12px !important; }
+    .issue-card:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(50,0,140,0.07) !important; background: #fff !important; }
+    .stat-value { font-size: 32px; letter-spacing: -0.03em; }
+    .cards-container { padding: 24px; gap: 16px; }
+
+    /* 이슈 요약 숫자: 크게 */
+    .issue-summary-bar { padding: 14px 24px; gap: 8px; }
+    .issue-summary-item.compact { min-width: 84px; padding: 10px 12px; border-radius: 12px; border-color: #EBEBF0; margin-right: 0; text-align: left; }
+    .issue-summary-item.compact > span:first-child { font-size: 22px !important; letter-spacing: -0.03em; line-height: 1.1; }
+    .issue-summary-item.compact > span:last-child { font-size: 11px !important; margin-top: 4px !important; }
+    .issue-summary-item.compact:hover { transform: translateY(-1px); }
+
+    /* 빠른 필터 칩: 알약 모양 */
+    .qf-chip { border-radius: 999px !important; }
+
+    /* 상세 패널: 둥근 모서리 + 그림자로 화면 위에 떠 있는 시트 */
+    .detail-panel, .issue-detail-panel { box-shadow: -16px 0 40px rgba(26,26,26,0.10); border-left: none; }
+
+    /* 떠 있는 '새 안건 추가' 버튼: 앱의 CTA와 같은 보라 */
+    @media (prefers-reduced-motion: reduce) {
+      .card:hover, .deploy-bundle-card:hover, .issue-card:hover, .issue-summary-item.compact:hover { transform: none; }
+      .tab.active::after { animation: none; }
+    }
+
+
+    /* v11.2 스케줄 */
+    .af-pid { flex-shrink: 0; font-size: 11px; font-weight: 700; color: #6433DF; background: #F3F0FF; border-radius: 6px; padding: 1px 6px; letter-spacing: 0; }
+    .af-pname { font-size: 14px; font-weight: 700; color: #1A1A1A; letter-spacing: -0.02em; }
+    .name-row.af-prow { transition: background var(--m-feedback) var(--e-out); }
+    .name-row.af-prow:hover .af-pname { color: #32008C; }
+    .name-row.tier-header { border-left: 4px solid currentColor; padding-left: 12px; }
+    .day-cell.weekend { background: #FAFAFC; color: #CCCCCC; }
+    .day-cell.is-today { background: #32008C !important; color: #fff !important; border-radius: 6px; font-weight: 800; }
+    .today-line { border-left: 2px solid #6433DF; }
+    .today-line::before { content: '오늘'; position: absolute; top: 4px; left: -16px; font-size: 10px; font-weight: 800; color: #fff; background: #6433DF; border-radius: 999px; padding: 1px 7px; white-space: nowrap; }
+    .grid-line.day { background: #F5F5F8; }
+    .grid-line.week { background: #EBEBF0; }
+
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
     #afUpdateBar button { border: none; background: #6433DF; color: #fff; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
@@ -4469,6 +4546,20 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v11.2</span>
+              <span class="rn-version-title">어바웃피싱 앱 톤 디자인</span>
+              <span class="rn-version-date">2026-10-15</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>탭을 앱처럼 보라 밑줄 방식으로, 헤더 그림자 제거·검색창 회색 면</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>카드·이슈·배포 카드 둥근 모서리, 마우스를 올리면 살짝 떠오름</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 요약 숫자·상단 지표 크게, 빠른 필터 칩 알약 모양</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>스케줄 간트 바가 왼쪽에서 차오르며 등장, 티어 구분 띠 정리</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v11.1</span>
               <span class="rn-version-title">Task 추가 안정화 · 새 버전 안내</span>
@@ -14389,7 +14480,7 @@ function renderDeployBundles() {
         // 주말 음영 (토~일 2일분)
         if (isSat) {
           const shade = document.createElement('div');
-          shade.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(0,0,0,0.04);pointer-events:none;z-index:1;';
+          shade.style.cssText = 'position:absolute;top:0;bottom:0;background:rgba(50,0,140,0.03);pointer-events:none;z-index:1;';
           shade.style.left = x + 'px';
           shade.style.width = (dayW * 2) + 'px';
           gridContainer.appendChild(shade);
@@ -14424,7 +14515,7 @@ function renderDeployBundles() {
       var pastDays = daysSinceStart(TODAY);
       if (pastDays > 0) {
         var pastShade = document.createElement('div');
-        pastShade.style.cssText = 'position:absolute;top:0;bottom:0;left:0;background:rgba(0,0,0,0.04);pointer-events:none;z-index:0;';
+        pastShade.style.cssText = 'position:absolute;top:0;bottom:0;left:0;background:rgba(26,26,26,0.025);pointer-events:none;z-index:0;';
         pastShade.style.width = (pastDays * dayW) + 'px';
         gridContainer.appendChild(pastShade);
       }
@@ -14627,8 +14718,9 @@ function renderDeployBundles() {
 
           const nameRow = document.createElement('div');
           nameRow.className = 'name-row' + (rowIdx % 2 === 1 ? ' row-even' : '');
-          nameRow.style.color = '#6433DF';
-          nameRow.style.fontWeight = '500';
+          nameRow.style.color = '#1A1A1A';
+          nameRow.style.fontWeight = '600';
+          nameRow.classList.add('af-prow');
           nameRow.style.flexDirection = 'column';
           nameRow.style.alignItems = 'flex-start';
           nameRow.style.gap = '2px';
@@ -14638,7 +14730,7 @@ function renderDeployBundles() {
           // 1행: 프로젝트 ID + 이름 + GMV
           const topLine = document.createElement('div');
           topLine.style.cssText = 'display:flex;align-items:center;gap:4px;width:100%;';
-          topLine.innerHTML = '<span style="font-weight:600;flex-shrink:0;font-size:13px;">' + project.id + '</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;">' + shortName + '</span>' + (project.gmvImpact ? '<span class="gmv-badge" style="font-size:10px;">' + project.gmvImpact + '</span>' : '');
+          topLine.innerHTML = '<span class="af-pid">' + project.id + '</span><span class="af-pname" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + shortName + '</span>' + (project.gmvImpact ? '<span class="gmv-badge" style="font-size:10px;">' + project.gmvImpact + '</span>' : '');
 
           // 2행: 서비스 태그 (태그 많으면 줄바꿈)
           var hasSvcTags = project.serviceTypes && project.serviceTypes.length > 0;
@@ -19672,6 +19764,8 @@ function renderNotifList() {
       });
     }
     function _afStaggerTab(tabId) {
+      try { _afCountUp(document.getElementById(tabId)); } catch(e) {}
+      if (tabId === 'schedule') { _afGanttSweep(); return; }
       var sel = {
         issues: '#issueContent .issue-card, #issuesContainer .issue-card',
         deploy: '.deploy-bundle-card',
@@ -19695,9 +19789,58 @@ function renderNotifList() {
       }
     }
     window._afStaggerTab = _afStaggerTab;
+    function _afGanttSweep() {
+      if (_afReducedMotion()) return;
+      var bars = document.querySelectorAll('#schedule .gantt-bar');
+      if (!bars.length || !bars[0].animate) return;
+      var vh = window.innerHeight, n = 0;
+      [].forEach.call(bars, function(b) {
+        var r = b.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh || n >= 80) return; // 보이는 바만
+        var delay = Math.min(360, Math.max(0, r.top - 150) * 0.6);
+        b.animate([{ clipPath: 'inset(0 100% 0 0 round 8px)', opacity: 0.4 }, { clipPath: 'inset(0 0 0 0 round 8px)', opacity: 1 }],
+          { duration: 520, delay: delay, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' });
+        n++;
+      });
+      var names = document.querySelectorAll('#schedule .name-row:not(.tier-header)');
+      _afStagger([].slice.call(names, 0, 6));
+    }
+    window._afGanttSweep = _afGanttSweep;
+    function _afCountUp(root) {
+      if (_afReducedMotion()) return;
+      var els = (root || document).querySelectorAll('.qa-stat-val, #issueSummaryBar .issue-summary-item > span:first-child, .stat-value');
+      [].forEach.call(els, function(el) {
+        if (el._afCounted || el.offsetParent === null) return;
+        var txt = (el.textContent || '').trim();
+        var m = txt.match(/^(\d{1,4})(.*)$/);
+        if (!m) return;
+        el._afCounted = true;
+        var target = parseInt(m[1], 10), suffix = m[2], t0 = performance.now(), dur = 600;
+        if (target === 0) return;
+        (function step(now) {
+          if ((el.textContent || '').trim() !== txt && el._afLast !== el.textContent) return; // 실시간 갱신이 오면 중단
+          var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+          el.textContent = Math.round(target * e) + suffix; el._afLast = el.textContent;
+          if (k < 1) requestAnimationFrame(step); else el.textContent = txt;
+        })(t0);
+      });
+    }
+    window._afCountUp = _afCountUp;
+    setTimeout(function() { try { _afCountUp(document.querySelector('.qa-status-bar')); } catch(e) {} }, 3500);
+    // 첫 화면(스케줄)도 데이터가 그려진 뒤 1회 재생
+    (function() {
+      var tries = 0;
+      var t = setInterval(function() {
+        tries++;
+        if (document.querySelector('#schedule .gantt-bar') || tries > 40) {
+          clearInterval(t);
+          if (typeof state !== 'undefined' && state.currentTab === 'schedule') setTimeout(_afGanttSweep, 80);
+        }
+      }, 250);
+    })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v11.1';
+    var AF_BUILD = 'v11.2';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -19738,7 +19881,7 @@ function renderNotifList() {
         '<ul>' +
           '<li><b>프로젝트 Task</b> — 프로젝트 상세 요약 바로 아래. 제목 입력 후 Enter 또는 [추가]</li>' +
           '<li><b>Task 담당자</b> — 줄의 "+ 담당자"를 눌러 여러 명 지정, 지정되면 알림</li>' +
-          '<li><b>디자인</b> — 어바웃피싱 보라·Pretendard 글꼴·선 아이콘·화면 전환 모션</li>' +
+          '<li><b>디자인</b> — 어바웃피싱 앱 톤: 보라 밑줄 탭·둥근 카드·큰 숫자·선 아이콘, 간트 바 차오름 모션</li>' +
         '</ul>' +
         '<button type="button" class="afwn-go" onclick="document.getElementById(\'afWhatsNew\').remove();var t=document.querySelector(\'.tab[data-tab=releasenotes]\');if(t)t.click();">전체 변경 내역 보기</button>';
       document.body.appendChild(card);

@@ -4593,6 +4593,88 @@
     #a13Ptr.ready { color: #32008C; }
     #a13Ptr.go svg { animation: a13Spin .8s linear infinite; }
     @keyframes a13Spin { to { transform: rotate(360deg); } }
+    /* ═══ v13.7 모바일 사용성: 한 줄 헤더 · 큰 터치 영역 · iOS 확대 방지 · 공간 절약 ═══ */
+    .a13-round-tg { display: none; }
+    @media (max-width: 640px) {
+      /* 헤더: 제목 + 아이콘 한 줄 (검색은 아이콘) */
+      body.a13-hdr .header-top { flex-direction: row !important; align-items: center !important; flex-wrap: nowrap !important; gap: 6px !important; margin-bottom: 0 !important; }
+      body.a13-hdr .header-title { flex: 1 1 auto; min-width: 0; font-size: 17px !important; }
+      body.a13-hdr .header-title #afPageTitle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; min-width: 0; }
+      body.a13-hdr .header-title #syncStatus { display: none !important; }
+      body.a13-hdr .a13-search { order: 0 !important; flex: 0 0 40px !important; width: 40px !important; height: 40px !important; padding: 0 !important; justify-content: center; margin: 0 !important; border-radius: 12px; background: #F7F8FC; }
+      body.a13-hdr .a13-search span, body.a13-hdr .a13-search kbd { display: none !important; }
+      body.a13-hdr .a13-search svg { width: 19px; height: 19px; }
+      body.a13-hdr .header-controls { width: auto !important; flex-wrap: nowrap !important; gap: 2px !important; flex: 0 0 auto; }
+      body.a13-hdr #chatToggleBtn, body.a13-hdr #notifBell { min-width: 40px; min-height: 40px; display: inline-flex !important; align-items: center; justify-content: center; }
+      body.a13-hdr #adminControls > button { min-height: 32px; padding: 0 8px !important; }
+      body.a13-hdr .a13-me { padding: 2px !important; }
+      body.a13-hdr .a13-me #userNameDisplay, body.a13-hdr .a13-me::after { display: none !important; }
+      /* 손가락으로 누르기 쉬운 크기 */
+      .a13-seg button { min-height: 38px; padding-left: 12px; padding-right: 12px; }
+      .a13-btn { min-height: 40px; }
+      .a13-btn.sm { min-height: 38px; padding: 6px 12px; }
+      .a13-fchip { height: 38px; }
+      .a13-tagbtn { width: 40px; height: 40px; }
+      .a13 .np-tiers button, .a13 .np-chips button, .a13-np .np-tiers button, .a13-np .np-chips button { min-height: 40px; }
+      .a13-np .x { width: 44px; height: 44px; }
+      .a13-crumb button { min-height: 36px; }
+      .a13-pop button.it, .a13-umenu .um-it, .a13-psel-pop .ls button { min-height: 44px; }
+      .a13-tp .tl label { min-height: 44px; }
+      .a13-fd { height: 38px; }
+      .a13-dnote .a13-btn { min-height: 36px; }
+      /* iOS: 16px 미만 입력칸은 누르면 화면이 확대됨 → 16px */
+      input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea { font-size: 16px !important; }
+      .a13-input, .a13-np input.a13-input, .a13-np select.a13-input { min-height: 44px; }
+      /* 공간 절약: 필터 칩은 한 줄 가로 스크롤 */
+      #a13issues .a13-fchips { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+      #a13issues .a13-fchips::-webkit-scrollbar { display: none; }
+      #a13issues .a13-fchips .a13-fchip { flex-shrink: 0; }
+      #a13issues .a13-toolbar select.a13-input, #a13issues .a13-toolbar input.a13-input { flex: 1 1 140px; max-width: none; height: 44px; }
+      .a13-folders { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+      .a13-folders::-webkit-scrollbar { display: none; }
+      .a13-folders > * { flex-shrink: 0; }
+      /* QA 라운드: 접어 두고 필요할 때 펼침 */
+      .a13-round-tg { display: flex; width: 100%; align-items: center; justify-content: space-between; border: none; background: none; font: inherit; font-size: 14px; font-weight: 800; color: #6433DF; min-height: 40px; padding: 0 4px; cursor: pointer; }
+      .a13-round:not(.open) > :not(.a13-round-tg) { display: none !important; }
+      .a13-round .a13-round-lb { display: none; }
+      .a13-round > select, .a13-round > .ttl { flex: 1 1 100%; }
+      /* 새 배포 한 줄 입력 */
+      .a13-newrow { flex-wrap: wrap; }
+      .a13-newrow > input:not([type=date]) { flex: 1 1 100%; min-width: 0; }
+      /* 안건 페이지: 티어는 고른 것만 (누르면 안건 정보 시트) */
+      #a13project .a13-meta .np-tiers button:not(.on) { display: none; }
+      #a13project .a13-meta .np-tiers button.on::after { content: '변경'; font-size: 11px; color: #919191; font-weight: 600; margin-left: 2px; }
+      #a13project .a13-meta { gap: 10px; }
+      #a13project .a13-meta > div[style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; }
+      #a13project .a13-meta > div[style*="margin-left:auto"] .a13-btn { flex: 1; justify-content: center; }
+      #a13project .a13-title { font-size: 20px; }
+    }
+    @media (max-width: 640px) {
+      /* 화면 이름은 위 헤더에 있으니 본문 큰 제목·설명은 줄임 (내 작업 인사말은 유지) */
+      #a13projects .a13-ph h1, #a13issues .a13-ph h1, #a13deploy .a13-ph h1 { display: none; }
+      #a13projects .a13-ph p, #a13issues .a13-ph p, #a13deploy .a13-ph p { display: none; }
+      .a13-ph { margin-bottom: 10px; }
+      .a13 { padding-top: 12px; }
+    }
+    @media (max-width: 640px) {
+      body.a13-hdr .header-title { overflow: hidden; }
+      body.a13-hdr .header-title #afPageTitle { flex: 1 1 auto !important; }
+      /* 단계 일정: 이름 한 줄, 시작·종료 날짜 나란히 */
+      .a13-phr { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; row-gap: 6px; }
+      .a13-phr .lb { grid-column: 1 / -1; }
+      .a13-phr .a13-input { width: 100%; padding-left: 8px; padding-right: 6px; }
+      .a13-np .np-ph, .a13-np .np-ph.edit { grid-template-columns: 10px minmax(0, 1fr) !important; row-gap: 6px; }
+      .a13-np .np-ph > input[type=date] { grid-column: 1 / -1; width: 100%; }
+      .a13-np .np-ph > span { display: none; }
+      .a13-np .np-ph .np-asg { grid-column: 1 / -1 !important; justify-self: start; }
+    }
+    @media (max-width: 640px) {
+      .a13-filters .search-input, .a13-filters select { font-size: 16px !important; height: 44px !important; }
+      #ganttToolbar .btn, #ganttToolbar .view-toggle .btn { min-height: 36px; min-width: 36px; }
+      .a13-catpick button, .a13-tp .cb { min-height: 40px; display: inline-flex; align-items: center; }
+      .a13-newrow > input { min-height: 40px; }
+      .a13-title { min-height: 36px; }
+    }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -5245,6 +5327,22 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.7</span>
+              <span class="rn-version-title">휴대폰 사용성 다듬기</span>
+              <span class="rn-version-date">2026-10-16</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>휴대폰 헤더를 한 줄로(제목 · 검색 아이콘 · 채팅 · 알림 · 내 정보) — 화면 위 공간 약 110px 확보</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>버튼·칩·선택칸을 손가락으로 누르기 쉬운 크기(38~44px)로</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>아이폰에서 입력칸을 누르면 화면이 확대되던 문제(글자 16px 미만) — 모든 입력칸 16px</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 화면: QA 라운드는 접어 두고 펼쳐서 사용, 필터 칩은 한 줄 가로 스크롤, 중복 제목·설명 숨김</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>안건 페이지: 티어는 고른 것만(누르면 안건 정보 시트), 단계 일정은 이름 아래 시작·종료 날짜 나란히</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>배포 작업 화면의 새 배포 이름 칸이 휴대폰에서 거의 안 보이던 문제</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.6</span>
               <span class="rn-version-title">휴대폰 화면 맞춤 · 당겨서 새로고침</span>
@@ -21396,7 +21494,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.6';
+    var AF_BUILD = 'v13.7';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -22515,7 +22613,7 @@ function renderNotifList() {
     var f = A.ui.if, list = filteredIssues();
     var rp = (function() { try { return localStorage.getItem('a13_round_pid') || ''; } catch (e) { return ''; } })();
     var h = '<div class="a13-ph"><div><h1>이슈</h1><p>보드에서 카드를 끌어 상태를 바꾸거나, 카드의 다음 단계 버튼을 누르세요</p></div><div class="a13-row">' + (canW() ? '<button class="a13-btn pri" onclick="AF13.sheet(\'issue\',{})">＋ 이슈 등록</button>' : '') + '</div></div>';
-    if (canW()) h += '<div class="a13-round"><b style="font-size:13px;color:#6433DF">QA 라운드</b><select class="a13-input" id="a13RoundP" onchange="try{localStorage.setItem(\'a13_round_pid\',this.value)}catch(e){}"><option value="">안건 선택</option>' + projOptions(rp) + '</select>' + sevSeg('Minor') +
+    if (canW()) h += '<div class="a13-round' + (A.ui.roundOpen ? ' open' : '') + '"><button type="button" class="a13-round-tg" aria-expanded="' + !!A.ui.roundOpen + '" onclick="AF13.ui.roundOpen=!AF13.ui.roundOpen;AF13.render(true)"><span>QA 라운드 연속 등록</span><span>' + (A.ui.roundOpen ? '접기 ▴' : '펼치기 ▾') + '</span></button><b class="a13-round-lb" style="font-size:13px;color:#6433DF">QA 라운드</b><select class="a13-input" id="a13RoundP" onchange="try{localStorage.setItem(\'a13_round_pid\',this.value)}catch(e){}"><option value="">안건 선택</option>' + projOptions(rp) + '</select>' + sevSeg('Minor') +
       '<input class="a13-input ttl" id="a13RoundT" placeholder="제목 입력 후 Enter로 연속 등록 · Alt+1~4 심각도" onkeydown="AF13.roundKey(event)"><span class="a13-hint" id="a13RoundN"></span></div>';
     h += A._folderBarH();
     h += '<div class="a13-toolbar"><span class="a13-seg">' + [['board', '보드'], ['list', '목록']].map(function(x) { return '<button class="' + (f.view === x[0] ? 'on' : '') + '" onclick="AF13.ifSet(\'view\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</span>' +
@@ -23760,6 +23858,14 @@ function renderNotifList() {
     }, { passive: true });
     A._ptr = { show: show, hide: hide };
   })();
+
+  /* v13.7: 휴대폰에서 안건 페이지의 티어 칩을 누르면 안건 정보 시트로 (칩은 고른 것만 보임) */
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth > 640) return;
+    var b = e.target && e.target.closest && e.target.closest('#a13project .a13-meta .np-tiers button.on');
+    if (!b || !A.cur.arg) return;
+    e.preventDefault(); e.stopPropagation(); A.editProject(A.cur.arg);
+  }, true);
 
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;

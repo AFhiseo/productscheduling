@@ -4449,6 +4449,7 @@
     #a13issues .a13-toolbar { flex-wrap: wrap; row-gap: 8px; }
     #a13issues .a13-toolbar select.a13-input { width: auto; max-width: 200px; flex: 0 1 auto; height: 32px; padding: 0 8px; font-size: 13px; }
     #a13issues .a13-toolbar input.a13-input { height: 32px; padding: 0 10px; font-size: 13px; flex: 0 1 170px; }
+    .a13-bnote { white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: #363636; max-height: 50vh; overflow: auto; }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -5114,6 +5115,8 @@
               <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 필터를 칩으로: 내 이슈 · 내가 검증 · 심각도(여러 개)를 누르는 즉시 적용, 칩마다 건수, 안건·서비스 선택, 필터는 다음에 열어도 유지</div>
               <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>안건 페이지의 티어·상태·서비스도 시트와 같은 칩, 열린 안건 시트는 다른 사람이 바꾼 내용도 따라 바뀜</div>
               <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>'대기→진행'처럼 글자 수가 같은 변경이 다른 사람 화면에 늦게 반영되던 문제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈를 배포에 추가할 때 배포완료된 지난 배포도 고를 수 있음(확인 후 추가) — 새 화면·예전 이슈 상세 모두</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>지난 배포 내용 보기: 전체 배포 목록에서 누르면 배포 노트(버전·변경 내용) 전체 표시, 노트로도 검색 · 배포 화면에 [이전 배포 화면] 버튼</div>
             </div>
           </div>
 
@@ -12976,14 +12979,17 @@ function _persistIssueFilters() {
         listDiv.innerHTML = '';
         var planningBundles = _deployBundles.filter(function(b) { return b.status === 'planning' || b.status === 'ready'; });
         planningBundles.sort(function(a, b) { return (a.targetDate || '9999') < (b.targetDate || '9999') ? -1 : 1; });
+        // 완료된 배포에도 추가할 수 있도록 최근 배포완료 건을 아래에 함께 표시
+        var doneBundles = _deployBundles.filter(function(b) { return b.status === 'deployed'; }).sort(function(a, b) { return String(b.deployedAt || b.targetDate || '').localeCompare(String(a.deployedAt || a.targetDate || '')); }).slice(0, 20);
+        planningBundles = planningBundles.concat(doneBundles);
         if (planningBundles.length === 0) {
-          listDiv.innerHTML = '<div style="text-align:center;padding:14px;color:#919191;font-size:12px;">진행중인 배포 번들이 없습니다</div>';
+          listDiv.innerHTML = '<div style="text-align:center;padding:14px;color:#919191;font-size:12px;">배포 번들이 없습니다</div>';
         } else {
           planningBundles.forEach(function(b) {
             var alreadyIn = (b.issues || []).indexOf(_currentIssueId) !== -1;
             var item = document.createElement('button');
-            var statusMap = {planning:'준비중',ready:'배포준비'};
-            var statusColor = {planning:'#f59e0b',ready:'#3b82f6'};
+            var statusMap = {planning:'준비중',ready:'배포준비',deployed:'배포완료'};
+            var statusColor = {planning:'#f59e0b',ready:'#3b82f6',deployed:'#10b981'};
             item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid ' + (alreadyIn ? '#d1fae5' : '#E7E7E7') + ';border-radius:8px;background:' + (alreadyIn ? '#f0fdf4' : '#fafafa') + ';cursor:' + (alreadyIn ? 'default' : 'pointer') + ';text-align:left;width:100%;';
             item.innerHTML = '<span style="font-size:11px;background:' + (statusColor[b.status]||'#767676') + '22;color:' + (statusColor[b.status]||'#767676') + ';padding:2px 8px;border-radius:8px;font-weight:600;flex-shrink:0;">' + (statusMap[b.status]||b.status) + '</span>' +
               '<span style="flex:1;font-size:12px;font-weight:600;color:#363636;">' + _escHtml(b.title) + '</span>' +
@@ -12992,6 +12998,7 @@ function _persistIssueFilters() {
             if (!alreadyIn) {
               item.onclick = (function(bundle) {
                 return function() {
+                  if (bundle.status === 'deployed' && !confirm('이미 배포완료된 "' + bundle.title + '"에 이 이슈를 추가할까요?')) return;
                   _afAddIssueToBundleSafe(bundle.id, _currentIssueId);
                   closeIssueToBundleModal();
                   _showToast('"' + bundle.title + '" 배포에 이슈가 추가되었습니다');
@@ -21220,6 +21227,7 @@ function renderNotifList() {
           '<li><b>안건 조회·수정 = 새 안건과 같은 시트</b> — 간트·검색·알림에서 안건을 열면 같은 화면, 바꾼 칸은 바로 저장</li>' +
           '<li><b>안건 페이지</b> — 티어·상태·서비스도 같은 칩으로</li>' +
           '<li><b>이슈 필터 칩</b> — 내 이슈·내가 검증·Block/Major/Minor/Trivial을 누르면 바로 적용, 다음에도 유지</li>' +
+          '<li><b>지난 배포에도 이슈 추가</b> — 배포 고르기에 배포완료 건도 표시</li>' +
           '<li><b>전체 배포 목록</b> — 배포 화면 오른쪽 위에서 진행 중·완료·취소 전체를 월별로, 줄을 누르면 상세·릴리즈 노트 복사</li>' +
         '</ul>' +
         '<button type="button" class="afwn-go" onclick="document.getElementById(\'afWhatsNew\').remove();var t=document.querySelector(\'.tab[data-tab=releasenotes]\');if(t)t.click();">전체 변경 내역 보기</button>';
@@ -21937,10 +21945,12 @@ function renderNotifList() {
   A.chooseBundle = function(ev, items) {
     if (!needW()) return;
     var bs = liveBundles().filter(function(b) { return b.status === 'planning' || b.status === 'ready'; });
+    var dn = liveBundles().filter(function(b) { return b.status === 'deployed'; }).sort(function(a, b) { return String(b.deployedAt || b.targetDate || '').localeCompare(String(a.deployedAt || a.targetDate || '')); }).slice(0, 15);
     var pop = openPop(ev, '<div style="font-size:12px;font-weight:800;padding:6px 10px">어느 배포에 담을까요?</div>' +
       bs.map(function(b) { return '<button class="it pick" data-id="' + esc(b.id) + '">' + esc(b.title) + '<small>' + (fmtD(b.targetDate) || '날짜 미정') + '</small></button>'; }).join('') +
+      (dn.length ? '<div style="font-size:11px;font-weight:700;color:#919191;padding:8px 10px 4px">배포완료 (지난 배포에 추가)</div><div style="max-height:220px;overflow:auto">' + dn.map(function(b) { return '<button class="it pick done" data-id="' + esc(b.id) + '">' + esc(b.title) + '<small>' + (fmtD(b.deployedAt || b.targetDate) || '') + '</small></button>'; }).join('') + '</div>' : '') +
       '<button class="it new" style="color:#6433DF">＋ 새 배포 만들어 담기</button>');
-    pop.querySelectorAll('.pick').forEach(function(x) { x.onclick = function() { closePop(); items.forEach(function(it) { A.addToBundle(x.dataset.id, it.kind, it.val, true); }); toast(items.length + '건을 배포에 담았습니다'); A.sel = {}; A.render(true); }; });
+    pop.querySelectorAll('.pick').forEach(function(x) { x.onclick = function() { if (x.classList.contains('done') && !confirm('이미 배포완료된 배포에 ' + items.length + '건을 추가할까요?')) return; closePop(); items.forEach(function(it) { A.addToBundle(x.dataset.id, it.kind, it.val, true); }); toast(items.length + '건을 배포에 담았습니다'); A.sel = {}; A.render(true); }; });
     pop.querySelector('.new').onclick = function() {
       closePop();
       var t = prompt('새 배포 이름', '배포 ' + fmtD(iso())); if (!t) return;
@@ -22417,7 +22427,7 @@ function renderNotifList() {
     var nC = Object.keys(g).reduce(function(s, k) { return s + g[k].iss.length + g[k].tasks.length; }, 0);
     var dv = A.ui.dv, nAll = (_deployBundles || []).filter(Boolean).length;
     var h = '<div class="a13-ph"><div><h1>배포</h1><p>' + (dv === 'all' ? '지금까지 만든 배포 전체입니다. 줄을 누르면 담긴 항목과 준비 상태를 봅니다.' : '왼쪽은 아직 배포에 안 담긴 후보(배포 대기 이슈 · 끝난 Task)입니다. 체크하거나 끌어서 오른쪽 배포에 담으세요.') + '</p></div>' +
-      '<div class="a13-row"><span class="a13-seg">' + [['work', '배포 작업'], ['all', '전체 배포 목록 ' + nAll]].map(function(x) { return '<button class="' + (dv === x[0] ? 'on' : '') + '" onclick="AF13.ui.dv=\'' + x[0] + '\';AF13.render(true)">' + x[1] + '</button>'; }).join('') + '</span></div></div>';
+      '<div class="a13-row"><button class="a13-btn sm ghost" onclick="var t=document.querySelector(\'.tab[data-tab=deploy]\');if(t)t.click()" title="예전 배포 관리 화면">이전 배포 화면</button><span class="a13-seg">' + [['work', '배포 작업'], ['all', '전체 배포 목록 ' + nAll]].map(function(x) { return '<button class="' + (dv === x[0] ? 'on' : '') + '" onclick="AF13.ui.dv=\'' + x[0] + '\';AF13.render(true)">' + x[1] + '</button>'; }).join('') + '</span></div></div>';
     if (dv === 'all') { el.innerHTML = '<div class="a13">' + h + deployListH() + '</div>'; return; }
     if (cw) h += '<div class="a13-newrow"><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewB" placeholder="새 배포 이름 (예: 10월 4주차 정기 배포) 입력 후 Enter" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229)AF13.newBundleInline()"><input type="date" id="a13NewBD" class="a13-input"><button class="a13-btn pri" onclick="AF13.newBundleInline()">만들기</button></div>';
     h += '<div class="a13-dep"><div class="a13-card"><div class="a13-card-h"><h3>배포 후보 <span class="a13-cnt">' + nC + '</span></h3><span class="a13-hint">선택 <span class="a13-dsel-n">' + Object.keys(A.dsel).length + '</span>건</span></div>' +
@@ -22799,6 +22809,7 @@ function renderNotifList() {
   A.releaseNote = function(b) {
     var R = A.readiness(b);
     var lines = ['[배포] ' + b.title + ' (' + (b.targetDate || bDate(b)) + ')'];
+    if (!A.readiness(b).total && b.notes) return lines.concat(['', String(b.notes)]).join('\n');
     R.pids.forEach(function(pid) {
       var p = proj(pid); lines.push('', '■ ' + pid + ' ' + (p ? p.name : ''));
       R.tasks.filter(function(x) { return x.pid === pid; }).forEach(function(x) { lines.push('  - ' + x.t.title); });
@@ -22818,7 +22829,7 @@ function renderNotifList() {
       if (f.st === 'active' && (b.status === 'deployed' || b.status === 'cancelled')) return false;
       if (f.st === 'deployed' && b.status !== 'deployed') return false;
       if (f.st === 'cancelled' && b.status !== 'cancelled') return false;
-      if (qq) { var R = A.readiness(b); var hay = (b.id + ' ' + (b.title || '') + ' ' + R.pids.join(' ') + ' ' + R.pids.map(function(p) { var x = proj(p); return x ? x.name : ''; }).join(' ') + ' ' + R.iss.map(function(i) { return i.id + ' ' + i.title; }).join(' ')).toLowerCase(); if (hay.indexOf(qq) === -1) return false; }
+      if (qq) { var R = A.readiness(b); var hay = (b.id + ' ' + (b.title || '') + ' ' + R.pids.join(' ') + ' ' + R.pids.map(function(p) { var x = proj(p); return x ? x.name : ''; }).join(' ') + ' ' + R.iss.map(function(i) { return i.id + ' ' + i.title; }).join(' ') + ' ' + (b.notes || '')).toLowerCase(); if (hay.indexOf(qq) === -1) return false; }
       return true;
     }).sort(function(a, b) { return bDate(b).localeCompare(bDate(a)) || String(b.id).localeCompare(String(a.id)); });
     var h = '<div class="a13-toolbar"><span class="a13-seg">' + [['active', '진행 중'], ['deployed', '배포 완료'], ['cancelled', '취소'], ['all', '전체']].map(function(x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" onclick="AF13.ui.dl.st=\'' + x[0] + '\';AF13.render(true)">' + x[1] + ' <span class="a13-cnt">' + cnt[x[0]] + '</span></button>'; }).join('') + '</span>' +
@@ -22835,7 +22846,7 @@ function renderNotifList() {
         '<div class="dt">' + (fmtD(b.deployedAt || b.targetDate) || '-') + (b.status === 'deployed' ? '' : ' ' + ddH(b.targetDate, b.status === 'cancelled')) + '</div>' +
         '<div class="nm"><b>' + esc(b.title || '(이름 없음)') + '</b><small>' + esc(b.id) + (b.notes ? ' · ' + esc(String(b.notes).slice(0, 40)) : '') + '</small></div>' +
         '<div>' + pill(st[0], st[1]) + '</div>' +
-        '<div class="ct">' + (R.total ? (R.tasks.length ? 'Task ' + R.tasks.length : '') + (R.tasks.length && R.iss.length ? ' · ' : '') + (R.iss.length ? '이슈 ' + R.iss.length : '') : '<span style="color:#CCCCCC">비어 있음</span>') + '</div>' +
+        '<div class="ct">' + (R.total ? (R.tasks.length ? 'Task ' + R.tasks.length : '') + (R.tasks.length && R.iss.length ? ' · ' : '') + (R.iss.length ? '이슈 ' + R.iss.length : '') : (b.notes ? '<span class="a13-chip">노트 ' + String(b.notes).split('\n').filter(function(x) { return x.trim(); }).length + '줄</span>' : '<span style="color:#CCCCCC">비어 있음</span>')) + '</div>' +
         '<div class="pj">' + R.pids.slice(0, 4).map(function(p) { var x = proj(p); return '<span class="a13-pid" title="' + esc(x ? x.name : p) + '">' + esc(p) + '</span>'; }).join('') + (R.pids.length > 4 ? '<span class="a13-hint">+' + (R.pids.length - 4) + '</span>' : '') + '</div></div>';
     });
     return h + '</div>';
@@ -22849,7 +22860,12 @@ function renderNotifList() {
       var b2 = bundle(bid); if (!b2) { close(); return; }
       var st = BST[b2.status] || [b2.status, '#919191'];
       wrap.innerHTML = '<aside class="a13-np a13-bs" role="dialog" aria-modal="true" aria-label="배포 상세"><header><div><h2>' + esc(b2.title) + '</h2><p>' + esc(b2.id) + ' · ' + pill(st[0], st[1]) + (b2.deployedAt ? ' · 배포 ' + esc(String(b2.deployedAt).slice(0, 10)) : (b2.targetDate ? ' · 목표 ' + esc(b2.targetDate) : '')) + '</p></div><button class="x" aria-label="닫기">✕</button></header>' +
-        '<div class="body">' + bundleCard(b2) + (b2.notes ? '<div class="np-f"><span>메모</span><div class="a13-card" style="white-space:pre-wrap;font-size:13px">' + esc(b2.notes) + '</div></div>' : '') + '</div>' +
+        '<div class="body">' + (function() {
+          var R = A.readiness(b2), closed = b2.status === 'deployed' || b2.status === 'cancelled';
+          var note = b2.notes ? '<div class="np-f"><span>배포 노트</span><div class="a13-card a13-bnote">' + esc(b2.notes) + '</div></div>' : '';
+          if (closed && !R.total) return note || '<div class="a13-empty"><b>담긴 항목·노트가 없습니다</b></div>';
+          return (closed ? note + bundleCard(b2) : bundleCard(b2) + note);
+        })() + '</div>' +
         '<footer><span class="np-hint"></span><button class="a13-btn np-note">릴리즈 노트 복사</button><button class="a13-btn pri np-close">닫기</button></footer></aside>';
       wrap.querySelector('.x').onclick = close; wrap.querySelector('.np-close').onclick = close;
       wrap.querySelector('.np-note').onclick = function() { A.copyNote(bid); };

@@ -4513,6 +4513,36 @@
     .a13-dtags .a13-btn { margin-left: auto; }
     .a13-ic .tgs { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 2px; cursor: pointer; }
     .a13-ic .tgs .a13-cat, .a13-ic .tgs .a13-tag { margin: 0; }
+    /* ═══ v13.4 안건 검색 선택 · 이슈 시트 · 배포 편집 ═══ */
+    select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"] { cursor: pointer; }
+    .a13-psel-pop { position: fixed; z-index: 10080; background: #fff; border: 1px solid #E7E7E7; border-radius: 14px; box-shadow: 0 16px 40px rgba(26,26,26,0.18); padding: 8px; animation: afRiseInSm var(--m-feedback) var(--e-enter); }
+    .a13-psel-pop > input { width: 100%; height: 36px; font-size: 14px; margin-bottom: 6px; }
+    .a13-psel-pop .ls { max-height: 300px; overflow: auto; display: flex; flex-direction: column; gap: 1px; }
+    .a13-psel-pop .ls button { border: none; background: none; text-align: left; padding: 9px 10px; border-radius: 8px; font-size: 13px; color: #363636; cursor: pointer; font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .a13-psel-pop .ls button.hi { background: #F3F0FF; color: #32008C; }
+    .a13-psel-pop .ls button.cur { font-weight: 800; }
+    .a13-psel-pop .ls button.cur::before { content: '✓ '; color: #6433DF; }
+    /* 이슈 등록 시트 */
+    .a13-is .np-title { font-size: 20px !important; }
+    .a13-is textarea.a13-input { min-height: 72px; width: 100%; }
+    .a13-is .np-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+    .a13-is .a13-seg { flex-wrap: wrap; }
+    .a13-is .is-asg button { padding-left: 4px; }
+    .a13-is .is-asg .a13-av { width: 22px; height: 22px; font-size: 10px; }
+    .a13-drop { border: 1.5px dashed #D9CCFA; background: #FBFAFF; border-radius: 12px; padding: 16px; text-align: center; font-size: 13px; color: #6433DF; font-weight: 700; cursor: pointer; transition: background var(--m-feedback) var(--e-out); }
+    .a13-drop:hover, .a13-drop.over, .a13-drop:focus-visible { background: #F3F0FF; outline: none; border-color: #6433DF; }
+    .a13-is #createIssueAttachmentGrid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .a13-is #createIssueAttachmentGrid:empty { display: none; }
+    @media (max-width: 640px) { .a13-is .np-grid { grid-template-columns: 1fr; } }
+    /* 배포 편집 */
+    .a13-bs .bf-form { display: flex; flex-direction: column; gap: 16px; padding-bottom: 6px; border-bottom: 1px solid #F3F3F3; }
+    .a13-bs .bf-notes { width: 100%; min-height: 110px; font-size: 13px; line-height: 1.6; font-family: inherit; }
+    .a13-bs .bf-form input[disabled] { opacity: .5; }
+    .a13-bs .np-title { font-size: 20px !important; }
+    .a13-dhead, .a13-drow { grid-template-columns: 84px minmax(0, 2.2fr) 88px minmax(0, 1.2fr) 64px 110px minmax(0, 1fr); }
+    .a13-drow .sv { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; min-width: 0; }
+    .a13-drow .ev { font-size: 12px; color: #555; font-weight: 600; }
+    @media (max-width: 768px) { .a13-drow .sv, .a13-drow .ev { grid-column: 1 / -1; } }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -5165,6 +5195,24 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.4</span>
+              <span class="rn-version-title">이슈 등록 시트 · 안건 검색 · 배포 편집</span>
+              <span class="rn-version-date">2026-10-16</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 이슈 등록 시트: 안건·Task·심각도·유형·빌드 카테고리·서비스·환경·플랫폼·담당자·검증 담당·태그·확인절차·기대/실제 결과·첨부(끌어 놓기·붙여넣기·선택), [등록하고 하나 더]</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>제목을 [커뮤니티]·[탐색]·[새소식]·[지도]처럼 시작하면 빌드 카테고리를 자동으로 골라 둠</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건 고르는 칸(이슈 필터·QA 라운드·이슈 등록·Task 추가)을 누르면 검색되는 목록 — 번호·이름 입력, ↑↓ Enter</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포 만들기·수정 시트: 이름 · 상태 · 목표일 · 배포일 · 환경 · 서비스 · 메모(배포 내역) — 배포완료 건도 수정 가능</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>후보·체크리스트가 비어 있어도 배포준비·배포완료 가능, [배포완료]는 확인 없이 바로 처리(준비중에서도 가능)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>배포 목록에 서비스·환경 열, 배포완료 건은 D+경과일·'체크리스트 남음' 경고 숨김</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>빌드 카테고리 칩 숫자와 보드 카드 수가 다르던 문제 — 완료 칸이 최근 14일만 보여 줬음. 필터를 걸면 전부, 아니면 '오래된 완료 n건 모두 보기'</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>빌드 카테고리 재분류: 제목이 [커뮤니티]·[새소식]·[지도]·[탐색]으로 시작하는데 다른 카테고리였던 이슈를 커뮤니티·새소식·지도·앱으로</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.3</span>
               <span class="rn-version-title">이슈 제목 태그 · 서비스 목록 · 이슈 폴더(공유 링크)</span>
@@ -6562,7 +6610,10 @@
 
       /* 0 새 기능 */
       '<div class="s" id="whatsnew">' +
-        '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.3</span></h2>' +
+        '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.4</span></h2>' +
+        '<h3>새 이슈 등록</h3><p>＋ 만들기 → 이슈 등록(또는 이슈 화면 [＋ 이슈 등록])을 누르면 오른쪽 시트가 열립니다. 제목만 있어도 등록되고, 제목을 <b>[커뮤니티]</b>·<b>[탐색]</b>처럼 시작하면 빌드 카테고리가 자동으로 골라집니다. 환경·플랫폼·담당자·검증 담당·확인절차·기대/실제 결과를 채우고, 스크린샷은 끌어 놓거나 <span class="sc">⌘V</span>로 붙여 넣습니다. Task를 고르면 Task 담당자가 담당자로 들어갑니다.</p>' +
+        '<h3>안건 고르기</h3><p>안건을 고르는 칸을 누르면 검색창이 달린 목록이 열립니다. 번호(P20)나 이름 일부를 입력하고 <span class="sc">↑↓</span> <span class="sc">Enter</span>로 고릅니다.</p>' +
+        '<h3>배포 만들기 · 수정</h3><ul><li>배포 화면의 [메모와 함께…] 또는 ＋ 만들기 → 배포 만들기: 이름 · 목표일 · 환경 · 서비스 · 메모(배포 내역)를 함께 씁니다.</li><li>전체 배포 목록에서 배포를 누르면 같은 칸이 열리고, 바꾸면 바로 저장됩니다. 배포완료 건도 메모·배포일·환경·서비스·상태를 고칠 수 있습니다.</li><li>담긴 항목이나 체크리스트가 없어도 배포준비·배포완료가 됩니다. [배포완료]는 확인 창 없이 바로 처리되고 담긴 이슈·Task가 완료로 바뀝니다.</li></ul>' +
         '<h3>이슈 제목 태그</h3><p>이슈 제목 앞에 <b>빌드 카테고리</b>(앱·새소식·지도·예약·커뮤니티·어드민) 색 배지와 <b>기능 태그</b>(예: 조황·회원조과, 새소식(홈)·배너·퀵메뉴)가 붙습니다. 카드나 줄의 <span class="sc">#</span> 버튼을 누르면 카테고리를 고르고 태그를 체크할 수 있고, 누를 때마다 바로 저장됩니다. 없는 태그는 입력하고 <span class="sc">Enter</span>를 누르면 팀 공용 목록에 추가됩니다. 이슈 상세 맨 위에도 같은 태그 줄이 있습니다.</p>' +
         '<p>이슈 화면의 카테고리 칩과 <b>[태그 ▾]</b>(체크 목록, 건수·(태그 없음) 포함)으로 바로 거를 수 있습니다.</p>' +
         '<h3>이슈 폴더 · 공유 링크</h3><ul><li>필터를 건 뒤 <b>＋ 지금 필터로 폴더 만들기</b> → 이름을 넣으면 폴더가 생기고 공유 링크가 복사됩니다.</li><li>링크를 받은 팀원이 열면(로그인 필요) 같은 필터가 걸린 이슈 목록이 바로 열립니다.</li><li>폴더 옆 <span class="sc">⋯</span>: 공유 링크 복사 · 지금 필터로 바꾸기 · 이름 바꾸기 · 삭제(이슈는 지워지지 않음)</li></ul>' +
@@ -21268,7 +21319,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.3';
+    var AF_BUILD = 'v13.4';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21307,6 +21358,9 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>새 이슈 등록 시트</b> — 환경·플랫폼·확인절차·기대/실제 결과·첨부·담당자까지 한 화면에</li>' +
+          '<li><b>안건 검색</b> — 안건 고르는 칸을 누르면 검색되는 목록</li>' +
+          '<li><b>배포 편집</b> — 메모(배포 내역)·서비스·환경, 배포완료 건도 수정 · 배포완료는 바로 처리</li>' +
           '<li><b>이슈 제목 태그</b> — 빌드 카테고리 배지 + 기능 태그, 카드의 [#]로 편집, [태그 ▾]로 거르기</li>' +
           '<li><b>이슈 폴더</b> — 필터를 폴더로 저장하고 공유 링크로 팀에 전달</li>' +
           '<li><b>새 서비스 목록</b> — 고객 앱 · 예약 웹 · 지도 웹 · 선주 앱 · 선주 웹 · 딸라싸 · 관리자/업주 어드민 · 비즈 파트너스</li>' +
@@ -21934,12 +21988,12 @@ function renderNotifList() {
     var p = o.pid ? proj(o.pid) : null;
     var svc = o.service || (p && arr(p.serviceTypes)[0]) || '';
     var task = (p && o.taskId) ? findTask(p.id, o.taskId) : null;
-    var asg = task ? arr(task.assignees).slice() : [];
+    var asg = arr(o.assignees).length ? arr(o.assignees).slice() : (task ? arr(task.assignees).slice() : []);
     var sev = o.severity || 'Minor';
-    var iss = { id: genIssueId(svc), title: title, type: 'Bug', severity: sev, priority: sev === 'Block' ? '0' : sev === 'Major' ? '1' : sev === 'Minor' ? '2' : '3', status: '등록',
-      projectIds: p ? [p.id] : [], projectId: p ? p.id : '', serviceTypes: svc ? [svc] : [], serviceType: svc, platforms: [], platform: '',
+    var iss = { id: genIssueId(svc), title: title, type: o.type || 'Bug', severity: sev, priority: sev === 'Block' ? '0' : sev === 'Major' ? '1' : sev === 'Minor' ? '2' : '3', status: '등록',
+      projectIds: p ? [p.id] : [], projectId: p ? p.id : '', serviceTypes: svc ? [svc] : [], serviceType: svc, platforms: arr(o.platforms), platform: arr(o.platforms)[0] || '', verifier: o.verifier || '', testSteps: o.testSteps || '', expectedResult: o.expectedResult || '', actualResult: o.actualResult || '',
       assignees: asg, assignee: asg[0] || '', references: [], relatedIssues: [], environment: o.env || '', taskId: task ? task.id : '', buildCategory: o.buildCategory || '', tags: arr(o.tags),
-      reporter: (state.currentUser && (state.currentUser.displayName || state.currentUser.email)) || '', created: iso(), updated: iso(), comments: [], attachments: [] };
+      reporter: (state.currentUser && (state.currentUser.displayName || state.currentUser.email)) || '', created: iso(), updated: iso(), comments: [], attachments: arr(o.attachments) };
     saveIssueData(iss);
     return iss;
   };
@@ -22005,28 +22059,21 @@ function renderNotifList() {
   A.markReady = function(bid) {
     var b = bundle(bid); if (!b || !needW()) return;
     var R = A.readiness(b);
-    if (!R.total) { toast('담긴 항목이 없습니다', 'error'); return; }
-    var patch = { status: 'ready' };
-    if (!R.ok) {
-      var why = prompt('아직 준비가 안 된 항목이 있습니다.\n\n· 미완료 Task ' + R.r1 + '건\n· 검증 안 된 이슈 ' + R.r2 + '건\n· 열린 Block ' + R.r3 + '건\n· 체크리스트 미완료 ' + R.r4 + '개\n\n그래도 배포준비로 넘기려면 사유를 적어주세요.');
-      if (why === null) return;
-      if (!why.trim()) { toast('사유가 필요합니다', 'error'); return; }
-      patch.readyOverride = { reason: why.trim(), by: (state.currentUser && state.currentUser.displayName) || '', at: iso() };
-    }
-    A.setBundle(bid, patch);
-    toast('"' + b.title + '" 배포준비');
+    // 후보·체크리스트가 비어 있어도 바로 배포준비 (남은 항목은 안내만)
+    A.setBundle(bid, { status: 'ready' });
+    var left = []; if (R.r1) left.push('미완료 Task ' + R.r1); if (R.r2) left.push('검증 전 이슈 ' + R.r2); if (R.r3) left.push('열린 Block ' + R.r3);
+    toast('"' + b.title + '" 배포준비' + (left.length ? ' · 남은 것: ' + left.join(', ') : ''), left.length ? 'info' : 'success');
   };
   A.completeBundle = function(bid) {
     var b = bundle(bid); if (!b || !needW()) return;
     var R = A.readiness(b);
     var toI = R.iss.filter(function(i) { return i.status !== '완료'; });
     var toT = R.tasks.filter(function(x) { return x.t.status !== 'done'; });
-    if (!confirm('"' + b.title + '" 배포완료 처리\n\n· 이슈 ' + toI.length + '건 → 완료\n· Task ' + toT.length + '건 → 완료\n\n릴리즈 노트를 클립보드에 복사합니다. 진행할까요?')) return;
     toI.forEach(function(i) { i.status = '완료'; i.updated = iso(); saveIssueData(i); });
     if (toT.length) { toT.forEach(function(x) { x.t.status = 'done'; x.t.updated = iso(); }); saveProjects(); }
     A.setBundle(bid, { status: 'deployed', deployedAt: iso() });
     try { navigator.clipboard.writeText(A.releaseNote(b)); } catch (e) {}
-    toast('배포완료 · 릴리즈 노트를 복사했습니다');
+    toast('배포완료' + (toI.length || toT.length ? ' · 이슈 ' + toI.length + '건·Task ' + toT.length + '건 완료 처리' : '') + ' · 릴리즈 노트 복사');
   };
   A.chooseBundle = function(ev, items) {
     if (!needW()) return;
@@ -22039,10 +22086,9 @@ function renderNotifList() {
     pop.querySelectorAll('.pick').forEach(function(x) { x.onclick = function() { if (x.classList.contains('done') && !confirm('이미 배포완료된 배포에 ' + items.length + '건을 추가할까요?')) return; closePop(); items.forEach(function(it) { A.addToBundle(x.dataset.id, it.kind, it.val, true); }); toast(items.length + '건을 배포에 담았습니다'); A.sel = {}; A.render(true); }; });
     pop.querySelector('.new').onclick = function() {
       closePop();
-      var t = prompt('새 배포 이름', '배포 ' + fmtD(iso())); if (!t) return;
       var it = { issues: [], tasks: [], projects: [] };
       items.forEach(function(x) { it[x.kind].push(x.val); if (x.kind === 'tasks') { var pid = x.val.split(':')[0]; if (it.projects.indexOf(pid) === -1) it.projects.push(pid); } });
-      var b = A.createBundle(t, '', it); if (b) { toast('"' + t + '" 배포를 만들고 ' + items.length + '건을 담았습니다'); A.sel = {}; A.render(true); }
+      A.bundleNew({ title: '배포 ' + fmtD(iso()), items: it, after: function() { A.sel = {}; A.render(true); } });
     };
   };
 
@@ -22064,6 +22110,8 @@ function renderNotifList() {
   A.sheet = function(kind, o) {
     if (!needW()) return;
     if (kind === 'project') { A.newProject(o || {}); return; }
+    if (kind === 'issue') { A.issueSheet(o || {}); return; }
+    if (kind === 'bundle') { A.bundleNew(o || {}); return; }
     o = o || {};
     var cur = A.cur.page === 'a13project' ? A.cur.arg : (o.pid || '');
     var html = '';
@@ -22410,13 +22458,15 @@ function renderNotifList() {
       ((f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || f.cats.length || f.tags.length) ? '<button class="a13-btn sm ghost" onclick="AF13.ifReset()">필터 초기화</button>' : '') +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '건</span></div>';
     if (f.view === 'board') {
-      var cut = Date.now() - 14 * 864e5;
+      var anyF = f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || (f.cats || []).length || (f.tags || []).length;
+      var cut = (anyF || A.ui.allDone) ? 0 : Date.now() - 14 * 864e5, hiddenDone = 0;
+      if (cut) hiddenDone = list.filter(function(i) { return i.status === '완료' && i.updated && new Date(i.updated).getTime() < cut; }).length;
       h += '<div class="a13-board">' + BUCKETS.map(function(bk) {
         var items = list.filter(function(i) { return bk.st.indexOf(i.status) !== -1 && (bk.k !== 'done' || !i.updated || new Date(i.updated).getTime() >= cut); });
         items.sort(function(a, b) { return ['Block', 'Major', 'Minor', 'Trivial'].indexOf(a.severity) - ['Block', 'Major', 'Minor', 'Trivial'].indexOf(b.severity) || String(b.updated || '').localeCompare(String(a.updated || '')); });
         return '<div class="a13-col" data-bucket="' + bk.k + '" ondragover="event.preventDefault();this.classList.add(\'drop\')" ondragleave="this.classList.remove(\'drop\')" ondrop="AF13.dropIssue(event,\'' + bk.k + '\')">' +
           '<div class="a13-col-h"><span style="color:' + bk.c + '">● ' + bk.l + '</span><span class="a13-cnt">' + items.length + '</span></div>' +
-          items.slice(0, 80).map(issueCard).join('') + (bk.k === 'done' ? '<div class="a13-hint" style="text-align:center;padding:6px">최근 14일</div>' : '') + '</div>';
+          items.slice(0, 300).map(issueCard).join('') + (bk.k === 'done' && hiddenDone ? '<button type="button" class="a13-btn sm ghost" style="width:100%;justify-content:center" onclick="AF13.ui.allDone=true;AF13.render(true)">최근 14일만 표시 · 오래된 완료 ' + hiddenDone + '건 모두 보기</button>' : '') + (bk.k === 'done' && !cut && A.ui.allDone && !anyF ? '<button type="button" class="a13-btn sm ghost" style="width:100%;justify-content:center" onclick="AF13.ui.allDone=false;AF13.render(true)">최근 14일만 보기</button>' : '') + '</div>';
       }).join('') + '</div>';
     } else {
       h += '<div class="a13-card"><div class="a13-list">' + (list.length ? list.slice().sort(function(a, b) { return String(b.updated || b.created || '').localeCompare(String(a.updated || a.created || '')); }).slice(0, 300).map(function(i) { return issueRow(i, { select: 1 }); }).join('') : '<div class="a13-empty"><b>조건에 맞는 이슈가 없습니다</b></div>') + '</div></div>';
@@ -22497,14 +22547,14 @@ function renderNotifList() {
     var b = A.createBundle(t.value, d ? d.value : ''); if (b) { toast('배포를 만들었습니다'); if (Object.keys(A.dsel).length) A.putSelected(b.id); else A.render(true); }
   };
   function bundleCard(b) {
-    var R = A.readiness(b), cw = canW(), cl = b.checklist || {};
+    var R = A.readiness(b), cw = canW(), cl = b.checklist || {}, closedB = b.status === 'deployed' || b.status === 'cancelled';
     var sig = function(label, n, unit) { return '<div class="' + (n ? 'bad' : 'ok') + '"><b>' + (n ? n + unit : '✓') + '</b>' + label + '</div>'; };
     var st = { planning: ['준비중', '#f59e0b'], ready: ['배포준비', '#3b82f6'], deployed: ['배포완료', '#10b981'], cancelled: ['취소', '#919191'] }[b.status] || [b.status, '#919191'];
     var h = '<div class="a13-bundle" ondragover="event.preventDefault();this.classList.add(\'drop\')" ondragleave="this.classList.remove(\'drop\')" ondrop="AF13.dropToBundle(event,\'' + q(b.id) + '\')">' +
-      '<div class="a13-row" style="justify-content:space-between"><div><h3>' + esc(b.title) + '</h3><div class="a13-hint" style="margin-top:2px">' + esc(b.id) + ' · ' + (fmtD(b.targetDate) || '날짜 미정') + ' ' + ddH(b.targetDate) + '</div></div>' + pill(st[0], st[1]) + '</div>' +
-      '<div class="a13-sig">' + sig('미완료 Task', R.r1, '건') + sig('검증 전 이슈', R.r2, '건') + sig('열린 Block', R.r3, '건') + sig('체크리스트', R.r4, '개 남음') + '</div>' +
+      '<div class="a13-row" style="justify-content:space-between"><div><h3>' + esc(b.title) + '</h3><div class="a13-hint" style="margin-top:2px">' + esc(b.id) + ' · ' + (closedB ? (b.deployedAt ? '배포 ' + fmtD(b.deployedAt) : (fmtD(b.targetDate) || '')) : (fmtD(b.targetDate) || '날짜 미정') + ' ' + ddH(b.targetDate)) + '</div></div>' + pill(st[0], st[1]) + '</div>' +
+      (closedB ? '' : '<div class="a13-sig">' + sig('미완료 Task', R.r1, '건') + sig('검증 전 이슈', R.r2, '건') + sig('열린 Block', R.r3, '건') + sig('체크리스트', R.r4, '개 남음') + '</div>') +
       '<div class="a13-row">' + (cw ? '<button class="a13-btn sm a13-dsel-btn" onclick="AF13.putSelected(\'' + q(b.id) + '\')"' + (Object.keys(A.dsel).length ? '' : ' disabled') + '>선택 항목 담기 (<span class="a13-dsel-n">' + Object.keys(A.dsel).length + '</span>)</button>' : '') +
-      '<span style="margin-left:auto;display:flex;gap:6px">' + (cw && b.status === 'planning' ? '<button class="a13-btn sm" onclick="AF13.markReady(\'' + q(b.id) + '\')">배포준비로</button>' : '') + (cw && b.status === 'ready' ? '<button class="a13-btn sm" onclick="AF13.setBundle(\'' + q(b.id) + '\',{status:\'planning\'})">준비중으로</button><button class="a13-btn sm pri" onclick="AF13.completeBundle(\'' + q(b.id) + '\')">배포완료</button>' : '') +
+      '<span style="margin-left:auto;display:flex;gap:6px">' + (cw && b.status === 'planning' ? '<button class="a13-btn sm" onclick="AF13.markReady(\'' + q(b.id) + '\')">배포준비로</button><button class="a13-btn sm pri" onclick="AF13.completeBundle(\'' + q(b.id) + '\')">배포완료</button>' : '') + (cw && b.status === 'ready' ? '<button class="a13-btn sm" onclick="AF13.setBundle(\'' + q(b.id) + '\',{status:\'planning\'})">준비중으로</button><button class="a13-btn sm pri" onclick="AF13.completeBundle(\'' + q(b.id) + '\')">배포완료</button>' : '') +
       (cw ? '<button class="a13-btn sm ghost" onclick="AF13.bundleMore(event,\'' + q(b.id) + '\')">⋯</button>' : '') + '</span></div>' +
       '<div class="a13-items">' + (R.total ? R.tasks.map(function(x) { var p = proj(x.pid); return '<div class="a13-item"><span class="a13-kind task">TASK</span><span class="a13-pid">' + esc(x.pid) + '</span><span class="t">' + esc(x.t.title) + '</span>' + pill((TST[x.t.status] || TST.todo)[0], (TST[x.t.status] || TST.todo)[1]) + (cw ? '<button class="x" title="빼기" onclick="AF13.removeFromBundle(\'' + q(b.id) + '\',\'tasks\',\'' + q(tkey(x.pid, x.t.id)) + '\')">×</button>' : '') + '</div>'; }).join('') +
         R.iss.map(function(i) { return '<div class="a13-item">' + sevB(i.severity) + '<span class="t" style="cursor:pointer" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + esc(i.title) + '</span>' + pill(i.status, ST_C[i.status] || '#767676') + (cw ? '<button class="x" title="빼기" onclick="AF13.removeFromBundle(\'' + q(b.id) + '\',\'issues\',\'' + q(i.id) + '\')">×</button>' : '') + '</div>'; }).join('')
@@ -22530,7 +22580,7 @@ function renderNotifList() {
     var h = '<div class="a13-ph"><div><h1>배포</h1><p>' + (dv === 'all' ? '지금까지 만든 배포 전체입니다. 줄을 누르면 담긴 항목과 준비 상태를 봅니다.' : '왼쪽은 아직 배포에 안 담긴 후보(배포 대기 이슈 · 끝난 Task)입니다. 체크하거나 끌어서 오른쪽 배포에 담으세요.') + '</p></div>' +
       '<div class="a13-row"><button class="a13-btn sm ghost" onclick="var t=document.querySelector(\'.tab[data-tab=deploy]\');if(t)t.click()" title="예전 배포 관리 화면">이전 배포 화면</button><span class="a13-seg">' + [['work', '배포 작업'], ['all', '전체 배포 목록 ' + nAll]].map(function(x) { return '<button class="' + (dv === x[0] ? 'on' : '') + '" onclick="AF13.ui.dv=\'' + x[0] + '\';AF13.render(true)">' + x[1] + '</button>'; }).join('') + '</span></div></div>';
     if (dv === 'all') { el.innerHTML = '<div class="a13">' + h + deployListH() + '</div>'; return; }
-    if (cw) h += '<div class="a13-newrow"><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewB" placeholder="새 배포 이름 (예: 10월 4주차 정기 배포) 입력 후 Enter" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229)AF13.newBundleInline()"><input type="date" id="a13NewBD" class="a13-input"><button class="a13-btn pri" onclick="AF13.newBundleInline()">만들기</button></div>';
+    if (cw) h += '<div class="a13-newrow"><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewB" placeholder="새 배포 이름 (예: 10월 4주차 정기 배포) 입력 후 Enter" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229)AF13.newBundleInline()"><input type="date" id="a13NewBD" class="a13-input"><button class="a13-btn pri" onclick="AF13.newBundleInline()">만들기</button><button class="a13-btn" onclick="AF13.bundleNew({title:(document.getElementById(\'a13NewB\')||{}).value||\'\',date:(document.getElementById(\'a13NewBD\')||{}).value||\'\'})" title="메모·서비스·환경까지 입력">메모와 함께…</button></div>';
     h += '<div class="a13-dep"><div class="a13-card"><div class="a13-card-h"><h3>배포 후보 <span class="a13-cnt">' + nC + '</span></h3><span class="a13-hint">선택 <span class="a13-dsel-n">' + Object.keys(A.dsel).length + '</span>건</span></div>' +
       (nC ? Object.keys(g).sort().map(function(pid) {
         var p = proj(pid), x = g[pid];
@@ -22937,7 +22987,7 @@ function renderNotifList() {
       '<input class="a13-input a13-dlq" placeholder="배포 이름 · 번호 · 안건 · 이슈 검색" value="' + esc(f.q) + '" oninput="AF13.ui.dl.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13deploy .a13-dlq\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},200)" style="width:260px">' +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '개</span></div>';
     if (!list.length) return h + '<div class="a13-card"><div class="a13-empty"><b>조건에 맞는 배포가 없습니다</b></div></div>';
-    h += '<div class="a13-card a13-dlist"><div class="a13-dhead"><div>날짜</div><div>배포</div><div>상태</div><div>담긴 항목</div><div>안건</div></div>';
+    h += '<div class="a13-card a13-dlist"><div class="a13-dhead"><div>날짜</div><div>배포</div><div>상태</div><div>서비스</div><div>환경</div><div>담긴 항목</div><div>안건</div></div>';
     var lastM = '';
     list.forEach(function(b) {
       var m = bDate(b).slice(0, 7);
@@ -22947,6 +22997,8 @@ function renderNotifList() {
         '<div class="dt">' + (fmtD(b.deployedAt || b.targetDate) || '-') + (b.status === 'deployed' ? '' : ' ' + ddH(b.targetDate, b.status === 'cancelled')) + '</div>' +
         '<div class="nm"><b>' + esc(b.title || '(이름 없음)') + '</b><small>' + esc(b.id) + (b.notes ? ' · ' + esc(String(b.notes).slice(0, 40)) : '') + '</small></div>' +
         '<div>' + pill(st[0], st[1]) + '</div>' +
+        '<div class="sv">' + (function() { var s = A._bundleSvcs(b); return s.length ? s.slice(0, 2).map(function(x) { return '<span class="a13-chip">' + esc(x) + '</span>'; }).join('') + (s.length > 2 ? '<span class="a13-hint">+' + (s.length - 2) + '</span>' : '') : '<span style="color:#CCCCCC">-</span>'; })() + '</div>' +
+        '<div class="ev">' + esc(b.environment || '-') + '</div>' +
         '<div class="ct">' + (R.total ? (R.tasks.length ? 'Task ' + R.tasks.length : '') + (R.tasks.length && R.iss.length ? ' · ' : '') + (R.iss.length ? '이슈 ' + R.iss.length : '') : (b.notes ? '<span class="a13-chip">노트 ' + String(b.notes).split('\n').filter(function(x) { return x.trim(); }).length + '줄</span>' : '<span style="color:#CCCCCC">비어 있음</span>')) + '</div>' +
         '<div class="pj">' + R.pids.slice(0, 4).map(function(p) { var x = proj(p); return '<span class="a13-pid" title="' + esc(x ? x.name : p) + '">' + esc(p) + '</span>'; }).join('') + (R.pids.length > 4 ? '<span class="a13-hint">+' + (R.pids.length - 4) + '</span>' : '') + '</div></div>';
     });
@@ -22959,17 +23011,19 @@ function renderNotifList() {
     var wrap = document.createElement('div'); wrap.id = 'a13BS'; wrap.className = 'a13-np-bg';
     var draw = function() {
       var b2 = bundle(bid); if (!b2) { close(); return; }
+      var ae = document.activeElement; if (ae && wrap.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) return; // 입력 중엔 다시 그리지 않음
       var st = BST[b2.status] || [b2.status, '#919191'];
       wrap.innerHTML = '<aside class="a13-np a13-bs" role="dialog" aria-modal="true" aria-label="배포 상세"><header><div><h2>' + esc(b2.title) + '</h2><p>' + esc(b2.id) + ' · ' + pill(st[0], st[1]) + (b2.deployedAt ? ' · 배포 ' + esc(String(b2.deployedAt).slice(0, 10)) : (b2.targetDate ? ' · 목표 ' + esc(b2.targetDate) : '')) + '</p></div><button class="x" aria-label="닫기">✕</button></header>' +
-        '<div class="body">' + (function() {
+        '<div class="body"><div class="bf-form">' + A._bundleFormH(b2, false) + '</div>' + (function() {
           var R = A.readiness(b2), closed = b2.status === 'deployed' || b2.status === 'cancelled';
-          var note = b2.notes ? '<div class="np-f"><span>배포 노트</span><div class="a13-card a13-bnote">' + esc(b2.notes) + '</div></div>' : '';
-          if (closed && !R.total) return note || '<div class="a13-empty"><b>담긴 항목·노트가 없습니다</b></div>';
-          return (closed ? note + bundleCard(b2) : bundleCard(b2) + note);
+          if (closed && !R.total) return '<div class="a13-hint" style="padding:4px 2px">담긴 이슈·Task가 없습니다 (배포 내역은 위 메모에 있습니다)</div>';
+          return '<div class="np-f"><span>담긴 항목</span>' + bundleCard(b2) + '</div>';
         })() + '</div>' +
         '<footer><span class="np-hint"></span><button class="a13-btn np-note">릴리즈 노트 복사</button><button class="a13-btn pri np-close">닫기</button></footer></aside>';
       wrap.querySelector('.x').onclick = close; wrap.querySelector('.np-close').onclick = close;
       wrap.querySelector('.np-note').onclick = function() { A.copyNote(bid); };
+      var ta = wrap.querySelector('.bf-notes'); if (ta) ta.rows = Math.min(24, Math.max(5, String(b2.notes || '').split('\n').length + 1));
+      A._wireBundleForm(wrap.querySelector('.a13-np'), bid);
     };
     var close = function() { if (A._bsRefresh === draw) A._bsRefresh = null; wrap.classList.add('out'); setTimeout(function() { wrap.remove(); try { _unlockBodyScroll(); } catch (e) {} }, 180); };
     draw();
@@ -23309,6 +23363,245 @@ function renderNotifList() {
       return r;
     };
   }
+
+  /* ═══ v13.4: 안건 검색 선택 · 이슈 등록 시트 · 카테고리 재분류 · 배포 편집 ═══ */
+
+  /* ── 안건 고르기: 누르면 검색되는 목록 (원래 <select>는 그대로 두고 값만 바꿔 change 발생) ── */
+  var PSEL = 'select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"]';
+  function closePsel() { var o = document.getElementById('a13Psel'); if (o) o.remove(); document.removeEventListener('mousedown', A._pselOut, true); }
+  A._pselOut = function(e) { var o = document.getElementById('a13Psel'); if (o && !o.contains(e.target)) closePsel(); };
+  A.openPsel = function(sel) {
+    closePsel();
+    var opts = [].slice.call(sel.options).map(function(o) { return { v: o.value, t: o.textContent }; });
+    var r = sel.getBoundingClientRect();
+    var box = document.createElement('div'); box.id = 'a13Psel'; box.className = 'a13-psel-pop'; box.setAttribute('role', 'listbox');
+    box.innerHTML = '<input class="a13-input" placeholder="안건 번호·이름 검색" aria-label="안건 검색"><div class="ls"></div>';
+    document.body.appendChild(box);
+    var w = Math.max(r.width, 320);
+    box.style.width = w + 'px';
+    box.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + 'px';
+    var top = r.bottom + 4; if (top + 360 > window.innerHeight && r.top > 380) top = r.top - 364; box.style.top = Math.max(8, top) + 'px';
+    var inp = box.querySelector('input'), ls = box.querySelector('.ls'), hi = 0, shown = [];
+    var draw = function() {
+      var qv = inp.value.trim().toLowerCase();
+      shown = opts.filter(function(o) { return !qv || o.t.toLowerCase().indexOf(qv) !== -1 || o.v.toLowerCase().indexOf(qv) !== -1; });
+      if (hi >= shown.length) hi = Math.max(0, shown.length - 1);
+      ls.innerHTML = shown.length ? shown.map(function(o, k) { return '<button type="button" role="option" data-k="' + k + '" class="' + (o.v === sel.value ? 'cur ' : '') + (k === hi ? 'hi' : '') + '">' + esc(o.t) + '</button>'; }).join('') : '<div class="a13-hint" style="padding:10px">찾는 안건이 없습니다</div>';
+      ls.querySelectorAll('button').forEach(function(b) { b.onmousedown = function(e) { e.preventDefault(); pick(shown[+b.dataset.k]); }; });
+      var h = ls.querySelector('.hi'); if (h && h.scrollIntoView) h.scrollIntoView({ block: 'nearest' });
+    };
+    var pick = function(o) { if (!o) return; closePsel(); if (sel.value !== o.v) { sel.value = o.v; sel.dispatchEvent(new Event('change', { bubbles: true })); } try { sel.focus(); } catch (e) {} };
+    inp.oninput = function() { hi = 0; draw(); };
+    inp.onkeydown = function(e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); hi = Math.min(hi + 1, shown.length - 1); draw(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); hi = Math.max(hi - 1, 0); draw(); }
+      else if (e.key === 'Enter' && !(e.isComposing || e.keyCode === 229)) { e.preventDefault(); pick(shown[hi]); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePsel(); try { sel.focus(); } catch (x) {} }
+    };
+    hi = Math.max(0, opts.findIndex(function(o) { return o.v === sel.value; }));
+    draw();
+    setTimeout(function() { inp.focus(); document.addEventListener('mousedown', A._pselOut, true); }, 0);
+    return box;
+  };
+  document.addEventListener('mousedown', function(e) {
+    var s = e.target && e.target.closest && e.target.closest(PSEL);
+    if (!s || s.disabled || !document.body.classList.contains('af-v13')) return;
+    e.preventDefault(); A.openPsel(s);
+  }, true);
+  document.addEventListener('keydown', function(e) {
+    var s = e.target && e.target.closest && e.target.closest(PSEL);
+    if (!s || s.disabled || document.getElementById('a13Psel')) return;
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); A.openPsel(s); }
+  }, true);
+
+  /* ── 빌드 카테고리: 제목 머리말로 추천 · 재분류 ── */
+  var PREFIX_CAT = { '커뮤니티': '커뮤니티', '새소식': '새소식', '지도': '지도', '탐색': '앱', '예약': '예약', '선주모바일': '예약', '어드민': '어드민' };
+  function catFromTitle(t) { var m = /^\s*\[([^\]]+)\]/.exec(String(t || '')); return m ? (PREFIX_CAT[m[1].trim()] || '') : ''; }
+  A.catFromTitle = catFromTitle;
+  // 재분류 대상: 제목 머리말이 [커뮤니티]·[새소식]·[지도]·[탐색]인데 카테고리가 다른 이슈 (빌드 카테고리 칸만 바꿈)
+  var RECLASS = ['커뮤니티', '새소식', '지도', '탐색'];
+  A.reclassPreview = function() {
+    return (_issues || []).filter(Boolean).map(function(i) {
+      var m = /^\s*\[([^\]]+)\]/.exec(i.title || ''); if (!m || RECLASS.indexOf(m[1].trim()) === -1) return null;
+      var to = PREFIX_CAT[m[1].trim()]; return to && i.buildCategory !== to ? { id: i.id, title: i.title, from: i.buildCategory || '', to: to } : null;
+    }).filter(Boolean);
+  };
+  A.reclassApply = function() {
+    if (!needW()) return 0;
+    var list = A.reclassPreview(); if (!list.length) return 0;
+    list.forEach(function(x) { var i = _issues.find(function(y) { return y.id === x.id; }); if (!i) return; i.buildCategory = x.to; i.updated = iso(); saveIssueData(i); });
+    A.render(true);
+    return list.length;
+  };
+
+  /* ── 새 이슈 등록 시트 ── */
+  var ENVS = [['production', '운영'], ['staging', '스테이징'], ['development', '개발']];
+  var PLATS = ['IOS', 'AOS', 'PC', 'MW'];
+  A.issueSheet = function(o) {
+    if (!needW()) return;
+    o = o || {};
+    var old = document.getElementById('a13IS'); if (old) old.remove();
+    var cur = o.pid || (A.cur.page === 'a13project' ? A.cur.arg : '');
+    try { _createIssueAttachments = []; } catch (e) {}
+    var tasksOpt = function(pid) { var p = proj(pid); return '<option value="">연결 안 함</option>' + (p ? arr(p.tasks).map(function(t) { return '<option value="' + esc(t.id) + '"' + (t.id === o.taskId ? ' selected' : '') + '>' + esc(t.title) + '</option>'; }).join('') : ''); };
+    var people = TEAM.filter(_isOnBoard); if (!people.length) people = TEAM.slice();
+    var wrap = document.createElement('div'); wrap.id = 'a13IS'; wrap.className = 'a13-np-bg';
+    wrap.innerHTML = '<aside class="a13-np a13-is" role="dialog" aria-modal="true" aria-label="새 이슈">' +
+      '<header><div><h2>새 이슈</h2><p>제목만 있어도 등록됩니다. 제목을 [커뮤니티]·[탐색]처럼 시작하면 빌드 카테고리를 골라 둡니다.</p></div><button class="x" aria-label="닫기">✕</button></header>' +
+      '<div class="body">' +
+        '<input class="np-title is-title" placeholder="무엇이 잘못됐나요?" maxlength="120" aria-label="이슈 제목">' +
+        '<div class="np-grid"><div class="np-f"><span>안건</span><select class="a13-input a13-psel is-pid"><option value="">안건 없음</option>' + projOptions(cur) + '</select></div>' +
+          '<div class="np-f"><span>관련 Task</span><select class="a13-input is-task">' + tasksOpt(cur) + '</select></div></div>' +
+        '<div class="np-grid"><div class="np-f"><span>심각도</span>' + sevSeg(o.severity || 'Minor') + '</div>' +
+          '<div class="np-f"><span>유형</span><div class="a13-seg is-type"><button type="button" class="on" data-v="Bug">Bug</button><button type="button" data-v="Task">Task</button></div></div></div>' +
+        '<div class="np-f"><span>빌드 카테고리</span><div class="a13-catpick">' + BUILD_CATS.map(function(c) { return '<button type="button" data-c="' + esc(c[0]) + '">' + catBadge(c[0]) + '</button>'; }).join('') + '</div></div>' +
+        '<div class="np-grid"><div class="np-f"><span>서비스</span><select class="a13-input is-svc"><option value="">선택 안 함</option>' + NEW_SERVICES.map(function(s) { return '<option>' + esc(s) + '</option>'; }).join('') + '</select></div>' +
+          '<div class="np-f"><span>환경</span><div class="a13-seg is-env">' + ENVS.map(function(e) { return '<button type="button" data-v="' + e[0] + '"' + (e[0] === (o.env || 'production') ? ' class="on"' : '') + '>' + e[1] + '</button>'; }).join('') + '</div></div></div>' +
+        '<div class="np-f"><span>플랫폼 <em>여러 개</em></span><div class="np-chips is-plat">' + PLATS.map(function(p) { return '<button type="button" data-v="' + p + '">' + p + '</button>'; }).join('') + '</div></div>' +
+        '<div class="np-f"><span>담당자 <em>여러 명 · Task를 고르면 Task 담당자가 들어갑니다</em></span><div class="np-chips is-asg">' + people.map(function(m) { return '<button type="button" data-v="' + esc(m.id) + '">' + av(m.id) + esc(m.name) + '</button>'; }).join('') + '</div></div>' +
+        '<div class="np-f"><span>검증 담당</span><select class="a13-input is-ver"><option value="">미정</option>' + people.map(function(m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>'; }).join('') + '</select></div>' +
+        '<div class="np-f"><span>태그</span><div class="a13-tagpick">' + tagList().map(function(t) { return '<button type="button" data-t="' + esc(t.name) + '">' + esc(t.name) + '</button>'; }).join('') + '</div></div>' +
+        '<div class="np-f"><span>확인절차</span><textarea class="a13-input is-steps" placeholder="1. 앱 실행&#10;2. 조황 탭 → 사진 업로드&#10;3. ..."></textarea></div>' +
+        '<div class="np-grid"><div class="np-f"><span>기대 결과</span><textarea class="a13-input is-exp" placeholder="어떻게 되어야 하나요?"></textarea></div>' +
+          '<div class="np-f"><span>실제 결과</span><textarea class="a13-input is-act" placeholder="실제로는 어떻게 되나요?"></textarea></div></div>' +
+        '<div class="np-f"><span>첨부 <em>스크린샷·영상 — 끌어 놓기 · 붙여넣기(⌘V) · 눌러서 선택</em></span><div class="a13-drop" tabindex="0" role="button">파일을 끌어 놓거나 눌러서 선택</div><input type="file" class="is-file" multiple accept="image/*,video/*" hidden><div id="createIssueAttachmentGrid" class="create-issue-attachments"></div></div>' +
+      '</div>' +
+      '<footer><span class="np-hint">Enter 등록 · Esc 닫기</span><button class="a13-btn np-cancel">취소</button><button class="a13-btn np-more">등록하고 하나 더</button><button class="a13-btn pri np-ok">등록</button></footer></aside>';
+    document.body.appendChild(wrap);
+    try { _lockBodyScroll(); } catch (e) {}
+    var P = wrap.querySelector('.a13-np'), q1 = function(s) { return P.querySelector(s); };
+    wireSeg(P);
+    var segOne = function(sel) { P.querySelectorAll(sel + ' button').forEach(function(b) { b.onclick = function() { P.querySelectorAll(sel + ' button').forEach(function(x) { x.classList.toggle('on', x === b); }); }; }); };
+    segOne('.is-type'); segOne('.is-env');
+    P.querySelectorAll('.is-plat button, .is-asg button, .a13-tagpick button').forEach(function(b) { b.onclick = function() { b.classList.toggle('on'); b.dataset.touched = '1'; }; });
+    var catTouched = false;
+    P.querySelectorAll('.a13-catpick button').forEach(function(b) { b.onclick = function() { catTouched = true; var on = !b.classList.contains('on'); P.querySelectorAll('.a13-catpick button').forEach(function(x) { x.classList.remove('on'); }); b.classList.toggle('on', on); }; });
+    var titleEl = q1('.is-title');
+    titleEl.addEventListener('input', function() { if (catTouched) return; var c = catFromTitle(titleEl.value); P.querySelectorAll('.a13-catpick button').forEach(function(x) { x.classList.toggle('on', !!c && x.dataset.c === c); }); });
+    var setAsgFromTask = function() {
+      var p = proj(q1('.is-pid').value), t = p ? findTask(p.id, q1('.is-task').value) : null; if (!t) return;
+      P.querySelectorAll('.is-asg button').forEach(function(b) { if (!b.dataset.touched) b.classList.toggle('on', arr(t.assignees).indexOf(b.dataset.v) !== -1); });
+    };
+    q1('.is-pid').addEventListener('change', function() {
+      q1('.is-task').innerHTML = tasksOpt(this.value);
+      var p = proj(this.value), s = p && arr(p.serviceTypes).find(function(x) { return NEW_SERVICES.indexOf(x) !== -1; });
+      if (s && !q1('.is-svc').value) q1('.is-svc').value = s;
+    });
+    q1('.is-task').addEventListener('change', setAsgFromTask);
+    // 첨부: 기존 첨부 처리(handleFileAttachment)를 그대로 사용
+    var addFiles = function(files) { if (!files || !files.length) return; try { _targetAttachmentContext = 'create'; handleFileAttachment(files); } catch (e) { toast('첨부 실패: ' + e.message, 'error'); } };
+    var drop = q1('.a13-drop'), fi = q1('.is-file');
+    drop.onclick = function() { fi.click(); };
+    drop.onkeydown = function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } };
+    fi.onchange = function() { addFiles(fi.files); fi.value = ''; };
+    drop.ondragover = function(e) { e.preventDefault(); drop.classList.add('over'); };
+    drop.ondragleave = function() { drop.classList.remove('over'); };
+    drop.ondrop = function(e) { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer && e.dataTransfer.files); };
+    P.addEventListener('paste', function(e) { var f = e.clipboardData && e.clipboardData.files; if (f && f.length) { e.preventDefault(); addFiles(f); } });
+    var closeIt = function(force) {
+      var dirty = titleEl.value.trim() || q1('.is-steps').value.trim() || (_createIssueAttachments || []).length;
+      if (!force && dirty && !confirm('작성 중인 이슈가 있습니다. 닫을까요?')) return;
+      wrap.classList.add('out'); setTimeout(function() { wrap.remove(); try { _unlockBodyScroll(); } catch (e) {} }, 180);
+    };
+    var submit = function(more) {
+      var ti = titleEl.value.trim();
+      if (!ti) { titleEl.focus(); titleEl.classList.add('err'); setTimeout(function() { titleEl.classList.remove('err'); }, 600); return; }
+      var on = function(sel) { return [].slice.call(P.querySelectorAll(sel + ' button.on')).map(function(b) { return b.dataset.v || b.dataset.t; }); };
+      var cb = q1('.a13-catpick button.on'), ty = q1('.is-type button.on'), en = q1('.is-env button.on');
+      var iss = A.createIssue({ title: ti, pid: q1('.is-pid').value, taskId: q1('.is-task').value, severity: segVal(P), type: ty ? ty.dataset.v : 'Bug',
+        buildCategory: cb ? cb.dataset.c : '', service: q1('.is-svc').value, env: en ? en.dataset.v : '', platforms: on('.is-plat'), assignees: on('.is-asg'), verifier: q1('.is-ver').value,
+        tags: on('.a13-tagpick'), testSteps: q1('.is-steps').value, expectedResult: q1('.is-exp').value, actualResult: q1('.is-act').value, attachments: (_createIssueAttachments || []).slice() });
+      if (!iss) return;
+      toast(iss.id + ' 등록');
+      if (more) {
+        titleEl.value = ''; q1('.is-steps').value = ''; q1('.is-exp').value = ''; q1('.is-act').value = '';
+        try { _createIssueAttachments = []; renderCreateAttachments(); } catch (e) {}
+        catTouched = false; P.querySelectorAll('.a13-catpick button').forEach(function(x) { x.classList.remove('on'); });
+        titleEl.focus(); A.render(true);
+      } else { closeIt(true); A.render(true); }
+    };
+    q1('.np-ok').onclick = function() { submit(false); };
+    q1('.np-more').onclick = function() { submit(true); };
+    q1('.np-cancel').onclick = function() { closeIt(); };
+    P.querySelector('.x').onclick = function() { closeIt(); };
+    wrap.addEventListener('mousedown', function(e) { if (e.target === wrap) closeIt(); });
+    P.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !document.getElementById('a13Psel')) { e.stopPropagation(); closeIt(); return; }
+      if (e.altKey && /^[1-4]$/.test(e.key)) { var b = P.querySelectorAll('.a13-seg.sev button')[+e.key - 1]; if (b) b.click(); e.preventDefault(); return; }
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submit(false); return; }
+      if (e.key === 'Enter' && e.target === titleEl && !(e.isComposing || e.keyCode === 229)) { e.preventDefault(); submit(false); }
+    });
+    if (o.taskId) setAsgFromTask();
+    setTimeout(function() { titleEl.focus(); }, 60);
+  };
+
+  /* ── 배포: 만들기·수정 시트 (배포완료 건도 수정) ── */
+  var BENV = ['운영', '스테이징', '개발'];
+  function bundleSvcs(b) {
+    var own = arr(b.services); if (own.length) return own;
+    var R = A.readiness(b), s = {};
+    R.iss.forEach(function(i) { issueSvcs(i).forEach(function(x) { s[x] = 1; }); });
+    R.pids.forEach(function(pid) { var p = proj(pid); if (p) arr(p.serviceTypes).forEach(function(x) { s[x] = 1; }); });
+    return Object.keys(s);
+  }
+  A._bundleSvcs = bundleSvcs;
+  function bundleFormH(b, isNew) {
+    var st = b.status || 'planning', svc = arr(b.services);
+    return '<input class="np-title bf-title" placeholder="배포 이름 (예: 10월 4주차 정기 배포)" value="' + esc(b.title || '') + '" maxlength="80" aria-label="배포 이름">' +
+      (isNew ? '' : '<div class="np-f"><span>상태</span><div class="a13-seg bf-status">' + [['planning', '준비중'], ['ready', '배포준비'], ['deployed', '배포완료'], ['cancelled', '취소']].map(function(x) { return '<button type="button" data-v="' + x[0] + '" class="' + (st === x[0] ? 'on' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>') +
+      '<div class="np-grid"><div class="np-f"><span>목표일</span><input type="date" class="a13-input bf-date" value="' + esc(b.targetDate || '') + '"></div>' +
+        (isNew ? '<div class="np-f"><span>환경</span><div class="a13-seg bf-env">' + BENV.map(function(e) { return '<button type="button" data-v="' + e + '" class="' + ((b.environment || '운영') === e ? 'on' : '') + '">' + e + '</button>'; }).join('') + '</div></div>'
+          : '<div class="np-f"><span>배포일</span><input type="date" class="a13-input bf-done" value="' + esc(String(b.deployedAt || '').slice(0, 10)) + '"' + (st === 'deployed' ? '' : ' disabled title="배포완료 상태일 때 입력"') + '></div>') + '</div>' +
+      (isNew ? '' : '<div class="np-f"><span>환경</span><div class="a13-seg bf-env">' + BENV.map(function(e) { return '<button type="button" data-v="' + e + '" class="' + ((b.environment || '운영') === e ? 'on' : '') + '">' + e + '</button>'; }).join('') + (b.environment && BENV.indexOf(b.environment) === -1 ? '<button type="button" class="on" data-v="' + esc(b.environment) + '">' + esc(b.environment) + '</button>' : '') + '</div></div>') +
+      '<div class="np-f"><span>서비스 <em>여러 개</em></span><div class="np-chips bf-svc">' + NEW_SERVICES.concat(svc.filter(function(s) { return NEW_SERVICES.indexOf(s) === -1; })).map(function(s) { return '<button type="button" data-v="' + esc(s) + '" class="' + (svc.indexOf(s) !== -1 ? 'on' : '') + '">' + esc(s) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="np-f"><span>메모 · 배포 내역 <em>버전, 변경 내용, PR 링크 등</em></span><textarea class="a13-input bf-notes" placeholder="예약 api 배포 : v2.62.0&#10;&#10;What\'s Changed&#10;- 쿠폰 사용 가능 시간 표기 개선 #241">' + esc(b.notes || '') + '</textarea></div>';
+  }
+  A.bundleNew = function(prefill) {
+    if (!needW()) return;
+    prefill = prefill || {};
+    var old = document.getElementById('a13BS'); if (old) old.remove();
+    var wrap = document.createElement('div'); wrap.id = 'a13BS'; wrap.className = 'a13-np-bg';
+    wrap.innerHTML = '<aside class="a13-np a13-bs" role="dialog" aria-modal="true" aria-label="새 배포"><header><div><h2>새 배포</h2><p>이름만 있어도 만들 수 있어요. 담을 항목은 만든 뒤 후보에서 체크하거나 끌어 놓습니다.</p></div><button class="x" aria-label="닫기">✕</button></header>' +
+      '<div class="body">' + bundleFormH({ title: prefill.title || '', targetDate: prefill.date || '', environment: '운영', notes: '' }, true) + '</div>' +
+      '<footer><span class="np-hint">⌘Enter 만들기 · Esc 닫기</span><button class="a13-btn np-cancel">취소</button><button class="a13-btn pri np-ok">만들기</button></footer></aside>';
+    document.body.appendChild(wrap);
+    try { _lockBodyScroll(); } catch (e) {}
+    var P = wrap.querySelector('.a13-np'), q1 = function(s) { return P.querySelector(s); };
+    P.querySelectorAll('.bf-env button').forEach(function(b) { b.onclick = function() { P.querySelectorAll('.bf-env button').forEach(function(x) { x.classList.toggle('on', x === b); }); }; });
+    P.querySelectorAll('.bf-svc button').forEach(function(b) { b.onclick = function() { b.classList.toggle('on'); }; });
+    var close = function() { wrap.classList.add('out'); setTimeout(function() { wrap.remove(); try { _unlockBodyScroll(); } catch (e) {} }, 180); };
+    var submit = function() {
+      var t = q1('.bf-title').value.trim(); if (!t) { q1('.bf-title').focus(); q1('.bf-title').classList.add('err'); setTimeout(function() { q1('.bf-title').classList.remove('err'); }, 600); return; }
+      var b = A.createBundle(t, q1('.bf-date').value, prefill.items);
+      if (!b) return;
+      var en = q1('.bf-env button.on'), svc = [].slice.call(P.querySelectorAll('.bf-svc button.on')).map(function(x) { return x.dataset.v; }), notes = q1('.bf-notes').value;
+      var patch = {}; if (en && en.dataset.v !== b.environment) patch.environment = en.dataset.v; if (svc.length) patch.services = svc; if (notes.trim()) patch.notes = notes;
+      if (Object.keys(patch).length) A.setBundle(b.id, patch);
+      toast('"' + t + '" 배포를 만들었습니다');
+      close();
+      if (Object.keys(A.dsel || {}).length && !prefill.items) A.putSelected(b.id); else A.render(true);
+      if (prefill.after) prefill.after(b);
+    };
+    q1('.np-ok').onclick = submit; q1('.np-cancel').onclick = close; P.querySelector('.x').onclick = close;
+    wrap.addEventListener('mousedown', function(e) { if (e.target === wrap) close(); });
+    P.addEventListener('keydown', function(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } if (e.key === 'Enter' && ((e.metaKey || e.ctrlKey) || (e.target === q1('.bf-title') && !(e.isComposing || e.keyCode === 229)))) { e.preventDefault(); submit(); } });
+    setTimeout(function() { q1('.bf-title').focus(); }, 60);
+  };
+  // 상세 시트 안의 편집 칸: 바꾼 칸만 바로 저장
+  A._wireBundleForm = function(P, bid) {
+    var b0 = function() { return bundle(bid); };
+    var q1 = function(s) { return P.querySelector(s); };
+    if (!canW()) { P.querySelectorAll('.bf-form input, .bf-form textarea, .bf-form button').forEach(function(x) { x.disabled = true; }); return; }
+    var t = q1('.bf-title');
+    if (t) { t.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !(e.isComposing || e.keyCode === 229)) { e.preventDefault(); t.blur(); } }); t.addEventListener('blur', function() { var v = t.value.trim(), b = b0(); if (!b) return; if (!v) { t.value = b.title || ''; return; } if (v !== b.title) A.setBundle(bid, { title: v }); }); }
+    P.querySelectorAll('.bf-status button').forEach(function(x) { x.onclick = function() { var b = b0(); if (!b || b.status === x.dataset.v) return; var patch = { status: x.dataset.v }; if (x.dataset.v === 'deployed' && !b.deployedAt) patch.deployedAt = iso(); A.setBundle(bid, patch); }; });
+    var d = q1('.bf-date'); if (d) d.addEventListener('change', function() { A.setBundle(bid, { targetDate: d.value }); });
+    var dd = q1('.bf-done'); if (dd) dd.addEventListener('change', function() { if (!dd.value) return; A.setBundle(bid, { deployedAt: dd.value + 'T09:00:00.000Z' }); });
+    P.querySelectorAll('.bf-env button').forEach(function(x) { x.onclick = function() { var b = b0(); if (b && b.environment !== x.dataset.v) A.setBundle(bid, { environment: x.dataset.v }); }; });
+    P.querySelectorAll('.bf-svc button').forEach(function(x) { x.onclick = function() { var b = b0(); if (!b) return; var a = arr(b.services).slice(), k = a.indexOf(x.dataset.v); if (k === -1) a.push(x.dataset.v); else a.splice(k, 1); A.setBundle(bid, { services: a }); }; });
+    var n = q1('.bf-notes'); if (n) n.addEventListener('blur', function() { var b = b0(); if (b && (b.notes || '') !== n.value) A.setBundle(bid, { notes: n.value }); });
+  };
+  A._bundleFormH = bundleFormH;
 
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;

@@ -4450,6 +4450,69 @@
     #a13issues .a13-toolbar select.a13-input { width: auto; max-width: 200px; flex: 0 1 auto; height: 32px; padding: 0 8px; font-size: 13px; }
     #a13issues .a13-toolbar input.a13-input { height: 32px; padding: 0 10px; font-size: 13px; flex: 0 1 170px; }
     .a13-bnote { white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: #363636; max-height: 50vh; overflow: auto; }
+    /* ═══ v13.3 제목 태그 · 폴더 ═══ */
+    .a13-cat { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px 0 6px; border-radius: 6px; background: var(--c); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; vertical-align: 1px; margin-right: 6px; box-shadow: inset 0 -1px 0 rgba(0,0,0,.12); flex-shrink: 0; }
+    .a13-cat svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .a13-cat.sm { height: 19px; font-size: 10.5px; padding: 0 6px 0 5px; border-radius: 5px; }
+    .a13-cat.sm svg { width: 11px; height: 11px; }
+    .a13-tag { display: inline-flex; align-items: center; height: 19px; padding: 0 7px; border-radius: 5px; border: 1px solid #D9CCFA; background: #FBFAFF; color: #5328C8; font-size: 11px; font-weight: 700; white-space: nowrap; vertical-align: 1px; margin-right: 6px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+    .a13-tag.more { color: #919191; border-color: #E7E7E7; background: #fff; }
+    .a13-ic .tt .a13-cat, .a13-ic .tt .a13-tag { margin-bottom: 2px; }
+    .a13-li .t .a13-cat, .a13-li .t .a13-tag { margin-right: 5px; }
+    .a13-tagbtn { border: 1px solid transparent; background: none; color: #AAAAAA; font-weight: 800; font-size: 13px; width: 26px; height: 26px; border-radius: 7px; cursor: pointer; flex-shrink: 0; }
+    .a13-tagbtn:hover, .a13-tagbtn:focus-visible { background: #F3F0FF; color: #6433DF; border-color: #D9CCFA; outline: none; }
+    .a13-ic .top .a13-tagbtn { margin-left: auto; }
+    .a13-ic .top .a13-tagbtn + input { margin-left: 2px; }
+    /* 태그 고르기 팝업 */
+    .a13-tp { width: 320px; max-width: calc(100vw - 32px); padding: 6px 8px 8px; }
+    .a13-tp .h { font-size: 12px; font-weight: 800; color: #363636; margin: 8px 2px 6px; }
+    .a13-tp .h small { font-weight: 500; color: #AAAAAA; margin-left: 4px; }
+    .a13-tp .cats { display: flex; flex-wrap: wrap; gap: 4px; }
+    .a13-tp .cb { border: 2px solid transparent; background: none; padding: 1px; border-radius: 8px; cursor: pointer; }
+    .a13-tp .cb .a13-cat { margin: 0; opacity: .55; }
+    .a13-tp .cb.on { border-color: #1A1A1A; }
+    .a13-tp .cb.on .a13-cat, .a13-tp .cb:hover .a13-cat { opacity: 1; }
+    .a13-tp .cb.none { font-size: 12px; font-weight: 700; color: #767676; padding: 2px 8px; border: 1px solid #E7E7E7; }
+    .a13-tp .cb.none.on { border: 2px solid #1A1A1A; color: #1A1A1A; }
+    .a13-tp .tq { width: 100%; height: 34px; font-size: 13px; margin-bottom: 6px; }
+    .a13-tp .tl { max-height: 260px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+    .a13-tp .tl label { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; cursor: pointer; font-size: 13px; color: #363636; }
+    .a13-tp .tl label:hover { background: #F7F8FC; }
+    .a13-tp .tl label.on { background: #F3F0FF; color: #32008C; font-weight: 700; }
+    .a13-tp .tl label input { accent-color: #6433DF; width: 16px; height: 16px; }
+    .a13-tp .tl label span { flex: 1; min-width: 0; }
+    .a13-tp .tl label em { font-style: normal; font-size: 11px; color: #919191; }
+    .a13-tp .tl .a13-cat { margin: 0; }
+    .a13-tp .new { border: 1px dashed #D9CCFA; background: #FBFAFF; color: #6433DF; font-weight: 700; font-size: 13px; padding: 8px; border-radius: 8px; cursor: pointer; text-align: left; margin-top: 4px; }
+    .a13-tp .ft { display: flex; justify-content: flex-end; margin-top: 6px; }
+    /* 필터 칩: 카테고리 */
+    .a13-fchip.cat svg { width: 13px; height: 13px; fill: none; stroke: var(--c); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .a13-fchip.cat.on { background: var(--c); border-color: var(--c); }
+    .a13-fchip.cat.on svg { stroke: #fff; }
+    /* 이슈 등록 시트 */
+    .a13-catpick, .a13-tagpick { display: flex; flex-wrap: wrap; gap: 6px; }
+    .a13-catpick button { border: 2px solid transparent; background: none; padding: 1px; border-radius: 8px; cursor: pointer; }
+    .a13-catpick button .a13-cat { margin: 0; opacity: .5; }
+    .a13-catpick button.on { border-color: #1A1A1A; }
+    .a13-catpick button.on .a13-cat, .a13-catpick button:hover .a13-cat { opacity: 1; }
+    .a13-tagpick button { border: 1px solid #E7E7E7; background: #fff; color: #555; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+    .a13-tagpick button.on { border-color: #6433DF; background: #F3F0FF; color: #32008C; }
+    /* 폴더 줄 */
+    .a13-folders { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; padding: 8px 10px; background: #fff; border: 1px solid #E7E7E7; border-radius: 14px; }
+    .a13-folders .lb { font-size: 12px; font-weight: 800; color: #919191; margin-right: 2px; }
+    .a13-fd { display: inline-flex; align-items: center; border: 1px solid #E7E7E7; background: #F7F8FC; border-radius: 10px; height: 32px; font-size: 13px; font-weight: 700; color: #363636; cursor: pointer; font-family: inherit; padding: 0 12px; }
+    span.a13-fd { padding: 0; overflow: hidden; }
+    .a13-fd .nm { border: none; background: none; height: 100%; padding: 0 4px 0 12px; font: inherit; color: inherit; cursor: pointer; }
+    .a13-fd .mn { border: none; background: none; height: 100%; padding: 0 9px 0 5px; color: #AAAAAA; cursor: pointer; font-weight: 800; }
+    .a13-fd .mn:hover { color: inherit; }
+    .a13-fd.on { background: #32008C; border-color: #32008C; color: #fff; }
+    .a13-fd.on .mn { color: rgba(255,255,255,.8); }
+    /* 예전 이슈 상세 위 태그 줄 */
+    .a13-dtags { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; padding: 10px 12px; margin-bottom: 12px; background: #FBFAFF; border: 1px solid #EEE8FF; border-radius: 10px; }
+    .a13-dtags .lb { font-size: 12px; font-weight: 800; color: #6433DF; margin-right: 6px; }
+    .a13-dtags .a13-btn { margin-left: auto; }
+    .a13-ic .tgs { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 2px; cursor: pointer; }
+    .a13-ic .tgs .a13-cat, .a13-ic .tgs .a13-tag { margin: 0; }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -4852,16 +4915,15 @@
           </select>
           <select class="qc-select" id="qc_service" title="서비스" style="max-width:130px;">
             <option value="">서비스</option>
-            <option value="고객앱">고객앱</option>
-            <option value="선주모바일">선주모바일</option>
-            <option value="비즈페이지">비즈페이지</option>
-            <option value="예약웹">예약웹</option>
-            <option value="쇼핑웹">쇼핑웹</option>
-            <option value="어드민">어드민</option>
-            <option value="샵바이어드민">샵바이어드민</option>
-            <option value="선박예약어드민">선박예약어드민</option>
-            <option value="포인트맵">포인트맵</option>
-            <option value="기타">기타</option>
+            <option value="고객 앱">고객 앱</option>
+            <option value="예약 웹">예약 웹</option>
+            <option value="지도 웹">지도 웹</option>
+            <option value="선주 앱">선주 앱</option>
+            <option value="선주 웹">선주 웹</option>
+            <option value="딸라싸">딸라싸</option>
+            <option value="관리자 어드민">관리자 어드민</option>
+            <option value="업주 어드민">업주 어드민</option>
+            <option value="비즈 파트너스">비즈 파트너스</option>
           </select>
           <button class="qc-submit-btn" id="qc_submitBtn" onclick="quickCaptureSubmit()" disabled>⚡ 빠른 등록</button>
           <button class="qc-more-btn" onclick="createIssue()" title="상세 폼으로 등록">상세 ▸</button>
@@ -5103,6 +5165,22 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.3</span>
+              <span class="rn-version-title">이슈 제목 태그 · 서비스 목록 · 이슈 폴더(공유 링크)</span>
+              <span class="rn-version-date">2026-10-16</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>제목 앞 태그: 빌드 카테고리(앱·새소식·지도·예약·커뮤니티·어드민)는 아이콘 색 배지, 기능 태그('조황·회원조과' 등)는 칩으로 — 카드·목록·예전 이슈 상세 위에 표시</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>태그 편집: 카드·줄의 [#] 버튼 → 카테고리 고르고 태그 체크(바로 저장), 새 태그는 입력 후 Enter로 팀 공용 목록에 추가</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>태그 필터: 카테고리 칩 + [태그 ▾] 체크 목록(시트처럼, 건수·(태그 없음) 포함), 누르는 즉시 적용</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>이슈 폴더: 지금 걸린 필터를 이름 붙여 저장, 폴더마다 공유 링크(#folder=…) — 링크를 연 팀원도 같은 목록, 이름 바꾸기·지금 필터로 바꾸기·삭제</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>서비스 목록: 고객 앱 · 예약 웹 · 지도 웹 · 선주 앱 · 선주 웹 · 딸라싸 · 관리자 어드민 · 업주 어드민 · 비즈 파트너스 (예전 이름이 붙은 이슈는 그대로 두고 필터에서 함께 찾음)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 등록에 빌드 카테고리·서비스·태그 선택, 예전 상세·등록의 빌드 카테고리도 새 목록(기존 값은 '(이전)'으로 유지)</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.2</span>
               <span class="rn-version-title">안건 조회·수정 통일 · 이슈 필터 즉시 적용 · 전체 배포 목록</span>
@@ -6084,7 +6162,7 @@
       qa: 'QA'
     };
 
-    const SERVICE_TYPES = ['고객앱', '선주모바일', '비즈페이지', '예약웹', '쇼핑웹', '어드민', '샵바이어드민', '선박예약어드민', '포인트맵', '기타'];
+    const SERVICE_TYPES = ['고객 앱', '예약 웹', '지도 웹', '선주 앱', '선주 웹', '딸라싸', '관리자 어드민', '업주 어드민', '비즈 파트너스'];
     const SERVICE_COLORS = {
       '고객앱': { bg: '#dbeafe', color: '#1d4ed8' },
       '선주모바일': { bg: '#fce7f3', color: '#be185d' },
@@ -6484,7 +6562,11 @@
 
       /* 0 새 기능 */
       '<div class="s" id="whatsnew">' +
-        '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.2</span></h2>' +
+        '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.3</span></h2>' +
+        '<h3>이슈 제목 태그</h3><p>이슈 제목 앞에 <b>빌드 카테고리</b>(앱·새소식·지도·예약·커뮤니티·어드민) 색 배지와 <b>기능 태그</b>(예: 조황·회원조과, 새소식(홈)·배너·퀵메뉴)가 붙습니다. 카드나 줄의 <span class="sc">#</span> 버튼을 누르면 카테고리를 고르고 태그를 체크할 수 있고, 누를 때마다 바로 저장됩니다. 없는 태그는 입력하고 <span class="sc">Enter</span>를 누르면 팀 공용 목록에 추가됩니다. 이슈 상세 맨 위에도 같은 태그 줄이 있습니다.</p>' +
+        '<p>이슈 화면의 카테고리 칩과 <b>[태그 ▾]</b>(체크 목록, 건수·(태그 없음) 포함)으로 바로 거를 수 있습니다.</p>' +
+        '<h3>이슈 폴더 · 공유 링크</h3><ul><li>필터를 건 뒤 <b>＋ 지금 필터로 폴더 만들기</b> → 이름을 넣으면 폴더가 생기고 공유 링크가 복사됩니다.</li><li>링크를 받은 팀원이 열면(로그인 필요) 같은 필터가 걸린 이슈 목록이 바로 열립니다.</li><li>폴더 옆 <span class="sc">⋯</span>: 공유 링크 복사 · 지금 필터로 바꾸기 · 이름 바꾸기 · 삭제(이슈는 지워지지 않음)</li></ul>' +
+        '<h3>서비스 목록</h3><p>고객 앱 · 예약 웹 · 지도 웹 · 선주 앱 · 선주 웹 · 딸라싸 · 관리자 어드민 · 업주 어드민 · 비즈 파트너스. 예전 이름(고객앱, [예약] 선주모바일 등)이 붙은 이슈는 그대로 두며, 같은 서비스는 필터에서 함께 찾아지고 나머지는 "이전 서비스 이름"에서 고를 수 있습니다.</p>' +
         '<h3>안건 보기 · 고치기</h3><p>간트의 안건 이름, 전체 검색, 알림, 안건 페이지의 [안건 정보] 어디서 열어도 <b>새 안건과 같은 시트</b>가 열립니다. 칸을 바꾸면 그 칸만 바로 저장되고 아래에 "저장됨"이 잠깐 보입니다.</p>' +
         '<ul><li>위쪽 요약: Task 진행 · 열린 이슈 · 다음 배포</li><li>단계 일정의 [+ 담당]으로 단계별 담당자 지정, Task 칸에 한 줄 쓰고 Enter로 추가</li><li>[안건 페이지 열기]로 Task·이슈·배포·활동 전체를 봅니다. 읽기 권한이면 내용만 보입니다.</li></ul>' +
         '<h3>이슈 필터</h3><p>이슈 화면 위 칩(<b>내 이슈 · 내가 검증 · Block · Major · Minor · Trivial</b>)을 누르면 바로 걸리고, 다시 누르면 풀립니다. 심각도는 여러 개 함께 걸 수 있고, 칩 옆 숫자가 건수입니다. 걸어 둔 필터는 다음에 열어도 유지되며 [필터 초기화]로 한 번에 풉니다.</p>' +
@@ -9264,6 +9346,7 @@
       // Format: {ServiceCode}{YYMMDD}-{Serial}
       var serviceCodeMap = {
         '고객앱':'CAP','선주모바일':'CAP','비즈페이지':'BIZ','예약웹':'RSV',
+        '고객 앱':'CAP','예약 웹':'RSV','지도 웹':'PFM','선주 앱':'OWN','선주 웹':'OWW','딸라싸':'TLS','관리자 어드민':'ADM','업주 어드민':'SBA','비즈 파트너스':'BIZ',
         '쇼핑웹':'SHP','어드민':'ADM','샵바이어드민':'SBA','선박예약어드민':'RSA','포인트맵':'PFM','기타':'ISS'
       };
       var selServices = (typeof _getMcValues === 'function') ? _getMcValues('create_serviceTypes') : [];
@@ -9617,7 +9700,7 @@
       ]);
       _addRowToSection(detailSection, [
         { label: '배포환경', id: 'createIssue_environment', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: 'production', l: '운영' }, { v: 'staging', l: '스테이징' }, { v: 'development', l: '개발' }] },
-        { label: '빌드 카테고리', id: 'createIssue_buildCategory', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '앱', l: '앱' }, { v: '커뮤니티', l: '커뮤니티' }, { v: '쇼핑', l: '쇼핑' }, { v: '중고', l: '중고' }, { v: '예약', l: '예약' }, { v: '백오피스', l: '백오피스' }] }
+        { label: '빌드 카테고리', id: 'createIssue_buildCategory', type: 'select', required: false, options: [{ v: '', l: '선택...' }, { v: '앱', l: '앱' }, { v: '새소식', l: '새소식' }, { v: '지도', l: '지도' }, { v: '예약', l: '예약' }, { v: '커뮤니티', l: '커뮤니티' }, { v: '어드민', l: '어드민' }] }
       ]);
       // 프로젝트 (멀티셀렉트) + 서비스 2열
       var rowProjSvc = document.createElement('div');
@@ -12121,7 +12204,7 @@ function _persistIssueFilters() {
       buildCategorySelect.className = 'issue-form-select';
       buildCategorySelect.disabled = !canEdit;
       buildCategorySelect.style.backgroundColor = !canEdit ? '#F3F3F3' : 'white';
-      [{ v: '', l: '선택...' }, { v: '앱', l: '앱' }, { v: '커뮤니티', l: '커뮤니티' }, { v: '쇼핑', l: '쇼핑' }, { v: '중고', l: '중고' }, { v: '예약', l: '예약' }, { v: '백오피스', l: '백오피스' }].forEach(function(o) {
+      [{ v: '', l: '선택...' }, { v: '앱', l: '앱' }, { v: '새소식', l: '새소식' }, { v: '지도', l: '지도' }, { v: '예약', l: '예약' }, { v: '커뮤니티', l: '커뮤니티' }, { v: '어드민', l: '어드민' }].forEach(function(o) {
         var opt = document.createElement('option');
         opt.value = o.v;
         opt.textContent = o.l;
@@ -21185,7 +21268,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.2';
+    var AF_BUILD = 'v13.3';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21224,6 +21307,9 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>이슈 제목 태그</b> — 빌드 카테고리 배지 + 기능 태그, 카드의 [#]로 편집, [태그 ▾]로 거르기</li>' +
+          '<li><b>이슈 폴더</b> — 필터를 폴더로 저장하고 공유 링크로 팀에 전달</li>' +
+          '<li><b>새 서비스 목록</b> — 고객 앱 · 예약 웹 · 지도 웹 · 선주 앱 · 선주 웹 · 딸라싸 · 관리자/업주 어드민 · 비즈 파트너스</li>' +
           '<li><b>안건 조회·수정 = 새 안건과 같은 시트</b> — 간트·검색·알림에서 안건을 열면 같은 화면, 바꾼 칸은 바로 저장</li>' +
           '<li><b>안건 페이지</b> — 티어·상태·서비스도 같은 칩으로</li>' +
           '<li><b>이슈 필터 칩</b> — 내 이슈·내가 검증·Block/Major/Minor/Trivial을 누르면 바로 적용, 다음에도 유지</li>' +
@@ -21852,7 +21938,7 @@ function renderNotifList() {
     var sev = o.severity || 'Minor';
     var iss = { id: genIssueId(svc), title: title, type: 'Bug', severity: sev, priority: sev === 'Block' ? '0' : sev === 'Major' ? '1' : sev === 'Minor' ? '2' : '3', status: '등록',
       projectIds: p ? [p.id] : [], projectId: p ? p.id : '', serviceTypes: svc ? [svc] : [], serviceType: svc, platforms: [], platform: '',
-      assignees: asg, assignee: asg[0] || '', references: [], relatedIssues: [], environment: o.env || '', taskId: task ? task.id : '',
+      assignees: asg, assignee: asg[0] || '', references: [], relatedIssues: [], environment: o.env || '', taskId: task ? task.id : '', buildCategory: o.buildCategory || '', tags: arr(o.tags),
       reporter: (state.currentUser && (state.currentUser.displayName || state.currentUser.email)) || '', created: iso(), updated: iso(), comments: [], attachments: [] };
     saveIssueData(iss);
     return iss;
@@ -21985,7 +22071,10 @@ function renderNotifList() {
     if (kind === 'task') html = '<h3>Task 추가</h3><div class="f"><span>안건</span><select class="a13-input pid">' + projOptions(cur) + '</select></div><div class="f"><span>할 일 (여러 줄이면 여러 개)</span><textarea class="a13-input ti" placeholder="결제 API 연동 @정지섭 ~10/24 #BE&#10;QA 시나리오 작성 @김채린 ~10/28 #QA"></textarea></div><p style="font-size:12px;color:#919191;margin:0 0 6px">@이름 담당자 · ~10/24 마감 (~10/20-10/24 기간) · #기획 #디자인 #FE #BE #QA 단계</p>';
     if (kind === 'issue') {
       var tasksOpt = function(pid) { var p = proj(pid); return '<option value="">연결 안 함</option>' + (p ? arr(p.tasks).map(function(t) { return '<option value="' + esc(t.id) + '"' + (t.id === o.taskId ? ' selected' : '') + '>' + esc(t.title) + '</option>'; }).join('') : ''); };
-      html = '<h3>이슈 등록</h3><div class="f"><span>안건</span><select class="a13-input pid"><option value="">안건 없음</option>' + projOptions(o.pid || cur) + '</select></div><div class="f"><span>제목</span><input class="a13-input ti" placeholder="무엇이 잘못됐나요?"></div><div class="f"><span>심각도</span>' + sevSeg('Minor') + '</div><div class="f"><span>관련 Task</span><select class="a13-input tk">' + tasksOpt(o.pid || cur) + '</select></div>';
+      html = '<h3>이슈 등록</h3><div class="f"><span>안건</span><select class="a13-input pid"><option value="">안건 없음</option>' + projOptions(o.pid || cur) + '</select></div><div class="f"><span>제목</span><input class="a13-input ti" placeholder="무엇이 잘못됐나요?"></div><div class="f"><span>심각도</span>' + sevSeg('Minor') + '</div>' +
+        '<div class="f"><span>빌드 카테고리</span><div class="a13-catpick">' + BUILD_CATS.map(function(c) { return '<button type="button" data-c="' + esc(c[0]) + '">' + catBadge(c[0]) + '</button>'; }).join('') + '</div></div>' +
+        '<div class="f"><span>서비스</span><select class="a13-input svc"><option value="">선택 안 함</option>' + NEW_SERVICES.map(function(s) { return '<option>' + esc(s) + '</option>'; }).join('') + '</select></div>' +
+        '<div class="f"><span>태그 <em style="font-style:normal;color:#AAAAAA;font-weight:500">여러 개 · 새 태그는 등록 후 # 버튼에서</em></span><div class="a13-tagpick">' + tagList().map(function(t) { return '<button type="button" data-t="' + esc(t.name) + '">' + esc(t.name) + '</button>'; }).join('') + '</div></div>' + '<div class="f"><span>관련 Task</span><select class="a13-input tk">' + tasksOpt(o.pid || cur) + '</select></div>';
       A._tasksOpt = tasksOpt;
     }
     if (kind === 'bundle') html = '<h3>배포 만들기</h3><div class="f"><span>이름</span><input class="a13-input ti" placeholder="예: 10월 4주차 정기 배포"></div><div class="f"><span>목표일</span><input type="date" class="a13-input dt"></div><p style="font-size:12px;color:#919191;margin:0 0 6px">만든 뒤 배포 화면에서 후보를 체크하거나 끌어다 담습니다.</p>';
@@ -21996,13 +22085,17 @@ function renderNotifList() {
     var close = function() { bg.remove(); };
     bg.addEventListener('mousedown', function(e) { if (e.target === bg) close(); });
     sh.querySelector('.x').onclick = close;
-    if (kind === 'issue') sh.querySelector('.pid').onchange = function() { sh.querySelector('.tk').innerHTML = A._tasksOpt(this.value); };
+    if (kind === 'issue') {
+      sh.querySelector('.pid').onchange = function() { sh.querySelector('.tk').innerHTML = A._tasksOpt(this.value); };
+      sh.querySelectorAll('.a13-catpick button').forEach(function(b) { b.onclick = function() { var on = !b.classList.contains('on'); sh.querySelectorAll('.a13-catpick button').forEach(function(x) { x.classList.remove('on'); }); b.classList.toggle('on', on); }; });
+      sh.querySelectorAll('.a13-tagpick button').forEach(function(b) { b.onclick = function() { b.classList.toggle('on'); }; });
+    }
     var submit = function() {
       var ti = sh.querySelector('.ti').value;
       if (!String(ti).trim()) { sh.querySelector('.ti').focus(); return; }
       if (kind === 'project') { var p = A.createProject(ti, sh.querySelector('.tier').value); if (p) { close(); toast(p.id + ' 안건을 만들었습니다'); A.go('a13project', p.id); } }
       if (kind === 'task') { var pid = sh.querySelector('.pid').value; var n = A.addTasks(pid, ti); if (n) { close(); A.render(true); } }
-      if (kind === 'issue') { var iss = A.createIssue({ title: ti, pid: sh.querySelector('.pid').value, severity: segVal(sh), taskId: sh.querySelector('.tk').value }); if (iss) { close(); toast(iss.id + ' 등록'); A.render(true); } }
+      if (kind === 'issue') { var cb = sh.querySelector('.a13-catpick button.on'); var iss = A.createIssue({ title: ti, pid: sh.querySelector('.pid').value, severity: segVal(sh), taskId: sh.querySelector('.tk').value, service: sh.querySelector('.svc').value, buildCategory: cb ? cb.dataset.c : '', tags: [].slice.call(sh.querySelectorAll('.a13-tagpick button.on')).map(function(b) { return b.dataset.t; }) }); if (iss) { close(); toast(iss.id + ' 등록'); A.render(true); } }
       if (kind === 'bundle') { var b = A.createBundle(ti, sh.querySelector('.dt').value); if (b) { close(); toast('배포를 만들었습니다'); A.go('a13deploy'); } }
     };
     sh.querySelector('.ok').onclick = submit;
@@ -22047,9 +22140,9 @@ function renderNotifList() {
     return '<div class="a13-li">' +
       (opts.select && canW() ? '<input type="checkbox"' + (sel ? ' checked' : '') + ' onclick="event.stopPropagation()" onchange="AF13.selIssue(\'' + q(i.id) + '\',this.checked)">' : '') +
       (opts.kind ? '<span class="a13-kind issue">이슈</span>' : '') + sevB(i.severity) +
-      '<div class="m" onclick="AF13.openIssue(\'' + q(i.id) + '\')"><div class="t">' + esc(i.title || i.id) + '</div>' +
+      '<div class="m" onclick="AF13.openIssue(\'' + q(i.id) + '\')"><div class="t">' + A._titleTags(i) + esc(i.title || i.id) + '</div>' +
       '<div class="s"><span>' + esc(i.id) + '</span>' + (p && !opts.noProj ? '<span class="a13-pid">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '</div></div>' +
-      avs(issueAssignees(i)) + ddH(i.deadline, i.status === '완료') + pill(i.status, ST_C[i.status] || '#767676') + nextBtns(i) + '</div>';
+      (canW() ? '<button type="button" class="a13-tagbtn" title="태그" aria-label="태그 편집" onclick="event.stopPropagation();AF13.tagPick(event,\'' + q(i.id) + '\')">#</button>' : '') + avs(issueAssignees(i)) + ddH(i.deadline, i.status === '완료') + pill(i.status, ST_C[i.status] || '#767676') + nextBtns(i) + '</div>';
   }
   A.openIssue = function(id) { try { openIssueDetail(id); } catch (e) { console.warn(e); } };
   function renderWork(el) {
@@ -22259,10 +22352,11 @@ function renderNotifList() {
   A.selIssue = function(id, on) { if (on) A.sel[id] = 1; else delete A.sel[id]; A.renderBulk(); var c = document.querySelector('.a13-ic[data-id="' + id + '"]'); if (c) c.classList.toggle('sel', !!on); };
   try { var _sf = JSON.parse(localStorage.getItem('a13_if') || 'null'); if (_sf) ['view', 'mine', 'verify', 'pid', 'sevs', 'svc'].forEach(function(k) { if (_sf[k] != null) A.ui.if[k] = _sf[k]; }); } catch (e) {}
   if (!Array.isArray(A.ui.if.sevs)) A.ui.if.sevs = [];
-  function saveIf() { try { var f = A.ui.if; localStorage.setItem('a13_if', JSON.stringify({ view: f.view, mine: f.mine, verify: f.verify, pid: f.pid, sevs: f.sevs, svc: f.svc })); } catch (e) {} }
+  function saveIf() { try { var f = A.ui.if; localStorage.setItem('a13_if', JSON.stringify({ view: f.view, mine: f.mine, verify: f.verify, pid: f.pid, sevs: f.sevs, svc: f.svc, cats: f.cats || [], tags: f.tags || [], folder: f.folder || '' })); } catch (e) {} }
+  A._saveIf = saveIf;
   A.ifSet = function(k, v) { var f = A.ui.if; f[k] = v; if (k === 'mine' && v) f.verify = false; if (k === 'verify' && v) f.mine = false; saveIf(); A.render(true); };
   A.ifSev = function(s) { var a = A.ui.if.sevs, i = a.indexOf(s); if (i === -1) a.push(s); else a.splice(i, 1); A.ui.if.sev = ''; saveIf(); A.render(true); };
-  A.ifReset = function() { var f = A.ui.if; f.mine = false; f.verify = false; f.pid = ''; f.sev = ''; f.sevs = []; f.svc = ''; f.q = ''; saveIf(); A.render(true); };
+  A.ifReset = function() { var f = A.ui.if; f.mine = false; f.verify = false; f.pid = ''; f.sev = ''; f.sevs = []; f.svc = ''; f.q = ''; f.cats = []; f.tags = []; f.folder = ''; saveIf(); A.render(true); };
   function issueSvcs(i) { var a = arr(i.serviceTypes).slice(); if (i.serviceType && a.indexOf(i.serviceType) === -1) a.push(i.serviceType); return a; }
   function filteredIssues(skip) {
     var f = A.ui.if, id = me(); skip = skip || {};
@@ -22273,7 +22367,9 @@ function renderNotifList() {
       if (f.pid && projIdsOf(i).indexOf(f.pid) === -1) return false;
       if (!skip.sev && f.sev && i.severity !== f.sev) return false;
       if (!skip.sev && f.sevs && f.sevs.length && f.sevs.indexOf(i.severity) === -1) return false;
-      if (f.svc && issueSvcs(i).indexOf(f.svc) === -1) return false;
+      if (f.svc && !A._svcMatch(i, f.svc)) return false;
+      if (!skip.cat && f.cats && f.cats.length && f.cats.indexOf(i.buildCategory || '') === -1) return false;
+      if (!skip.tags && f.tags && f.tags.length) { var it = arr(i.tags); if (!f.tags.some(function(t) { return t === '__none' ? !it.length : it.indexOf(t) !== -1; })) return false; }
       if (f.q && ((i.id || '') + ' ' + (i.title || '')).toLowerCase().indexOf(f.q.toLowerCase()) === -1) return false;
       return true;
     });
@@ -22282,7 +22378,8 @@ function renderNotifList() {
     var b = bundleOfIssue(i.id), pids = projIdsOf(i), p = pids[0] ? proj(pids[0]) : null;
     var t = i.taskId && p ? findTask(p.id, i.taskId) : null;
     return '<div class="a13-ic' + (A.sel[i.id] ? ' sel' : '') + '" draggable="' + (canW() ? 'true' : 'false') + '" data-id="' + esc(i.id) + '" ondragstart="event.dataTransfer.setData(\'text/plain\',\'issue:' + q(i.id) + '\')">' +
-      '<div class="top">' + sevB(i.severity) + '<span class="id">' + esc(i.id) + '</span>' + (canW() ? '<input type="checkbox"' + (A.sel[i.id] ? ' checked' : '') + ' onchange="AF13.selIssue(\'' + q(i.id) + '\',this.checked)" aria-label="선택">' : '') + '</div>' +
+      '<div class="top">' + sevB(i.severity) + '<span class="id">' + esc(i.id) + '</span>' + (canW() ? '<button type="button" class="a13-tagbtn" title="태그" aria-label="태그 편집" onclick="AF13.tagPick(event,\'' + q(i.id) + '\')">#</button><input type="checkbox"' + (A.sel[i.id] ? ' checked' : '') + ' onchange="AF13.selIssue(\'' + q(i.id) + '\',this.checked)" aria-label="선택">' : '') + '</div>' +
+      (A._titleTags(i) ? '<div class="tgs" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + A._titleTags(i) + '</div>' : '') +
       '<div class="tt" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + esc(i.title || i.id) + '</div>' +
       '<div class="bt">' + (p ? '<span class="a13-pid" style="cursor:pointer" onclick="event.stopPropagation();AF13.go(\'a13project\',\'' + q(p.id) + '\')">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '<span style="margin-left:auto">' + avs(issueAssignees(i)) + '</span></div>' +
       (issueNext(i).length && canW() ? '<div class="bt">' + nextBtns(i) + '</div>' : '') + '</div>';
@@ -22293,6 +22390,7 @@ function renderNotifList() {
     var h = '<div class="a13-ph"><div><h1>이슈</h1><p>보드에서 카드를 끌어 상태를 바꾸거나, 카드의 다음 단계 버튼을 누르세요</p></div><div class="a13-row">' + (canW() ? '<button class="a13-btn pri" onclick="AF13.sheet(\'issue\',{})">＋ 이슈 등록</button>' : '') + '</div></div>';
     if (canW()) h += '<div class="a13-round"><b style="font-size:13px;color:#6433DF">QA 라운드</b><select class="a13-input" id="a13RoundP" onchange="try{localStorage.setItem(\'a13_round_pid\',this.value)}catch(e){}"><option value="">안건 선택</option>' + projOptions(rp) + '</select>' + sevSeg('Minor') +
       '<input class="a13-input ttl" id="a13RoundT" placeholder="제목 입력 후 Enter로 연속 등록 · Alt+1~4 심각도" onkeydown="AF13.roundKey(event)"><span class="a13-hint" id="a13RoundN"></span></div>';
+    h += A._folderBarH();
     h += '<div class="a13-toolbar"><span class="a13-seg">' + [['board', '보드'], ['list', '목록']].map(function(x) { return '<button class="' + (f.view === x[0] ? 'on' : '') + '" onclick="AF13.ifSet(\'view\',\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</span>' +
       (function() {
         var cs = {}; filteredIssues({ sev: 1 }).forEach(function(i) { cs[i.severity] = (cs[i.severity] || 0) + 1; });
@@ -22302,11 +22400,14 @@ function renderNotifList() {
         var svcs = (typeof _getServiceTypes === 'function') ? _getServiceTypes() : [];
         return '<span class="a13-fchips">' + chip('내 이슈', f.mine, nMine, 'AF13.ifSet(\'mine\',' + !f.mine + ')') + chip('내가 검증', f.verify, nVer, 'AF13.ifSet(\'verify\',' + !f.verify + ')') + '<i class="sep"></i>' +
           ['Block', 'Major', 'Minor', 'Trivial'].map(function(s) { return chip(s, f.sevs.indexOf(s) !== -1 || f.sev === s, cs[s] || 0, 'AF13.ifSev(\'' + s + '\')', SEV[s][1]); }).join('') + '</span>' +
+          (function() { var cc = {}; filteredIssues({ cat: 1 }).forEach(function(i) { cc[i.buildCategory || ''] = (cc[i.buildCategory || ''] || 0) + 1; });
+            return '<span class="a13-fchips cats">' + BUILD_CATS.map(function(c) { var on = f.cats.indexOf(c[0]) !== -1; return '<button type="button" class="a13-fchip cat' + (on ? ' on' : '') + '" aria-pressed="' + on + '" style="--c:' + c[1] + '" onclick="AF13.ifCat(\'' + c[0] + '\')">' + (CAT_ICON[c[0]] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + CAT_ICON[c[0]] + '</svg>' : '') + c[0] + ' <span>' + (cc[c[0]] || 0) + '</span></button>'; }).join('') +
+              '<button type="button" class="a13-fchip' + (f.tags.length ? ' on' : '') + '" onclick="AF13.ifTagPop(event)">태그' + (f.tags.length ? ' ' + f.tags.length : '') + ' ▾</button></span>'; })() +
           '<select class="a13-input' + (f.pid ? ' on' : '') + '" onchange="AF13.ifSet(\'pid\',this.value)" aria-label="안건"><option value="">모든 안건</option>' + projOptions(f.pid) + '</select>' +
-          '<select class="a13-input' + (f.svc ? ' on' : '') + '" onchange="AF13.ifSet(\'svc\',this.value)" aria-label="서비스"><option value="">모든 서비스</option>' + svcs.map(function(s) { return '<option' + (f.svc === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</select>';
+          '<select class="a13-input' + (f.svc ? ' on' : '') + '" onchange="AF13.ifSet(\'svc\',this.value)" aria-label="서비스">' + A._svcOptionsH(f.svc) + '</select>';
       })() +
       '<input class="a13-input" placeholder="검색" value="' + esc(f.q) + '" oninput="AF13.ui.if.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13issues .a13-toolbar input[placeholder=검색]\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},250)" style="width:170px">' +
-      ((f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q) ? '<button class="a13-btn sm ghost" onclick="AF13.ifReset()">필터 초기화</button>' : '') +
+      ((f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || f.cats.length || f.tags.length) ? '<button class="a13-btn sm ghost" onclick="AF13.ifReset()">필터 초기화</button>' : '') +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '건</span></div>';
     if (f.view === 'board') {
       var cut = Date.now() - 14 * 864e5;
@@ -22464,7 +22565,7 @@ function renderNotifList() {
     try {
       // 길이만 비교하면 '대기→진행'처럼 글자 수가 같은 변경을 놓치므로 내용 해시로 비교
       return state.projects.length + '|' + hsh(JSON.stringify(state.projects.map(function(p) { return [p.id, p.name, p.status, p.tier, p.deployDate, p.pm, p.phases, p.assignments, p.tasks, p.memo, p.desc, p.rationale, p.links, p.serviceTypes]; }))) + '|' +
-        hsh((_issues || []).map(function(i) { return i.id + i.status + (i.updated || '') + (i.severity || '') + (i.taskId || '') + (i.verifier || ''); }).join(',')) + '|' + (_issues || []).length + '|' +
+        hsh((_issues || []).map(function(i) { return i.id + i.status + (i.updated || '') + (i.severity || '') + (i.taskId || '') + (i.verifier || '') + (i.buildCategory || '') + arr(i.tags).join('|'); }).join(',')) + '|' + hsh(JSON.stringify(A.folders || {}) + JSON.stringify(A.tagDefs || {})) + '|' + (_issues || []).length + '|' +
         JSON.stringify((_deployBundles || []).map(function(b) { return [b.id, b.status, b.title, b.targetDate, b.issues, b.tasks, b.checklist]; })) + '|' + me();
     } catch (e) { return Math.random(); }
   }
@@ -22971,6 +23072,244 @@ function renderNotifList() {
     };
   }
 
+  /* ═══ v13.3: 이슈 제목 태그 · 서비스 목록 · 이슈 폴더 ═══
+   * 데이터: issue.buildCategory(기존 필드 그대로) · issue.tags(새 필드, 이름 배열)
+   *         settings/issueTags/{key} = {name, cat, created} · settings/issueFolders/{id} = {name, f, createdBy, created, updated}
+   * 기존 값(쇼핑·중고·백오피스, 예전 서비스 이름)은 바꾸거나 지우지 않음 */
+  var CAT_ICON = {
+    '앱': '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+    '새소식': '<path d="M4 11v2a1 1 0 0 0 1 1h2l5 4V6L7 10H5a1 1 0 0 0-1 1z"/><path d="M16 9a3 3 0 0 1 0 6"/>',
+    '지도': '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    '예약': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    '커뮤니티': '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>',
+    '어드민': '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+  };
+  var BUILD_CATS = [['앱', '#6433DF'], ['새소식', '#E8590C'], ['지도', '#0E9F6E'], ['예약', '#2563EB'], ['커뮤니티', '#DB2777'], ['어드민', '#475569']];
+  var CAT_C = {}; BUILD_CATS.forEach(function(c) { CAT_C[c[0]] = c[1]; });
+  var NEW_SERVICES = ['고객 앱', '예약 웹', '지도 웹', '선주 앱', '선주 웹', '딸라싸', '관리자 어드민', '업주 어드민', '비즈 파트너스'];
+  // 필터에서만 쓰는 같은 서비스의 예전 이름 (데이터는 그대로 둠)
+  var SVC_ALIAS = { '고객 앱': ['고객앱'], '예약 웹': ['[예약] 고객웹', '예약웹'], '지도 웹': ['[포인트맵] 고객웹', '포인트맵'], '선주 앱': ['[예약] 선주모바일', '선주모바일'], '비즈 파트너스': ['[비즈] 파트너스페이지', '비즈페이지'] };
+  Object.assign(CODE, { '고객 앱': 'CAP', '예약 웹': 'RSV', '지도 웹': 'PFM', '선주 앱': 'OWN', '선주 웹': 'OWW', '딸라싸': 'TLS', '관리자 어드민': 'ADM', '업주 어드민': 'SBA', '비즈 파트너스': 'BIZ' });
+  var DEFAULT_TAGS = ['조황·회원조과', '새소식(홈)·배너·퀵메뉴'];
+  A.tagDefs = {}; A.folders = {};
+  function catBadge(c, small) {
+    if (!c) return '';
+    var col = CAT_C[c] || '#919191', ic = CAT_ICON[c];
+    return '<span class="a13-cat' + (small ? ' sm' : '') + '" style="--c:' + col + '" title="빌드 카테고리: ' + esc(c) + '">' + (ic ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + ic + '</svg>' : '') + esc(c) + '</span>';
+  }
+  function tagList() {
+    var seen = {}, out = [];
+    var add = function(n, cat) { n = String(n || '').trim(); if (!n || seen[n]) return; seen[n] = 1; out.push({ name: n, cat: cat || '' }); };
+    Object.keys(A.tagDefs).sort(function(a, b) { return String(A.tagDefs[a].created || '').localeCompare(String(A.tagDefs[b].created || '')); }).forEach(function(k) { var t = A.tagDefs[k]; if (t && !t.hidden) add(t.name, t.cat); });
+    DEFAULT_TAGS.forEach(function(n) { add(n); });
+    (_issues || []).forEach(function(i) { arr(i && i.tags).forEach(function(n) { add(n); }); });
+    return out;
+  }
+  A.tagList = tagList;
+  function titleTags(i) {
+    var tg = arr(i.tags);
+    return (i.buildCategory ? catBadge(i.buildCategory, true) : '') + tg.slice(0, 2).map(function(n) { return '<span class="a13-tag">' + esc(n) + '</span>'; }).join('') + (tg.length > 2 ? '<span class="a13-tag more">+' + (tg.length - 2) + '</span>' : '');
+  }
+  A._titleTags = titleTags;
+  function svcMatch(i, s) { var have = issueSvcs(i); if (have.indexOf(s) !== -1) return true; return (SVC_ALIAS[s] || []).some(function(a) { return have.indexOf(a) !== -1; }); }
+  A._svcMatch = svcMatch;
+  function svcOptionsH(cur) {
+    var used = {}; (_issues || []).forEach(function(i) { issueSvcs(i).forEach(function(s) { used[s] = 1; }); });
+    var aliased = {}; Object.keys(SVC_ALIAS).forEach(function(k) { SVC_ALIAS[k].forEach(function(a) { aliased[a] = 1; }); });
+    var legacy = Object.keys(used).filter(function(s) { return NEW_SERVICES.indexOf(s) === -1 && !aliased[s]; }).sort();
+    return '<option value="">모든 서비스</option>' + NEW_SERVICES.map(function(s) { return '<option' + (cur === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') +
+      (legacy.length ? '<optgroup label="이전 서비스 이름">' + legacy.map(function(s) { return '<option value="' + esc(s) + '"' + (cur === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</optgroup>' : '');
+  }
+  A._svcOptionsH = svcOptionsH;
+
+  /* 태그 저장: 이슈는 saveIssueData(바꾼 칸만 저장), 태그 목록은 settings/issueTags/{key} 한 건씩 */
+  A.addTagDef = function(name, cat) {
+    name = String(name || '').trim().slice(0, 40); if (!name || !needW()) return '';
+    if (tagList().some(function(t) { return t.name === name; })) return name;
+    var key = 't' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
+    var o = { name: name, cat: cat || '', created: iso(), createdBy: (state.currentUser && state.currentUser.email) || '' };
+    A.tagDefs[key] = o;
+    try { if (_fb.db) dbRef('settings/issueTags/' + key).set(o); } catch (e) { toast('태그 저장 실패: ' + e.message, 'error'); }
+    return name;
+  };
+  A.setIssueTags = function(id, patch) {
+    if (!needW()) return;
+    var i = (_issues || []).find(function(x) { return x.id === id; }); if (!i) return;
+    var ch = false;
+    if ('buildCategory' in patch && (i.buildCategory || '') !== (patch.buildCategory || '')) { i.buildCategory = patch.buildCategory || ''; ch = true; }
+    if ('tags' in patch && JSON.stringify(arr(i.tags)) !== JSON.stringify(patch.tags)) { i.tags = patch.tags.slice(); ch = true; }
+    if (!ch) return;
+    // 예전 이슈 상세가 열려 있으면 그쪽 저장이 태그를 되돌리지 않도록 기준값도 맞춤
+    try { if (window._afIssueOrig && window._afIssueOrig.id === id) { if ('buildCategory' in patch) window._afIssueOrig.buildCategory = i.buildCategory; if ('tags' in patch) window._afIssueOrig.tags = arr(i.tags).slice(); } var sel = document.getElementById('issueDetail_buildCategory'); if (sel && _currentIssueId === id && 'buildCategory' in patch) { A._ensureCatOption(sel, i.buildCategory); sel.value = i.buildCategory; } } catch (e) {}
+    i.updated = iso();
+    saveIssueData(i);
+    A.render(true);
+    try { A._refreshDetailTags && A._refreshDetailTags(); } catch (e) {}
+  };
+  A._ensureCatOption = function(sel, v) { if (v && ![].slice.call(sel.options).some(function(o) { return o.value === v; })) { var o = document.createElement('option'); o.value = v; o.textContent = v + ' (이전)'; sel.appendChild(o); } };
+  // 태그 고르기 (이슈 하나) — 누를 때마다 바로 저장
+  A.tagPick = function(ev, id) {
+    var i = (_issues || []).find(function(x) { return x.id === id; }); if (!i) return;
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var cw = canW();
+    var draw = function(filter) {
+      var cur = arr(i.tags), list = tagList(), fq = (filter || '').trim();
+      var shown = list.filter(function(t) { return !fq || t.name.toLowerCase().indexOf(fq.toLowerCase()) !== -1; });
+      return '<div class="a13-tp"><div class="h">빌드 카테고리</div><div class="cats">' + BUILD_CATS.map(function(c) { return '<button type="button" class="cb' + (i.buildCategory === c[0] ? ' on' : '') + '" data-c="' + esc(c[0]) + '"' + (cw ? '' : ' disabled') + '>' + catBadge(c[0]) + '</button>'; }).join('') +
+        (i.buildCategory && !CAT_C[i.buildCategory] ? '<button type="button" class="cb on" data-c="' + esc(i.buildCategory) + '" disabled>' + catBadge(i.buildCategory) + '</button>' : '') +
+        '<button type="button" class="cb none' + (!i.buildCategory ? ' on' : '') + '" data-c=""' + (cw ? '' : ' disabled') + '>없음</button></div>' +
+        '<div class="h">태그 <small>여러 개 선택</small></div>' + (cw ? '<input class="a13-input tq" placeholder="찾기 또는 새 태그 입력 후 Enter" value="' + esc(fq) + '">' : '') +
+        '<div class="tl">' + shown.map(function(t) { var on = cur.indexOf(t.name) !== -1; return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" data-t="' + esc(t.name) + '"' + (on ? ' checked' : '') + (cw ? '' : ' disabled') + '>' + (t.cat ? catBadge(t.cat, true) : '') + '<span>' + esc(t.name) + '</span></label>'; }).join('') +
+        (fq && cw && !list.some(function(t) { return t.name === fq; }) ? '<button type="button" class="new">＋ "' + esc(fq) + '" 새 태그로 추가</button>' : '') + (!shown.length && !fq ? '<div class="a13-hint">태그가 없습니다</div>' : '') + '</div></div>';
+    };
+    var pop = openPop(ev, draw(''));
+    var wire = function() {
+      pop.querySelectorAll('.cb').forEach(function(b) { b.onclick = function() { A.setIssueTags(id, { buildCategory: b.dataset.c }); i = (_issues || []).find(function(x) { return x.id === id; }) || i; pop.innerHTML = draw(q2()); wire(); }; });
+      pop.querySelectorAll('input[type=checkbox][data-t]').forEach(function(c) { c.onchange = function() { var cur = arr(i.tags).slice(), n = c.dataset.t, k = cur.indexOf(n); if (c.checked && k === -1) cur.push(n); if (!c.checked && k !== -1) cur.splice(k, 1); A.setIssueTags(id, { tags: cur }); c.parentNode.classList.toggle('on', c.checked); }; });
+      var addNew = function(n) { n = A.addTagDef(n); if (!n) return; var cur = arr(i.tags).slice(); if (cur.indexOf(n) === -1) cur.push(n); A.setIssueTags(id, { tags: cur }); pop.innerHTML = draw(''); wire(); var t = pop.querySelector('.tq'); if (t) t.focus(); };
+      var nb = pop.querySelector('.new'); if (nb) nb.onclick = function() { addNew(q2()); };
+      var tq = pop.querySelector('.tq');
+      if (tq) {
+        tq.oninput = function() { var v = tq.value, pos = tq.selectionStart; pop.innerHTML = draw(v); wire(); var t = pop.querySelector('.tq'); t.focus(); t.setSelectionRange(pos, pos); };
+        tq.onkeydown = function(e) { if (e.key === 'Enter' && !(e.isComposing || e.keyCode === 229)) { e.preventDefault(); var v = tq.value.trim(); if (!v) return; var ex = tagList().find(function(t) { return t.name === v; }); if (ex) { var cur = arr(i.tags).slice(); if (cur.indexOf(v) === -1) { cur.push(v); A.setIssueTags(id, { tags: cur }); } pop.innerHTML = draw(''); wire(); } else addNew(v); } };
+      }
+    };
+    var q2 = function() { var t = pop.querySelector('.tq'); return t ? t.value : ''; };
+    wire();
+  };
+
+  /* 필터: 빌드 카테고리 칩 + 태그(시트처럼 체크 목록) */
+  if (!Array.isArray(A.ui.if.cats)) A.ui.if.cats = [];
+  if (!Array.isArray(A.ui.if.tags)) A.ui.if.tags = [];
+  try { var _sf2 = JSON.parse(localStorage.getItem('a13_if') || 'null'); if (_sf2) { if (Array.isArray(_sf2.cats)) A.ui.if.cats = _sf2.cats; if (Array.isArray(_sf2.tags)) A.ui.if.tags = _sf2.tags; if (_sf2.folder) A.ui.if.folder = _sf2.folder; } } catch (e) {}
+  A.ifCat = function(c) { var a = A.ui.if.cats, k = a.indexOf(c); if (k === -1) a.push(c); else a.splice(k, 1); A._saveIf(); A.render(true); };
+  A.ifTagPop = function(ev) {
+    var f = A.ui.if;
+    var counts = {}, none = 0; filteredIssues({ tags: 1 }).forEach(function(i) { var t = arr(i.tags); if (!t.length) none++; t.forEach(function(n) { counts[n] = (counts[n] || 0) + 1; }); });
+    var draw = function(fq) {
+      var list = tagList().filter(function(t) { return !fq || t.name.toLowerCase().indexOf(fq.toLowerCase()) !== -1; });
+      return '<div class="a13-tp"><div class="h">태그로 거르기 <small>하나라도 붙은 이슈</small></div><input class="a13-input tq" placeholder="태그 찾기" value="' + esc(fq || '') + '">' +
+        '<div class="tl"><label class="' + (f.tags.indexOf('__none') !== -1 ? 'on' : '') + '"><input type="checkbox" data-t="__none"' + (f.tags.indexOf('__none') !== -1 ? ' checked' : '') + '><span>(태그 없음)</span><em>' + none + '</em></label>' +
+        list.map(function(t) { var on = f.tags.indexOf(t.name) !== -1; return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" data-t="' + esc(t.name) + '"' + (on ? ' checked' : '') + '>' + (t.cat ? catBadge(t.cat, true) : '') + '<span>' + esc(t.name) + '</span><em>' + (counts[t.name] || 0) + '</em></label>'; }).join('') + '</div>' +
+        '<div class="ft"><button type="button" class="a13-btn sm ghost clr">선택 해제</button></div></div>';
+    };
+    var pop = openPop(ev, draw(''));
+    var wire = function() {
+      pop.querySelectorAll('input[type=checkbox]').forEach(function(c) { c.onchange = function() { var n = c.dataset.t, k = f.tags.indexOf(n); if (c.checked && k === -1) f.tags.push(n); if (!c.checked && k !== -1) f.tags.splice(k, 1); c.parentNode.classList.toggle('on', c.checked); A._saveIf(); A._renderKeepPop(); }; });
+      pop.querySelector('.clr').onclick = function() { f.tags = []; A._saveIf(); pop.innerHTML = draw(''); wire(); A._renderKeepPop(); };
+      var tq = pop.querySelector('.tq'); tq.oninput = function() { var v = tq.value; pop.innerHTML = draw(v); wire(); var t = pop.querySelector('.tq'); t.focus(); t.setSelectionRange(v.length, v.length); };
+    };
+    wire();
+  };
+  // 팝업을 연 채로 목록만 다시 그림 (체크할 때마다 바로 적용)
+  A._renderKeepPop = function() {
+    var pop = document.getElementById('a13Pop'); if (pop) pop.remove();
+    A.render(true);
+    if (pop) { document.body.appendChild(pop); }
+  };
+
+  /* ── 이슈 폴더: 필터를 이름 붙여 저장, 폴더마다 공유 링크 ── */
+  var FKEYS = ['mine', 'verify', 'pid', 'sevs', 'svc', 'cats', 'tags', 'q', 'view'];
+  function curF() { var f = A.ui.if, o = {}; FKEYS.forEach(function(k) { var v = f[k]; if (Array.isArray(v)) { if (v.length) o[k] = v.slice(); } else if (v) o[k] = v; }); return o; }
+  function sameF(a, b) { var n = function(o) { var x = {}; FKEYS.forEach(function(k) { if (k === 'view') return; var v = o && o[k]; if (Array.isArray(v) ? v.length : v) x[k] = Array.isArray(v) ? v.slice().sort() : v; }); return JSON.stringify(x); }; return n(a) === n(b); }
+  A.folderLink = function(id) { return location.origin + location.pathname + '#folder=' + encodeURIComponent(id); };
+  A.applyFolder = function(id) {
+    var fo = A.folders[id]; var f = A.ui.if;
+    if (!id || !fo) { f.folder = ''; A._saveIf(); A.render(true); return; }
+    FKEYS.forEach(function(k) { f[k] = Array.isArray(f[k]) ? [] : (k === 'view' ? f.view : (typeof f[k] === 'boolean' ? false : '')); });
+    f.sev = '';
+    var src = fo.f || {};
+    FKEYS.forEach(function(k) { if (src[k] != null) f[k] = Array.isArray(src[k]) ? arr(src[k]).slice() : src[k]; });
+    ['sevs', 'cats', 'tags'].forEach(function(k) { if (!Array.isArray(f[k])) f[k] = arr(f[k]); });
+    f.folder = id; A._saveIf(); A.render(true);
+  };
+  A.saveFolder = function() {
+    if (!needW()) return;
+    var name = prompt('폴더 이름 (지금 걸린 필터를 저장합니다)', ''); if (name === null) return; name = name.trim().slice(0, 40); if (!name) { toast('이름이 필요합니다', 'error'); return; }
+    var id = 'F' + Date.now().toString(36) + Math.random().toString(36).substr(2, 3);
+    var o = { id: id, name: name, f: curF(), created: iso(), updated: iso(), createdBy: (state.currentUser && (state.currentUser.displayName || state.currentUser.email)) || '' };
+    A.folders[id] = o; A.ui.if.folder = id; A._saveIf(); A.render(true);
+    if (_fb.db) dbRef('settings/issueFolders/' + id).transaction(function(cur) { return cur ? undefined : o; }).then(function() { A.copyFolderLink(id, true); }).catch(function(e) { toast('폴더 저장 실패: ' + e.message, 'error'); });
+    else A.copyFolderLink(id, true);
+  };
+  A.copyFolderLink = function(id, created) {
+    var link = A.folderLink(id);
+    try { navigator.clipboard.writeText(link); toast((created ? '폴더를 만들고 ' : '') + '공유 링크를 복사했습니다'); } catch (e) { prompt('공유 링크', link); }
+  };
+  A.folderMenu = function(ev, id) {
+    var fo = A.folders[id]; if (!fo) return;
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var cw = canW();
+    var pop = openPop(ev, '<div style="font-size:12px;font-weight:800;padding:6px 10px">' + esc(fo.name) + '</div>' +
+      '<button class="it lk">공유 링크 복사</button>' + (cw ? '<button class="it up">지금 필터로 바꾸기</button><button class="it rn">이름 바꾸기</button><button class="it dl" style="color:#EE0005">폴더 삭제</button>' : '') +
+      '<div class="a13-hint" style="padding:6px 10px">' + esc(fo.createdBy || '') + (fo.updated ? ' · ' + esc(String(fo.updated).slice(0, 10)) : '') + '</div>');
+    pop.querySelector('.lk').onclick = function() { closePop(); A.copyFolderLink(id); };
+    if (!cw) return;
+    var path = 'settings/issueFolders/' + id;
+    pop.querySelector('.up').onclick = function() { closePop(); var f = curF(); fo.f = f; fo.updated = iso(); if (_fb.db) { dbRef(path + '/f').set(f); dbRef(path + '/updated').set(fo.updated); } A.ui.if.folder = id; A._saveIf(); toast('"' + fo.name + '" 폴더를 지금 필터로 바꿨습니다'); A.render(true); };
+    pop.querySelector('.rn').onclick = function() { closePop(); var n = prompt('폴더 이름', fo.name); if (n === null) return; n = n.trim().slice(0, 40); if (!n || n === fo.name) return; fo.name = n; if (_fb.db) { dbRef(path + '/name').set(n); dbRef(path + '/updated').set(iso()); } A.render(true); };
+    pop.querySelector('.dl').onclick = function() { closePop(); if (!confirm('"' + fo.name + '" 폴더를 삭제할까요? (이슈는 지워지지 않습니다. 공유 링크는 더 이상 열리지 않습니다)')) return; delete A.folders[id]; if (A.ui.if.folder === id) A.ui.if.folder = ''; A._saveIf(); if (_fb.db) dbRef(path).remove(); A.render(true); };
+  };
+  function folderBarH() {
+    var f = A.ui.if, ids = Object.keys(A.folders).filter(function(k) { return A.folders[k] && A.folders[k].name; }).sort(function(a, b) { return String(A.folders[a].created || '').localeCompare(String(A.folders[b].created || '')); });
+    var active = f.folder && A.folders[f.folder] ? f.folder : '';
+    var dirty = active && !sameF(A.folders[active].f || {}, curF());
+    var anyF = Object.keys(curF()).filter(function(k) { return k !== 'view'; }).length;
+    return '<div class="a13-folders" role="tablist" aria-label="이슈 폴더"><span class="lb">폴더</span>' +
+      '<button type="button" class="a13-fd' + (!active ? ' on' : '') + '" onclick="AF13.ifReset()">전체 이슈</button>' +
+      ids.map(function(id) { var fo = A.folders[id]; return '<span class="a13-fd' + (active === id ? ' on' : '') + '"><button type="button" class="nm" onclick="AF13.applyFolder(\'' + q(id) + '\')">' + esc(fo.name) + '</button><button type="button" class="mn" aria-label="폴더 메뉴" onclick="AF13.folderMenu(event,\'' + q(id) + '\')">⋯</button></span>'; }).join('') +
+      (dirty ? '<span class="a13-hint" style="color:#E8590C">필터 바뀜</span>' + (canW() ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.folderMenu(event,\'' + q(active) + '\')">폴더에 반영…</button>' : '') : '') +
+      (canW() && anyF && (!active || dirty) ? '<button type="button" class="a13-btn sm" onclick="AF13.saveFolder()">＋ 지금 필터로 폴더 만들기</button>' : '') +
+      (!ids.length && !anyF ? '<span class="a13-hint">필터를 건 뒤 폴더로 저장하면 공유 링크가 생깁니다</span>' : '') + '</div>';
+  }
+  A._folderBarH = folderBarH;
+  // 공유 링크(#folder=ID)로 들어오면 이슈 화면에서 그 폴더를 엶
+  A.openFolderFromHash = function() {
+    var m = /#folder=([^&]+)/.exec(location.hash); if (!m) return false;
+    var id = decodeURIComponent(m[1]), tries = 0;
+    var go = function() {
+      if (A.folders[id]) { A.go('a13issues'); A.applyFolder(id); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} return; }
+      if (++tries > 40) { A.go('a13issues'); toast('폴더를 찾을 수 없습니다 (삭제되었을 수 있어요)', 'error'); return; }
+      setTimeout(go, 250);
+    };
+    go(); return true;
+  };
+  window.addEventListener('hashchange', function() { if (/#folder=/.test(location.hash)) A.openFolderFromHash(); });
+  function listenMeta() {
+    if (A._metaOn || !(typeof _fb !== 'undefined' && _fb.db) || typeof dbRef !== 'function') return;
+    A._metaOn = true;
+    try {
+      dbRef('settings/issueFolders').on('value', function(s) { A.folders = s.val() || {}; A._metaSig = null; A.render(false); }, function(e) { console.warn('[folders]', e && e.message); });
+      dbRef('settings/issueTags').on('value', function(s) { A.tagDefs = s.val() || {}; A._metaSig = null; }, function(e) { console.warn('[tags]', e && e.message); });
+    } catch (e) { console.warn(e); }
+  }
+  A._listenMeta = listenMeta;
+  // 예전 이슈 상세 위에 태그 줄
+  var _origOID = window.openIssueDetail;
+  if (typeof _origOID === 'function') {
+    window.openIssueDetail = function(id) {
+      var r = _origOID.apply(this, arguments);
+      try {
+        var sel = document.getElementById('issueDetail_buildCategory'), iss = (_issues || []).find(function(x) { return x.id === id; });
+        if (sel && iss) {
+          // 빌드 카테고리 선택지를 새 목록으로 (기존 값은 '(이전)'으로 남겨 저장 시 지워지지 않게)
+          var cur = iss.buildCategory || '';
+          sel.innerHTML = '<option value="">선택...</option>' + BUILD_CATS.map(function(c) { return '<option value="' + esc(c[0]) + '">' + esc(c[0]) + '</option>'; }).join('');
+          A._ensureCatOption(sel, cur); sel.value = cur;
+        }
+        A._refreshDetailTags = function() {
+          var body = document.getElementById('issueDetailBody'); if (!body || _currentIssueId !== id) return;
+          var i2 = (_issues || []).find(function(x) { return x.id === id; }); if (!i2) return;
+          var bar = document.getElementById('a13DetailTags');
+          if (!bar) { bar = document.createElement('div'); bar.id = 'a13DetailTags'; bar.className = 'a13-dtags'; body.insertBefore(bar, body.firstChild); }
+          bar.innerHTML = '<span class="lb">태그</span>' + (titleTags(i2) || '<span class="a13-hint">없음</span>') + '<button type="button" class="a13-btn sm ghost" onclick="AF13.tagPick(event,\'' + q(id) + '\')">' + (canW() ? '태그 편집' : '태그 보기') + '</button>';
+        };
+        A._refreshDetailTags();
+      } catch (e) { console.warn('[v13.3 detail tags]', e); }
+      return r;
+    };
+  }
+
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;
     var tries = 0;
@@ -22980,6 +23319,8 @@ function renderNotifList() {
       var ready = document.querySelector('.a13-navs') && state.projects && state.projects.length && state.currentUser;
       if (ready) {
         clearInterval(tm);
+        A._listenMeta();
+        if (/#folder=/.test(location.hash)) { A.openFolderFromHash(); return; }
         var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&]install=1/.test(location.search);
         if (!deep && (state.currentTab === 'home' || state.currentTab === 'schedule')) {
           var last = null; try { last = JSON.parse(localStorage.getItem('a13_last') || 'null'); } catch (e) {}

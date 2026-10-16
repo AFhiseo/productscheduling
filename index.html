@@ -4552,6 +4552,47 @@
     .a13-dnote .a13-btn { margin-top: 4px; padding-left: 0; }
     .a13-dnote.card { grid-column: auto; margin: 8px 0; background: #FBFBFB; }
     @media (max-width: 768px) { .a13-dnote { grid-column: 1 / -1; } .a13-drow .ac { grid-column: 1 / -1; justify-content: flex-start; } }
+    /* ═══ v13.6 모바일 맞춤 · 당겨서 새로고침 ═══ */
+    .a13-grid2 > *, .a13-dep > *, .a13-info > * { min-width: 0; }
+    @media (max-width: 1100px) { .a13-grid2, .a13-dep, .a13-info { grid-template-columns: minmax(0, 1fr); } }
+    body.af-v13 #afSide .a13-navs { scrollbar-width: none; }
+    body.af-v13 #afSide .a13-navs::-webkit-scrollbar { display: none; }
+    @media (max-width: 900px) {
+      body.af-v13 #afSide .a13-navs { overflow-x: hidden; }
+      body.af-v13 #afSide .a13-navs > .tab { flex: 1 1 0; min-width: 0; padding-left: 2px; padding-right: 2px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    }
+    @media (max-width: 640px) {
+      html, body.af-v13 { overflow-x: hidden; max-width: 100vw; }
+      body.af-v13 { overscroll-behavior-y: contain; }
+      .a13 { padding-left: 12px; padding-right: 12px; }
+      .a13-card { padding-left: 12px; padding-right: 12px; }
+      .a13-card-h { flex-wrap: wrap; row-gap: 2px; }
+      .a13-card-h .a13-hint { white-space: normal; }
+      /* 목록 줄: 제목은 한 줄 전체, 담당·상태·버튼은 다음 줄 */
+      .a13-li { flex-wrap: wrap; row-gap: 6px; column-gap: 8px; }
+      .a13-li .m { flex: 1 1 calc(100% - 64px); min-width: 0; }
+      .a13-li .m .t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .a13-li .a13-tagbtn { margin-left: auto; }
+      .a13-li .a13-next { margin-left: auto; }
+      .a13-ph { flex-wrap: wrap; row-gap: 10px; }
+      .a13-ph .a13-row { flex-wrap: wrap; }
+      .a13-toolbar .a13-seg { flex-wrap: wrap; }
+      /* 배포 목록 */
+      .a13-dlist .a13-drow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 10px 8px; margin: 0; }
+      .a13-dlist .a13-drow .nm { flex: 1 1 100%; order: -1; }
+      .a13-dlist .a13-drow .pj, .a13-dlist .a13-drow .ct:empty { display: none; }
+      .a13-dlist .a13-drow .ac { margin-left: auto; }
+      .a13-dlist .a13-drow .a13-dnote { flex: 1 1 100%; margin: 2px 0 0; }
+      .a13-dmonth { padding-left: 8px; }
+      .a13-folders { padding: 8px; }
+      .a13-bundle .a13-row { flex-wrap: wrap; row-gap: 6px; }
+    }
+    /* 당겨서 새로고침 */
+    #a13Ptr { position: fixed; top: 0; left: 50%; z-index: 10090; transform: translate(-50%, -60px); display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px 0 10px; border-radius: 999px; background: #fff; border: 1px solid #E7E7E7; box-shadow: 0 8px 24px rgba(26,26,26,.16); font-size: 12px; font-weight: 700; color: #363636; pointer-events: none; opacity: 0; transition: opacity 120ms ease-out; }
+    #a13Ptr svg { width: 18px; height: 18px; stroke: #6433DF; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform 120ms ease-out; }
+    #a13Ptr.ready { color: #32008C; }
+    #a13Ptr.go svg { animation: a13Spin .8s linear infinite; }
+    @keyframes a13Spin { to { transform: rotate(360deg); } }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -5204,6 +5245,19 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.6</span>
+              <span class="rn-version-title">휴대폰 화면 맞춤 · 당겨서 새로고침</span>
+              <span class="rn-version-date">2026-10-16</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>휴대폰에서 내 작업·배포 목록이 화면보다 넓어져 옆으로 밀리던 문제 — 목록 줄은 제목 한 줄 + 담당·상태·버튼 다음 줄로</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>휴대폰 아래 메뉴 6개가 한 화면에 들어오도록, 가로 스크롤 막대 제거</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>당겨서 새로고침: 화면 맨 위에서 아래로 당겼다 놓으면 최신 화면으로 다시 열림 (입력 중·창이 열려 있을 땐 동작 안 함)</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.5</span>
               <span class="rn-version-title">배포 목록에서 메모 바로 보기 · 배포 수정·삭제</span>
@@ -21342,7 +21396,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.5';
+    var AF_BUILD = 'v13.6';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21381,6 +21435,7 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>휴대폰</b> — 화면 폭에 맞춤, 맨 위에서 당기면 새로고침</li>' +
           '<li><b>배포 메모 바로 보기 · 수정 · 삭제</b> — 배포 목록 줄마다 메모가 보이고 [수정]·[삭제] 버튼</li>' +
           '<li><b>새 이슈 등록 시트</b> — 환경·플랫폼·확인절차·기대/실제 결과·첨부·담당자까지 한 화면에</li>' +
           '<li><b>안건 검색</b> — 안건 고르는 칸을 누르면 검색되는 목록</li>' +
@@ -23658,6 +23713,53 @@ function renderNotifList() {
     var n = q1('.bf-notes'); if (n) n.addEventListener('blur', function() { var b = b0(); if (b && (b.notes || '') !== n.value) A.setBundle(bid, { notes: n.value }); });
   };
   A._bundleFormH = bundleFormH;
+
+  /* ═══ v13.6: 당겨서 새로고침 (휴대폰·앱 설치 상태) ═══
+   * 맨 위에서 아래로 당겼다 놓으면 최신 화면으로 다시 엶. 입력 중·시트/창이 열려 있을 땐 동작 안 함 */
+  (function() {
+    var y0 = null, x0 = 0, pull = 0, ind = null, TH = 70;
+    function busy() {
+      if (document.querySelector('.a13-np-bg, #a13Psel, .a13-pop, #issueDetailPanel.open, .modal-overlay.show, .modal.open, #afWhatsNew:hover')) return true;
+      var ae = document.activeElement; return !!(ae && (/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) || ae.isContentEditable));
+    }
+    function atTop(t) {
+      if ((window.scrollY || document.documentElement.scrollTop || document.body.scrollTop) > 0) return false;
+      for (var el = t; el && el !== document.body && el !== document.documentElement; el = el.parentElement) { if (el.scrollTop > 0) return false; }
+      return true;
+    }
+    function show(p, ready) {
+      if (!ind) { ind = document.createElement('div'); ind.id = 'a13Ptr'; ind.setAttribute('role', 'status'); ind.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg><span></span>'; document.body.appendChild(ind); }
+      ind.style.opacity = p > 8 ? '1' : '0';
+      ind.style.transform = 'translate(-50%,' + (Math.min(p, 110) - 46) + 'px)';
+      ind.querySelector('svg').style.transform = 'rotate(' + (p * 3) + 'deg)';
+      ind.classList.toggle('ready', !!ready);
+      ind.querySelector('span').textContent = ready ? '놓으면 새로고침' : '당겨서 새로고침';
+    }
+    function hide() { if (ind) { ind.style.opacity = '0'; ind.style.transform = 'translate(-50%,-60px)'; } }
+    document.addEventListener('touchstart', function(e) {
+      y0 = null; pull = 0;
+      if (e.touches.length !== 1 || busy()) return;
+      var t = e.target; if (t && t.closest && t.closest('.a13-board, .a13-col, input, textarea, select')) return;
+      if (!atTop(t)) return;
+      y0 = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    }, { passive: true });
+    document.addEventListener('touchmove', function(e) {
+      if (y0 == null) return;
+      var dy = e.touches[0].clientY - y0, dx = Math.abs(e.touches[0].clientX - x0);
+      if (dy <= 0 || dx > dy) { pull = 0; hide(); if (dy < -4 || dx > 12) y0 = null; return; }
+      pull = dy * 0.5; show(pull, pull >= TH);
+    }, { passive: true });
+    document.addEventListener('touchend', function() {
+      if (y0 == null) return;
+      y0 = null;
+      if (pull >= TH && !busy()) {
+        show(TH, true); ind.classList.add('go'); ind.querySelector('span').textContent = '새로고침 중…';
+        setTimeout(function() { (A._reload || function() { location.reload(); })(); }, 150);
+      } else hide();
+      pull = 0;
+    }, { passive: true });
+    A._ptr = { show: show, hide: hide };
+  })();
 
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;

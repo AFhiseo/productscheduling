@@ -4675,6 +4675,34 @@
       .a13-newrow > input { min-height: 40px; }
       .a13-title { min-height: 36px; }
     }
+    /* ═══ v13.8 배포: 메모 바로 수정 · 프로젝트 묶기 · TC · 링크 ═══ */
+    .a13-dnote.editable pre { cursor: text; border-radius: 6px; transition: background var(--m-feedback) var(--e-out); }
+    .a13-dnote.editable pre:hover, .a13-dnote.editable pre:focus-visible { background: #EEF0F8; outline: none; }
+    .a13-dnote.empty { color: #6433DF; font-size: 12.5px; font-weight: 700; cursor: pointer; background: #FBFAFF; border-style: dashed; border-color: #D9CCFA; }
+    .a13-dnote.empty:hover { background: #F3F0FF; }
+    .a13-dnote.editing { background: #fff; border-color: #6433DF; box-shadow: 0 0 0 3px rgba(100,51,223,.12); }
+    .a13-note-ta { width: 100%; min-height: 90px; font-size: 13px; line-height: 1.6; font-family: inherit; border: none !important; box-shadow: none !important; padding: 2px 0 !important; resize: vertical; }
+    .a13-note-ft { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .a13-note-ft:empty { display: none; }
+    .a13-note-ft .a13-hint { margin-right: auto; }
+    .a13-bproj { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; }
+    .a13-bproj.derived .a13-pid { background: #F3F3F3; color: #767676; }
+    .a13-bproj .nm { font-size: 12px; color: #363636; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+    .a13-bproj button { border: none; background: none; color: #AAAAAA; font-weight: 800; cursor: pointer; padding: 0 4px; min-width: 22px; min-height: 22px; }
+    .a13-bproj button:hover { color: #EE0005; }
+    .a13-bproj-add { border: 1px dashed #D9CCFA; background: #FBFAFF; color: #6433DF; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 3px 9px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .a13-bproj-add:hover { background: #F3F0FF; }
+    .a13-bs .bf-proj { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+    .a13-bs .bf-tcrow { display: flex; gap: 6px; align-items: center; }
+    .a13-bs .bf-tcrow .a13-input { flex: 1; min-width: 0; }
+    .a13-tc { color: #0E7490; font-weight: 700; text-decoration: none; }
+    .a13-tc:hover { text-decoration: underline; }
+    .a13-dhead, .a13-drow { grid-template-columns: 84px minmax(0, 2.2fr) 88px minmax(0, 1.1fr) 60px 96px minmax(0, 1.3fr) 150px; }
+    @media (max-width: 640px) {
+      .a13-bproj-add { min-height: 36px; padding: 0 12px; }
+      .a13-bproj button { min-width: 36px; min-height: 36px; }
+      .a13-dlist .a13-drow .pj { display: flex !important; flex-wrap: wrap; gap: 4px; flex: 1 1 100%; }
+    }
 
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
@@ -5327,6 +5355,22 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.8</span>
+              <span class="rn-version-title">배포: 메모 바로 수정 · 프로젝트 묶기 · 링크 복사 · TC 링크</span>
+              <span class="rn-version-date">2026-10-26</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포 목록에서 메모를 누르면 그 자리에서 수정 — 다른 곳을 누르면 저장, Esc 취소, 메모 없는 배포는 [＋ 메모 쓰기]</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포에 프로젝트 묶기: 목록 줄·배포 상세·새 배포에서 [＋ 프로젝트] → 검색해서 여러 개, × 로 빼기 (프로젝트 페이지 배포 탭에도 표시)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포 링크 복사: 목록 줄 [링크]·상세 [링크 복사] — 받은 사람이 열면 그 배포 상세가 바로 열림</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>TC 링크(선택): 배포 상세·새 배포에서 입력, 목록에 [TC 열기 ↗]</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>배포 체크리스트 제거(준비 신호에서도 제외, 기존에 저장된 값은 지우지 않음)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-fix">FIX</span>이슈 상세에서 아무것도 안 바꾸고 저장해도 대표 서비스(예: 고객앱)가 비워지던 문제, 참조자가 없던 이슈에 기본 참조자가 채워지던 문제</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.7</span>
               <span class="rn-version-title">휴대폰 사용성 다듬기</span>
@@ -6788,7 +6832,7 @@
         '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.5</span></h2>' +
         '<h3>새 이슈 등록</h3><p>＋ 만들기 → 이슈 등록(또는 이슈 화면 [＋ 이슈 등록])을 누르면 오른쪽 시트가 열립니다. 제목만 있어도 등록되고, 제목을 <b>[커뮤니티]</b>·<b>[탐색]</b>처럼 시작하면 빌드 카테고리가 자동으로 골라집니다. 환경·플랫폼·담당자·검증 담당·확인절차·기대/실제 결과를 채우고, 스크린샷은 끌어 놓거나 <span class="sc">⌘V</span>로 붙여 넣습니다. Task를 고르면 Task 담당자가 담당자로 들어갑니다.</p>' +
         '<h3>안건 고르기</h3><p>안건을 고르는 칸을 누르면 검색창이 달린 목록이 열립니다. 번호(P20)나 이름 일부를 입력하고 <span class="sc">↑↓</span> <span class="sc">Enter</span>로 고릅니다.</p>' +
-        '<h3>배포 만들기 · 수정</h3><ul><li>배포 화면은 전체 배포 목록으로 열리고, 줄마다 메모(배포 내역)가 바로 보입니다. 긴 메모는 [전체 보기]로 펼칩니다.</li><li>줄 오른쪽 [수정]은 편집 시트를, [삭제]는 확인 후 배포를 지웁니다(담긴 이슈·Task는 지워지지 않고 다시 후보로 돌아감).</li><li>배포 화면의 [메모와 함께…] 또는 ＋ 만들기 → 배포 만들기: 이름 · 목표일 · 환경 · 서비스 · 메모(배포 내역)를 함께 씁니다.</li><li>전체 배포 목록에서 배포를 누르면 같은 칸이 열리고, 바꾸면 바로 저장됩니다. 배포완료 건도 메모·배포일·환경·서비스·상태를 고칠 수 있습니다.</li><li>담긴 항목이나 체크리스트가 없어도 배포준비·배포완료가 됩니다. [배포완료]는 확인 창 없이 바로 처리되고 담긴 이슈·Task가 완료로 바뀝니다.</li></ul>' +
+        '<h3>배포 만들기 · 수정</h3><ul><li>배포 목록의 메모를 누르면 그 자리에서 고칠 수 있습니다. 다른 곳을 누르면 저장되고 Esc는 취소입니다.</li><li>[＋ 프로젝트]로 배포에 안건을 여러 개 묶고, × 로 뺍니다. TC 링크는 배포 상세에서 넣고(선택), 목록의 [TC 열기 ↗]로 엽니다.</li><li>[링크]/[링크 복사]로 배포 주소를 복사해 공유하면, 받은 사람에게 그 배포 상세가 바로 열립니다. 체크리스트는 없앴습니다.</li><li>배포 화면은 전체 배포 목록으로 열리고, 줄마다 메모(배포 내역)가 바로 보입니다. 긴 메모는 [전체 보기]로 펼칩니다.</li><li>줄 오른쪽 [수정]은 편집 시트를, [삭제]는 확인 후 배포를 지웁니다(담긴 이슈·Task는 지워지지 않고 다시 후보로 돌아감).</li><li>배포 화면의 [메모와 함께…] 또는 ＋ 만들기 → 배포 만들기: 이름 · 목표일 · 환경 · 서비스 · 메모(배포 내역)를 함께 씁니다.</li><li>전체 배포 목록에서 배포를 누르면 같은 칸이 열리고, 바꾸면 바로 저장됩니다. 배포완료 건도 메모·배포일·환경·서비스·상태를 고칠 수 있습니다.</li><li>담긴 항목이나 체크리스트가 없어도 배포준비·배포완료가 됩니다. [배포완료]는 확인 창 없이 바로 처리되고 담긴 이슈·Task가 완료로 바뀝니다.</li></ul>' +
         '<h3>이슈 제목 태그</h3><p>이슈 제목 앞에 <b>빌드 카테고리</b>(앱·새소식·지도·예약·커뮤니티·어드민) 색 배지와 <b>기능 태그</b>(예: 조황·회원조과, 새소식(홈)·배너·퀵메뉴)가 붙습니다. 카드나 줄의 <span class="sc">#</span> 버튼을 누르면 카테고리를 고르고 태그를 체크할 수 있고, 누를 때마다 바로 저장됩니다. 없는 태그는 입력하고 <span class="sc">Enter</span>를 누르면 팀 공용 목록에 추가됩니다. 이슈 상세 맨 위에도 같은 태그 줄이 있습니다.</p>' +
         '<p>이슈 화면의 카테고리 칩과 <b>[태그 ▾]</b>(체크 목록, 건수·(태그 없음) 포함)으로 바로 거를 수 있습니다.</p>' +
         '<h3>이슈 폴더 · 공유 링크</h3><ul><li>필터를 건 뒤 <b>＋ 지금 필터로 폴더 만들기</b> → 이름을 넣으면 폴더가 생기고 공유 링크가 복사됩니다.</li><li>링크를 받은 팀원이 열면(로그인 필요) 같은 필터가 걸린 이슈 목록이 바로 열립니다.</li><li>폴더 옆 <span class="sc">⋯</span>: 공유 링크 복사 · 지금 필터로 바꾸기 · 이름 바꾸기 · 삭제(이슈는 지워지지 않음)</li></ul>' +
@@ -13237,6 +13281,16 @@ function _persistIssueFilters() {
         var opts = {}; box.querySelectorAll('input[type=checkbox]').forEach(function(cb) { opts[cb.value] = 1; });
         (_afOrigI[f[0]] || []).forEach(function(v) { if (!opts[v] && iss[f[0]].indexOf(v) === -1) iss[f[0]].push(v); });
         if (_afSame(iss[f[0]], _afOrigI[f[0]])) iss[f[0]] = _afBeforeI[f[0]];
+      });
+      // v13.8: 참조자가 비어 있던 이슈는 화면에 기본값(개발팀)이 채워져 보이므로, 그대로 저장하면 손대지 않은 것으로 봄
+      try { if (!_getRefIds(_afOrigI).length && typeof _DEV_TEAM_IDS !== 'undefined' && _afSame((iss.references || []).slice().sort(), _DEV_TEAM_IDS.slice().sort())) { if (_afBeforeI.references === undefined) delete iss.references; else iss.references = _afBeforeI.references; } } catch (e) {}
+      // v13.8: 대표값(serviceType·projectId·assignee·platform)은 보존된 배열 기준으로 다시 맞춤
+      //        (목록에서 사라진 예전 서비스 이름 등이 대표값에서만 지워지던 문제 방지)
+      [['serviceTypes','serviceType'],['projectIds','projectId'],['assignees','assignee'],['platforms','platform']].forEach(function(f) {
+        var a = iss[f[0]]; if (!Array.isArray(a)) return;
+        var first = a[0] || '';
+        if (first) iss[f[1]] = first;
+        if (_afSame(iss[f[1]], _afOrigI[f[1]])) { if (_afBeforeI[f[1]] === undefined) delete iss[f[1]]; else iss[f[1]] = _afBeforeI[f[1]]; }
       });
       var _changed = Object.keys(iss).concat(Object.keys(_afBeforeI)).some(function(k) { return k !== 'updated' && !_afSame(iss[k], _afBeforeI[k]); });
       if (!_changed) { window._afIssueOrig = null; closeIssueDetail(); _showToast('변경된 내용이 없습니다', 1500, 'info'); return; }
@@ -21494,7 +21548,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.7';
+    var AF_BUILD = 'v13.8';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21533,6 +21587,9 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>배포 메모 바로 수정</b> — 목록에서 메모를 눌러 고치고, 다른 곳을 누르면 저장</li>' +
+          '<li><b>배포 ↔ 프로젝트 묶기</b> — [＋ 프로젝트]로 검색해서 여러 개</li>' +
+          '<li><b>배포 링크 복사 · TC 링크</b> — 링크로 열면 그 배포가 바로 열림, TC 링크는 선택 입력</li>' +
           '<li><b>휴대폰</b> — 화면 폭에 맞춤, 맨 위에서 당기면 새로고침</li>' +
           '<li><b>배포 메모 바로 보기 · 수정 · 삭제</b> — 배포 목록 줄마다 메모가 보이고 [수정]·[삭제] 버튼</li>' +
           '<li><b>새 이슈 등록 시트</b> — 환경·플랫폼·확인절차·기대/실제 결과·첨부·담당자까지 한 화면에</li>' +
@@ -22230,7 +22287,7 @@ function renderNotifList() {
     var r2 = iss.filter(function(i) { return ['운영배포예정', '완료'].indexOf(i.status) === -1; }).length;
     var blocks = (_issues || []).filter(function(i) { return i.status !== '완료' && i.severity === 'Block' && projIdsOf(i).some(function(p) { return pids[p]; }); });
     var cl = b.checklist || {};
-    var r4 = CHECK.filter(function(c) { return !cl[c[0]]; }).length;
+    var r4 = 0; // v13.8: 체크리스트 사용 안 함 (기존 저장값은 지우지 않음)
     return { iss: iss, tasks: tasks, r1: r1, r2: r2, r3: blocks.length, r4: r4, blocks: blocks, total: iss.length + tasks.length, ok: !r1 && !r2 && !blocks.length && !r4, pids: Object.keys(pids) };
   };
   A.markReady = function(bid) {
@@ -22730,14 +22787,14 @@ function renderNotifList() {
     var h = '<div class="a13-bundle" ondragover="event.preventDefault();this.classList.add(\'drop\')" ondragleave="this.classList.remove(\'drop\')" ondrop="AF13.dropToBundle(event,\'' + q(b.id) + '\')">' +
       '<div class="a13-row" style="justify-content:space-between"><div><h3>' + esc(b.title) + '</h3><div class="a13-hint" style="margin-top:2px">' + esc(b.id) + ' · ' + (closedB ? (b.deployedAt ? '배포 ' + fmtD(b.deployedAt) : (fmtD(b.targetDate) || '')) : (fmtD(b.targetDate) || '날짜 미정') + ' ' + ddH(b.targetDate)) + '</div></div>' + pill(st[0], st[1]) + '</div>' +
       noteH(b, 'card') +
-      (closedB ? '' : '<div class="a13-sig">' + sig('미완료 Task', R.r1, '건') + sig('검증 전 이슈', R.r2, '건') + sig('열린 Block', R.r3, '건') + sig('체크리스트', R.r4, '개 남음') + '</div>') +
+      (closedB ? '' : '<div class="a13-sig">' + sig('미완료 Task', R.r1, '건') + sig('검증 전 이슈', R.r2, '건') + sig('열린 Block', R.r3, '건') + '</div>') +
       '<div class="a13-row">' + (cw ? '<button class="a13-btn sm a13-dsel-btn" onclick="AF13.putSelected(\'' + q(b.id) + '\')"' + (Object.keys(A.dsel).length ? '' : ' disabled') + '>선택 항목 담기 (<span class="a13-dsel-n">' + Object.keys(A.dsel).length + '</span>)</button>' : '') +
       '<span style="margin-left:auto;display:flex;gap:6px">' + (cw && b.status === 'planning' ? '<button class="a13-btn sm" onclick="AF13.markReady(\'' + q(b.id) + '\')">배포준비로</button><button class="a13-btn sm pri" onclick="AF13.completeBundle(\'' + q(b.id) + '\')">배포완료</button>' : '') + (cw && b.status === 'ready' ? '<button class="a13-btn sm" onclick="AF13.setBundle(\'' + q(b.id) + '\',{status:\'planning\'})">준비중으로</button><button class="a13-btn sm pri" onclick="AF13.completeBundle(\'' + q(b.id) + '\')">배포완료</button>' : '') +
       (cw ? '<button class="a13-btn sm ghost" onclick="AF13.bundleMore(event,\'' + q(b.id) + '\')">⋯</button>' : '') + '</span></div>' +
       '<div class="a13-items">' + (R.total ? R.tasks.map(function(x) { var p = proj(x.pid); return '<div class="a13-item"><span class="a13-kind task">TASK</span><span class="a13-pid">' + esc(x.pid) + '</span><span class="t">' + esc(x.t.title) + '</span>' + pill((TST[x.t.status] || TST.todo)[0], (TST[x.t.status] || TST.todo)[1]) + (cw ? '<button class="x" title="빼기" onclick="AF13.removeFromBundle(\'' + q(b.id) + '\',\'tasks\',\'' + q(tkey(x.pid, x.t.id)) + '\')">×</button>' : '') + '</div>'; }).join('') +
         R.iss.map(function(i) { return '<div class="a13-item">' + sevB(i.severity) + '<span class="t" style="cursor:pointer" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + esc(i.title) + '</span>' + pill(i.status, ST_C[i.status] || '#767676') + (cw ? '<button class="x" title="빼기" onclick="AF13.removeFromBundle(\'' + q(b.id) + '\',\'issues\',\'' + q(i.id) + '\')">×</button>' : '') + '</div>'; }).join('')
         : '<div class="a13-empty" style="padding:14px">왼쪽 후보를 체크해서 담거나 여기로 끌어다 놓으세요</div>') + '</div>' +
-      '<div class="a13-check">' + CHECK.map(function(c) { return '<label class="' + (cl[c[0]] ? 'on' : '') + '"><input type="checkbox"' + (cl[c[0]] ? ' checked' : '') + (cw ? '' : ' disabled') + ' onchange="AF13.toggleCheck(\'' + q(b.id) + '\',\'' + c[0] + '\')" style="accent-color:#047857">' + c[1] + (c[0] === 'qa' && cl.qaBy ? ' · ' + esc(cl.qaBy) : '') + '</label>'; }).join('') + '</div>' +
+      // v13.8: 체크리스트 화면에서 제거
       (R.blocks.length ? '<div style="margin-top:8px;font-size:12px;color:#EE0005;font-weight:700">열린 Block: ' + R.blocks.slice(0, 3).map(function(i) { return '<a href="#" onclick="event.preventDefault();AF13.openIssue(\'' + q(i.id) + '\')" style="color:#EE0005">' + esc(i.id) + '</a>'; }).join(', ') + '</div>' : '') +
       (b.readyOverride ? '<div style="margin-top:8px;font-size:12px;color:#FF4C14">예외 승인: ' + esc(b.readyOverride.reason) + ' (' + esc(b.readyOverride.by) + ')</div>' : '') + '</div>';
     return h;
@@ -23169,7 +23226,7 @@ function renderNotifList() {
       '<input class="a13-input a13-dlq" placeholder="배포 이름 · 번호 · 안건 · 이슈 검색" value="' + esc(f.q) + '" oninput="AF13.ui.dl.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13deploy .a13-dlq\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},200)" style="width:260px">' +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '개</span></div>';
     if (!list.length) return h + '<div class="a13-card"><div class="a13-empty"><b>조건에 맞는 배포가 없습니다</b></div></div>';
-    h += '<div class="a13-card a13-dlist"><div class="a13-dhead"><div>날짜</div><div>배포</div><div>상태</div><div>서비스</div><div>환경</div><div>담긴 항목</div><div>안건</div><div></div></div>';
+    h += '<div class="a13-card a13-dlist"><div class="a13-dhead"><div>날짜</div><div>배포</div><div>상태</div><div>서비스</div><div>환경</div><div>담긴 항목</div><div>프로젝트</div><div></div></div>';
     var lastM = '';
     list.forEach(function(b) {
       var m = bDate(b).slice(0, 7);
@@ -23177,13 +23234,13 @@ function renderNotifList() {
       var R = A.readiness(b), st = BST[b.status] || [b.status || '-', '#919191'];
       h += '<div class="a13-drow" tabindex="0" role="button" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.bundleSheet(\'' + q(b.id) + '\')">' +
         '<div class="dt">' + (fmtD(b.deployedAt || b.targetDate) || '-') + (b.status === 'deployed' ? '' : ' ' + ddH(b.targetDate, b.status === 'cancelled')) + '</div>' +
-        '<div class="nm"><b>' + esc(b.title || '(이름 없음)') + '</b><small>' + esc(b.id) + '</small></div>' +
+        '<div class="nm"><b>' + esc(b.title || '(이름 없음)') + '</b><small>' + esc(b.id) + (b.tcLink ? ' · <a class="a13-tc" href="' + safeHref(b.tcLink) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">TC 열기 ↗</a>' : '') + '</small></div>' +
         '<div>' + pill(st[0], st[1]) + '</div>' +
         '<div class="sv">' + (function() { var s = A._bundleSvcs(b); return s.length ? s.slice(0, 2).map(function(x) { return '<span class="a13-chip">' + esc(x) + '</span>'; }).join('') + (s.length > 2 ? '<span class="a13-hint">+' + (s.length - 2) + '</span>' : '') : '<span style="color:#CCCCCC">-</span>'; })() + '</div>' +
         '<div class="ev">' + esc(b.environment || '-') + '</div>' +
         '<div class="ct">' + (R.total ? (R.tasks.length ? 'Task ' + R.tasks.length : '') + (R.tasks.length && R.iss.length ? ' · ' : '') + (R.iss.length ? '이슈 ' + R.iss.length : '') : (b.notes ? '<span class="a13-chip">노트 ' + String(b.notes).split('\n').filter(function(x) { return x.trim(); }).length + '줄</span>' : '<span style="color:#CCCCCC">비어 있음</span>')) + '</div>' +
-        '<div class="pj">' + R.pids.slice(0, 4).map(function(p) { var x = proj(p); return '<span class="a13-pid" title="' + esc(x ? x.name : p) + '">' + esc(p) + '</span>'; }).join('') + (R.pids.length > 4 ? '<span class="a13-hint">+' + (R.pids.length - 4) + '</span>' : '') + '</div>' +
-        (canW() ? '<div class="ac" onclick="event.stopPropagation()"><button type="button" class="a13-btn sm" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')">수정</button><button type="button" class="a13-btn sm ghost del" onclick="AF13.deleteBundle(\'' + q(b.id) + '\')">삭제</button></div>' : '<div class="ac"></div>') +
+        '<div class="pj" onclick="event.stopPropagation()">' + bundleProjChipsH(b) + '</div>' +
+        (canW() ? '<div class="ac" onclick="event.stopPropagation()"><button type="button" class="a13-btn sm ghost" title="배포 링크 복사" onclick="AF13.copyBundleLink(event,\'' + q(b.id) + '\')">링크</button><button type="button" class="a13-btn sm" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')">수정</button><button type="button" class="a13-btn sm ghost del" onclick="AF13.deleteBundle(\'' + q(b.id) + '\')">삭제</button></div>' : '<div class="ac" onclick="event.stopPropagation()"><button type="button" class="a13-btn sm ghost" onclick="AF13.copyBundleLink(event,\'' + q(b.id) + '\')">링크</button></div>') +
         noteH(b) + '</div>';
     });
     return h + '</div>';
@@ -23206,11 +23263,12 @@ function renderNotifList() {
   };
   A.toggleNote = function(ev, bid) { if (ev) ev.stopPropagation(); A.ui.dlOpen[bid] = !A.ui.dlOpen[bid]; A.render(true); };
   function noteH(b, cls) {
-    if (!b.notes || !String(b.notes).trim()) return '';
+    var cw = canW(), has = b.notes && String(b.notes).trim();
+    if (!has) return cw ? '<div class="a13-dnote empty ' + (cls || '') + '" data-bid="' + esc(b.id) + '" role="button" tabindex="0" onclick="AF13.editNote(event,\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.editNote(event,\'' + q(b.id) + '\')">＋ 메모 쓰기</div>' : '';
     var lines = String(b.notes).replace(/\s+$/, '').split('\n'), open = A.ui.dlOpen[b.id], LIM = 6;
     var shown = open ? lines : lines.slice(0, LIM);
-    return '<div class="a13-dnote ' + (cls || '') + '" onclick="event.stopPropagation()"><pre>' + esc(shown.join('\n')) + '</pre>' +
-      (lines.length > LIM ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.toggleNote(event,\'' + q(b.id) + '\')">' + (open ? '접기' : '전체 보기 (' + lines.length + '줄)') + '</button>' : '') + '</div>';
+    return '<div class="a13-dnote ' + (cls || '') + (cw ? ' editable' : '') + '" data-bid="' + esc(b.id) + '" onclick="event.stopPropagation()"><pre' + (cw ? ' role="button" tabindex="0" title="눌러서 바로 수정" onclick="AF13.editNote(event,\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.editNote(event,\'' + q(b.id) + '\')"' : '') + '>' + esc(shown.join('\n')) + '</pre>' +
+      '<div class="a13-note-ft">' + (lines.length > LIM ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.toggleNote(event,\'' + q(b.id) + '\')">' + (open ? '접기' : '전체 보기 (' + lines.length + '줄)') + '</button>' : '') + (cw ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.editNote(event,\'' + q(b.id) + '\')">메모 수정</button>' : '') + '</div></div>';
   }
   A._noteH = noteH;
   A.bundleSheet = function(bid) {
@@ -23227,7 +23285,7 @@ function renderNotifList() {
           if (closed && !R.total) return '<div class="a13-hint" style="padding:4px 2px">담긴 이슈·Task가 없습니다 (배포 내역은 위 메모에 있습니다)</div>';
           return '<div class="np-f"><span>담긴 항목</span>' + bundleCard(b2) + '</div>';
         })() + '</div>' +
-        '<footer>' + (canW() ? '<button class="a13-btn ghost np-del" style="color:#EE0005">삭제</button>' : '') + '<span class="np-hint">바꾸면 바로 저장됩니다</span><button class="a13-btn np-note">릴리즈 노트 복사</button><button class="a13-btn pri np-close">닫기</button></footer></aside>';
+        '<footer>' + (canW() ? '<button class="a13-btn ghost np-del" style="color:#EE0005">삭제</button>' : '') + '<span class="np-hint">바꾸면 바로 저장됩니다</span><button class="a13-btn np-link" onclick="AF13.copyBundleLink(event,\'' + q(bid) + '\')">링크 복사</button><button class="a13-btn np-note">릴리즈 노트 복사</button><button class="a13-btn pri np-close">닫기</button></footer></aside>';
       wrap.querySelector('.x').onclick = close; wrap.querySelector('.np-close').onclick = close;
       wrap.querySelector('.np-note').onclick = function() { A.copyNote(bid); };
       var dl = wrap.querySelector('.np-del'); if (dl) dl.onclick = function() { A.deleteBundle(bid); };
@@ -23754,6 +23812,7 @@ function renderNotifList() {
     return Object.keys(s);
   }
   A._bundleSvcs = bundleSvcs;
+  function newProjChips(list) { return arr(list).map(function(p) { var x = proj(p); return '<span class="a13-bproj"><span class="a13-pid">' + esc(p) + '</span><span class="nm">' + esc(x ? x.name : '') + '</span><button type="button" data-rm="' + esc(p) + '" aria-label="빼기">×</button></span>'; }).join('') + '<button type="button" class="a13-bproj-add bf-padd">＋ 프로젝트</button>'; }
   function bundleFormH(b, isNew) {
     var st = b.status || 'planning', svc = arr(b.services);
     return '<input class="np-title bf-title" placeholder="배포 이름 (예: 10월 4주차 정기 배포)" value="' + esc(b.title || '') + '" maxlength="80" aria-label="배포 이름">' +
@@ -23763,6 +23822,8 @@ function renderNotifList() {
           : '<div class="np-f"><span>배포일</span><input type="date" class="a13-input bf-done" value="' + esc(String(b.deployedAt || '').slice(0, 10)) + '"' + (st === 'deployed' ? '' : ' disabled title="배포완료 상태일 때 입력"') + '></div>') + '</div>' +
       (isNew ? '' : '<div class="np-f"><span>환경</span><div class="a13-seg bf-env">' + BENV.map(function(e) { return '<button type="button" data-v="' + e + '" class="' + ((b.environment || '운영') === e ? 'on' : '') + '">' + e + '</button>'; }).join('') + (b.environment && BENV.indexOf(b.environment) === -1 ? '<button type="button" class="on" data-v="' + esc(b.environment) + '">' + esc(b.environment) + '</button>' : '') + '</div></div>') +
       '<div class="np-f"><span>서비스 <em>여러 개</em></span><div class="np-chips bf-svc">' + NEW_SERVICES.concat(svc.filter(function(s) { return NEW_SERVICES.indexOf(s) === -1; })).map(function(s) { return '<button type="button" data-v="' + esc(s) + '" class="' + (svc.indexOf(s) !== -1 ? 'on' : '') + '">' + esc(s) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="np-f"><span>프로젝트 <em>배포에 묶을 안건 · 여러 개</em></span><div class="bf-proj">' + (isNew ? newProjChips(arr(b.projects)) : bundleProjChipsH(b, { full: 1 })) + '</div></div>' +
+      '<div class="np-f"><span>TC 링크 <em>선택 · 테스트 케이스 문서 주소</em></span><div class="bf-tcrow"><input type="url" inputmode="url" class="a13-input bf-tc" placeholder="https://… (비워 두어도 됩니다)" value="' + esc(b.tcLink || '') + '">' + (!isNew && b.tcLink ? '<a class="a13-btn sm ghost" href="' + safeHref(b.tcLink) + '" target="_blank" rel="noopener">열기 ↗</a>' : '') + '</div></div>' +
       '<div class="np-f"><span>메모 · 배포 내역 <em>버전, 변경 내용, PR 링크 등</em></span><textarea class="a13-input bf-notes" placeholder="예약 api 배포 : v2.62.0&#10;&#10;What\'s Changed&#10;- 쿠폰 사용 가능 시간 표기 개선 #241">' + esc(b.notes || '') + '</textarea></div>';
   }
   A.bundleNew = function(prefill) {
@@ -23778,13 +23839,21 @@ function renderNotifList() {
     var P = wrap.querySelector('.a13-np'), q1 = function(s) { return P.querySelector(s); };
     P.querySelectorAll('.bf-env button').forEach(function(b) { b.onclick = function() { P.querySelectorAll('.bf-env button').forEach(function(x) { x.classList.toggle('on', x === b); }); }; });
     P.querySelectorAll('.bf-svc button').forEach(function(b) { b.onclick = function() { b.classList.toggle('on'); }; });
+    var selP = arr((prefill.items && prefill.items.projects) || prefill.projects).slice();
+    var wireP = function() {
+      var box = q1('.bf-proj'); box.innerHTML = newProjChips(selP);
+      box.querySelectorAll('[data-rm]').forEach(function(x) { x.onclick = function() { selP = selP.filter(function(p) { return p !== x.dataset.rm; }); wireP(); }; });
+      box.querySelector('.bf-padd').onclick = function(e) { A.pickProjects(e, selP, function(pid, on, all) { selP = all; wireP(); }); };
+    };
+    wireP();
     var close = function() { wrap.classList.add('out'); setTimeout(function() { wrap.remove(); try { _unlockBodyScroll(); } catch (e) {} }, 180); };
     var submit = function() {
       var t = q1('.bf-title').value.trim(); if (!t) { q1('.bf-title').focus(); q1('.bf-title').classList.add('err'); setTimeout(function() { q1('.bf-title').classList.remove('err'); }, 600); return; }
-      var b = A.createBundle(t, q1('.bf-date').value, prefill.items);
+      var items = Object.assign({}, prefill.items || {}); items.projects = arr(items.projects).concat(selP.filter(function(p) { return arr(items.projects).indexOf(p) === -1; }));
+      var b = A.createBundle(t, q1('.bf-date').value, items);
       if (!b) return;
       var en = q1('.bf-env button.on'), svc = [].slice.call(P.querySelectorAll('.bf-svc button.on')).map(function(x) { return x.dataset.v; }), notes = q1('.bf-notes').value;
-      var patch = {}; if (en && en.dataset.v !== b.environment) patch.environment = en.dataset.v; if (svc.length) patch.services = svc; if (notes.trim()) patch.notes = notes;
+      var patch = {}; if (en && en.dataset.v !== b.environment) patch.environment = en.dataset.v; if (svc.length) patch.services = svc; if (notes.trim()) patch.notes = notes; var tc = normUrl(q1('.bf-tc').value); if (tc) patch.tcLink = tc;
       if (Object.keys(patch).length) A.setBundle(b.id, patch);
       toast('"' + t + '" 배포를 만들었습니다');
       close();
@@ -23808,6 +23877,7 @@ function renderNotifList() {
     var dd = q1('.bf-done'); if (dd) dd.addEventListener('change', function() { if (!dd.value) return; A.setBundle(bid, { deployedAt: dd.value + 'T09:00:00.000Z' }); });
     P.querySelectorAll('.bf-env button').forEach(function(x) { x.onclick = function() { var b = b0(); if (b && b.environment !== x.dataset.v) A.setBundle(bid, { environment: x.dataset.v }); }; });
     P.querySelectorAll('.bf-svc button').forEach(function(x) { x.onclick = function() { var b = b0(); if (!b) return; var a = arr(b.services).slice(), k = a.indexOf(x.dataset.v); if (k === -1) a.push(x.dataset.v); else a.splice(k, 1); A.setBundle(bid, { services: a }); }; });
+    var tcI = q1('.bf-tc'); if (tcI) tcI.addEventListener('change', function() { var b = b0(); if (!b) return; var v = normUrl(tcI.value); if (v !== (b.tcLink || '')) { A.setBundle(bid, { tcLink: v }); toast(v ? 'TC 링크를 저장했습니다' : 'TC 링크를 지웠습니다'); } });
     var n = q1('.bf-notes'); if (n) n.addEventListener('blur', function() { var b = b0(); if (b && (b.notes || '') !== n.value) A.setBundle(bid, { notes: n.value }); });
   };
   A._bundleFormH = bundleFormH;
@@ -23867,6 +23937,106 @@ function renderNotifList() {
     e.preventDefault(); e.stopPropagation(); A.editProject(A.cur.arg);
   }, true);
 
+  /* ═══ v13.8: 배포 — 메모 바로 수정 · 프로젝트 묶기 · 링크 복사 · TC 링크 ═══ */
+  A.bundleLink = function(bid) { return location.origin + location.pathname + '?deploy=' + encodeURIComponent(bid); };
+  A.copyBundleLink = function(ev, bid) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var url = A.bundleLink(bid);
+    try { navigator.clipboard.writeText(url).then(function() { toast('배포 링크를 복사했습니다'); }, function() { prompt('배포 링크', url); }); } catch (e) { prompt('배포 링크', url); }
+  };
+  // 예전 화면·공유 링크(?deploy=ID)로 배포를 열면 새 배포 상세로
+  var _origODB = window.openDeployBundleDetail;
+  A.classicBundle = _origODB;
+  window.openDeployBundleDetail = function(id) {
+    if (document.body.classList.contains('af-v13') && bundle(id)) { A.ui.dv = 'all'; A.go('a13deploy'); A.bundleSheet(id); return; }
+    if (typeof _origODB === 'function') return _origODB.apply(this, arguments);
+  };
+  function normUrl(v) { v = String(v || '').trim(); if (!v) return ''; if (!/^https?:\/\//i.test(v)) v = 'https://' + v; return v; }
+  A._normUrl = normUrl;
+  function safeHref(u) { return /^https?:\/\//i.test(u || '') ? esc(u) : '#'; }
+  A._safeHref = safeHref;
+
+  /* 메모: 목록·카드에서 눌러 바로 수정 (다른 곳을 누르면 저장, Esc 취소) */
+  A.editNote = function(ev, bid) {
+    if (ev) { ev.stopPropagation(); ev.preventDefault && ev.preventDefault(); }
+    if (!needW()) return;
+    var b = bundle(bid); if (!b) return;
+    var box = ev && ev.currentTarget && ev.currentTarget.closest ? ev.currentTarget.closest('.a13-dnote') : null;
+    if (!box) box = document.querySelector('.a13-dnote[data-bid="' + bid + '"]');
+    if (!box || box.querySelector('textarea')) return;
+    var cur = String(b.notes || '');
+    box.classList.add('editing'); box.classList.remove('empty');
+    box.innerHTML = '<textarea class="a13-input a13-note-ta" aria-label="배포 메모" placeholder="배포 내역 · 버전 · 변경 내용 · PR 링크">' + esc(cur) + '</textarea><div class="a13-note-ft"><span class="a13-hint">다른 곳을 누르면 저장 · Esc 취소</span><button type="button" class="a13-btn sm pri">저장</button></div>';
+    var ta = box.querySelector('textarea'), done = false;
+    ta.rows = Math.min(24, Math.max(4, cur.split('\n').length + 1));
+    var finish = function(save) {
+      if (done) return; done = true;
+      var v = ta.value;
+      if (save && v !== cur) { A.setBundle(bid, { notes: v }); toast('메모를 저장했습니다'); }
+      else A.render(true);
+    };
+    ta.addEventListener('blur', function() { setTimeout(function() { finish(true); }, 0); });
+    ta.addEventListener('keydown', function(e) {
+      e.stopPropagation();
+      if (e.key === 'Escape') { e.preventDefault(); done = true; A.render(true); }
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); ta.blur(); }
+    });
+    box.querySelector('.a13-note-ft button').onmousedown = function(e) { e.preventDefault(); ta.blur(); };
+    ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  };
+
+  /* 프로젝트 고르기 (여러 개, 검색) — 고를 때마다 onToggle(pid, on) */
+  A.pickProjects = function(ev, selected, onToggle, title) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var sel = arr(selected).slice();
+    var list = state.projects.slice().sort(function(a, b) {
+      var da = (a.status === '완료' || a.status === 'Deprecated') ? 1 : 0, db = (b.status === '완료' || b.status === 'Deprecated') ? 1 : 0;
+      return da - db || String(a.id).localeCompare(String(b.id), undefined, { numeric: true });
+    });
+    var draw = function(fq) {
+      fq = (fq || '').trim().toLowerCase();
+      var shown = list.filter(function(p) { return !fq || (p.id + ' ' + (p.name || '')).toLowerCase().indexOf(fq) !== -1; });
+      return '<div class="a13-tp"><div class="h">' + esc(title || '배포에 묶을 프로젝트') + ' <small>여러 개 선택</small></div><input class="a13-input tq" placeholder="번호·이름 검색" value="' + esc(fq) + '">' +
+        '<div class="tl">' + (shown.length ? shown.map(function(p) { var on = sel.indexOf(p.id) !== -1; return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" data-p="' + esc(p.id) + '"' + (on ? ' checked' : '') + '><span><span class="a13-pid">' + esc(p.id) + '</span> ' + esc(p.name || '') + '</span>' + (p.status === '완료' ? '<em>완료</em>' : '') + '</label>'; }).join('') : '<div class="a13-hint" style="padding:8px">찾는 프로젝트가 없습니다</div>') + '</div></div>';
+    };
+    var pop = openPop(ev, draw(''));
+    var wire = function() {
+      pop.querySelectorAll('input[type=checkbox][data-p]').forEach(function(c) { c.onchange = function() {
+        var pid = c.dataset.p, k = sel.indexOf(pid);
+        if (c.checked && k === -1) sel.push(pid); if (!c.checked && k !== -1) sel.splice(k, 1);
+        c.parentNode.classList.toggle('on', c.checked);
+        onToggle(pid, c.checked, sel.slice());
+      }; });
+      var tq = pop.querySelector('.tq');
+      tq.oninput = function() { var v = tq.value; pop.innerHTML = draw(v); wire(); var t = pop.querySelector('.tq'); t.focus(); t.setSelectionRange(v.length, v.length); };
+      tq.onkeydown = function(e) { e.stopPropagation(); };
+    };
+    wire();
+    setTimeout(function() { var t = pop.querySelector('.tq'); if (t) t.focus(); }, 30);
+    return pop;
+  };
+  A.toggleBundleProject = function(bid, pid, on) {
+    if (!needW()) return;
+    var b = bundle(bid); if (!b) return;
+    if (on) { A.addToBundle(bid, 'projects', pid, true); toast(pid + ' 프로젝트를 묶었습니다'); A.render(true); }
+    else A.removeFromBundle(bid, 'projects', pid);
+  };
+  A.bundleProjPick = function(ev, bid) {
+    var b = bundle(bid); if (!b) return;
+    A.pickProjects(ev, arr(b.projects), function(pid, on) { A.toggleBundleProject(bid, pid, on); });
+  };
+  // 프로젝트 칩: 직접 묶은 것(빼기 가능) + 담긴 이슈·Task에서 따라온 것
+  function bundleProjChipsH(b, opts) {
+    opts = opts || {};
+    var own = arr(b.projects), R = A.readiness(b), cw = canW() && !opts.ro;
+    var derived = R.pids.filter(function(p) { return own.indexOf(p) === -1; });
+    var chip = function(p, mine) { var x = proj(p); return '<span class="a13-bproj' + (mine ? '' : ' derived') + '" title="' + esc(x ? x.name : p) + (mine ? '' : ' (담긴 이슈·Task에서)') + '"><span class="a13-pid">' + esc(p) + '</span>' + (opts.full && x ? '<span class="nm">' + esc(x.name) + '</span>' : '') + (mine && cw ? '<button type="button" aria-label="' + esc(p) + ' 빼기" onclick="event.stopPropagation();AF13.toggleBundleProject(\'' + q(b.id) + '\',\'' + q(p) + '\',false)">×</button>' : '') + '</span>'; };
+    var lim = opts.full ? 99 : 3, all = own.concat(derived);
+    return all.slice(0, lim).map(function(p) { return chip(p, own.indexOf(p) !== -1); }).join('') + (all.length > lim ? '<span class="a13-hint">+' + (all.length - lim) + '</span>' : '') +
+      (cw ? '<button type="button" class="a13-bproj-add" onclick="event.stopPropagation();AF13.bundleProjPick(event,\'' + q(b.id) + '\')">＋ 프로젝트</button>' : (all.length ? '' : '<span style="color:#CCCCCC">-</span>'));
+  }
+  A._bundleProjChipsH = bundleProjChipsH;
+
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;
     var tries = 0;
@@ -23878,7 +24048,7 @@ function renderNotifList() {
         clearInterval(tm);
         A._listenMeta();
         if (/#folder=/.test(location.hash)) { A.openFolderFromHash(); return; }
-        var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&]install=1/.test(location.search);
+        var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&](install|deploy|issue)=/.test(location.search);
         if (!deep && (state.currentTab === 'home' || state.currentTab === 'schedule')) {
           var last = null; try { last = JSON.parse(localStorage.getItem('a13_last') || 'null'); } catch (e) {}
           if (last && PAGES[last.page] && (last.page !== 'a13project' || proj(last.arg))) A.go(last.page, last.arg); else A.go('a13work');

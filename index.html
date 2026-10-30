@@ -4704,6 +4704,12 @@
       .a13-dlist .a13-drow .pj { display: flex !important; flex-wrap: wrap; gap: 4px; flex: 1 1 100%; }
     }
 
+    /* v13.9 프로젝트 링크 */
+    .a13-plink { border: 1px solid #E7E7E7; background: #fff; color: #6433DF; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 6px; cursor: pointer; line-height: 18px; opacity: 0; transition: opacity var(--m-feedback, .15s) ease; }
+    .a13-prow:hover .a13-plink, .a13-plink:focus-visible { opacity: 1; }
+    .a13-plink:hover { background: #F3F0FF; border-color: #D9CCFA; }
+    @media (hover: none) { .a13-plink { opacity: 1; padding: 4px 10px; } }
+
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
     #afUpdateBar button { border: none; background: #6433DF; color: #fff; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
@@ -5355,6 +5361,17 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v13.9</span>
+              <span class="rn-version-title">프로젝트 링크 복사</span>
+              <span class="rn-version-date">2026-10-30</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>프로젝트 링크 복사: 프로젝트 목록 줄 [링크] · 프로젝트 페이지 [링크 복사] · 안건 정보 시트 [링크 복사] — 받은 사람이 열면 그 프로젝트 페이지가 바로 열림</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.8</span>
               <span class="rn-version-title">배포: 메모 바로 수정 · 프로젝트 묶기 · 링크 복사 · TC 링크</span>
@@ -21548,7 +21565,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.8';
+    var AF_BUILD = 'v13.9';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21587,6 +21604,7 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>프로젝트 링크 복사</b> — 목록 줄 [링크] · 프로젝트 페이지 [링크 복사], 열면 그 프로젝트가 바로 열림</li>' +
           '<li><b>배포 메모 바로 수정</b> — 목록에서 메모를 눌러 고치고, 다른 곳을 누르면 저장</li>' +
           '<li><b>배포 ↔ 프로젝트 묶기</b> — [＋ 프로젝트]로 검색해서 여러 개</li>' +
           '<li><b>배포 링크 복사 · TC 링크</b> — 링크로 열면 그 배포가 바로 열림, TC 링크는 선택 입력</li>' +
@@ -22487,7 +22505,7 @@ function renderNotifList() {
         var cp = curPhase(p);
         var who = {}; PH.forEach(function(ph) { arr(p.assignments && p.assignments[ph]).forEach(function(m) { who[m] = 1; }); });
         h += '<div class="a13-prow" onclick="AF13.go(\'a13project\',\'' + q(p.id) + '\')">' +
-          '<div class="nm"><b><span class="a13-pid">' + esc(p.id) + '</span> ' + esc(p.name || '(제목 없음)') + '</b><small>' + arr(p.serviceTypes).slice(0, 3).map(function(s) { return '<span class="a13-chip">' + esc(s) + '</span>'; }).join('') + '</small></div>' +
+          '<div class="nm"><b><span class="a13-pid">' + esc(p.id) + '</span> ' + esc(p.name || '(제목 없음)') + '</b><small>' + arr(p.serviceTypes).slice(0, 3).map(function(s) { return '<span class="a13-chip">' + esc(s) + '</span>'; }).join('') + '<button class="a13-plink" title="이 프로젝트 링크 복사" aria-label="' + esc(p.id) + ' 링크 복사" onclick="AF13.copyProjectLink(event,\'' + q(p.id) + '\')">링크</button></small></div>' +
           '<div>' + pill(p.status || '대기', PST[p.status] || '#919191') + '</div>' +
           '<div class="a13-phases">' + PH.map(function(ph) { var d = p.phases && p.phases[ph]; var on = d && d.start; return '<i class="' + (on ? 'on' : '') + (cp === ph ? ' now' : '') + '" style="' + (on ? 'background:' + phc(ph) : '') + '" title="' + PHL[ph] + (on ? ' ' + fmtD(d.start) + '~' + fmtD(d.end) : ' 미정') + '"></i>'; }).join('') + '</div>' +
           '<div class="a13-prog">' + (tk.length ? dn + '/' + tk.length + '<div class="a13-bar"><div style="width:' + Math.round(dn / tk.length * 100) + '%"></div></div>' : '<span style="color:#CCCCCC">Task 없음</span>') + '</div>' +
@@ -22524,7 +22542,7 @@ function renderNotifList() {
       '<div class="a13-mf-break"></div>' +
       '<label>배포 목표일<input type="date" class="a13-input"' + dis + ' value="' + esc(p.deployDate || '') + '" onchange="AF13.setProject(\'' + q(pid) + '\',\'deployDate\',this.value,\'배포일\')"></label>' +
       '<label>PM<select class="a13-input"' + dis + ' onchange="AF13.setProject(\'' + q(pid) + '\',\'pm\',this.value,\'PM\')"><option value="">미정</option>' + TEAM.filter(_isOnBoard).map(function(m) { return '<option value="' + esc(m.id) + '"' + (p.pm === m.id ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join('') + '</select></label>' +
-      '<div style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
+      '<div style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')">링크 복사</button><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
     h += '<div class="a13-kpis">' +
       '<div class="a13-kpi"><span>Task 진행</span><b>' + (tk.length ? Math.round(dn / tk.length * 100) + '%' : '-') + '</b><small>' + dn + ' / ' + tk.length + ' 완료</small></div>' +
       '<div class="a13-kpi"><span>열린 이슈</span><b style="' + (bl ? 'color:#EE0005' : '') + '">' + open.length + '</b><small>Block ' + bl + ' · Major ' + mj + '</small></div>' +
@@ -23020,7 +23038,7 @@ function renderNotifList() {
     }
     function footH() {
       if (isNew) return '<footer><span class="np-hint">Enter 만들기 · Esc 닫기</span><button class="a13-btn np-cancel">취소</button><button class="a13-btn np-more">만들고 하나 더</button><button class="a13-btn pri np-ok">만들고 열기</button></footer>';
-      return '<footer>' + (cw ? '<button class="a13-btn ghost np-del" style="color:#EE0005">삭제</button>' : '') + '<span class="np-hint">' + (cw ? '<span class="np-saved"></span>' : '') + '</span><button class="a13-btn np-page">안건 페이지 열기</button><button class="a13-btn pri np-close">닫기</button></footer>';
+      return '<footer>' + (cw ? '<button class="a13-btn ghost np-del" style="color:#EE0005">삭제</button>' : '') + '<span class="np-hint">' + (cw ? '<span class="np-saved"></span>' : '') + '</span><button class="a13-btn np-plink" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')">링크 복사</button><button class="a13-btn np-page">안건 페이지 열기</button><button class="a13-btn pri np-close">닫기</button></footer>';
     }
     wrap.innerHTML = '<aside class="a13-np" role="dialog" aria-modal="true" aria-label="' + (isNew ? '새 안건' : '안건 정보') + '">' + headH() + '<div class="body">' + bodyH() + '</div>' + footH() + '</aside>';
     document.body.appendChild(wrap);
@@ -24037,6 +24055,26 @@ function renderNotifList() {
   }
   A._bundleProjChipsH = bundleProjChipsH;
 
+  /* ═══ v13.9: 프로젝트 링크 복사 (?project=ID → 새 화면의 프로젝트 페이지) ═══ */
+  A.projectLink = function(pid) { return location.origin + location.pathname + '?project=' + encodeURIComponent(pid); };
+  A.copyProjectLink = function(ev, pid) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var url = A.projectLink(pid);
+    try { navigator.clipboard.writeText(url).then(function() { toast('프로젝트 링크를 복사했습니다'); }, function() { prompt('프로젝트 링크', url); }); } catch (e) { prompt('프로젝트 링크', url); }
+  };
+  var _origCPL = window.copyProjectLink;
+  A.classicCopyProjectLink = _origCPL;
+  window.copyProjectLink = function(pid) {
+    if (document.body.classList.contains('af-v13')) return A.copyProjectLink(null, pid);
+    return typeof _origCPL === 'function' ? _origCPL.apply(this, arguments) : undefined;
+  };
+  A.openProjectFromQuery = function() {
+    var m = /[?&]project=([^&#]+)/.exec(location.search); if (!m) return false;
+    var pid = decodeURIComponent(m[1]);
+    if (proj(pid)) { A.go('a13project', pid); return true; }
+    toast('링크의 프로젝트를 찾을 수 없습니다 — 삭제되었을 수 있어요'); return false;
+  };
+
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;
     var tries = 0;
@@ -24048,6 +24086,7 @@ function renderNotifList() {
         clearInterval(tm);
         A._listenMeta();
         if (/#folder=/.test(location.hash)) { A.openFolderFromHash(); return; }
+        if (/[?&]project=/.test(location.search) && A.openProjectFromQuery()) { if (!canW()) { var c0 = document.querySelector('.a13-create'); if (c0) c0.style.display = 'none'; } return; }
         var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&](install|deploy|issue)=/.test(location.search);
         if (!deep && (state.currentTab === 'home' || state.currentTab === 'schedule')) {
           var last = null; try { last = JSON.parse(localStorage.getItem('a13_last') || 'null'); } catch (e) {}

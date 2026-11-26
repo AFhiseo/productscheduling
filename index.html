@@ -4710,6 +4710,67 @@
     .a13-plink:hover { background: #F3F0FF; border-color: #D9CCFA; }
     @media (hover: none) { .a13-plink { opacity: 1; padding: 4px 10px; } }
 
+    /* v14.0 업무일지 */
+    .wl-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .wl-date { display: flex; align-items: center; gap: 6px; }
+    .wl-date input { width: 150px; }
+    .wl-who { width: auto; min-width: 120px; margin-left: auto; }
+    .wl-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+    .wl-grid > .wl-wide { grid-column: 1 / -1; }
+    .wl-grid > .a13-card { margin: 0; }
+    .wl-card h3 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .wl-cnt { font-size: 12px; font-weight: 800; color: #6433DF; background: #F3F0FF; padding: 1px 8px; border-radius: 999px; }
+    .wl-sub { font-size: 12px; font-weight: 600; color: #767676; }
+    .wl-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .wl-list li { display: flex; align-items: center; gap: 8px; padding: 6px 6px; border-radius: 8px; }
+    .wl-list li:hover { background: #F7F8FC; }
+    .wl-chk { flex: none; width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid #CCCCCC; background: #fff; color: #fff; font-size: 13px; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+    .wl-chk:disabled { cursor: default; }
+    .wl-list li.done .wl-chk { background: #6433DF; border-color: #6433DF; }
+    .wl-t { flex: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 14px; color: #1A1A1A; padding: 2px 4px; border-radius: 6px; }
+    input.wl-t:focus { outline: none; background: #fff; box-shadow: 0 0 0 2px #D9CCFA; }
+    .wl-list li.done .wl-t { color: #919191; text-decoration: line-through; }
+    .wl-carry { flex: none; font-size: 11px; font-weight: 700; color: #FF4C14; background: #FFF4EE; padding: 1px 6px; border-radius: 6px; }
+    .wl-del { flex: none; border: none; background: none; color: #AAAAAA; font-size: 18px; cursor: pointer; width: 28px; height: 28px; border-radius: 6px; opacity: 0; }
+    .wl-list li:hover .wl-del, .wl-del:focus-visible { opacity: 1; }
+    .wl-del:hover { color: #EE0005; background: #FFF1F1; }
+    .wl-add { display: flex; align-items: center; gap: 8px; margin-top: 8px; border: 1.5px dashed #D9CCFA; border-radius: 10px; padding: 6px 10px; }
+    .wl-add span { color: #6433DF; font-weight: 800; }
+    .wl-add input { flex: 1; border: none; background: none; font: inherit; font-size: 14px; outline: none; min-width: 0; }
+    .wl-empty { color: #AAAAAA; font-size: 13px; padding: 8px 6px; }
+    .wl-blk { width: 100%; min-height: 72px; resize: vertical; }
+    .wl-blk-ro { white-space: pre-wrap; font-size: 14px; padding: 6px; }
+    .wl-nudge { background: #F3F0FF; color: #32008C; font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; }
+    .wl-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .wl-chip { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+    .wl-chip.ok { background: #EAF8EF; color: #1E7B45; }
+    .wl-chip.warn { background: #FFF4EE; color: #C2410C; }
+    .wl-chip.red { background: #FFF1F1; color: #EE0005; }
+    .wl-team { background: #fff; border: 1px solid #EBEBF0; border-radius: 12px; overflow: hidden; }
+    .wl-th, .wl-tr { display: grid; grid-template-columns: 180px minmax(0, 1.4fr) minmax(0, 1.4fr) 90px; gap: 12px; align-items: center; padding: 10px 14px; }
+    .wl-th { font-size: 11px; font-weight: 700; color: #AAAAAA; border-bottom: 1px solid #F3F3F3; }
+    .wl-tr { border-bottom: 1px solid #F3F3F3; cursor: pointer; font-size: 13px; }
+    .wl-tr:hover, .wl-tr.open { background: #F7F8FC; }
+    .wl-tr > div { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .wl-tr .nm { display: flex; align-items: center; gap: 6px; }
+    .wl-tr .nm small { color: #919191; font-size: 11px; }
+    .wl-miss { color: #C2410C; font-weight: 700; }
+    .wl-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #EE0005; margin-right: 6px; vertical-align: middle; }
+    .wl-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 6px 14px 14px 40px; background: #F7F8FC; border-bottom: 1px solid #F3F3F3; }
+    .wl-detail h4 { margin: 4px 0 4px; font-size: 12px; color: #767676; }
+    .wl-pre { white-space: pre-wrap; font-family: inherit; font-size: 13px; line-height: 1.6; background: #FBFBFB; border: 1px solid #F3F3F3; border-radius: 10px; padding: 14px; margin: 0; max-height: 560px; overflow: auto; }
+    @media (max-width: 760px) {
+      .wl-grid { grid-template-columns: minmax(0, 1fr); }
+      .wl-who { margin-left: 0; }
+      .wl-th { display: none; }
+      .wl-tr { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+      .wl-tr > div:nth-child(3) { grid-column: 1 / -1; white-space: normal; }
+      .wl-tr > div:nth-child(4) { display: none; }
+      .wl-detail { grid-template-columns: 1fr; padding-left: 14px; }
+      .wl-del { opacity: 1; }
+      .wl-add input, .wl-t { font-size: 16px; }
+    }
+
     /* 새 버전 안내 */
     #afUpdateBar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 10060; display: flex; align-items: center; gap: 12px; background: #1A1A1A; color: #fff; font-size: 13px; padding: 10px 12px 10px 16px; border-radius: 10px; box-shadow: 0 6px 16px rgba(26,26,26,0.2); animation: afBannerDown var(--m-enter) var(--e-enter); }
     #afUpdateBar button { border: none; background: #6433DF; color: #fff; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
@@ -5361,6 +5422,20 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v14.0</span>
+              <span class="rn-version-title">업무일지</span>
+              <span class="rn-version-date">2026-11-26</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>왼쪽 메뉴 [업무일지]: 오늘 계획(체크리스트) · 블로커·특이사항 · 이번주 계획 — 본인 일지만 작성, 체크한 항목이 곧 한 일</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>어제 미완료 · 지난주 미완료를 버튼 한 번으로 가져오기(↪ 이월 표시)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>팀 보기: 날짜별 작성 여부 · 미작성자 · 블로커 · 이번주 진척, 줄을 누르면 상세</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>주간 정리: 월~금 일지로 「플랫폼개발팀 주간 업무 공유」 초안(#요약# / #상세#, 파트별) 자동 작성 + 복사</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v13.9</span>
               <span class="rn-version-title">프로젝트 링크 복사</span>
@@ -21565,7 +21640,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v13.9';
+    var AF_BUILD = 'v14.0';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -21604,6 +21679,7 @@ function renderNotifList() {
       card.innerHTML =
         '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
         '<ul>' +
+          '<li><b>업무일지</b> — 왼쪽 메뉴 [업무일지]에서 오늘·이번주 계획을 체크리스트로, 금요일 주간 정리는 버튼 한 번</li>' +
           '<li><b>프로젝트 링크 복사</b> — 목록 줄 [링크] · 프로젝트 페이지 [링크 복사], 열면 그 프로젝트가 바로 열림</li>' +
           '<li><b>배포 메모 바로 수정</b> — 목록에서 메모를 눌러 고치고, 다른 곳을 누르면 저장</li>' +
           '<li><b>배포 ↔ 프로젝트 묶기</b> — [＋ 프로젝트]로 검색해서 여러 개</li>' +
@@ -22905,7 +22981,7 @@ function renderNotifList() {
     var oldTabs = side.querySelector('.tabs');
     var ic = function(p) { return (typeof AF_NAV !== 'undefined' && AF_NAV[p]) ? _afSvg(AF_NAV[p][1], 'afs-ic') : ''; };
     var navs = document.createElement('div'); navs.className = 'a13-navs';
-    var items = [['a13work', '내 작업', 'home'], ['a13projects', '프로젝트', 'projects'], ['a13issues', '이슈', 'issues'], ['a13deploy', '배포', 'deploy']];
+    var items = [['a13work', '내 작업', 'home'], ['a13projects', '프로젝트', 'projects'], ['a13issues', '이슈', 'issues'], ['a13deploy', '배포', 'deploy'], ['a13log', '업무일지', 'worklog']];
     navs.innerHTML = items.map(function(x) { return '<button class="tab a13-nav" data-page="' + x[0] + '" title="' + x[1] + '">' + ic(x[2]) + x[1] + '</button>'; }).join('');
     navs.querySelectorAll('.a13-nav').forEach(function(b) { b.onclick = function() { A.go(b.dataset.page); }; });
     // 기존 스케줄·팀은 주 메뉴로, 나머지는 '더보기'
@@ -24075,6 +24151,246 @@ function renderNotifList() {
     toast('링크의 프로젝트를 찾을 수 없습니다 — 삭제되었을 수 있어요'); return false;
   };
 
+  /* ═══ v14.0: 업무일지 — 이번주 계획 · 오늘 계획 · 블로커, 팀 보기, 금요일 주간 정리 ═══
+   * 데이터: worklogs/{memberId}/days/{YYYY-MM-DD}  { plan/{id}:{t,d,o,c?}, blocker, at }
+   *         worklogs/{memberId}/weeks/{YYYY-Www}   { plan/{id}:{t,d,o,c?}, at }
+   * 쓰기는 본인 일지 경로의 해당 칸만 update — 다른 노드(안건·이슈·배포 등)는 건드리지 않는다. */
+  A.wl = {};
+  A.wlReady = false;
+  A.ui.wl = { tab: 'mine', date: '', who: '', open: {}, wk: '' };
+  try { if (typeof AF_NAV !== 'undefined' && !AF_NAV.worklog) AF_NAV.worklog = ['업무일지', '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/>']; } catch (e) {}
+
+  function wlToday() { var d = new Date(); return ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()); }
+  function wlAdd(s, n) { var d = dOnly(s); d.setDate(d.getDate() + n); return ymd(d.getFullYear(), d.getMonth() + 1, d.getDate()); }
+  function wlDow(s) { return dOnly(s).getDay(); }
+  function wlWeek(s) {
+    var d = dOnly(s), day = (d.getDay() + 6) % 7; // 월=0
+    var mon = new Date(d); mon.setDate(d.getDate() - day);
+    var th = new Date(mon); th.setDate(mon.getDate() + 3);
+    var y = th.getFullYear(), j1 = new Date(y, 0, 4), w = 1 + Math.round(((th - j1) / 864e5 - 3 + ((j1.getDay() + 6) % 7)) / 7);
+    var monS = ymd(mon.getFullYear(), mon.getMonth() + 1, mon.getDate());
+    return { key: y + '-W' + String(w).padStart(2, '0'), y: y, w: w, mon: monS, fri: wlAdd(monS, 4) };
+  }
+  A._wlWeek = wlWeek;
+  function wlMD(s) { var d = dOnly(s); return (d.getMonth() + 1) + '/' + d.getDate() + '(' + '일월화수목금토'[d.getDay()] + ')'; }
+  function wlId() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function wlItems(o) { return Object.keys(o || {}).map(function(k) { var v = o[k] || {}; return { id: k, t: v.t || '', d: !!v.d, o: v.o || 0, c: v.c || '' }; }).filter(function(x) { return x.t; }).sort(function(a, b) { return a.o - b.o; }); }
+  function wlDay(mid, date) { return ((A.wl[mid] || {}).days || {})[date] || null; }
+  function wlWk(mid, key) { return ((A.wl[mid] || {}).weeks || {})[key] || null; }
+  function wlMembers() { var l = TEAM.filter(function(m) { return typeof _isOnBoard !== 'function' || _isOnBoard(m) || m.id === me(); }); return l.length > 1 ? l : TEAM.slice(); }
+  function wlName(mid) { var m = TEAM.find(function(x) { return x.id === mid; }); return m ? m.name : mid; }
+  function wlPart(m) {
+    var r = (m && m.role) || '';
+    if (/디자인|CDO|Design/i.test(r)) return '디자인파트';
+    if (/기획|PM|CPO|PO|QA/i.test(r)) return '기획파트';
+    return '개발파트';
+  }
+  A._wlPart = wlPart;
+  // 본인 일지만 쓸 수 있다 (로그인한 팀원이면 쓰기 권한 여부와 무관하게 자기 일지는 작성)
+  function wlCanEdit(mid) { return !!me() && mid === me(); }
+
+  A._wlListen = function() {
+    if (A._wlOn) return;
+    var r = (typeof dbRef === 'function') ? dbRef('worklogs') : null; if (!r) return;
+    A._wlOn = true;
+    r.on('value', function(snap) {
+      A.wl = snap.val() || {}; A.wlReady = true;
+      if (A.cur.page === 'a13log') A.render();
+    }, function(err) { console.warn('[worklog] read fail', err); A._wlOn = false; });
+  };
+
+  function wlWrite(mid, base, patch, msg) {
+    if (!wlCanEdit(mid)) { toast('본인 일지만 작성할 수 있습니다', 'error'); return false; }
+    if (!A.wlReady) { toast('일지를 불러오는 중입니다. 잠시 후 다시 해 주세요', 'error'); return false; }
+    patch.at = new Date().toISOString();
+    var r = dbRef('worklogs/' + mid + '/' + base); if (!r) return false;
+    // 로컬 반영 (즉시 화면 갱신)
+    var cur = A.wl[mid] = A.wl[mid] || {}; var parts = base.split('/'); var node = cur;
+    parts.forEach(function(p) { node = node[p] = node[p] || {}; });
+    Object.keys(patch).forEach(function(k) { var ks = k.split('/'), n = node; for (var i = 0; i < ks.length - 1; i++) n = n[ks[i]] = n[ks[i]] || {}; if (patch[k] === null) delete n[ks[ks.length - 1]]; else n[ks[ks.length - 1]] = patch[k]; });
+    r.update(patch).then(function() { if (msg) toast(msg); }).catch(function(e) { toast('저장 실패: ' + e.message, 'error'); });
+    return true;
+  }
+  function wlBase(kind, key) { return (kind === 'w' ? 'weeks/' : 'days/') + key; }
+
+  A.wlAddItem = function(kind, key, text, from) {
+    var mid = me(); text = String(text || '').trim(); if (!text) return;
+    var p = {}; var id = wlId(); var v = { t: text.slice(0, 300), d: false, o: Date.now() }; if (from) v.c = from;
+    p['plan/' + id] = v;
+    wlWrite(mid, wlBase(kind, key), p); A.render(true);
+    setTimeout(function() { var i = document.querySelector('#a13log .wl-add[data-k="' + kind + '"] input'); if (i) i.focus(); }, 30);
+  };
+  A.wlKey = function(ev, kind, key) {
+    if (ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
+    ev.preventDefault();
+    var lines = ev.target.value.split(/\n/).map(function(s) { return s.replace(/^\s*[-•·*]\s*/, '').trim(); }).filter(Boolean);
+    ev.target.value = '';
+    lines.forEach(function(t, i) { setTimeout(function() { A.wlAddItem(kind, key, t); }, i * 5); });
+  };
+  A.wlToggle = function(kind, key, id) {
+    var mid = me(), n = kind === 'w' ? wlWk(mid, key) : wlDay(mid, key); var it = n && n.plan && n.plan[id]; if (!it) return;
+    var p = {}; p['plan/' + id + '/d'] = !it.d; wlWrite(mid, wlBase(kind, key), p); A.render(true);
+  };
+  A.wlEdit = function(kind, key, id, el) {
+    var mid = me(), n = kind === 'w' ? wlWk(mid, key) : wlDay(mid, key); var it = n && n.plan && n.plan[id]; if (!it) return;
+    var v = el.value.trim();
+    if (!v) { el.value = it.t; return; }
+    if (v === it.t) return;
+    var p = {}; p['plan/' + id + '/t'] = v.slice(0, 300); wlWrite(mid, wlBase(kind, key), p);
+  };
+  A.wlDel = function(kind, key, id) {
+    var mid = me(); var p = {}; p['plan/' + id] = null; wlWrite(mid, wlBase(kind, key), p); A.render(true);
+  };
+  A.wlBlocker = function(date, el) {
+    var mid = me(), n = wlDay(mid, date) || {}; var v = el.value.trim();
+    if (v === (n.blocker || '')) return;
+    wlWrite(mid, 'days/' + date, { blocker: v ? v.slice(0, 1000) : null }, v ? '블로커·특이사항을 저장했습니다' : '');
+  };
+  // 이전 작업일의 미완료 항목 (최대 7일 전까지)
+  function wlPrevDay(mid, date) {
+    for (var i = 1; i <= 7; i++) { var d = wlAdd(date, -i), n = wlDay(mid, d); if (n && wlItems(n.plan).length) return d; }
+    return '';
+  }
+  function wlCarry(mid, kind, fromKey, toKey) {
+    var src = kind === 'w' ? wlWk(mid, fromKey) : wlDay(mid, fromKey), dst = kind === 'w' ? wlWk(mid, toKey) : wlDay(mid, toKey);
+    var have = {}; wlItems(dst && dst.plan).forEach(function(x) { have[x.t] = 1; });
+    return wlItems(src && src.plan).filter(function(x) { return !x.d && !have[x.t]; });
+  }
+  A.wlCarryIn = function(kind, toKey) {
+    var mid = me(); var fromKey = kind === 'w' ? wlWeek(wlAdd(A.ui.wl.date || wlToday(), -7)).key : wlPrevDay(mid, toKey);
+    if (!fromKey) return;
+    var list = wlCarry(mid, kind, fromKey, toKey); if (!list.length) return;
+    var p = {}, base = Date.now();
+    list.forEach(function(x, i) { p['plan/' + wlId() + i] = { t: x.t, d: false, o: base + i, c: fromKey }; });
+    wlWrite(mid, wlBase(kind, toKey), p, list.length + '건을 가져왔습니다'); A.render(true);
+  };
+  A.wlNav = function(n) { var u = A.ui.wl; u.date = n === 0 ? wlToday() : wlAdd(u.date || wlToday(), n); A.render(true); };
+  A.wlDate = function(v) { if (v) { A.ui.wl.date = v; A.render(true); } };
+  A.wlTab = function(t) { A.ui.wl.tab = t; A.render(true); };
+  A.wlWho = function(v) { A.ui.wl.who = v; A.render(true); };
+  A.wlOpen = function(mid) { A.ui.wl.open[mid] = !A.ui.wl.open[mid]; A.render(true); };
+
+  function wlListH(kind, key, items, edit) {
+    var h = '<ul class="wl-list">' + items.map(function(x) {
+      return '<li class="' + (x.d ? 'done' : '') + '">' +
+        '<button class="wl-chk" ' + (edit ? 'onclick="AF13.wlToggle(\'' + kind + '\',\'' + key + '\',\'' + x.id + '\')"' : 'disabled') + ' aria-pressed="' + x.d + '" aria-label="' + (x.d ? '완료 취소' : '완료') + '">' + (x.d ? '✓' : '') + '</button>' +
+        (edit ? '<input class="wl-t" value="' + esc(x.t) + '" onkeydown="if(event.key===\'Enter\'&&!event.isComposing)this.blur()" onblur="AF13.wlEdit(\'' + kind + '\',\'' + key + '\',\'' + x.id + '\',this)" aria-label="계획 항목">' : '<span class="wl-t">' + esc(x.t) + '</span>') +
+        (x.c ? '<span class="wl-carry" title="' + esc(x.c) + '에서 가져옴">↪ 이월</span>' : '') +
+        (edit ? '<button class="wl-del" onclick="AF13.wlDel(\'' + kind + '\',\'' + key + '\',\'' + x.id + '\')" aria-label="삭제">×</button>' : '') + '</li>';
+    }).join('') + '</ul>';
+    if (!items.length) h = '<div class="wl-empty">' + (edit ? '아직 없습니다. 아래에 적고 Enter' : '작성하지 않았습니다') + '</div>';
+    if (edit) h += '<div class="wl-add" data-k="' + kind + '"><span>＋</span><input placeholder="' + (kind === 'w' ? '이번주에 할 일 — Enter (여러 줄 붙여넣기 가능)' : '오늘 할 일 — Enter (여러 줄 붙여넣기 가능)') + '" onkeydown="AF13.wlKey(event,\'' + kind + '\',\'' + key + '\')" onpaste="var t=this;setTimeout(function(){if(/\\n/.test(t.value)){AF13.wlKey({key:\'Enter\',target:t,preventDefault:function(){}},\'' + kind + '\',\'' + key + '\')}},0)"></div>';
+    return h;
+  }
+  function wlProg(items) { var dn = items.filter(function(x) { return x.d; }).length; return items.length ? dn + '/' + items.length : '-'; }
+
+  function wlMine(u) {
+    var mid = u.who || me(); var edit = wlCanEdit(mid); var date = u.date, wk = wlWeek(date);
+    var day = wlDay(mid, date) || {}, wkn = wlWk(mid, wk.key) || {};
+    var dItems = wlItems(day.plan), wItems = wlItems(wkn.plan);
+    var h = '';
+    // 오늘 계획
+    var prev = edit ? wlPrevDay(mid, date) : '', carry = prev ? wlCarry(mid, 'd', prev, date) : [];
+    h += '<div class="a13-card wl-card"><div class="a13-card-h"><h3>' + (date === wlToday() ? '오늘 계획' : wlMD(date) + ' 계획') + ' <span class="wl-cnt">' + wlProg(dItems) + '</span></h3>' +
+      (carry.length ? '<button class="a13-btn" onclick="AF13.wlCarryIn(\'d\',\'' + date + '\')">' + wlMD(prev) + ' 미완료 ' + carry.length + '건 가져오기</button>' : '') + '</div>' +
+      wlListH('d', date, dItems, edit) + '</div>';
+    // 이번주 계획
+    var lastWk = wlWeek(wlAdd(date, -7)).key, wcarry = edit ? wlCarry(mid, 'w', lastWk, wk.key) : [];
+    h += '<div class="a13-card wl-card"><div class="a13-card-h"><h3>이번주 계획 <span class="wl-sub">W' + wk.w + ' · ' + wlMD(wk.mon) + '~' + wlMD(wk.fri) + '</span> <span class="wl-cnt">' + wlProg(wItems) + '</span></h3>' +
+      (wcarry.length ? '<button class="a13-btn" onclick="AF13.wlCarryIn(\'w\',\'' + wk.key + '\')">지난주 미완료 ' + wcarry.length + '건 가져오기</button>' : '') + '</div>' +
+      (edit && !wItems.length && wlDow(date) === 1 ? '<div class="wl-nudge">월요일이에요 — 이번주에 끝낼 일을 3~7개 적어 두세요</div>' : '') +
+      wlListH('w', wk.key, wItems, edit) + '</div>';
+    // 블로커
+    h += '<div class="a13-card wl-card wl-wide"><div class="a13-card-h"><h3>블로커 · 특이사항</h3><span class="a13-hint">막힌 일, 누구 응답을 기다리는지</span></div>' +
+      (edit ? '<textarea class="a13-input wl-blk" placeholder="예) PG 테스트 키 만료 — 구범모님 재발급 요청 (대기)" onblur="AF13.wlBlocker(\'' + date + '\',this)">' + esc(day.blocker || '') + '</textarea>'
+        : (day.blocker ? '<div class="wl-blk-ro">' + esc(day.blocker) + '</div>' : '<div class="wl-empty">없음</div>')) + '</div>';
+    return h;
+  }
+
+  function wlTeam(u) {
+    var date = u.date, wk = wlWeek(date), ms = wlMembers();
+    var missing = ms.filter(function(m) { return !wlItems((wlDay(m.id, date) || {}).plan).length; });
+    var blk = ms.filter(function(m) { return (wlDay(m.id, date) || {}).blocker; });
+    var h = '<div class="wl-chips">' +
+      '<span class="wl-chip ' + (missing.length ? 'warn' : 'ok') + '">' + (missing.length ? '미작성 ' + missing.length + '명 · ' + missing.map(function(m) { return esc(m.name); }).join(', ') : '모두 작성') + '</span>' +
+      (blk.length ? '<span class="wl-chip red">블로커 ' + blk.length + '건</span>' : '') + '</div>';
+    h += '<div class="wl-team"><div class="wl-th"><div>이름</div><div>' + (date === wlToday() ? '오늘' : wlMD(date)) + ' 계획</div><div>블로커·특이사항</div><div>이번주 W' + wk.w + '</div></div>';
+    ms.forEach(function(m) {
+      var d = wlDay(m.id, date) || {}, di = wlItems(d.plan), wi = wlItems((wlWk(m.id, wk.key) || {}).plan), op = u.open[m.id];
+      h += '<div class="wl-tr' + (op ? ' open' : '') + '" onclick="AF13.wlOpen(\'' + q(m.id) + '\')" role="button" tabindex="0" aria-expanded="' + !!op + '">' +
+        '<div class="nm">' + av(m.id) + '<b>' + esc(m.name) + '</b><small>' + esc(wlPart(m)) + '</small></div>' +
+        '<div>' + (di.length ? '<b>' + wlProg(di) + '</b> <span class="a13-hint">' + esc(di[0].t) + (di.length > 1 ? ' 외 ' + (di.length - 1) : '') + '</span>' : '<span class="wl-miss">미작성</span>') + '</div>' +
+        '<div class="bk">' + (d.blocker ? '<span class="wl-dot"></span>' + esc(d.blocker) : '<span class="a13-hint">-</span>') + '</div>' +
+        '<div>' + (wi.length ? wlProg(wi) : '<span class="a13-hint">-</span>') + '</div></div>';
+      if (op) h += '<div class="wl-detail"><div><h4>' + (date === wlToday() ? '오늘' : wlMD(date)) + ' 계획</h4>' + wlListH('d', date, di, false) + '</div><div><h4>이번주 계획</h4>' + wlListH('w', wk.key, wi, false) + '</div></div>';
+    });
+    return h + '</div>';
+  }
+
+  // 금요일 주간 정리: 월~금 일지에서 완료한 일 + 이번주 계획을 노션 '주간 업무 공유' 형식으로
+  A.wlWeeklyText = function(wkKey) {
+    var any = wlToday(); var wk = wkKey ? null : wlWeek(any);
+    if (wkKey) { var m = /^(\d{4})-W(\d{2})$/.exec(wkKey); var j4 = new Date(+m[1], 0, 4); var mon = new Date(j4); mon.setDate(j4.getDate() - ((j4.getDay() + 6) % 7) + (+m[2] - 1) * 7); wk = wlWeek(ymd(mon.getFullYear(), mon.getMonth() + 1, mon.getDate())); }
+    var parts = ['기획파트', '디자인파트', '개발파트'], ms = wlMembers();
+    var days = [0, 1, 2, 3, 4].map(function(i) { return wlAdd(wk.mon, i); });
+    var by = {}; parts.forEach(function(p) { by[p] = []; });
+    ms.forEach(function(mm) {
+      var done = [], seen = {}, cont = {};
+      days.forEach(function(d) { wlItems((wlDay(mm.id, d) || {}).plan).forEach(function(x) { if (x.d) { if (!seen[x.t]) { seen[x.t] = 1; done.push(x.t); } } else cont[x.t] = 1; }); });
+      Object.keys(cont).forEach(function(t) { if (!seen[t]) { seen[t] = 1; done.push(t + ' (진행중)'); } });
+      var wi = wlItems((wlWk(mm.id, wk.key) || {}).plan);
+      by[wlPart(mm)].push({ name: mm.name, done: done, week: wi });
+    });
+    var yy = String(wk.y).slice(2);
+    var L = ['[플랫폼개발팀 ' + yy + '년 W' + wk.w + ' 주간 업무 공유]', '', '#요약#', ''];
+    parts.forEach(function(p) {
+      var items = []; by[p].forEach(function(x) { x.week.forEach(function(w) { items.push(w.t + (w.d ? '' : ' (진행중)')); }); });
+      if (!items.length) by[p].forEach(function(x) { x.done.slice(0, 3).forEach(function(t) { items.push(t); }); });
+      L.push('[' + p + ']'); if (items.length) items.forEach(function(t) { L.push('- ' + t); }); else L.push('- (작성된 내용 없음)'); L.push('');
+    });
+    L.push('---', '', '#상세#', '');
+    parts.forEach(function(p, pi) {
+      L.push('[' + p + ']', '');
+      var wrote = false; by[p].forEach(function(x) { if (!x.done.length) return; wrote = true; L.push('[' + x.name + ']'); x.done.forEach(function(t) { L.push('- ' + t); }); L.push(''); });
+      if (!wrote) L.push('- (작성된 내용 없음)', '');
+      if (pi < parts.length - 1) L.push('---', '');
+    });
+    L.push('이상입니다.');
+    return { text: L.join('\n'), wk: wk, missing: ms.filter(function(mm) { return !days.some(function(d) { return wlItems((wlDay(mm.id, d) || {}).plan).length; }); }).map(function(mm) { return mm.name; }) };
+  };
+  A.wlCopyWeekly = function() {
+    var r = A.wlWeeklyText(A.ui.wl.wk || wlWeek(A.ui.wl.date || wlToday()).key);
+    try { navigator.clipboard.writeText(r.text).then(function() { toast('주간 정리를 복사했습니다 — 구글챗에 붙여넣으세요'); }, function() { prompt('주간 정리', r.text); }); } catch (e) { prompt('주간 정리', r.text); }
+  };
+  A.wlWeekNav = function(n) { var u = A.ui.wl; var cur = u.wk || wlWeek(u.date || wlToday()).key; var r = A.wlWeeklyText(cur); u.wk = wlWeek(wlAdd(r.wk.mon, n * 7)).key; A.render(true); };
+  function wlWeekly(u) {
+    var r = A.wlWeeklyText(u.wk || wlWeek(u.date).key);
+    return '<div class="a13-card wl-card"><div class="a13-card-h"><h3>주간 업무 공유 초안 <span class="wl-sub">W' + r.wk.w + ' · ' + wlMD(r.wk.mon) + '~' + wlMD(r.wk.fri) + '</span></h3>' +
+      '<div style="display:flex;gap:6px"><button class="a13-btn" onclick="AF13.wlWeekNav(-1)" aria-label="지난주">‹</button><button class="a13-btn" onclick="AF13.wlWeekNav(1)" aria-label="다음주">›</button><button class="a13-btn pri" onclick="AF13.wlCopyWeekly()">복사</button></div></div>' +
+      (r.missing.length ? '<div class="wl-nudge">이번주 일지를 한 번도 안 쓴 사람: ' + r.missing.map(esc).join(', ') + '</div>' : '') +
+      '<div class="a13-hint" style="margin:0 0 8px">월~금 일지에서 완료한 일(미완료는 "진행중")과 이번주 계획을 파트별로 모았습니다. 복사한 뒤 다듬어서 공유하세요.</div>' +
+      '<pre class="wl-pre">' + esc(r.text) + '</pre></div>';
+  }
+
+  function renderWorklog(el) {
+    A._wlListen();
+    var u = A.ui.wl; if (!u.date) u.date = wlToday();
+    var tabs = [['mine', '내 일지'], ['team', '팀 보기'], ['weekly', '주간 정리']];
+    var h = '<div class="wl-top"><div class="a13-seg wl-tabs" role="tablist">' + tabs.map(function(t) { return '<button role="tab" aria-selected="' + (u.tab === t[0]) + '" class="' + (u.tab === t[0] ? 'on' : '') + '" onclick="AF13.wlTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div>';
+    if (u.tab !== 'weekly') h += '<div class="wl-date"><button class="a13-btn" onclick="AF13.wlNav(-1)" aria-label="전날">‹</button><input type="date" class="a13-input" value="' + u.date + '" onchange="AF13.wlDate(this.value)" aria-label="날짜"><button class="a13-btn" onclick="AF13.wlNav(1)" aria-label="다음날">›</button>' + (u.date !== wlToday() ? '<button class="a13-btn" onclick="AF13.wlNav(0)">오늘</button>' : '') + '</div>';
+    if (u.tab === 'mine') h += '<select class="a13-input wl-who" onchange="AF13.wlWho(this.value)" aria-label="누구의 일지">' + wlMembers().map(function(m) { var sel = (u.who || me()) === m.id; return '<option value="' + esc(m.id) + '"' + (sel ? ' selected' : '') + '>' + esc(m.name) + (m.id === me() ? ' (나)' : '') + '</option>'; }).join('') + '</select>';
+    h += '</div>';
+    if (!A.wlReady) h += '<div class="a13-empty"><b>일지를 불러오는 중…</b></div>';
+    else if (u.tab === 'team') h += wlTeam(u);
+    else if (u.tab === 'weekly') h += wlWeekly(u);
+    else {
+      if (!me()) h += '<div class="a13-empty"><b>팀원으로 연결된 계정만 일지를 쓸 수 있습니다</b></div>';
+      else { if (u.who && u.who !== me()) h += '<div class="wl-nudge">' + esc(wlName(u.who)) + '님의 일지 (보기 전용)</div>'; h += '<div class="wl-grid">' + wlMine(u) + '</div>'; }
+    }
+    el.innerHTML = '<div class="a13">' + h + '</div>';
+  }
+  PAGES.a13log = ['업무일지', renderWorklog];
+
   function start() {
     if (typeof _afUiMode !== 'undefined' && _afUiMode === 'classic') return;
     var tries = 0;
@@ -24085,6 +24401,7 @@ function renderNotifList() {
       if (ready) {
         clearInterval(tm);
         A._listenMeta();
+        try { A._wlListen(); } catch (e) {}
         if (/#folder=/.test(location.hash)) { A.openFolderFromHash(); return; }
         if (/[?&]project=/.test(location.search) && A.openProjectFromQuery()) { if (!canW()) { var c0 = document.querySelector('.a13-create'); if (c0) c0.style.display = 'none'; } return; }
         var deep = /#(project|issue|bundle|deploy)=/.test(location.hash) || /[?&](install|deploy|issue)=/.test(location.search);

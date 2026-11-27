@@ -147,7 +147,7 @@
       font-weight: 500;
       font-size: 14px;
       color: #767676;
-      transition: all 0.2s;
+      transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       white-space: nowrap;
     }
 
@@ -555,7 +555,7 @@
       left: 0;
       height: 3px;
       border-radius: 0 0 3px 3px;
-      transition: width 0.3s;
+      transition: none;
     }
 
     .gantt-bar .progress-stripe.status-대기 { background: #919191; width: 0%; }
@@ -1142,7 +1142,7 @@
       font-size: 15px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: 0.2s ease; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1224,7 +1224,7 @@
       font-size: 13px;
       color: #767676;
       border-bottom: 2px solid transparent;
-      transition: all 0.2s;
+      transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
 
     .chat-tab.active {
@@ -1643,7 +1643,7 @@
       background: #fff;
       border-left: 3px solid transparent;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: 0.15s ease; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       border: 1px solid #F3F3F3;
       position: relative;
     }
@@ -1969,7 +1969,7 @@
       text-align: center;
       min-width: 70px;
       border-radius: 6px;
-      transition: all 0.15s;
+      transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
 
     .issue-summary-item.compact {
@@ -1999,7 +1999,7 @@
       cursor: pointer;
       color: #767676;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
 
     .issue-view-btn:hover {
@@ -2032,7 +2032,7 @@
       border: 1px solid #F3F3F3;
       border-left: 3px solid transparent;
       margin-bottom: 6px;
-      transition: all 0.15s ease;
+      transition: 0.15s ease; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       background: white;
     }
 
@@ -2544,7 +2544,7 @@
       border-radius: 8px;
       padding: 16px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       margin-bottom: 12px;
     }
 
@@ -3144,7 +3144,7 @@
       border: 1.5px solid #E7E7E7;
       background: #fff;
       color: #363636;
-      transition: all 0.15s;
+      transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
       white-space: nowrap;
       user-select: none;
     }
@@ -3288,7 +3288,7 @@
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s;
+      transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
     .qc-more-btn:hover { background: #F3F0FF; }
     .qc-success {
@@ -3315,7 +3315,7 @@
       cursor: pointer;
       border-bottom: 2px solid transparent;
       margin-bottom: -2px;
-      transition: all 0.15s;
+      transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
     .modal-step-tab.active { color: #6433DF; border-bottom-color: #6433DF; }
     .modal-step-panel { display: none; }
@@ -3364,7 +3364,7 @@
       cursor: pointer;
       border: 1px solid #E7E7E7;
       background: #fff;
-      transition: all 0.15s;
+      transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;
     }
     .deploy-inline-action:hover { background: #F3F3F3; }
     .deploy-inline-action.primary { background: #6433DF; color: #fff; border-color: #6433DF; }
@@ -3740,7 +3740,7 @@
     :root {
       --af-cta: #32008C; --af-cta-hover: #24006A; --af-accent: #6433DF; --af-accent-soft: #F3F0FF; --af-accent-line: #D9CCFA;
       --af-title: #1A1A1A; --af-head: #363636; --af-body: #767676; --af-sub: #919191; --af-ph: #AAAAAA; --af-disabled: #CCCCCC;
-      --af-line: #E7E7E7; --af-surface: #F3F3F3; --af-surface-2: #F7F8FC; --af-surface-3: #FBFBFB; --af-bg: #F1F2F7;
+      --af-white: #FFFFFF; --af-line: #E7E7E7; --af-surface: #F3F3F3; --af-surface-2: #F7F8FC; --af-surface-3: #FBFBFB; --af-bg: #F1F2F7;
       --af-danger: #EE0005; --af-urgent: #FF4C14;
       --m-signature: 400ms;
     }
@@ -3771,7 +3771,7 @@
     .af-tk-h { font-size: 14px; font-weight: 700; color: var(--af-title); }
     .af-tk-count { font-size: 12px; color: var(--af-body); }
     .af-tk-bar { flex: 1; height: 6px; background: var(--af-surface); border-radius: 3px; overflow: hidden; }
-    .af-tk-bar > div { height: 100%; background: var(--af-accent); border-radius: 3px; transition: width var(--m-enter) var(--e-enter); }
+    .af-tk-bar > div { height: 100%; background: var(--af-accent); border-radius: 3px;  }
     .af-tk-quick input { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px dashed var(--af-accent-line); border-radius: 8px; font-size: 13px; background: var(--af-surface-2); transition: border-color var(--m-feedback) var(--e-out), background var(--m-feedback) var(--e-out); }
     .af-tk-quick { display: flex; gap: 6px; }
     .af-tk-quick input { flex: 1; min-width: 0; }
@@ -4125,7 +4125,7 @@
     .a13-phases i.on { opacity: .9; } .a13-phases i.now { outline: 2px solid #1A1A1A; outline-offset: 1px; }
     .a13-prog { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #767676; font-weight: 700; }
     .a13-bar { height: 6px; background: #F3F3F3; border-radius: 3px; overflow: hidden; }
-    .a13-bar > div { height: 100%; background: #6433DF; border-radius: 3px; transition: width var(--m-enter) var(--e-enter); }
+    .a13-bar > div { height: 100%; background: var(--af-accent); border-radius: 3px; }
     .a13-phead { display: grid; grid-template-columns: minmax(220px, 2.2fr) 90px 150px 120px 120px 90px 90px; gap: 12px; padding: 0 12px 6px; font-size: 11px; color: #AAAAAA; font-weight: 700; }
 
     /* 프로젝트 페이지 */
@@ -4514,7 +4514,7 @@
     .a13-ic .tgs { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 2px; cursor: pointer; }
     .a13-ic .tgs .a13-cat, .a13-ic .tgs .a13-tag { margin: 0; }
     /* ═══ v13.4 안건 검색 선택 · 이슈 시트 · 배포 편집 ═══ */
-    select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"] { cursor: pointer; }
+    select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"], #a13issues .a13-fmore select[aria-label="안건"] { cursor: pointer; }
     .a13-psel-pop { position: fixed; z-index: 10080; background: #fff; border: 1px solid #E7E7E7; border-radius: 14px; box-shadow: 0 16px 40px rgba(26,26,26,0.18); padding: 8px; animation: afRiseInSm var(--m-feedback) var(--e-enter); }
     .a13-psel-pop > input { width: 100%; height: 36px; font-size: 14px; margin-bottom: 6px; }
     .a13-psel-pop .ls { max-height: 300px; overflow: auto; display: flex; flex-direction: column; gap: 1px; }
@@ -4895,9 +4895,71 @@
     .wl-wkp { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 0 7px; }
     .wl-tr .cl .ln { font-size: 14px; }
     .wl-tr .nm b { font-size: 14px; }
+    /* v14.7 사용성 정리 */
+    html, body { overflow-x: clip; }
+    .a13-navs .a13-ngl { font-size: 12px; color: var(--af-sub); padding: 16px 12px 4px; font-weight: 600; }
+    .a13-navs .a13-ngl:first-child { padding-top: 4px; }
+    .a13-navs .tab { position: relative; }
+    .a13-nbadge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 8px; border-radius: 10px; background: var(--af-accent-soft); color: var(--af-cta); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; animation: a13Pop var(--m-feedback) var(--e-enter); }
+    .a13-nbadge.dot { min-width: 8px; width: 8px; height: 8px; padding: 0; background: var(--af-urgent); }
+    .a13-navs .tab.active .a13-nbadge:not(.dot) { background: var(--af-cta); color: var(--af-white); }
+    @media (max-width: 60rem) { .a13-navs .a13-ngl { display: none; } }
+    .a13 :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible, #afSide :is(button, a):focus-visible, .a13-np :is(button, a, input, select, textarea, summary, label):focus-visible { outline: 2px solid var(--af-accent); outline-offset: 2px; transition: none; }
+    .a13-sbox { position: relative; display: inline-flex; align-items: center; min-width: 220px; flex: 0 1 300px; }
+    .a13-sbox svg { position: absolute; left: 10px; width: 15px; height: 15px; color: var(--af-sub); pointer-events: none; }
+    :is(#a13issues, #a13projects, #a13deploy, #a13log, #a13work, #a13project) .a13-sbox > input { width: 100% !important; max-width: none !important; padding-left: 32px !important; flex: 1 1 auto !important; min-width: 0 !important; }
+    .a13-ph .a13-sbox { flex: 0 0 220px; min-width: 0; }
+    #a13issues .a13-toolbar { flex-wrap: wrap; row-gap: 8px; }
+    #a13issues .a13-toolbar .a13-sbox { flex: 1 1 200px; max-width: 320px; min-width: 160px; }
+    #a13issues .a13-toolbar > .a13-hint { margin-left: auto; }
+    .a13-ph .a13-quiet { color: var(--af-body); font-weight: 500; }
+    .a13-folders .lb { display: none; }
+    #a13issues .a13-round.open { border: 1px dashed var(--af-accent-line) !important; background: var(--af-accent-soft) !important; }
+    .a13-toolbar { row-gap: 8px; }
+    .a13-fmore { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 12px; margin: -2px 0 16px; background: var(--af-surface-2); border: 1px solid var(--af-line); border-radius: 12px; animation: a13Reveal var(--m-enter) var(--e-enter); }
+    .a13-fmore[hidden] { display: none; }
+    .a13-fmore .a13-fml { font-size: 12px; color: var(--af-sub); margin-left: 4px; }
+    .a13-fmore .a13-fml:not(:first-child) { margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--af-line); }
+    .a13-fmore .a13-folders { margin: 0; padding: 0; background: none; border: none; box-shadow: none; }
+    .a13-fmore-tg.on { background: var(--af-accent-soft); color: var(--af-cta); border-color: var(--af-accent-line); }
+    .a13-round.open { border: 1px dashed var(--af-accent-line); background: var(--af-accent-soft); }
+    @media (hover: hover) { .a13-drow .ac { opacity: 0; transition: opacity var(--m-feedback) var(--e-out); } .a13-drow:hover .ac, .a13-drow:focus-within .ac { opacity: 1; } }
+    .a13-icbtn { width: 36px; padding: 0 !important; justify-content: center; }
+    .a13-icbtn svg { width: 16px; height: 16px; }
+    .wl-wordpop { display: flex; flex-direction: column; min-width: 140px; padding: 4px; }
+    .wl-wordpop button { text-align: left; border: none; background: none; padding: 8px 12px; border-radius: 8px; font: inherit; font-size: 13px; cursor: pointer; color: var(--af-title); min-height: 36px; }
+    .wl-wordpop button:hover, .wl-wordpop button:focus-visible { background: var(--af-accent-soft); }
+    .wl-card .wl-add { margin-bottom: 4px; }
+    #a13log .wl-tabs button { min-height: 36px; padding: 0 16px; font-size: 14px; }
+    #a13log .wl-top { gap: 12px; }
+    #afPageTitle { transition: opacity var(--m-feedback) var(--e-out), transform var(--m-feedback) var(--e-out); }
+    #afPageTitle.a13-dim { opacity: 0; transform: translateY(4px); }
+    .a13-enter { animation: a13PageIn var(--m-enter) var(--e-enter); }
+    @keyframes a13PageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes a13Reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    @keyframes a13Pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+    #a13Keys { position: fixed; inset: 0; z-index: 10070; background: color-mix(in srgb, var(--af-title) 32%, transparent); display: flex; align-items: center; justify-content: center; animation: a13Fade var(--m-enter) var(--e-enter); }
+    #a13Keys .a13-keys { background: var(--af-white); border-radius: 16px; padding: 20px 20px; width: min(420px, calc(100% - 32px)); box-shadow: 0 20px 48px color-mix(in srgb, var(--af-title) 20%, transparent); animation: a13KeysIn var(--m-enter) var(--e-enter); }
+    #a13Keys .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    #a13Keys .hd button { border: none; background: none; font-size: 16px; cursor: pointer; color: var(--af-sub); min-width: 32px; min-height: 32px; border-radius: 8px; }
+    #a13Keys dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0; font-size: 13px; align-items: center; }
+    #a13Keys dt { display: flex; gap: 4px; align-items: center; }
+    #a13Keys dd { margin: 0; color: var(--af-head); }
+    #a13Keys kbd { font: inherit; font-size: 12px; min-width: 24px; padding: 4px 8px; border: 1px solid var(--af-line); border-bottom-width: 2px; border-radius: 6px; background: var(--af-surface-3); text-align: center; }
+    #a13Keys i { font-style: normal; font-size: 11px; color: var(--af-sub); }
+    @keyframes a13Fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes a13KeysIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+    #afWhatsNew { width: 300px; padding: 12px 16px; }
+    #afWhatsNew ul { margin: 0 0 12px; font-size: 12px; }
+    #afWhatsNew.afwn-quiet { opacity: .72; transition: opacity var(--m-feedback) var(--e-out); }
+    #afWhatsNew.afwn-quiet:hover, #afWhatsNew.afwn-quiet:focus-within { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .a13-enter, .a13-fmore, .a13-nbadge, #a13Keys, #a13Keys .a13-keys { animation: none !important; }
+      #afPageTitle, .a13-drow .ac { transition: none !important; }
+    }
     /* v14.6 LNB 바깥 바로가기 */
     .a13-navs a.a13-ext{text-decoration:none;display:flex;align-items:center}
-    .a13-navs .a13-ext-ic{margin-left:auto;font-size:11px;color:#AAAAAA}
+    .a13-navs .a13-ext-ic{margin-left:auto;font-size:11px;color:var(--af-ph)}
     /* v14.6 링크 · AI로 다시 쓰기 */
     .a13-np .np-links{display:flex;flex-direction:column;gap:6px}
     .a13-np .np-lk{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid #F3F3F3}
@@ -5056,6 +5118,67 @@
       .af-tk-bar > div { transition: none !important; }
     }
 
+    /* v14.7 모션 — 버튼·링크·팝오버·모달·목록·탭 (aboutfishing-all 10장 토큰, transform·opacity만) */
+    @keyframes a13Rip { to { transform: scale(1); opacity: 0; } }
+    @keyframes a13PopIn { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: none; } }
+    @keyframes a13RowFlash { 0% { box-shadow: inset 0 0 0 999px var(--af-accent-soft); } 100% { box-shadow: inset 0 0 0 999px transparent; } }
+    @keyframes a13Tick { 0% { transform: scale(1); } 35% { transform: scale(.8); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
+    @keyframes a13BadgeIn { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
+    @keyframes a13Nudge { 0%, 100% { transform: none; } 50% { transform: translateX(3px); } }
+    .a13-glide { position: absolute; left: 0; top: 0; z-index: 0; border-radius: 8px; background: var(--af-white); box-shadow: 0 1px 3px color-mix(in srgb, var(--af-title) 12%, transparent); transform-origin: left center; pointer-events: none; }
+    .a13-seg.a13-hasglide { position: relative; }
+    .a13-seg.a13-hasglide > button { position: relative; z-index: 1; }
+    .a13-seg.a13-hasglide > button.on { background: transparent; box-shadow: none; }
+    .a13-rip { position: absolute; border-radius: 50%; pointer-events: none; background: currentColor; opacity: .2; transform: scale(0); animation: a13Rip 560ms var(--e-enter) forwards; }
+    @media (prefers-reduced-motion: no-preference) {
+      :is(.a13-btn, .btn, .a13-icbtn, .a13-fchip, .a13-seg > button, .wl-quick button, .a13-plink, .afwn-go, .a13-stat, .a13-kpi, .a13-nav, .wl-pin, .wl-chk) {
+        transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+        transition-duration: var(--m-feedback); transition-timing-function: var(--e-out);
+      }
+      :is(.a13-btn, .btn, .a13-icbtn, .a13-plink, .afwn-go):hover:not(:disabled) { transform: translateY(-1px); }
+      .a13-btn.pri:hover:not(:disabled), .afwn-go:hover { box-shadow: 0 6px 16px color-mix(in srgb, var(--af-cta) 26%, transparent); }
+      :is(.a13-btn, .btn, .a13-icbtn, .a13-fchip, .a13-seg > button, .wl-quick button, .a13-plink, .afwn-go, .a13-nav, .wl-pin, .a13-stat, .a13-kpi):active:not(:disabled) { transform: scale(.96); transition-duration: var(--m-press); }
+      .a13-fchip:hover { transform: translateY(-1px); }
+      .a13-stat:hover, .a13-kpi:hover { transform: translateY(-2px); }
+      /* 링크: 밑줄이 스며 나옴, 화살표가 살짝 밀림 */
+      #content a:not(.a13-btn):not(.a13-nav):not(.a13-ext):not(.a13-plink), .wl-link {
+        text-decoration-line: underline; text-decoration-color: transparent; text-underline-offset: 3px; text-decoration-thickness: 1px;
+        transition: text-decoration-color var(--m-feedback) var(--e-out), color var(--m-feedback) var(--e-out);
+      }
+      #content a:not(.a13-btn):not(.a13-nav):not(.a13-ext):not(.a13-plink):hover, .wl-link:hover { text-decoration-color: currentColor; }
+      .a13-ext:hover .a13-ext-ic { display: inline-block; animation: a13Nudge var(--m-signature) var(--e-enter); }
+      /* 왼쪽 메뉴: 아이콘이 밀리고, 선택 메뉴 아이콘이 한 번 튐 */
+      .a13-nav svg { transition: transform var(--m-feedback) var(--e-enter); }
+      .a13-nav:hover svg { transform: translateX(2px); }
+      .a13-navs .tab.active svg { animation: afBump var(--m-feedback) var(--e-out); }
+      .a13-nbadge { animation: a13BadgeIn var(--m-enter) var(--e-enter); }
+      .a13-nbadge.a13-bump { animation: afBump var(--m-signature) var(--e-out); }
+      /* 팝오버·드롭다운·말머리·메뉴 */
+      #a13Pop, .a13-pop, .wl-ppop, .wl-tplpop, .wl-cpop { animation: a13PopIn var(--m-feedback) var(--e-enter); transform-origin: top left; }
+      /* 모달·시트 */
+      .modal-overlay.show { animation: afFadeIn var(--m-feedback) var(--e-out); }
+      .modal-overlay.show .modal { animation: afRiseIn var(--m-enter) var(--e-enter); }
+      #globalSearchOverlay > * { animation: a13PopIn var(--m-enter) var(--e-enter); }
+      /* 펼침 */
+      details[open] > :not(summary) { animation: a13Reveal var(--m-enter) var(--e-enter); }
+      summary { transition: color var(--m-feedback) var(--e-out); }
+      /* 입력칸 포커스 */
+      :is(input, select, textarea) { transition: border-color var(--m-feedback) var(--e-out), box-shadow var(--m-feedback) var(--e-out), background-color var(--m-feedback) var(--e-out); }
+      /* 체크·완료 */
+      input[type=checkbox] { transition: transform var(--m-press) var(--e-out); }
+      input[type=checkbox]:active { transform: scale(.85); }
+      .a13-tick { animation: a13Tick var(--m-signature) var(--e-enter); }
+      .a13-flash { animation: a13RowFlash 900ms var(--e-out); }
+      /* 탭 글라이더 */
+      .a13-glide.go { transition: transform var(--m-enter) var(--e-enter); }
+      /* 토스트·배너는 v11 모션 유지 */
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .a13-rip, .a13-glide { display: none !important; }
+      .a13-seg.a13-hasglide > button.on { background: var(--af-white); }
+      .a13-tick, .a13-flash, .a13-nbadge, .a13-navs .tab.active svg, #a13Pop, .a13-pop, .wl-ppop, .wl-tplpop, .wl-cpop, details[open] > :not(summary) { animation: none !important; }
+    }
+
     /* ═══ 반응형 보강 (v10.2) — 창 폭이 줄어도 잘리거나 찌그러지지 않게 ═══ */
     #syncStatus { white-space: nowrap; }
     @media (max-width: 1200px) {
@@ -5191,11 +5314,11 @@
           <!-- 채팅 버튼 -->
           <button class="btn btn-secondary" id="chatToggleBtn" title="채팅" onclick="toggleChatPanel()" style="font-size:15px;padding:5px 8px;display:none;position:relative;">💬<span class="chat-badge" id="chatBadge">0</span></button>
           <!-- 알림 버튼 -->
-          <button id="afInstallBtn" onclick="openAppInstall()" title="앱으로 설치하고 알림 받기" style="border:1px solid #D9CCFA;background:#F3F0FF;color:#5328C8;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all 0.15s;" onmouseover="this.style.background='#EAE3FD'" onmouseout="this.style.background='#F3F0FF'">📲 앱 설치</button>
-          <div id="globalSearchBtn" onclick="openGlobalSearch()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition:all 0.15s;" title="전역 검색 (Ctrl/Cmd+K) — 프로젝트·이슈·배포·팀원 통합 검색" onmouseover="this.style.background='#F3F3F3'" onmouseout="this.style.background='transparent'">
+          <button id="afInstallBtn" onclick="openAppInstall()" title="앱으로 설치하고 알림 받기" style="border:1px solid #D9CCFA;background:#F3F0FF;color:#5328C8;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;" onmouseover="this.style.background='#EAE3FD'" onmouseout="this.style.background='#F3F0FF'">📲 앱 설치</button>
+          <div id="globalSearchBtn" onclick="openGlobalSearch()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;" title="전역 검색 (Ctrl/Cmd+K) — 프로젝트·이슈·배포·팀원 통합 검색" onmouseover="this.style.background='#F3F3F3'" onmouseout="this.style.background='transparent'">
             <span style="font-size:15px;">🔍</span>
           </div>
-          <div id="notifBell" onclick="toggleNotifPanel()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition:all 0.15s;" title="알림" onmouseover="this.style.background='#F3F3F3'" onmouseout="this.style.background='transparent'">
+          <div id="notifBell" onclick="toggleNotifPanel()" style="position:relative;cursor:pointer;padding:5px 7px;border-radius:6px;transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;" title="알림" onmouseover="this.style.background='#F3F3F3'" onmouseout="this.style.background='transparent'">
             <span style="font-size:16px;">🔔</span>
             <span id="notifBadge" style="display:none;position:absolute;top:-1px;right:-1px;background:#ef4444;color:white;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1;"></span>
           </div>
@@ -5674,12 +5797,28 @@
 
           <div class="rn-version-block rn-latest">
             <div class="rn-version-header">
+              <span class="rn-version-tag">v14.7</span>
+              <span class="rn-version-title">메뉴·검색·필터 정리, 움직임 추가</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>왼쪽 메뉴를 내 일 / 팀 / 바로가기로 묶고, 이슈(내가 맡은 수)·배포(7일 안)·업무일지(오늘 미작성) 표시</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>키보드로 이동: G 다음 W·L·P·S·I·D·T, ?를 누르면 단축키 안내</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>이슈 필터를 한 줄로: 보기·검색·내 이슈·심각도만 앞에, 빌드·태그·안건·서비스·저장한 필터는 「필터 더보기」</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>검색칸에 돋보기를 붙여 등록 칸과 구분 · 업무일지 입력칸을 목록 위로, 말머리는 한 버튼으로</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포 목록 메모는 3줄까지, 줄의 링크·수정·삭제는 마우스를 올렸을 때 · 업데이트 안내는 작게</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>버튼을 누르면 물결이 퍼지고, 보기 전환 탭은 선택 표시가 미끄러져 옮겨 갑니다. 메뉴·드롭다운·창·목록·숫자에도 짧은 움직임을 넣었습니다(기기에서 동작 줄이기를 켜면 꺼짐)</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
+            <div class="rn-version-header">
               <span class="rn-version-tag">v14.6</span>
               <span class="rn-version-title">저장된 안건 AI로 다시 쓰기 · 관련 링크</span>
               <span class="rn-version-date">2026-11-27</span>
             </div>
             <div class="rn-body">
-              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건 페이지·안건 정보에 「✨ AI로 다시 쓰기」: 저장된 설명·Task·이슈·관련 링크(+새 메모·캡처)를 읽고 다시 써서 칸별로 비교 → 체크한 칸만 적용, 빠진 Task 제안, 되돌리기</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건 페이지·안건 정보에 「AI로 다시 쓰기」: 저장된 설명·Task·이슈·관련 링크(+새 메모·캡처)를 읽고 다시 써서 칸별로 비교 → 체크한 칸만 적용, 빠진 Task 제안, 되돌리기</div>
               <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>왼쪽 메뉴에 「지표 대시보드 ↗」 바로가기(새 탭)</div>
               <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>관련 링크(기획서·Figma·PRD·노션 등) 칸 복구: 새 안건·안건 정보에서 추가·삭제, 안건 페이지 맨 위에 링크 칩 · AI 입력에 넣은 링크는 자동으로 관련 링크에</div>
             </div>
@@ -5714,11 +5853,11 @@
           <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.3</span>
-              <span class="rn-version-title">✨ AI로 안건 채우기</span>
+              <span class="rn-version-title">AI로 안건 채우기</span>
               <span class="rn-version-date">2026-11-27</span>
             </div>
             <div class="rn-body">
-              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 안건 만들 때 「✨ AI로 채우기」: 한 줄 메모 · 구글챗 대화·회의록 · 기획서·노션·구글 문서 링크 · 캡처(⌘V/끌어놓기) · 🎤 말하기 — 제목·설명·기획의도·티어·점수·서비스를 채움</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 안건 만들 때 「AI로 채우기」: 한 줄 메모 · 구글챗 대화·회의록 · 기획서·노션·구글 문서 링크 · 캡처(⌘V/끌어놓기) · 🎤 말하기 — 제목·설명·기획의도·티어·점수·서비스를 채움</div>
               <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>비슷한 기존 안건 경고, 확정 전에 확인할 질문, 점수 근거 표시 · 되돌리기 · 저장 전 직접 수정</div>
               <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>Claude가 먼저, 응답이 없으면 Gemini가 대신 (회사 서버 중계 · 팀원 로그인만 · 사람당 하루 60회)</div>
             </div>
@@ -7257,7 +7396,7 @@
 
       /* 0 새 기능 */
       '<div class="s" id="whatsnew">' +
-        '<h2><span class="ic">✨</span> 처음 보는 기능<span class="nw">v13.5</span></h2>' +
+        '<h2>처음 보는 기능<span class="nw">v13.5</span></h2>' +
         '<h3>새 이슈 등록</h3><p>＋ 만들기 → 이슈 등록(또는 이슈 화면 [＋ 이슈 등록])을 누르면 오른쪽 시트가 열립니다. 제목만 있어도 등록되고, 제목을 <b>[커뮤니티]</b>·<b>[탐색]</b>처럼 시작하면 빌드 카테고리가 자동으로 골라집니다. 환경·플랫폼·담당자·검증 담당·확인절차·기대/실제 결과를 채우고, 스크린샷은 끌어 놓거나 <span class="sc">⌘V</span>로 붙여 넣습니다. Task를 고르면 Task 담당자가 담당자로 들어갑니다.</p>' +
         '<h3>안건 고르기</h3><p>안건을 고르는 칸을 누르면 검색창이 달린 목록이 열립니다. 번호(P20)나 이름 일부를 입력하고 <span class="sc">↑↓</span> <span class="sc">Enter</span>로 고릅니다.</p>' +
         '<h3>배포 만들기 · 수정</h3><ul><li>배포 목록의 메모를 누르면 그 자리에서 고칠 수 있습니다. 다른 곳을 누르면 저장되고 Esc는 취소입니다.</li><li>[＋ 프로젝트]로 배포에 안건을 여러 개 묶고, × 로 뺍니다. TC 링크는 배포 상세에서 넣고(선택), 목록의 [TC 열기 ↗]로 엽니다.</li><li>[링크]/[링크 복사]로 배포 주소를 복사해 공유하면, 받은 사람에게 그 배포 상세가 바로 열립니다. 체크리스트는 없앴습니다.</li><li>배포 화면은 전체 배포 목록으로 열리고, 줄마다 메모(배포 내역)가 바로 보입니다. 긴 메모는 [전체 보기]로 펼칩니다.</li><li>줄 오른쪽 [수정]은 편집 시트를, [삭제]는 확인 후 배포를 지웁니다(담긴 이슈·Task는 지워지지 않고 다시 후보로 돌아감).</li><li>배포 화면의 [메모와 함께…] 또는 ＋ 만들기 → 배포 만들기: 이름 · 목표일 · 환경 · 서비스 · 메모(배포 내역)를 함께 씁니다.</li><li>전체 배포 목록에서 배포를 누르면 같은 칸이 열리고, 바꾸면 바로 저장됩니다. 배포완료 건도 메모·배포일·환경·서비스·상태를 고칠 수 있습니다.</li><li>담긴 항목이나 체크리스트가 없어도 배포준비·배포완료가 됩니다. [배포완료]는 확인 창 없이 바로 처리되고 담긴 이슈·Task가 완료로 바뀝니다.</li></ul>' +
@@ -10366,7 +10505,7 @@
 
       // === Collapsible "상세 설정" section ===
       var detailToggle = document.createElement('div');
-      detailToggle.style.cssText = 'cursor:pointer;padding:12px;display:flex;align-items:center;gap:8px;color:#fff;background:#6433DF;font-size:13px;font-weight:600;border-radius:6px;margin-top:12px;user-select:none;transition:all 0.2s;';
+      detailToggle.style.cssText = 'cursor:pointer;padding:12px;display:flex;align-items:center;gap:8px;color:#fff;background:#6433DF;font-size:13px;font-weight:600;border-radius:6px;margin-top:12px;user-select:none;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
       detailToggle.innerHTML = '<span class="toggle-arrow" style="font-size:11px;transition:transform 0.2s;display:inline-block;">▼</span> 상세 설정 <span style="color:#D9CCFA;font-weight:400;font-size:11px;margin-left:auto;">(선택사항)</span>';
       detailToggle.onmouseover = function() { this.style.background = '#5328C8'; };
       detailToggle.onmouseout = function() { this.style.background = '#6433DF'; };
@@ -12169,14 +12308,14 @@ function _persistIssueFilters() {
 
       // Action 1: Open detail
       var openBtn = document.createElement('button');
-      openBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition:all 0.1s;white-space:nowrap;';
+      openBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition: 0.1s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;white-space:nowrap;';
       openBtn.textContent = '🔍 상세';
       openBtn.onclick = function(e) { e.stopPropagation(); openIssueDetail(iss.id); };
       actionsBar.appendChild(openBtn);
 
       // Action 2: Copy ID
       var copyBtn = document.createElement('button');
-      copyBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition:all 0.1s;';
+      copyBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition: 0.1s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
       copyBtn.textContent = '⎘ ID';
       copyBtn.onclick = function(e) { e.stopPropagation(); _copyToClipboard(iss.id); };
       actionsBar.appendChild(copyBtn);
@@ -12184,7 +12323,7 @@ function _persistIssueFilters() {
       // Action 3: Bookmark
       var bookmarkBtn = document.createElement('button');
       var isBookmarked = _bookmarkedIssues.indexOf(iss.id) >= 0;
-      bookmarkBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition:all 0.1s;';
+      bookmarkBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:11px;color:#767676;padding:3px 8px;border-radius:4px;transition: 0.1s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
       bookmarkBtn.textContent = (isBookmarked ? '★' : '☆') + ' 즐겨찾기';
       bookmarkBtn.onclick = function(e) {
         e.stopPropagation();
@@ -12252,7 +12391,7 @@ function _persistIssueFilters() {
       statuses.forEach(function(s) {
         var btn = document.createElement('button');
         var c = statusColors[s] || '#767676';
-        btn.style.cssText = 'padding:8px 12px;border:1px solid ' + c + ';border-radius:8px;color:' + c + ';font-size:12px;font-weight:600;cursor:pointer;background:transparent;text-align:center;transition:all 0.1s;';
+        btn.style.cssText = 'padding:8px 12px;border:1px solid ' + c + ';border-radius:8px;color:' + c + ';font-size:12px;font-weight:600;cursor:pointer;background:transparent;text-align:center;transition: 0.1s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         btn.textContent = s;
         btn.onmouseover = function() { this.style.background = c; this.style.color = '#fff'; };
         btn.onmouseout = function() { this.style.background = 'transparent'; this.style.color = c; };
@@ -14890,7 +15029,7 @@ function renderDeployBundles() {
         var card = document.createElement('div');
         card.className = 'deploy-bundle-card';
         card.style.cursor = 'pointer';
-        card.style.cssText = 'cursor:pointer;transition:all 0.2s;';
+        card.style.cssText = 'cursor:pointer;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         card.onmouseover = function() { this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'; this.style.transform = 'translateY(-2px)'; };
         card.onmouseout = function() { this.style.boxShadow = ''; this.style.transform = ''; };
         card.onclick = function() { openDeployBundleDetail(bundle.id); };
@@ -15128,9 +15267,9 @@ function renderDeployBundles() {
       transitions2.forEach(function(t) {
         var btn = document.createElement('button');
         if (t.isPrimary) {
-          btn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:'+t.color+';color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px '+t.color+'33;';
+          btn.style.cssText = 'padding:8px 16px;border:none;border-radius:6px;background:'+t.color+';color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;box-shadow:0 2px 8px '+t.color+'33;';
         } else {
-          btn.style.cssText = 'padding:6px 12px;border:1px solid '+t.color+';border-radius:6px;color:'+t.color+';font-size:12px;font-weight:600;cursor:pointer;background:transparent;transition:all 0.2s;';
+          btn.style.cssText = 'padding:6px 12px;border:1px solid '+t.color+';border-radius:6px;color:'+t.color+';font-size:12px;font-weight:600;cursor:pointer;background:transparent;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         }
         btn.textContent = t.label;
         btn.onmouseover = function() {
@@ -15176,7 +15315,7 @@ function renderDeployBundles() {
       // 보조 버튼: 되돌리기, 취소
       if (bundle.status !== 'deployed' && bundle.status !== 'cancelled') {
         var revertBtn = document.createElement('button');
-        revertBtn.style.cssText = 'padding:6px 12px;border:1px solid #CCCCCC;border-radius:6px;color:#767676;font-size:12px;font-weight:600;cursor:pointer;background:#fff;transition:all 0.2s;';
+        revertBtn.style.cssText = 'padding:6px 12px;border:1px solid #CCCCCC;border-radius:6px;color:#767676;font-size:12px;font-weight:600;cursor:pointer;background:#fff;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         revertBtn.textContent = '↩ 상태 되돌리기';
         revertBtn.onmouseover = function() { this.style.background='#FBFBFB'; };
         revertBtn.onmouseout = function() { this.style.background='#fff'; };
@@ -15194,7 +15333,7 @@ function renderDeployBundles() {
         if (bundle.status === 'ready') transitionBar.appendChild(revertBtn);
 
         var cancelBtn = document.createElement('button');
-        cancelBtn.style.cssText = 'padding:6px 12px;border:1px solid #fecaca;border-radius:6px;color:#dc2626;font-size:12px;font-weight:600;cursor:pointer;background:#fff;transition:all 0.2s;';
+        cancelBtn.style.cssText = 'padding:6px 12px;border:1px solid #fecaca;border-radius:6px;color:#dc2626;font-size:12px;font-weight:600;cursor:pointer;background:#fff;transition: 0.2s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         cancelBtn.textContent = '배포 취소';
         cancelBtn.onmouseover = function() { this.style.background='#fef2f2'; };
         cancelBtn.onmouseout = function() { this.style.background='#fff'; };
@@ -15258,7 +15397,7 @@ function renderDeployBundles() {
           var isBlock = iss.severity==='Block' && !isDone;
 
           var row = document.createElement('div');
-          row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border-left:3px solid '+(sevColorsD[iss.severity]||'#E7E7E7')+';margin-bottom:4px;cursor:pointer;transition:all 0.15s;background:'+(isBlock?'#fff5f5':'#FBFBFB')+';border:1px solid '+(isBlock?'#fecaca':'#F3F3F3')+';';
+          row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border-left:3px solid '+(sevColorsD[iss.severity]||'#E7E7E7')+';margin-bottom:4px;cursor:pointer;transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;background:'+(isBlock?'#fff5f5':'#FBFBFB')+';border:1px solid '+(isBlock?'#fecaca':'#F3F3F3')+';';
           row.onmouseover = function() { this.style.background='#F3F3F3'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'; };
           row.onmouseout = function() { this.style.background=isBlock?'#fff5f5':'#FBFBFB'; this.style.boxShadow=''; };
           row.onclick = function() {
@@ -18171,7 +18310,7 @@ function renderDeployBundles() {
       allTypes.forEach(function(st) {
         var checked = selected.includes(st);
         var label = document.createElement('label');
-        label.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:1.5px solid ' + (checked ? '#2563eb' : '#CCCCCC') + ';background:' + (checked ? '#eff6ff' : '#fff') + ';color:' + (checked ? '#1d4ed8' : '#767676') + ';font-weight:' + (checked ? '600' : '400') + ';transition:all 0.15s;user-select:none;';
+        label.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:1.5px solid ' + (checked ? '#2563eb' : '#CCCCCC') + ';background:' + (checked ? '#eff6ff' : '#fff') + ';color:' + (checked ? '#1d4ed8' : '#767676') + ';font-weight:' + (checked ? '600' : '400') + ';transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;user-select:none;';
         var cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.checked = checked;
@@ -18757,7 +18896,7 @@ function renderDeployBundles() {
       phases.forEach(ph => {
         const hasSchedule = project.phases[ph] && project.phases[ph].start && project.phases[ph].end;
         const btn = document.createElement('button');
-        btn.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;border:2px solid ' + PHASE_COLORS[ph] + ';border-radius:6px;background:white;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.15s;';
+        btn.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;border:2px solid ' + PHASE_COLORS[ph] + ';border-radius:6px;background:white;cursor:pointer;font-size:13px;font-weight:600;transition: 0.15s; transition-property: background-color, border-color, color, box-shadow, transform, opacity, fill, stroke;';
         if (hasSchedule) {
           btn.style.opacity = '0.4';
           btn.style.cursor = 'default';
@@ -21979,7 +22118,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.6';
+    var AF_BUILD = 'v14.7';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -22015,30 +22154,15 @@ function renderNotifList() {
       if (seen === AF_BUILD) return;
       var card = document.createElement('div');
       card.id = 'afWhatsNew';
+      var items = [].slice.call(document.querySelectorAll('.rn-version-block.rn-latest .rn-item')).map(function(x) { return x.textContent.replace(/^(NEW|FIX|UPD|IMP)\s*/, '').trim(); }).filter(Boolean);
+      var title = (document.querySelector('.rn-version-block.rn-latest .rn-version-title') || {}).textContent || '';
+      var esc2 = function(t) { return String(t).replace(/[&<>"]/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+      card.setAttribute('role', 'status');
       card.innerHTML =
-        '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
-        '<ul>' +
-          '<li><b>업무일지</b> — 내 Task·이슈를 눌러 오늘 계획에 담고, 완료하면 한 일 한 줄. 금요일 주간 정리는 프로젝트별로 자동</li>' +
-          '<li><b>휴가 표시</b> — 구글 캘린더 「휴가」가 업무일지·내 작업·스케줄에 표시</li>' +
-          '<li><b>프로젝트 링크 복사</b> — 목록 줄 [링크] · 프로젝트 페이지 [링크 복사], 열면 그 프로젝트가 바로 열림</li>' +
-          '<li><b>배포 메모 바로 수정</b> — 목록에서 메모를 눌러 고치고, 다른 곳을 누르면 저장</li>' +
-          '<li><b>배포 ↔ 프로젝트 묶기</b> — [＋ 프로젝트]로 검색해서 여러 개</li>' +
-          '<li><b>배포 링크 복사 · TC 링크</b> — 링크로 열면 그 배포가 바로 열림, TC 링크는 선택 입력</li>' +
-          '<li><b>휴대폰</b> — 화면 폭에 맞춤, 맨 위에서 당기면 새로고침</li>' +
-          '<li><b>배포 메모 바로 보기 · 수정 · 삭제</b> — 배포 목록 줄마다 메모가 보이고 [수정]·[삭제] 버튼</li>' +
-          '<li><b>새 이슈 등록 시트</b> — 환경·플랫폼·확인절차·기대/실제 결과·첨부·담당자까지 한 화면에</li>' +
-          '<li><b>안건 검색</b> — 안건 고르는 칸을 누르면 검색되는 목록</li>' +
-          '<li><b>배포 편집</b> — 메모(배포 내역)·서비스·환경, 배포완료 건도 수정 · 배포완료는 바로 처리</li>' +
-          '<li><b>이슈 제목 태그</b> — 빌드 카테고리 배지 + 기능 태그, 카드의 [#]로 편집, [태그 ▾]로 거르기</li>' +
-          '<li><b>이슈 폴더</b> — 필터를 폴더로 저장하고 공유 링크로 팀에 전달</li>' +
-          '<li><b>새 서비스 목록</b> — 고객 앱 · 예약 웹 · 지도 웹 · 선주 앱 · 선주 웹 · 딸라싸 · 관리자/업주 어드민 · 비즈 파트너스</li>' +
-          '<li><b>안건 조회·수정 = 새 안건과 같은 시트</b> — 간트·검색·알림에서 안건을 열면 같은 화면, 바꾼 칸은 바로 저장</li>' +
-          '<li><b>안건 페이지</b> — 티어·상태·서비스도 같은 칩으로</li>' +
-          '<li><b>이슈 필터 칩</b> — 내 이슈·내가 검증·Block/Major/Minor/Trivial을 누르면 바로 적용, 다음에도 유지</li>' +
-          '<li><b>지난 배포에도 이슈 추가</b> — 배포 고르기에 배포완료 건도 표시</li>' +
-          '<li><b>전체 배포 목록</b> — 배포 화면 오른쪽 위에서 진행 중·완료·취소 전체를 월별로, 줄을 누르면 상세·릴리즈 노트 복사</li>' +
-        '</ul>' +
-        '<button type="button" class="afwn-go" onclick="document.getElementById(\'afWhatsNew\').remove();var t=document.querySelector(\'.tab[data-tab=releasenotes]\');if(t)t.click();">전체 변경 내역 보기</button>';
+        '<div class="afwn-h"><b>' + AF_BUILD + ' 업데이트' + (title ? ' · ' + esc2(title.slice(0, 28)) : '') + '</b><button type="button" aria-label="닫기" onclick="this.closest(\'#afWhatsNew\').remove()">✕</button></div>' +
+        '<ul>' + items.slice(0, 3).map(function(t) { return '<li>' + esc2(t.length > 70 ? t.slice(0, 68) + '…' : t) + '</li>'; }).join('') + '</ul>' +
+        '<button type="button" class="afwn-go" onclick="document.getElementById(\'afWhatsNew\').remove();var t=document.querySelector(\'.tab[data-tab=releasenotes]\');if(t)t.click();">' + (items.length > 3 ? '나머지 ' + (items.length - 3) + '개 포함 ' : '') + '전체 변경 내역 보기</button>';
+      setTimeout(function() { var c = document.getElementById('afWhatsNew'); if (c) c.classList.add('afwn-quiet'); }, 12000);
       document.body.appendChild(card);
     }
     setTimeout(function() { if (state && state.currentUser) _afWhatsNewOnce(); else setTimeout(function() { if (state && state.currentUser) _afWhatsNewOnce(); }, 6000); }, 2500);
@@ -22953,7 +23077,7 @@ function renderNotifList() {
       '<div class="a13-row"><span class="a13-seg">' + [['active', '진행 중'], ['done', '완료'], ['all', '전체']].map(function(x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" onclick="AF13.ui.pf.st=\'' + x[0] + '\';AF13.render(true)">' + x[1] + '</button>'; }).join('') + '</span>' +
       '<select class="a13-input" onchange="AF13.ui.pf.tier=this.value;AF13.render(true)"><option value="">모든 티어</option>' + TIERS.map(function(t) { return '<option value="' + t + '"' + (f.tier === t ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select>' +
       '<input class="a13-input" placeholder="검색" value="' + esc(f.q) + '" oninput="AF13.ui.pf.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13projects input[placeholder=검색]\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},250)" style="width:160px"></div></div>';
-    if (canW()) h += '<div class="a13-newrow"><button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.newProject({})" title="메모·대화·링크·캡처로 AI가 채워 줘요">✨ AI로 만들기</button><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewProj" placeholder="새 안건 제목을 입력하고 Enter (일정·Task는 다음 화면에서)" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229){AF13.quickProject()}"><select class="a13-input" id="a13NewTier">' + TIERS.map(function(t) { return '<option value="' + t + '"' + (t === 'TIER3' ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select><button class="a13-btn pri" onclick="AF13.quickProject()">만들기</button></div>';
+    if (canW()) h += '<div class="a13-newrow"><button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.newProject({})" title="메모·대화·링크·캡처로 AI가 채워 줘요">AI로 만들기</button><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewProj" placeholder="새 안건 제목을 입력하고 Enter (일정·Task는 다음 화면에서)" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229){AF13.quickProject()}"><select class="a13-input" id="a13NewTier">' + TIERS.map(function(t) { return '<option value="' + t + '"' + (t === 'TIER3' ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select><button class="a13-btn pri" onclick="AF13.quickProject()">만들기</button></div>';
     try { if (typeof _afTimelineHTML === 'function' && f.st === 'active') h += '<details class="a13-card" style="padding:12px 16px;margin-bottom:12px"><summary style="cursor:pointer;font-weight:800;font-size:14px">진행 타임라인 (2주 전 ~ 7주 후)</summary>' + _afTimelineHTML().replace('class="afh-card" style="margin-top:14px"', 'style="margin-top:10px"') + '</details>'; } catch (e) {}
     h += '<div class="a13-phead"><div>안건</div><div>상태</div><div>단계 (기획·디자인·FE·BE·QA)</div><div>Task</div><div>열린 이슈</div><div>배포일</div><div>담당</div></div>';
     var byTier = {};
@@ -23007,7 +23131,7 @@ function renderNotifList() {
       '<div class="a13-mf-break"></div>' +
       '<label>배포 목표일<input type="date" class="a13-input"' + dis + ' value="' + esc(p.deployDate || '') + '" onchange="AF13.setProject(\'' + q(pid) + '\',\'deployDate\',this.value,\'배포일\')"></label>' +
       '<label>PM<select class="a13-input"' + dis + ' onchange="AF13.setProject(\'' + q(pid) + '\',\'pm\',this.value,\'PM\')"><option value="">미정</option>' + TEAM.filter(_isOnBoard).map(function(m) { return '<option value="' + esc(m.id) + '"' + (p.pm === m.id ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join('') + '</select></label>' +
-      '<div style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')">링크 복사</button><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">✨ AI로 다시 쓰기</button><button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
+      '<div class="a13-pacts" style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn a13-icbtn" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')" aria-label="안건 링크 복사" title="안건 링크 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1 1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">AI로 다시 쓰기</button><button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
     h += '<div class="a13-kpis">' +
       '<div class="a13-kpi"><span>Task 진행</span><b>' + (tk.length ? Math.round(dn / tk.length * 100) + '%' : '-') + '</b><small>' + dn + ' / ' + tk.length + ' 완료</small></div>' +
       '<div class="a13-kpi"><span>열린 이슈</span><b style="' + (bl ? 'color:#EE0005' : '') + '">' + open.length + '</b><small>Block ' + bl + ' · Major ' + mj + '</small></div>' +
@@ -23298,7 +23422,7 @@ function renderNotifList() {
     var nC = Object.keys(g).reduce(function(s, k) { return s + g[k].iss.length + g[k].tasks.length; }, 0);
     var dv = A.ui.dv, nAll = (_deployBundles || []).filter(Boolean).length;
     var h = '<div class="a13-ph"><div><h1>배포</h1><p>' + (dv === 'all' ? '지금까지 만든 배포 전체입니다. 줄을 누르면 담긴 항목과 준비 상태를 봅니다.' : '왼쪽은 아직 배포에 안 담긴 후보(배포 대기 이슈 · 끝난 Task)입니다. 체크하거나 끌어서 오른쪽 배포에 담으세요.') + '</p></div>' +
-      '<div class="a13-row"><button class="a13-btn sm ghost" onclick="var t=document.querySelector(\'.tab[data-tab=deploy]\');if(t)t.click()" title="예전 배포 관리 화면">이전 배포 화면</button><span class="a13-seg">' + [['work', '배포 작업'], ['all', '전체 배포 목록 ' + nAll]].map(function(x) { return '<button class="' + (dv === x[0] ? 'on' : '') + '" onclick="AF13.setDv(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</span></div></div>';
+      '<div class="a13-row"><span class="a13-seg">' + [['work', '배포 작업'], ['all', '전체 배포 목록 ' + nAll]].map(function(x) { return '<button class="' + (dv === x[0] ? 'on' : '') + '" onclick="AF13.setDv(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</span><button class="a13-btn sm ghost a13-quiet" onclick="var t=document.querySelector(\'.tab[data-tab=deploy]\');if(t)t.click()" title="예전 배포 관리 화면으로 이동">이전 배포 화면</button></div></div>';
     if (dv === 'all') { el.innerHTML = '<div class="a13">' + h + deployListH() + '</div>'; return; }
     if (cw) h += '<div class="a13-newrow"><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewB" placeholder="새 배포 이름 (예: 10월 4주차 정기 배포) 입력 후 Enter" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229)AF13.newBundleInline()"><input type="date" id="a13NewBD" class="a13-input"><button class="a13-btn pri" onclick="AF13.newBundleInline()">만들기</button><button class="a13-btn" onclick="AF13.bundleNew({title:(document.getElementById(\'a13NewB\')||{}).value||\'\',date:(document.getElementById(\'a13NewBD\')||{}).value||\'\'})" title="메모·서비스·환경까지 입력">메모와 함께…</button></div>';
     h += '<div class="a13-dep"><div class="a13-card"><div class="a13-card-h"><h3>배포 후보 <span class="a13-cnt">' + nC + '</span></h3><span class="a13-hint">선택 <span class="a13-dsel-n">' + Object.keys(A.dsel).length + '</span>건</span></div>' +
@@ -23329,6 +23453,7 @@ function renderNotifList() {
     if (force !== 'nav') window.scrollTo(0, y);
     A._sig = sig();
     try { if (typeof _afIconizeTree === 'function') _afIconizeTree(el); } catch (e) {}
+    try { A.uxSearch(el); if (pg === 'a13issues') A.uxIssues(el); A.navBadges(); if (A._titleUpd) A._titleUpd(); A.uxGlide(el); } catch (e) { console.warn('[ux]', e); }
   };
   function hsh(s) { var h = 5381, i = s.length; while (i) h = (h * 33) ^ s.charCodeAt(--i); return (h >>> 0).toString(36) + ':' + s.length; }
   function sig() {
@@ -23356,7 +23481,9 @@ function renderNotifList() {
     if (page !== 'a13issues') { var bb = document.getElementById('a13Bulk'); if (bb) bb.remove(); }
     A.render('nav');
     window.scrollTo(0, 0);
+    try { var fc = el.firstElementChild; if (fc && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { fc.classList.remove('a13-enter'); void fc.offsetWidth; fc.classList.add('a13-enter'); fc.addEventListener('animationend', function() { fc.classList.remove('a13-enter'); }, { once: true }); } } catch (e) {}
     try { _afStagger(el.querySelectorAll('.a13-prow, .a13-stat, .a13-kpi, .a13-card, .a13-col, .a13-bundle')); } catch (e) {}
+    try { if (!A._rm()) { _afCountUpEls(el.querySelectorAll('.a13-stat > b, .a13-kpi > b')); [].slice.call(el.querySelectorAll('.a13-drow, .a13-li, .a13-ic, #a13log .wl-list li, .ww-list li'), 0, 10).forEach(function(r, i) { if (r.animate) r.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 260, delay: 60 + i * 28, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' }); }); } } catch (e) {}
     try { localStorage.setItem('a13_last', JSON.stringify(A.cur)); } catch (e) {}
   };
   // 상세 패널에서 저장해도 화면이 따라오도록 주기적으로 변화 감지
@@ -23381,6 +23508,15 @@ function renderNotifList() {
     kpi.innerHTML = '<svg class="afs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>지표 대시보드<span class="a13-ext-ic" aria-hidden="true">↗</span>';
     kpi.addEventListener('click', function(e) { e.stopPropagation(); });
     navs.appendChild(kpi);
+    // 묶음 순서: 내 일(내 작업·업무일지) → 팀(프로젝트·스케줄·이슈·배포·팀) → 바로가기
+    try {
+      var pick = function(sel) { return navs.querySelector(sel); };
+      var lab = function(t) { var d = document.createElement('div'); d.className = 'a13-ngl'; d.textContent = t; return d; };
+      var order = [lab('내 일'), pick('[data-page="a13work"]'), pick('[data-page="a13log"]'), lab('팀'), pick('[data-page="a13projects"]'), pick('.tab[data-tab="schedule"]'), pick('[data-page="a13issues"]'), pick('[data-page="a13deploy"]'), pick('.tab[data-tab="team"]'), lab('바로가기'), kpi];
+      order.forEach(function(n) { if (n) navs.appendChild(n); });
+      var keys = { a13work: 'W', a13log: 'L', a13projects: 'P', a13issues: 'I', a13deploy: 'D', schedule: 'S', team: 'T' };
+      navs.querySelectorAll('.tab').forEach(function(t) { var k = keys[t.dataset.page || t.dataset.tab]; if (k) { t.title = (t.textContent || '').trim() + ' (G 다음 ' + k + ')'; t.setAttribute('aria-keyshortcuts', 'g ' + k.toLowerCase()); } });
+    } catch (e) { console.warn('[nav]', e); }
     var more = document.createElement('details'); more.className = 'a13-more';
     more.innerHTML = '<summary>더보기 · 기존 화면 ▾</summary>';
     var label = { home: '기존 홈', projects: '기존 프로젝트 표', issues: '기존 이슈 목록', deploy: '기존 배포 목록', overview: '개요', history: '이력', releasenotes: '릴리즈 노트' };
@@ -23443,6 +23579,146 @@ function renderNotifList() {
   A._parts = { tierChipsH: tierChipsH, statusSegH: statusSegH, svcChipsH: svcChipsH };
   function pmOptions(cur) { return '<option value="">미정</option>' + TEAM.filter(function(m) { return _isOnBoard(m) || m.id === cur; }).map(function(m) { return '<option value="' + esc(m.id) + '"' + (m.id === cur ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join(''); }
 
+  /* ═══ v14.7 사용성: 메뉴 배지 · 단축키 · 화면 전환 · 도구 막대 정리 ═══ */
+  // v14.7 모션: 탭 글라이더·클릭 물결·완료 체크·배지 튐·숫자 올라감
+  A._rm = function() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); };
+  A._glide = A._glide || {};
+  A.uxGlide = function(root) {
+    if (A._rm()) return;
+    [].forEach.call((root || document).querySelectorAll('.a13-seg'), function(seg, i) {
+      var on = seg.querySelector(':scope > button.on'); if (!on || !on.offsetWidth) return;
+      var key = (A.cur && A.cur.page || '') + ':' + i + ':' + seg.children.length;
+      var g = seg.querySelector(':scope > .a13-glide');
+      if (!g) { g = document.createElement('span'); g.className = 'a13-glide'; g.setAttribute('aria-hidden', 'true'); seg.insertBefore(g, seg.firstChild); }
+      seg.classList.add('a13-hasglide');
+      var x = on.offsetLeft, y = on.offsetTop, w = on.offsetWidth, h = on.offsetHeight, pv = A._glide[key];
+      g.style.width = w + 'px'; g.style.height = h + 'px';
+      g.classList.remove('go');
+      g.style.transform = pv ? 'translate(' + pv.x + 'px,' + y + 'px) scaleX(' + (pv.w / w) + ')' : 'translate(' + x + 'px,' + y + 'px)';
+      void g.offsetWidth; g.classList.add('go');
+      g.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      A._glide[key] = { x: x, w: w };
+    });
+  };
+  document.addEventListener('pointerdown', function(e) {
+    if (A._rm() || e.button !== 0) return;
+    var b = e.target.closest && e.target.closest('.a13-btn, .btn, .a13-icbtn, .a13-fchip, .afwn-go, .a13-stat, .a13-kpi, .wl-quick button, .wl-pin, .a13-seg > button');
+    if (!b || b.disabled) return;
+    var cs = getComputedStyle(b); if (cs.position === 'static') b.style.position = 'relative'; if (cs.overflow === 'visible') b.style.overflow = 'hidden';
+    var r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2, s = document.createElement('span');
+    s.className = 'a13-rip'; s.setAttribute('aria-hidden', 'true');
+    s.style.width = s.style.height = d + 'px'; s.style.left = (e.clientX - r.left - d / 2) + 'px'; s.style.top = (e.clientY - r.top - d / 2) + 'px';
+    b.appendChild(s); s.addEventListener('animationend', function() { s.remove(); }, { once: true });
+    setTimeout(function() { if (s.parentNode) s.remove(); }, 900);
+  }, true);
+  // 체크하면 새로 그려진 같은 칸을 찾아 튀게 하고 줄을 한 번 밝힘
+  document.addEventListener('click', function(e) {
+    if (A._rm()) return;
+    var c = e.target.closest && e.target.closest('.wl-chk, input[type=checkbox]'); if (!c) return;
+    var li = c.closest('li, .a13-li, .a13-ic, .a13-prow, label, tr');
+    var key = c.getAttribute('data-ref') || c.getAttribute('data-id') || (li && (li.getAttribute('data-id') || li.getAttribute('data-k'))) || '';
+    var on = c.classList.contains('wl-chk') ? !(li && li.classList.contains('done')) : c.checked;
+    var hit = function(el, row) { if (!el || !el.animate) return; el.classList.remove('a13-tick'); void el.offsetWidth; el.classList.add('a13-tick'); if (row && on) { row.classList.remove('a13-flash'); void row.offsetWidth; row.classList.add('a13-flash'); setTimeout(function() { row.classList.remove('a13-flash'); }, 950); } setTimeout(function() { el.classList.remove('a13-tick'); }, 450); };
+    hit(c, li);
+    if (!key) return;
+    setTimeout(function() {
+      if (document.contains(c)) return;
+      var sel = '[data-ref="' + key.replace(/"/g, '') + '"], [data-id="' + key.replace(/"/g, '') + '"]';
+      var n = document.querySelector(sel); if (!n) return;
+      var chk = n.matches('.wl-chk, input[type=checkbox]') ? n : n.querySelector('.wl-chk, input[type=checkbox]');
+      hit(chk || n, n.closest('li, .a13-li, .a13-ic, .a13-prow, tr') || n);
+    }, 160);
+  }, true);
+  A.navBadges = function() {
+    try {
+      var id = me(); if (!id) return;
+      var set = function(page, n, title, dot) {
+        var b = document.querySelector('.a13-navs .tab[data-page="' + page + '"]'); if (!b) return;
+        var x = b.querySelector('.a13-nbadge');
+        if (!n) { if (x) x.remove(); return; }
+        if (!x) { x = document.createElement('span'); x.className = 'a13-nbadge'; b.appendChild(x); }
+        var nv = dot ? '' : (n > 99 ? '99+' : String(n)), was = x.textContent; x.className = 'a13-nbadge' + (dot ? ' dot' : ''); x.textContent = nv; if (was && was !== nv && !dot) { x.classList.add('a13-bump'); setTimeout(function() { x.classList.remove('a13-bump'); }, 450); } x.title = title; x.setAttribute('aria-label', title);
+      };
+      var mine = (_issues || []).filter(function(i) { return i && i.status !== '완료' && (issueAssignees(i).indexOf(id) !== -1 || i.verifier === id); }).length;
+      set('a13issues', mine, '내가 맡거나 검증할 이슈 ' + mine + '건');
+      var wk = new Date(Date.now() + 7 * 864e5);
+      var dep = (_deployBundles || []).filter(function(b) { return b && (b.status === 'planning' || b.status === 'ready') && (!b.targetDate || dOnly(b.targetDate) <= wk); }).length;
+      set('a13deploy', dep, '7일 안에 나갈 배포 ' + dep + '건');
+      var t = new Date(), dow = t.getDay(), today = ymd(t.getFullYear(), t.getMonth() + 1, t.getDate());
+      var wl = A.wl && A.wl[id] && A.wl[id].days && A.wl[id].days[today];
+      var lv = A.leaveOf ? A.leaveOf(id, today) : null;
+      var empty = A.wlReady && dow > 0 && dow < 6 && !(wl && wl.plan && Object.keys(wl.plan).length) && !(lv && lv.k === '종일');
+      set('a13log', empty ? 1 : 0, '오늘 업무일지를 아직 쓰지 않았어요', true);
+    } catch (e) {}
+  };
+  // 검색칸: 돋보기를 붙이고 왼쪽에 둠 (입력칸과 헷갈리지 않게)
+  var SEARCH_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  A.uxSearch = function(root) {
+    (root || document).querySelectorAll('.a13 input.a13-input').forEach(function(i) {
+      if (i.closest('.a13-sbox') || i.closest('.a13-np') || !/검색/.test(i.placeholder || '')) return;
+      var w = document.createElement('label'); w.className = 'a13-sbox'; w.innerHTML = SEARCH_SVG;
+      i.parentNode.insertBefore(w, i); w.appendChild(i); i.setAttribute('type', 'search'); if (!i.getAttribute('aria-label')) i.setAttribute('aria-label', i.placeholder);
+      var style = i.getAttribute('style') || ''; if (/width/.test(style)) i.setAttribute('style', style.replace(/(^|;)\s*width\s*:[^;]*/g, ''));
+    });
+  };
+  // 이슈 도구 막대: 자주 쓰는 것만 한 줄, 나머지는 「필터 더보기」
+  A.uxIssues = function(el) {
+    var tb = el.querySelector('.a13-toolbar'); if (!tb) return;
+    var f = A.ui.if || {};
+    var seg = tb.querySelector('.a13-seg'), sb = tb.querySelector('.a13-sbox') || tb.querySelector('input[placeholder="검색"]');
+    if (seg && sb) seg.after(sb);
+    var more = document.createElement('div'); more.className = 'a13-fmore'; more.id = 'a13IfMore';
+    var cats = tb.querySelector('.a13-fchips.cats'), sels = tb.querySelectorAll('select'), reset = [].slice.call(tb.querySelectorAll('button')).filter(function(b) { return /필터 초기화/.test(b.textContent); })[0];
+    var folder = el.querySelector('.a13-folders');
+    var lab = function(t) { var x = document.createElement('span'); x.className = 'a13-fml'; x.textContent = t; return x; };
+    if (folder) { more.appendChild(lab('저장한 필터')); more.appendChild(folder); }
+    if (cats) { more.appendChild(lab('빌드·태그')); more.appendChild(cats); }
+    if (sels.length) { more.appendChild(lab('안건·서비스')); sels.forEach(function(x) { more.appendChild(x); }); }
+    var nMore = (f.cats || []).length + (f.tags || []).length + (f.pid ? 1 : 0) + (f.svc ? 1 : 0) + (f.folder ? 1 : 0);
+    var open = A.ui.ifMore || nMore > 0;
+    var tg = document.createElement('button'); tg.type = 'button'; tg.className = 'a13-btn sm a13-fmore-tg' + (open ? ' on' : ''); tg.setAttribute('aria-expanded', open); tg.setAttribute('aria-controls', 'a13IfMore');
+    tg.innerHTML = '필터 더보기' + (nMore ? ' <span class="a13-cnt">' + nMore + '</span>' : '') + ' <span aria-hidden="true">' + (open ? '▴' : '▾') + '</span>';
+    tg.onclick = function() { A.ui.ifMore = !open; A.render(true); };
+    var cnt = tb.querySelector('.a13-hint[style*="margin-left:auto"]');
+    if (cnt) tb.insertBefore(tg, cnt); else tb.appendChild(tg);
+    if (reset) tb.insertBefore(reset, cnt || null);
+    if (!open) more.hidden = true;
+    tb.after(more);
+    var rb = el.querySelector('.a13-round'); if (rb) { (more.hidden ? tb : more).after(rb); var t = rb.querySelector('#a13RoundT'); if (t) t.placeholder = '새 이슈 제목 입력 후 Enter = 바로 등록 · Alt+1~4 심각도'; }
+  };
+  // 키보드: G 다음 글자로 메뉴 이동, ?로 단축키 안내
+  (function() {
+    var gAt = 0;
+    var go = { w: 'a13work', l: 'a13log', p: 'a13projects', i: 'a13issues', d: 'a13deploy' }, old = { s: 'schedule', t: 'team' };
+    var typing = function(t) { return t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable); };
+    document.addEventListener('keydown', function(e) {
+      if (e.metaKey || e.ctrlKey || e.altKey || typing(e.target) || document.querySelector('.a13-np-bg, #a13Keys')) { if (e.key === 'Escape') { var k = document.getElementById('a13Keys'); if (k) k.remove(); } return; }
+      var key = (e.key || '').toLowerCase();
+      if (key === '?' || (e.shiftKey && key === '/')) { e.preventDefault(); A.keysHelp(); return; }
+      if (key === 'g') { gAt = Date.now(); return; }
+      if (gAt && Date.now() - gAt < 1200) {
+        gAt = 0;
+        if (go[key]) { e.preventDefault(); A.go(go[key]); return; }
+        if (old[key]) { var t = document.querySelector('.a13-navs .tab[data-tab="' + old[key] + '"]'); if (t) { e.preventDefault(); t.click(); } return; }
+      }
+    });
+  })();
+  A.keysHelp = function() {
+    var old = document.getElementById('a13Keys'); if (old) { old.remove(); return; }
+    var rows = [['G → W', '내 작업'], ['G → L', '업무일지'], ['G → P', '프로젝트'], ['G → S', '스케줄'], ['G → I', '이슈'], ['G → D', '배포'], ['G → T', '팀'], ['C', '새로 만들기'], ['⌘ K', '안건·이슈·배포 검색'], ['/', '업무일지에서 할 일 입력칸으로'], ['⌘ Enter', '시트에서 저장·담기'], ['Esc', '닫기'], ['?', '이 안내 열고 닫기']];
+    var d = document.createElement('div'); d.id = 'a13Keys'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', '키보드 단축키');
+    d.innerHTML = '<div class="a13-keys"><div class="hd"><b>키보드 단축키</b><button type="button" aria-label="닫기">✕</button></div><dl>' + rows.map(function(r) { return '<dt>' + r[0].split(' ').map(function(k) { return k === '→' ? '<i>다음</i>' : '<kbd>' + esc(k) + '</kbd>'; }).join('') + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl></div>';
+    d.addEventListener('click', function(e) { if (e.target === d || e.target.closest('button')) d.remove(); });
+    document.body.appendChild(d); var b = d.querySelector('button'); if (b) b.focus();
+  };
+  // 헤더 제목: 본문 큰 제목이 보이는 동안은 숨기고, 내려가면 나타남(같은 제목이 두 번 보이지 않게)
+  (function() {
+    var tick = false;
+    var upd = function() { tick = false; var pt = document.getElementById('afPageTitle'); if (!pt) return; var h1 = document.querySelector('.tab-content.active .a13-ph h1, .tab-content.active .a13-title'); pt.classList.toggle('a13-dim', !!h1 && window.scrollY < 72); };
+    window.addEventListener('scroll', function() { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+    A._titleUpd = upd;
+  })();
+
   /* ═══ v14.6 관련 링크 ═══ */
   A.LINK_TYPES = ['기획서', 'Figma', 'PRD', '노션', 'API', 'TC', '기타'];
   function linkGuess(url) { var u = String(url || '').toLowerCase(); return /figma\.com/.test(u) ? 'Figma' : /notion\.(so|site)/.test(u) ? '노션' : /docs\.google\.com\/spreadsheets/.test(u) ? '기획서' : /docs\.google\.com/.test(u) ? '기획서' : /swagger|api/.test(u) ? 'API' : '기타'; }
@@ -23486,11 +23762,11 @@ function renderNotifList() {
     var p = proj(pid); if (!p) return;
     var old = document.getElementById('a13AIR'); if (old) old.remove();
     var wrap = document.createElement('div'); wrap.id = 'a13AIR'; wrap.className = 'a13-np-bg air-bg';
-    wrap.innerHTML = '<aside class="a13-np air" role="dialog" aria-modal="true" aria-label="AI로 다시 쓰기"><header><div><h2>✨ <span class="a13-pid">' + esc(pid) + '</span> AI로 다시 쓰기</h2><p>저장된 설명·Task·이슈·관련 링크를 읽고 다시 써요. 고를 때까지 아무것도 바뀌지 않아요.</p></div><button class="x" aria-label="닫기">✕</button></header>' +
+    wrap.innerHTML = '<aside class="a13-np air" role="dialog" aria-modal="true" aria-label="AI로 다시 쓰기"><header><div><h2><span class="a13-pid">' + esc(pid) + '</span> AI로 다시 쓰기</h2><p>저장된 설명·Task·이슈·관련 링크를 읽고 다시 써요. 고를 때까지 아무것도 바뀌지 않아요.</p></div><button class="x" aria-label="닫기">✕</button></header>' +
       '<div class="body"><div class="np-ai"><div class="np-ai-h"><b>새로 알게 된 내용 (선택)</b><em>메모·대화·회의록·링크·캡처 — 비워 두면 지금 내용만 다듬어요</em></div>' +
       '<textarea class="a13-input np-ai-in" rows="4" placeholder="예) 회의 결과 2차 범위에서 선주웹은 빠짐. 1월 말까지 고객앱만 먼저 배포"></textarea><div class="np-ai-att"></div>' +
       '<label class="air-opt"><input type="checkbox" class="air-links" checked> 관련 링크 ' + arr(p.links).length + '개도 읽기 (공개 문서만)</label>' +
-      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">✨ 다시 쓰기</button></div>' +
+      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">다시 쓰기</button></div>' +
       '<div class="np-ai-out" aria-live="polite"></div></div><div class="air-res"></div></div>' +
       '<footer><span class="np-hint">체크한 칸만 바뀌고 변경 이력에 남아요</span><button class="a13-btn air-cancel">닫기</button><button class="a13-btn pri air-apply" disabled>선택한 항목 적용</button></footer></aside>';
     document.body.appendChild(wrap);
@@ -23500,7 +23776,7 @@ function renderNotifList() {
     Pn.querySelector('.x').onclick = close; Pn.querySelector('.air-cancel').onclick = close;
     wrap.addEventListener('click', function(e) { if (e.target === wrap) close(); });
     Pn.addEventListener('keydown', function(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
-    var drawAtt = function() { att.innerHTML = aiUrls(inp.value).map(function(u) { return '<span class="np-ai-chip">🔗 ' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') + imgs.map(function(im, i) { return '<span class="np-ai-img"><img src="' + im.thumb + '" alt="첨부 ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="빼기">×</button></span>'; }).join(''); att.querySelectorAll('button[data-i]').forEach(function(b) { b.onclick = function() { imgs.splice(+b.dataset.i, 1); drawAtt(); }; }); };
+    var drawAtt = function() { att.innerHTML = aiUrls(inp.value).map(function(u) { return '<span class="np-ai-chip">' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') + imgs.map(function(im, i) { return '<span class="np-ai-img"><img src="' + im.thumb + '" alt="첨부 ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="빼기">×</button></span>'; }).join(''); att.querySelectorAll('button[data-i]').forEach(function(b) { b.onclick = function() { imgs.splice(+b.dataset.i, 1); drawAtt(); }; }); };
     var addFiles = function(files) { [].slice.call(files || []).filter(function(f) { return /^image\//.test(f.type); }).forEach(function(f) { if (imgs.length >= 3) return; aiShrink(f, function(im) { if (im && imgs.length < 3) { imgs.push(im); drawAtt(); } }); }); };
     inp.addEventListener('input', drawAtt);
     inp.addEventListener('paste', function(e) { var it = (e.clipboardData && e.clipboardData.items) || [], fs = []; for (var i = 0; i < it.length; i++) if (it[i].kind === 'file' && /^image\//.test(it[i].type)) fs.push(it[i].getAsFile()); if (fs.length) { e.preventDefault(); addFiles(fs); } setTimeout(drawAtt, 0); });
@@ -23528,7 +23804,7 @@ function renderNotifList() {
         if (!j.ok) { out.innerHTML = '<div class="np-ai-msg err">' + esc(rr.st === 429 ? j.error : rr.st === 401 ? '로그인 확인에 실패했어요. 새로고침 후 다시 해 주세요' : 'AI가 응답하지 않았어요. 잠시 후 다시 해 주세요') + '</div>'; return; }
         draft = j.draft; drawResult(j);
       }).catch(function() { out.innerHTML = '<div class="np-ai-msg err">AI 서버에 연결하지 못했어요</div>'; })
-        .then(function() { go.disabled = false; go.textContent = '✨ 다시 쓰기'; });
+        .then(function() { go.disabled = false; go.textContent = '다시 쓰기'; });
     }
     function drawResult(j) {
       var d = draft, c = cur(), rows = [];
@@ -23548,7 +23824,7 @@ function renderNotifList() {
       if (newT.length) h += '<div class="air-tasks"><b>빠진 Task 제안</b> <span class="a13-hint">체크한 것만 추가돼요 (기존 Task는 지우지 않음)</span>' + newT.map(function(t, i) { return '<label class="air-t"><input type="checkbox" data-t="' + i + '"><span class="a13-chip" style="color:' + phc(t.phase) + '">' + esc(PHL[t.phase] || t.phase) + '</span>' + esc(t.title) + ' <small>' + t.days + '일</small></label>'; }).join('') + '</div>';
       if (d.similar && d.similar.length) h += '<div class="np-ai-sim"><b>⚠ 비슷한 다른 안건</b>' + d.similar.map(function(x) { var q3 = proj(x.id); return '<div><span class="a13-pid">' + esc(x.id) + '</span> ' + esc(q3 ? q3.name : '') + (x.reason ? ' <small>— ' + esc(x.reason) + '</small>' : '') + '</div>'; }).join('') + '</div>';
       if (d.questions && d.questions.length) h += '<div class="np-ai-q"><b>확인할 것</b><ul>' + d.questions.map(function(x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
-      var bad = (j.sources || []).filter(function(x) { return !x.ok; }); if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return '🔗 ' + esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
+      var bad = (j.sources || []).filter(function(x) { return !x.ok; }); if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
       res.innerHTML = h; out.innerHTML = '';
       res._newT = newT;
       var upd = function() { applyB.disabled = !res.querySelector('input[type=checkbox]:checked'); };
@@ -23742,7 +24018,7 @@ function renderNotifList() {
       var svcN = P.querySelectorAll('.np-chips button.on').length;
       var pl = A.planFromDeploy(d, { complexity: ai ? ai.complexity : 3, tasks: ai && ai.tasks, phases: ai && ai.phases, services: svcN });
       var canPh = phasesEmpty() || sameAsLast(), canTk = tasksEl && (!tasksEl.value.trim() || (last && tasksEl.value === last.text));
-      if (!canPh && !canTk) { info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">📅 배포일 기준으로 다시 잡기</button> <span class="a13-hint">직접 고친 일정·Task가 있어 자동으로 바꾸지 않았어요</span>'; info.querySelector('.np-plan-redo').onclick = function() { last = null; force(); }; return; }
+      if (!canPh && !canTk) { info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">배포일 기준으로 다시 잡기</button> <span class="a13-hint">직접 고친 일정·Task가 있어 자동으로 바꾸지 않았어요</span>'; info.querySelector('.np-plan-redo').onclick = function() { last = null; force(); }; return; }
       var prev = keep || { phases: curPhases(), text: tasksEl ? tasksEl.value : '' };
       if (canPh) PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = pl.phases[ph].start; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = pl.phases[ph].end; });
       var text = pl.lines.join('\n');
@@ -23750,7 +24026,7 @@ function renderNotifList() {
       last = { phases: curPhases(), text: tasksEl ? tasksEl.value : '' };
       ['ph', 'task'].forEach(function(k) { var x = P.querySelector('details[data-sec="' + k + '"]'); if (x) x.open = true; });
       P.querySelectorAll('.np-phases input').forEach(function(el) { el.classList.remove('ai-filled'); void el.offsetWidth; el.classList.add('ai-filled'); });
-      info.innerHTML = '<div class="np-plan-ok"><b>📅 ' + esc(fmtD(d)) + ' 배포 기준으로 거꾸로 잡았어요</b> · ' + esc(fmtD(pl.start)) + ' 시작 · 영업일 ' + pl.bdays + '일' + (ai ? ' · 복잡도 ' + pl.k + '(AI)' : '') + ' · Task ' + pl.lines.length + '건' + (ai && ai.tasks && ai.tasks.length ? '(AI 초안)' : '(기본 틀)') +
+      info.innerHTML = '<div class="np-plan-ok"><b>' + esc(fmtD(d)) + ' 배포 기준으로 거꾸로 잡았어요</b> · ' + esc(fmtD(pl.start)) + ' 시작 · 영업일 ' + pl.bdays + '일' + (ai ? ' · 복잡도 ' + pl.k + '(AI)' : '') + ' · Task ' + pl.lines.length + '건' + (ai && ai.tasks && ai.tasks.length ? '(AI 초안)' : '(기본 틀)') +
         (pl.vel ? '<div class="np-plan-vel">⏱ 팀 속도 기준: 완료 안건 ' + A.VELOCITY.projects + '건의 단계 기간 · 규모 ' + pl.size + ' (서비스 ' + svcN + '개)' + ' → ' + PH.filter(function(k) { return pl.dur[k]; }).map(function(k) { return PHL[k] + ' ' + pl.dur[k] + '일'; }).join(' · ') + '</div>' : '') +
         (pl.holidays.length ? '<div class="np-plan-hol">공휴일 제외: ' + pl.holidays.map(esc).join(', ') + '</div>' : '') +
         (pl.short ? '<div class="np-plan-warn">⚠ 표준 일정보다 ' + pl.short + '영업일 부족해 단계마다 줄였어요. 범위를 줄이거나 배포일을 미루는 걸 검토하세요</div>' : '') +
@@ -23758,7 +24034,7 @@ function renderNotifList() {
       info.querySelector('.np-plan-undo').onclick = function() {
         PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = prev.phases[ph].start; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = prev.phases[ph].end; });
         if (tasksEl) { tasksEl.value = prev.text; tasksEl.dispatchEvent(new Event('input', { bubbles: true })); }
-        last = null; info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">📅 배포일 기준으로 다시 잡기</button>'; info.querySelector('.np-plan-redo').onclick = force;
+        last = null; info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">배포일 기준으로 다시 잡기</button>'; info.querySelector('.np-plan-redo').onclick = force;
       };
       info.querySelector('.np-plan-redo').onclick = force;
     }
@@ -23791,7 +24067,7 @@ function renderNotifList() {
   A.AI_URL = 'https://af-ai-assist.sparkling-sound-d52d.workers.dev/v1/project-draft';
   A.aiPanelH = function() {
     var sr = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    return '<div class="np-ai"><div class="np-ai-h"><b>✨ AI로 채우기</b><em>무엇이든 넣으면 제목·설명·기획의도·티어·서비스를 채워 드려요</em></div>' +
+    return '<div class="np-ai"><div class="np-ai-h"><b>AI로 채우기</b><em>무엇이든 넣으면 제목·설명·기획의도·티어·서비스를 채워 드려요</em></div>' +
       '<div class="np-ai-modes" role="group" aria-label="입력 예시">' +
         [['memo', '한 줄 메모', '예) 선주가 조황 사진 올리면 새소식에 자동 게시되게 해 달라는 요청이 많음 (마케팅 김OO)'],
          ['chat', '대화·회의록', '구글챗 대화나 회의 메모를 그대로 붙여넣으세요. 누가 무엇을 요청했는지 AI가 정리합니다.'],
@@ -23800,7 +24076,7 @@ function renderNotifList() {
         (sr ? '<button type="button" data-m="voice" class="np-ai-mic" aria-pressed="false">🎤 말하기</button>' : '') + '</div>' +
       '<textarea class="a13-input np-ai-in" rows="3" placeholder="예) 선주가 조황 사진 올리면 새소식에 자동 게시되게 해 달라는 요청이 많음 (마케팅 김OO)" aria-label="AI에게 줄 메모·대화·링크"></textarea>' +
       '<div class="np-ai-att" aria-live="polite"></div>' +
-      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">✨ 채우기</button></div>' +
+      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">채우기</button></div>' +
       '<div class="np-ai-out" aria-live="polite"></div></div>';
   };
   function aiUrls(t) { var m = String(t || '').match(/https?:\/\/[^\s<>"')\]]+/g) || []; var out = []; m.forEach(function(u) { u = u.replace(/[.,;]+$/, ''); if (out.indexOf(u) === -1) out.push(u); }); return out.slice(0, 3); }
@@ -23825,7 +24101,7 @@ function renderNotifList() {
     wrap._aiImgs = [];
     var drawAtt = function() {
       var urls = aiUrls(inp.value);
-      att.innerHTML = urls.map(function(u) { return '<span class="np-ai-chip">🔗 ' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') +
+      att.innerHTML = urls.map(function(u) { return '<span class="np-ai-chip">' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') +
         wrap._aiImgs.map(function(im, i) { return '<span class="np-ai-img"><img src="' + im.thumb + '" alt="첨부 이미지 ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="이미지 빼기">×</button></span>'; }).join('');
       att.querySelectorAll('button[data-i]').forEach(function(b) { b.onclick = function() { wrap._aiImgs.splice(+b.dataset.i, 1); drawAtt(); }; });
     };
@@ -23915,14 +24191,14 @@ function renderNotifList() {
         if (d.similar && d.similar.length) h += '<div class="np-ai-sim"><b>⚠ 비슷한 안건이 이미 있어요</b>' + d.similar.map(function(x) { var p = proj(x.id); return '<button type="button" data-pid="' + esc(x.id) + '"><span class="a13-pid">' + esc(x.id) + '</span> ' + esc(p ? p.name : '') + (x.reason ? ' <small>— ' + esc(x.reason) + '</small>' : '') + '</button>'; }).join('') + '</div>';
         if (d.questions && d.questions.length) h += '<div class="np-ai-q"><b>확정 전에 확인할 것</b><ul>' + d.questions.map(function(x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
         var bad = (j.sources || []).filter(function(x) { return !x.ok; });
-        if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return '🔗 ' + esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
+        if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
         h += '<div class="np-ai-foot">AI 초안이에요. ' + (d.tasks && d.tasks.length ? 'Task ' + d.tasks.length + '건 초안도 만들었어요' + (P.querySelector('.np-deploy').value ? ' (배포일 기준 일정·담당 포함)' : ' — 배포 목표일을 넣으면 일정·담당까지 잡아요') + '. ' : '') + '아래 칸에서 고친 뒤 「만들고 열기」를 누르세요 · 오늘 ' + j.used + '/' + j.limit + '회</div></div>';
         out.innerHTML = h;
         out.querySelector('.np-ai-undo').onclick = function() { undo(prev); };
         out.querySelectorAll('.np-ai-sim button').forEach(function(b) { b.onclick = function() { if (confirm(b.dataset.pid + ' 안건을 열까요? 작성 중인 새 안건은 닫힙니다.')) { if (A._closeSheet) A._closeSheet(true); A.go('a13project', b.dataset.pid); } }; });
       }).catch(function() {
         out.innerHTML = '<div class="np-ai-msg err">AI 서버에 연결하지 못했어요. 네트워크를 확인하고 다시 해 주세요</div>';
-      }).then(function() { go.disabled = false; go.textContent = '✨ 다시 채우기'; box.classList.remove('busy'); });
+      }).then(function() { go.disabled = false; go.textContent = '다시 채우기'; box.classList.remove('busy'); });
     }
     go.onclick = run;
   };
@@ -23942,7 +24218,7 @@ function renderNotifList() {
     function headH() {
       if (isNew) return '<header><div><h2>새 안건</h2><p>메모·대화·링크·캡처를 주면 AI가 채워 줍니다. 제목만 있어도 만들 수 있어요.</p></div><button class="x" aria-label="닫기">✕</button></header>';
       var p = proj(pid);
-      return '<header><div><h2><span class="a13-pid">' + esc(pid) + '</span> 안건 정보</h2><p>' + (cw ? '바꾸면 그 칸만 바로 저장됩니다' : '읽기 전용 — 쓰기 권한이 있어야 수정할 수 있습니다') + (p && p.created ? ' · 등록 ' + esc(String(p.created).slice(0, 10)) : '') + '</p></div>' + (cw ? '<button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">✨ AI로 다시 쓰기</button>' : '') + '<button class="x" aria-label="닫기">✕</button></header>';
+      return '<header><div><h2><span class="a13-pid">' + esc(pid) + '</span> 안건 정보</h2><p>' + (cw ? '바꾸면 그 칸만 바로 저장됩니다' : '읽기 전용 — 쓰기 권한이 있어야 수정할 수 있습니다') + (p && p.created ? ' · 등록 ' + esc(String(p.created).slice(0, 10)) : '') + '</p></div>' + (cw ? '<button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">AI로 다시 쓰기</button>' : '') + '<button class="x" aria-label="닫기">✕</button></header>';
     }
     function sumH(p) {
       var tk = arr(p.tasks), dn = tk.filter(function(t) { return t.status === 'done'; }).length;
@@ -24251,7 +24527,7 @@ function renderNotifList() {
   function noteH(b, cls) {
     var cw = canW(), has = b.notes && String(b.notes).trim();
     if (!has) return cw ? '<div class="a13-dnote empty ' + (cls || '') + '" data-bid="' + esc(b.id) + '" role="button" tabindex="0" onclick="AF13.editNote(event,\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.editNote(event,\'' + q(b.id) + '\')">＋ 메모 쓰기</div>' : '';
-    var lines = String(b.notes).replace(/\s+$/, '').split('\n'), open = A.ui.dlOpen[b.id], LIM = 6;
+    var lines = String(b.notes).replace(/\s+$/, '').split('\n'), open = A.ui.dlOpen[b.id], LIM = 3;
     var shown = open ? lines : lines.slice(0, LIM);
     return '<div class="a13-dnote ' + (cls || '') + (cw ? ' editable' : '') + '" data-bid="' + esc(b.id) + '" onclick="event.stopPropagation()"><pre' + (cw ? ' role="button" tabindex="0" title="눌러서 바로 수정" onclick="AF13.editNote(event,\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.editNote(event,\'' + q(b.id) + '\')"' : '') + '>' + esc(shown.join('\n')) + '</pre>' +
       '<div class="a13-note-ft">' + (b.chatLink ? '<a class="a13-btn sm ghost" href="' + safeHref(b.chatLink) + '" target="_blank" rel="noopener">구글챗 원문 ↗' + (b.chatAuthor ? ' · ' + esc(b.chatAuthor) : '') + '</a>' : '') + (lines.length > LIM ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.toggleNote(event,\'' + q(b.id) + '\')">' + (open ? '접기' : '전체 보기 (' + lines.length + '줄)') + '</button>' : '') + (cw ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.editNote(event,\'' + q(b.id) + '\')">메모 수정</button>' : '') + '</div></div>';
@@ -24620,7 +24896,7 @@ function renderNotifList() {
   /* ═══ v13.4: 안건 검색 선택 · 이슈 등록 시트 · 카테고리 재분류 · 배포 편집 ═══ */
 
   /* ── 안건 고르기: 누르면 검색되는 목록 (원래 <select>는 그대로 두고 값만 바꿔 change 발생) ── */
-  var PSEL = 'select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"]';
+  var PSEL = 'select.a13-psel, select#a13RoundP, select.a13-input.pid, #a13issues .a13-toolbar select[aria-label="안건"], #a13issues .a13-fmore select[aria-label="안건"]';
   function closePsel() { var o = document.getElementById('a13Psel'); if (o) o.remove(); document.removeEventListener('mousedown', A._pselOut, true); }
   A._pselOut = function(e) { var o = document.getElementById('a13Psel'); if (o && !o.contains(e.target)) closePsel(); };
   A.openPsel = function(sel) {
@@ -24958,6 +25234,7 @@ function renderNotifList() {
     var finish = function(save) {
       if (done) return; done = true;
       var v = ta.value;
+      if (save) A.ui.dlOpen[bid] = true;   // 방금 고친 메모는 펼친 채로 보여 줌
       if (save && v !== cur) { A.setBundle(bid, { notes: v }); toast('메모를 저장했습니다'); }
       else A.render(true);
     };
@@ -25418,6 +25695,12 @@ function renderNotifList() {
   A.wlPickHide = function() { A.ui.wl.pickShowAdded = !A.ui.wl.pickShowAdded; var pk = document.getElementById('wl-pick'); if (pk) pk.innerHTML = wlPickBody(); };
   A.wlShowStart = function() { A.ui.wl.showStart = !A.ui.wl.showStart; A.render(true); };
   A.wlVexp = function(v) { A.ui.wl.vexp = !!v; A.ui.wl.draft = {}; A.render(true); };
+  A.wlWordPop = function(ev) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    var words = ['회의', '리뷰', '외부 미팅', '문의 대응', '시안', '배포', '문서'];
+    var pop = openPop(ev, '<div class="wl-wordpop" role="menu" aria-label="말머리">' + words.map(function(w) { return '<button type="button" role="menuitem" onclick="AF13.wlQuick(\'' + w + '\');var p=document.getElementById(\'a13Pop\');if(p)p.remove()">' + w + '</button>'; }).join('') + '</div>');
+    setTimeout(function() { var b = pop && pop.querySelector('button'); if (b) b.focus(); }, 20);
+  };
   A.wlAdhoc = function() {
     var sel = document.querySelector('#a13log .wl-psel[data-k="d"]'), i = document.querySelector('#a13log .wl-add[data-k="d"] input');
     if (sel) sel.value = '_adhoc';
@@ -25560,9 +25843,9 @@ function renderNotifList() {
       '<input list="wl-recent-' + kind + '" placeholder="' + (kind === 'w' ? '이번주 할 일 입력 후 Enter' : '할 일 입력 후 Enter · 여러 줄 붙여넣으면 한 번에') + '" onkeydown="AF13.wlKey(event,\'' + kind + '\')" onpaste="AF13.wlPaste(event,\'' + kind + '\')" aria-label="' + (kind === 'w' ? '이번주 계획 추가' : '오늘 계획 추가') + '">' +
       '<button class="a13-btn" onclick="AF13.wlAddBtn(\'' + kind + '\')">추가</button></div>';
     var rec = wlRecentTexts(me()); h += '<datalist id="wl-recent-' + kind + '">' + Object.keys(rec).slice(-30).map(function(t) { return '<option value="' + esc(t) + '">'; }).join('') + '</datalist>';
-    var rp = wlRecentProjects(me());
+    var rp = wlRecentProjects(me()).filter(function(p) { return p !== WL_ADHOC; });
     h += '<div class="wl-quick" aria-label="빠른 입력">' + (rp.length ? '<span class="lb">최근</span>' + rp.map(function(p) { return '<button class="rp" onclick="AF13.wlRecentP(\'' + kind + '\',\'' + q(p) + '\')" title="' + esc(wlProjLabel(p)) + '">' + esc(wlProjShort(p)) + '</button>'; }).join('') : '') +
-      (kind === 'd' ? (rp.length ? '<span class="sep"></span>' : '') + '<button class="wl-adhoc" onclick="AF13.wlAdhoc()" title="프로젝트로 잡기 애매한, 갑자기 들어온 요청">⚡ 돌발</button>' + ['회의', '리뷰', '외부 미팅', '문의 대응', '시안', '배포', '문서'].map(function(w) { return '<button onclick="AF13.wlQuick(\'' + w + '\')">' + w + '</button>'; }).join('') + '<button class="wl-tplbtn" onclick="AF13.wlTplPop(event)">↻ 반복 항목</button><span class="a13-hint">/ 키로 입력칸 이동</span>' : '') + '</div>';
+      (kind === 'd' ? (rp.length ? '<span class="sep"></span>' : '') + '<button class="wl-adhoc" onclick="AF13.wlAdhoc()" title="프로젝트로 잡기 애매한, 갑자기 들어온 요청">⚡ 돌발</button>' + '<button class="wl-wordbtn" onclick="AF13.wlWordPop(event)" aria-haspopup="menu">말머리 ▾</button><button class="wl-tplbtn" onclick="AF13.wlTplPop(event)">↻ 반복 항목</button><span class="a13-hint">/ 키로 입력칸 · ? 단축키</span>' : '') + '</div>';
     return h;
   }
   // 오늘 시작하기: 빈 날 한 번에 채우기
@@ -25638,14 +25921,15 @@ function renderNotifList() {
     var moreStart = startAll && dItems.length && !u.showStart ? (startAll.match(/data-ref=/g) || []).length : 0;
     h += '<div class="a13-card wl-card wl-main"><div class="a13-card-h"><h3>' + (date === wlToday() ? '오늘 계획' : wlMD(date) + ' 계획') + ' <span class="wl-cnt" id="wlc-d">' + wlProg(dItems) + '</span></h3>' +
       (moreStart ? '<button class="a13-btn" onclick="AF13.wlShowStart()">추천 ' + moreStart + '건 더 보기</button>' : (u.showStart && dItems.length ? '<button class="a13-btn" onclick="AF13.wlShowStart()">추천 닫기</button>' : '')) + '</div>' +
-      (edit && mid === me() && A.meetOf(date).length ? '<div class="wl-meetstrip">📅 <b>' + (date === wlToday() ? '오늘' : wlMD(date)) + ' 회의</b> ' + A.meetOf(date).map(function(m) { return '<span>' + esc(m.s) + ' ' + esc(m.t) + '</span>'; }).join('<i>·</i>') + '</div>' : '') +
+      (edit && mid === me() && A.meetOf(date).length ? '<div class="wl-meetstrip"><b>' + (date === wlToday() ? '오늘' : wlMD(date)) + ' 회의</b> ' + A.meetOf(date).map(function(m) { return '<span>' + esc(m.s) + ' ' + esc(m.t) + '</span>'; }).join('<i>·</i>') + '</div>' : '') +
       '<div id="wl-startbox">' + start + '</div>' +
+      (edit ? wlAddRow('d') : '') +
       '<div id="wlb-d">' + wlListBody('d', date, dItems, edit) + '</div>' +
-      (edit ? wlAddRow('d') + '<div class="wl-pick" id="wl-pick">' + wlPickBody() + '</div>' : '') + '</div>';
+      (edit ? '<div class="wl-pick" id="wl-pick">' + wlPickBody() + '</div>' : '') + '</div>';
     var lastWk = wlWeek(wlAdd(date, -7)).key, wcarry = edit ? wlCarry(mid, 'w', lastWk, wk.key) : [];
     h += '<div class="wl-side"><div class="a13-card wl-card"><div class="a13-card-h"><h3>이번주 계획 <span class="wl-sub">' + wlMD(wk.mon) + '~' + wlMD(wk.fri) + '</span> <span class="wl-cnt" id="wlc-w">' + wlProg(wItems) + '</span></h3>' +
       (wcarry.length ? '<button class="a13-btn" onclick="AF13.wlCarryIn(\'w\')">지난주 미완료 ' + wcarry.length + '건</button>' : '') + '</div>' +
-      '<div id="wlb-w">' + wlListBody('w', wk.key, wItems, edit) + '</div>' + (edit ? wlAddRow('w') : '') + '</div>';
+      (edit ? wlAddRow('w') : '') + '<div id="wlb-w">' + wlListBody('w', wk.key, wItems, edit) + '</div>' + '</div>';
     h += '<div class="a13-card wl-card"><div class="a13-card-h"><h3>블로커 · 특이사항</h3><span class="a13-hint" id="wlBlkSaved">' + (edit ? '자동 저장 · 팀 보기에 표시됩니다' : '') + '</span></div>' +
       (edit ? '<textarea class="a13-input wl-blk" placeholder="막힌 일, 누구 응답을 기다리는지 — 예) PG 테스트 키 만료, 구범모님 재발급 요청(대기)" oninput="AF13.wlBlkInput(\'' + date + '\',this)" onblur="AF13.wlBlocker(\'' + date + '\',this)">' + esc(day.blocker || '') + '</textarea>'
         : (day.blocker ? '<div class="wl-blk-ro">' + esc(day.blocker) + '</div>' : '<div class="wl-empty">없음</div>')) + '</div></div>';

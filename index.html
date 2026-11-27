@@ -4895,6 +4895,36 @@
     .wl-wkp { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 0 7px; }
     .wl-tr .cl .ln { font-size: 14px; }
     .wl-tr .nm b { font-size: 14px; }
+    /* v14.3 AI로 채우기 */
+    .a13-np .np-ai{border:1px solid #e3d9ff;background:linear-gradient(180deg,#faf7ff,#fff);border-radius:14px;padding:12px 14px;margin:0 0 14px;display:flex;flex-direction:column;gap:8px}
+    .a13-np .np-ai.drag{border-color:#6433DF;box-shadow:0 0 0 3px #efe9ff}.a13-np .np-ai.busy{opacity:.85}
+    .a13-np .np-ai-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.a13-np .np-ai-h b{color:#32008C;font-size:14px}.a13-np .np-ai-h em{font-style:normal;font-size:12px;color:#767676}
+    .a13-np .np-ai-modes{display:flex;gap:6px;flex-wrap:wrap}
+    .a13-np .np-ai-modes button{border:1px solid #E7E7E7;background:#fff;border-radius:999px;padding:5px 11px;font-size:12px;color:#363636;cursor:pointer;font-family:inherit;min-height:30px}
+    .a13-np .np-ai-modes button.on{border-color:#6433DF;color:#32008C;background:#efe9ff;font-weight:600}
+    .a13-np .np-ai-modes .np-ai-mic.on{border-color:#EE0005;color:#EE0005;background:#fff1f1}
+    .a13-np .np-ai-in{width:100%;resize:vertical;min-height:64px;font-size:13px;line-height:1.55}
+    .a13-np .np-ai-att{display:flex;gap:6px;flex-wrap:wrap}.a13-np .np-ai-att:empty{display:none}
+    .a13-np .np-ai-chip{font-size:11px;background:#F3F3F3;border-radius:6px;padding:3px 8px;color:#363636}
+    .a13-np .np-ai-img{position:relative}.a13-np .np-ai-img img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #E7E7E7;display:block}
+    .a13-np .np-ai-img button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#363636;color:#fff;font-size:12px;cursor:pointer;line-height:20px;padding:0}
+    .a13-np .np-ai-bar{display:flex;align-items:center;gap:8px}.a13-np .np-ai-hint{flex:1;font-size:11px;color:#AAAAAA;text-align:right}
+    .a13-np .np-ai-file{cursor:pointer}
+    .a13-np .np-ai-msg{font-size:12px;color:#767676}.a13-np .np-ai-msg.err{color:#EE0005}
+    .a13-np .np-ai-res{border-top:1px dashed #e3d9ff;padding-top:8px;display:flex;flex-direction:column;gap:6px;font-size:12px;color:#363636}
+    .a13-np .np-ai-res .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.a13-np .np-ai-res .hd b{color:#32008C}
+    .a13-np .np-ai-fb{font-size:11px;color:#8a5a00;background:#fff7e0;border-radius:4px;padding:1px 6px}
+    .a13-np .np-ai-undo{margin-left:auto}
+    .a13-np .np-ai-res .sc small{color:#919191}.a13-np .np-ai-res .rs{color:#767676;margin-top:2px}
+    .a13-np .np-ai-sim{background:#FFF8F3;border:1px solid #FFE1CF;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+    .a13-np .np-ai-sim b{color:#FF4C14}.a13-np .np-ai-sim button{border:none;background:none;text-align:left;font-size:12px;padding:3px 0;cursor:pointer;font-family:inherit;color:#363636}
+    .a13-np .np-ai-sim button:hover{color:#32008C;text-decoration:underline}
+    .a13-np .np-ai-q ul{margin:2px 0 0 16px;padding:0}.a13-np .np-ai-q b{color:#363636}
+    .a13-np .np-ai-src{color:#919191;font-size:11px}.a13-np .np-ai-foot{color:#919191;font-size:11px}
+    .a13-np .ai-filled{animation:aiFill 1.4s ease}
+    @keyframes aiFill{0%{background:#efe9ff}100%{background:transparent}}
+    @media (prefers-reduced-motion:reduce){.a13-np .ai-filled{animation:none}}
+    .np-ai-entry{background:#efe9ff!important;color:#32008C!important;border-color:#e3d9ff!important;font-weight:700;margin-right:6px;white-space:nowrap}
     /* v14.2 아침 알림 · 전체 진행 */
     .ww-morning{font-size:13px;color:#363636;margin:0 0 8px}.ww-morning a{color:#6433DF;font-weight:700}.ww-morning .ov{color:#EE0005;font-weight:600}.ww-morning .dd{color:#FF4C14;font-weight:600}.ww-morning .nw{color:#6433DF;font-weight:600}
     .ww-alert{border:1px solid #f5c542;background:#fffaf0;border-radius:10px;padding:10px 14px;margin:0 0 12px}
@@ -5605,6 +5635,19 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v14.3</span>
+              <span class="rn-version-title">✨ AI로 안건 채우기</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 안건 만들 때 「✨ AI로 채우기」: 한 줄 메모 · 구글챗 대화·회의록 · 기획서·노션·구글 문서 링크 · 캡처(⌘V/끌어놓기) · 🎤 말하기 — 제목·설명·기획의도·티어·점수·서비스를 채움</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>비슷한 기존 안건 경고, 확정 전에 확인할 질문, 점수 근거 표시 · 되돌리기 · 저장 전 직접 수정</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>Claude가 먼저, 응답이 없으면 Gemini가 대신 (회사 서버 중계 · 팀원 로그인만 · 사람당 하루 60회)</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.2</span>
               <span class="rn-version-title">첫 화면 업무일지 · 돌발 업무 · 파트별 주간 정리 · 구글챗 배포공지 · 캘린더 회의</span>
@@ -21859,7 +21902,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.2';
+    var AF_BUILD = 'v14.3';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -22833,7 +22876,7 @@ function renderNotifList() {
       '<div class="a13-row"><span class="a13-seg">' + [['active', '진행 중'], ['done', '완료'], ['all', '전체']].map(function(x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" onclick="AF13.ui.pf.st=\'' + x[0] + '\';AF13.render(true)">' + x[1] + '</button>'; }).join('') + '</span>' +
       '<select class="a13-input" onchange="AF13.ui.pf.tier=this.value;AF13.render(true)"><option value="">모든 티어</option>' + TIERS.map(function(t) { return '<option value="' + t + '"' + (f.tier === t ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select>' +
       '<input class="a13-input" placeholder="검색" value="' + esc(f.q) + '" oninput="AF13.ui.pf.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13projects input[placeholder=검색]\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},250)" style="width:160px"></div></div>';
-    if (canW()) h += '<div class="a13-newrow"><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewProj" placeholder="새 안건 제목을 입력하고 Enter (일정·Task는 다음 화면에서)" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229){AF13.quickProject()}"><select class="a13-input" id="a13NewTier">' + TIERS.map(function(t) { return '<option value="' + t + '"' + (t === 'TIER3' ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select><button class="a13-btn pri" onclick="AF13.quickProject()">만들기</button></div>';
+    if (canW()) h += '<div class="a13-newrow"><button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.newProject({})" title="메모·대화·링크·캡처로 AI가 채워 줘요">✨ AI로 만들기</button><span style="color:#6433DF;font-weight:800;font-size:18px;padding:0 6px">＋</span><input id="a13NewProj" placeholder="새 안건 제목을 입력하고 Enter (일정·Task는 다음 화면에서)" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&event.keyCode!==229){AF13.quickProject()}"><select class="a13-input" id="a13NewTier">' + TIERS.map(function(t) { return '<option value="' + t + '"' + (t === 'TIER3' ? ' selected' : '') + '>' + TIER_L[t] + '</option>'; }).join('') + '</select><button class="a13-btn pri" onclick="AF13.quickProject()">만들기</button></div>';
     try { if (typeof _afTimelineHTML === 'function' && f.st === 'active') h += '<details class="a13-card" style="padding:12px 16px;margin-bottom:12px"><summary style="cursor:pointer;font-weight:800;font-size:14px">진행 타임라인 (2주 전 ~ 7주 후)</summary>' + _afTimelineHTML().replace('class="afh-card" style="margin-top:14px"', 'style="margin-top:10px"') + '</details>'; } catch (e) {}
     h += '<div class="a13-phead"><div>안건</div><div>상태</div><div>단계 (기획·디자인·FE·BE·QA)</div><div>Task</div><div>열린 이슈</div><div>배포일</div><div>담당</div></div>';
     var byTier = {};
@@ -23317,6 +23360,139 @@ function renderNotifList() {
   A._parts = { tierChipsH: tierChipsH, statusSegH: statusSegH, svcChipsH: svcChipsH };
   function pmOptions(cur) { return '<option value="">미정</option>' + TEAM.filter(function(m) { return _isOnBoard(m) || m.id === cur; }).map(function(m) { return '<option value="' + esc(m.id) + '"' + (m.id === cur ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join(''); }
 
+  /* ═══ v14.3 AI로 안건 채우기 (Claude → Gemini 폴백, 회사 클라우드플레어 중계) ═══ */
+  A.AI_URL = 'https://af-ai-assist.sparkling-sound-d52d.workers.dev/v1/project-draft';
+  A.aiPanelH = function() {
+    var sr = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    return '<div class="np-ai"><div class="np-ai-h"><b>✨ AI로 채우기</b><em>무엇이든 넣으면 제목·설명·기획의도·티어·서비스를 채워 드려요</em></div>' +
+      '<div class="np-ai-modes" role="group" aria-label="입력 예시">' +
+        [['memo', '한 줄 메모', '예) 선주가 조황 사진 올리면 새소식에 자동 게시되게 해 달라는 요청이 많음 (마케팅 김OO)'],
+         ['chat', '대화·회의록', '구글챗 대화나 회의 메모를 그대로 붙여넣으세요. 누가 무엇을 요청했는지 AI가 정리합니다.'],
+         ['link', '링크', '기획서·노션·구글 문서 링크를 붙여넣으세요 (공개 공유된 문서만 읽을 수 있어요). 링크와 메모를 같이 써도 됩니다.'],
+         ['shot', '캡처', '화면·대화 캡처를 ⌘V(Ctrl+V)로 붙여넣거나 끌어다 놓으세요. 최대 3장.']].map(function(m, i) { return '<button type="button" class="' + (i ? '' : 'on') + '" data-m="' + m[0] + '" data-ph="' + esc(m[2]) + '">' + m[1] + '</button>'; }).join('') +
+        (sr ? '<button type="button" data-m="voice" class="np-ai-mic" aria-pressed="false">🎤 말하기</button>' : '') + '</div>' +
+      '<textarea class="a13-input np-ai-in" rows="3" placeholder="예) 선주가 조황 사진 올리면 새소식에 자동 게시되게 해 달라는 요청이 많음 (마케팅 김OO)" aria-label="AI에게 줄 메모·대화·링크"></textarea>' +
+      '<div class="np-ai-att" aria-live="polite"></div>' +
+      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">✨ 채우기</button></div>' +
+      '<div class="np-ai-out" aria-live="polite"></div></div>';
+  };
+  function aiUrls(t) { var m = String(t || '').match(/https?:\/\/[^\s<>"')\]]+/g) || []; var out = []; m.forEach(function(u) { u = u.replace(/[.,;]+$/, ''); if (out.indexOf(u) === -1) out.push(u); }); return out.slice(0, 3); }
+  function aiShrink(file, cb) {
+    var rd = new FileReader();
+    rd.onload = function() {
+      var img = new Image();
+      img.onload = function() {
+        var mx = 1600, w = img.width, h = img.height, k = Math.min(1, mx / Math.max(w, h));
+        var c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        var url = c.toDataURL('image/jpeg', 0.85); cb({ mime: 'image/jpeg', data: url.split(',')[1], thumb: url });
+      };
+      img.onerror = function() { cb(null); };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  }
+  A.aiWire = function(P, wrap, prefill) {
+    var box = P.querySelector('.np-ai'); if (!box) return;
+    var inp = box.querySelector('.np-ai-in'), att = box.querySelector('.np-ai-att'), out = box.querySelector('.np-ai-out'), go = box.querySelector('.np-ai-go');
+    wrap._aiImgs = [];
+    var drawAtt = function() {
+      var urls = aiUrls(inp.value);
+      att.innerHTML = urls.map(function(u) { return '<span class="np-ai-chip">🔗 ' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') +
+        wrap._aiImgs.map(function(im, i) { return '<span class="np-ai-img"><img src="' + im.thumb + '" alt="첨부 이미지 ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="이미지 빼기">×</button></span>'; }).join('');
+      att.querySelectorAll('button[data-i]').forEach(function(b) { b.onclick = function() { wrap._aiImgs.splice(+b.dataset.i, 1); drawAtt(); }; });
+    };
+    var addFiles = function(files) {
+      [].slice.call(files || []).filter(function(f) { return /^image\//.test(f.type); }).forEach(function(f) {
+        if (wrap._aiImgs.length >= 3) { toast('이미지는 3장까지 넣을 수 있어요', 'info'); return; }
+        aiShrink(f, function(im) { if (im && wrap._aiImgs.length < 3) { wrap._aiImgs.push(im); drawAtt(); } });
+      });
+    };
+    box.querySelectorAll('.np-ai-modes button[data-m]').forEach(function(b) {
+      if (b.dataset.m === 'voice') return;
+      b.onclick = function() { box.querySelectorAll('.np-ai-modes button[data-m]').forEach(function(x) { if (x.dataset.m !== 'voice') x.classList.toggle('on', x === b); }); inp.placeholder = b.dataset.ph; inp.rows = b.dataset.m === 'chat' ? 7 : 3; if (b.dataset.m === 'shot') box.querySelector('.np-ai-file input').click(); else inp.focus(); };
+    });
+    inp.addEventListener('input', drawAtt);
+    inp.addEventListener('paste', function(e) {
+      var items = (e.clipboardData && e.clipboardData.items) || [], files = [];
+      for (var i = 0; i < items.length; i++) if (items[i].kind === 'file' && /^image\//.test(items[i].type)) files.push(items[i].getAsFile());
+      if (files.length) { e.preventDefault(); addFiles(files); }
+      setTimeout(drawAtt, 0);
+    });
+    box.addEventListener('dragover', function(e) { e.preventDefault(); box.classList.add('drag'); });
+    box.addEventListener('dragleave', function() { box.classList.remove('drag'); });
+    box.addEventListener('drop', function(e) { e.preventDefault(); box.classList.remove('drag'); var dt = e.dataTransfer; if (dt.files && dt.files.length) addFiles(dt.files); else { var t = dt.getData('text'); if (t) { inp.value += (inp.value ? '\n' : '') + t; drawAtt(); } } });
+    box.querySelector('.np-ai-file input').onchange = function() { addFiles(this.files); this.value = ''; };
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); e.stopPropagation(); run(); } });
+    // 음성
+    var mic = box.querySelector('.np-ai-mic'), rec = null;
+    if (mic) mic.onclick = function() {
+      if (rec) { try { rec.stop(); } catch (e) {} return; }
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition; rec = new SR(); rec.lang = 'ko-KR'; rec.continuous = true; rec.interimResults = true;
+      var base = inp.value ? inp.value + '\n' : '';
+      rec.onresult = function(ev) { var fin = '', tmp = ''; for (var i = 0; i < ev.results.length; i++) { if (ev.results[i].isFinal) fin += ev.results[i][0].transcript; else tmp += ev.results[i][0].transcript; } inp.value = base + fin + tmp; };
+      rec.onend = function() { rec = null; mic.classList.remove('on'); mic.setAttribute('aria-pressed', 'false'); mic.textContent = '🎤 말하기'; };
+      rec.onerror = function(ev) { toast(ev.error === 'not-allowed' ? '마이크 권한을 허용해 주세요' : '음성 인식이 멈췄어요', 'info'); };
+      try { rec.start(); mic.classList.add('on'); mic.setAttribute('aria-pressed', 'true'); mic.textContent = '■ 그만 말하기'; } catch (e) { rec = null; }
+    };
+    if (prefill && prefill.aiText) { inp.value = prefill.aiText; drawAtt(); }
+    setTimeout(function() { if (!(prefill && prefill.name)) inp.focus(); }, 60);
+
+    function apply(d) {
+      var q1 = function(sel) { return P.querySelector(sel); };
+      var prev = { name: q1('.np-title').value, desc: q1('.np-desc').value, rat: q1('.np-rat').value, tier: (q1('.np-tiers button.on') || {}).dataset ? q1('.np-tiers button.on').dataset.v : 'TIER3', svc: [].slice.call(P.querySelectorAll('.np-chips button.on')).map(function(b) { return b.dataset.v; }) };
+      var flash = function(el) { if (!el) return; el.classList.remove('ai-filled'); void el.offsetWidth; el.classList.add('ai-filled'); };
+      if (d.name) { q1('.np-title').value = d.name; flash(q1('.np-title')); q1('.np-title').dispatchEvent(new Event('input', { bubbles: true })); }
+      if (d.desc) { q1('.np-desc').value = d.desc; flash(q1('.np-desc')); }
+      if (d.rationale) { q1('.np-rat').value = d.rationale; flash(q1('.np-rat')); }
+      var ds = q1('details[data-sec="desc"]'); if (ds && (d.desc || d.rationale)) ds.open = true;
+      P.querySelectorAll('.np-tiers button').forEach(function(b) { var on = b.dataset.v === d.tier; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+      if (d.serviceTypes && d.serviceTypes.length) P.querySelectorAll('.np-chips button').forEach(function(b) { var on = d.serviceTypes.indexOf(b.dataset.v) !== -1; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      return prev;
+    }
+    function undo(prev) {
+      var q1 = function(sel) { return P.querySelector(sel); };
+      q1('.np-title').value = prev.name; q1('.np-desc').value = prev.desc; q1('.np-rat').value = prev.rat;
+      P.querySelectorAll('.np-tiers button').forEach(function(b) { b.classList.toggle('on', b.dataset.v === prev.tier); });
+      P.querySelectorAll('.np-chips button').forEach(function(b) { b.classList.toggle('on', prev.svc.indexOf(b.dataset.v) !== -1); });
+      wrap._ai = null; out.innerHTML = '<div class="np-ai-msg">AI가 채운 내용을 되돌렸습니다</div>';
+    }
+    function run() {
+      var text = inp.value.trim(), urls = aiUrls(text), imgs = wrap._aiImgs || [];
+      if (!text && !imgs.length) { inp.focus(); toast('메모·대화·링크·캡처 중 하나를 넣어 주세요', 'info'); return; }
+      var user = (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+      if (!user || typeof user.getIdToken !== 'function') { toast('로그인한 뒤 사용할 수 있어요', 'error'); return; }
+      go.disabled = true; go.textContent = '채우는 중…'; box.classList.add('busy');
+      out.innerHTML = '<div class="np-ai-msg">' + (urls.length ? '링크를 읽고 ' : '') + (imgs.length ? '캡처를 보고 ' : '') + '정리하는 중이에요… (보통 5~15초)</div>';
+      var svcs = [].slice.call(P.querySelectorAll('.np-chips button')).map(function(b) { return b.dataset.v; });
+      var existing = (state.projects || []).map(function(p) { return { id: p.id, name: p.name, status: p.status }; });
+      user.getIdToken().then(function(tok) {
+        return fetch(A.AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }, body: JSON.stringify({ text: text, urls: urls, images: imgs.map(function(im) { return { mime: im.mime, data: im.data }; }), services: svcs, existing: existing }) });
+      }).then(function(r) { return r.json().then(function(j) { return { st: r.status, j: j }; }); }).then(function(res) {
+        var j = res.j || {};
+        if (!j.ok) {
+          var msg = res.st === 429 ? j.error : res.st === 401 ? '로그인 확인에 실패했어요. 새로고침 후 다시 해 주세요' : (j.detail && j.detail.length ? 'AI가 응답하지 않았어요. 잠시 후 다시 해 주세요' : 'AI 키가 아직 연결되지 않았어요. 관리자에게 알려 주세요');
+          out.innerHTML = '<div class="np-ai-msg err">' + esc(msg) + '</div>'; return;
+        }
+        var d = j.draft, prev = apply(d);
+        wrap._ai = { d: d, provider: j.provider, applied: true };
+        var sc = Math.round(((d.impact + d.urgency + d.dependency) / 3 - d.complexity * 0.1) * 10) / 10;
+        var h = '<div class="np-ai-res"><div class="hd"><b>' + (j.provider === 'claude' ? 'Claude' : 'Gemini') + '가 채웠어요</b>' + (j.fallback ? '<span class="np-ai-fb">Claude 응답이 없어 Gemini로 대신했어요</span>' : '') + '<button type="button" class="wl-link np-ai-undo">되돌리기</button></div>' +
+          '<div class="sc">' + esc(TIER_L[d.tier] || d.tier) + ' · 점수 ' + sc + ' <small>(영향 ' + d.impact + ' · 긴급 ' + d.urgency + ' · 의존 ' + d.dependency + ' · 복잡 ' + d.complexity + ')</small>' + (d.scoreReason ? '<div class="rs">' + esc(d.scoreReason) + '</div>' : '') + '</div>';
+        if (d.similar && d.similar.length) h += '<div class="np-ai-sim"><b>⚠ 비슷한 안건이 이미 있어요</b>' + d.similar.map(function(x) { var p = proj(x.id); return '<button type="button" data-pid="' + esc(x.id) + '"><span class="a13-pid">' + esc(x.id) + '</span> ' + esc(p ? p.name : '') + (x.reason ? ' <small>— ' + esc(x.reason) + '</small>' : '') + '</button>'; }).join('') + '</div>';
+        if (d.questions && d.questions.length) h += '<div class="np-ai-q"><b>확정 전에 확인할 것</b><ul>' + d.questions.map(function(x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+        var bad = (j.sources || []).filter(function(x) { return !x.ok; });
+        if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return '🔗 ' + esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
+        h += '<div class="np-ai-foot">AI 초안이에요. 아래 칸에서 고친 뒤 「만들고 열기」를 누르세요 · 오늘 ' + j.used + '/' + j.limit + '회</div></div>';
+        out.innerHTML = h;
+        out.querySelector('.np-ai-undo').onclick = function() { undo(prev); };
+        out.querySelectorAll('.np-ai-sim button').forEach(function(b) { b.onclick = function() { if (confirm(b.dataset.pid + ' 안건을 열까요? 작성 중인 새 안건은 닫힙니다.')) { if (A._closeSheet) A._closeSheet(true); A.go('a13project', b.dataset.pid); } }; });
+      }).catch(function() {
+        out.innerHTML = '<div class="np-ai-msg err">AI 서버에 연결하지 못했어요. 네트워크를 확인하고 다시 해 주세요</div>';
+      }).then(function() { go.disabled = false; go.textContent = '✨ 다시 채우기'; box.classList.remove('busy'); });
+    }
+    go.onclick = run;
+  };
   A.newProject = function(prefill) { A.projectSheet('new', prefill || {}); };
   A.editProject = function(pid) { A.projectSheet('edit', pid); };
 
@@ -23331,7 +23507,7 @@ function renderNotifList() {
     var openSecs = {};
 
     function headH() {
-      if (isNew) return '<header><div><h2>새 안건</h2><p>제목만 있어도 만들 수 있어요. 나머지는 나중에 채워도 됩니다.</p></div><button class="x" aria-label="닫기">✕</button></header>';
+      if (isNew) return '<header><div><h2>새 안건</h2><p>메모·대화·링크·캡처를 주면 AI가 채워 줍니다. 제목만 있어도 만들 수 있어요.</p></div><button class="x" aria-label="닫기">✕</button></header>';
       var p = proj(pid);
       return '<header><div><h2><span class="a13-pid">' + esc(pid) + '</span> 안건 정보</h2><p>' + (cw ? '바꾸면 그 칸만 바로 저장됩니다' : '읽기 전용 — 쓰기 권한이 있어야 수정할 수 있습니다') + (p && p.created ? ' · 등록 ' + esc(String(p.created).slice(0, 10)) : '') + '</p></div><button class="x" aria-label="닫기">✕</button></header>';
     }
@@ -23360,7 +23536,7 @@ function renderNotifList() {
       var hasPh = p && PH.some(function(ph) { return p.phases && p.phases[ph] && (p.phases[ph].start || p.phases[ph].end); });
       var sec = function(k, title, hint, inner, defOpen) { var o = openSecs[k] != null ? openSecs[k] : defOpen; return '<details class="np-sec" data-sec="' + k + '"' + (o ? ' open' : '') + '><summary><b>' + title + '</b><em>' + hint + '</em></summary>' + inner + '</details>'; };
       var tk = p ? arr(p.tasks) : [];
-      var h = '<input class="np-title" placeholder="안건 제목" value="' + esc(v.name || '') + '" maxlength="80" aria-label="안건 제목"' + (dis ? ' disabled' : '') + '>' +
+      var h = (isNew ? A.aiPanelH() : '') + '<input class="np-title" placeholder="안건 제목" value="' + esc(v.name || '') + '" maxlength="80" aria-label="안건 제목"' + (dis ? ' disabled' : '') + '>' +
         (isNew ? '<div class="np-dup"></div>' : sumH(p)) +
         '<div class="np-f"><span>티어</span>' + tierChipsH(v.tier, dis) + '</div>' +
         '<div class="np-f"><span>상태</span>' + statusSegH(v.status || '대기', isNew ? ['대기', '진행'] : PST_ALL, dis) + '</div>' +
@@ -23506,6 +23682,7 @@ function renderNotifList() {
     wire();
     P.querySelector('.x').onclick = function() { closeIt(); };
     wrap.addEventListener('mousedown', function(e) { if (e.target === wrap) closeIt(); });
+    if (isNew) { try { A.aiWire(P, wrap, prefill); } catch (e) { console.warn('[ai]', e); } }
     if (isNew) {
       var submit = function(more) {
         var titleEl = q1('.np-title'), name = titleEl.value.trim();
@@ -23523,6 +23700,14 @@ function renderNotifList() {
         p.phases = phases;
         p.desc = q1('.np-desc').value.trim();
         p.rationale = q1('.np-rat').value.trim();
+        try {
+          var ai = wrap._ai;
+          if (ai && ai.applied) {
+            ['impact', 'urgency', 'complexity', 'dependency'].forEach(function(k) { if (ai.d[k] != null) p[k] = ai.d[k]; });
+            p.score = Math.round(((p.impact + p.urgency + p.dependency) / 3 - p.complexity * 0.1) * 10) / 10;
+            p.aiDraft = { by: ai.provider, at: new Date().toISOString(), reason: ai.d.scoreReason || '' };
+          }
+        } catch (e) {}
         saveProjects();
         var tasksEl = q1('.np-tasks');
         var n = tasksEl.value.trim() ? A.addTasks(p.id, tasksEl.value) : 0;
@@ -23530,6 +23715,7 @@ function renderNotifList() {
         if (more) {
           titleEl.value = ''; tasksEl.value = ''; q1('.np-preview').innerHTML = ''; q1('.np-dup').innerHTML = '';
           q1('.np-desc').value = ''; q1('.np-rat').value = '';
+          try { wrap._ai = null; var ai0 = q1('.np-ai-in'); if (ai0) ai0.value = ''; var ao = q1('.np-ai-out'); if (ao) ao.innerHTML = ''; var at0 = q1('.np-ai-att'); if (at0) at0.innerHTML = ''; wrap._aiImgs = []; } catch (e) {}
           titleEl.focus(); A.render(true);
         } else { closeIt(true); A.go('a13project', p.id); }
       };

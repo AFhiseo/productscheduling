@@ -5376,6 +5376,101 @@
       .a13-tt-x { animation: a13Reveal var(--m-enter) var(--e-enter); }
       .gantt-bar { transition: opacity var(--m-enter) var(--e-out), filter var(--m-enter) var(--e-out), box-shadow var(--m-feedback) var(--e-out); }
     }
+    /* v15.0 현황판 */
+    #a13status .st-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    #a13status .st-k { background: var(--af-white); border: 1px solid var(--af-line); border-radius: 14px; padding: 14px 16px; cursor: pointer; position: relative; }
+    #a13status .st-k b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; color: var(--af-title); font-variant-numeric: tabular-nums; }
+    #a13status .st-k span { font-size: 13px; color: var(--af-body); }
+    #a13status .st-k small { display: block; font-size: 12px; color: var(--af-sub); margin-top: 2px; }
+    #a13status .st-k.hot { border-color: var(--af-danger); box-shadow: inset 4px 0 0 var(--af-danger); }
+    #a13status .st-k.hot b { color: var(--af-danger); }
+    #a13status .st-k.zero b { color: var(--af-disabled); }
+    #a13status .st-mx { width: 100%; border-collapse: separate; border-spacing: 0; }
+    #a13status .st-mx th { font-size: 12px; font-weight: 600; color: var(--af-body); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--af-line); white-space: nowrap; }
+    #a13status .st-mx td { padding: 9px 10px; border-bottom: 1px solid var(--af-surface); font-size: 13px; color: var(--af-head); vertical-align: middle; }
+    #a13status .st-mx tr.r { cursor: pointer; } #a13status .st-mx tr.r:hover td { background: var(--af-surface-2); }
+    #a13status .st-mx .nm b { color: var(--af-title); font-weight: 700; }
+    #a13status .st-ph { display: flex; gap: 3px; }
+    #a13status .st-ph i { width: 40px; height: 22px; border-radius: 5px; display: grid; place-items: center; font-style: normal; font-size: 10px; font-weight: 700; color: var(--af-white); transform-origin: left center; }
+    #a13status .st-ph i.done { background: color-mix(in srgb, var(--c) 45%, var(--af-white)); }
+    #a13status .st-ph i.now { background: var(--c); box-shadow: 0 0 0 2px var(--af-white), 0 0 0 4px var(--c); }
+    #a13status .st-ph i.late { background: var(--af-danger); }
+    #a13status .st-ph i.next { background: var(--af-white); border: 1px dashed color-mix(in srgb, var(--c) 70%, var(--af-white)); color: var(--c); }
+    #a13status .st-ph i.empty { background: var(--af-surface); color: var(--af-disabled); border: 1px dashed var(--af-line); }
+    #a13status .st-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--af-body); }
+    #a13status .st-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+    #a13status .st-rk { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; margin: 1px 4px 1px 0; color: var(--af-danger); background: #FFF1F1; }
+    #a13status .st-rk.w { color: #B45309; background: #FFFBEB; }
+    #a13status .st-sev { font-weight: 700; } #a13status .st-sev.b { color: var(--af-danger); } #a13status .st-sev.m { color: #C2410C; }
+    #a13status .st-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+    #a13status .st-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+    #a13status .st-day { background: var(--af-surface-3); border: 1px solid var(--af-surface); border-radius: 10px; padding: 8px; min-height: 120px; }
+    #a13status .st-day.today { border-color: var(--af-accent); background: var(--af-accent-soft); }
+    #a13status .st-day h5 { margin: 0 0 6px; font-size: 12px; color: var(--af-body); font-weight: 600; }
+    #a13status .st-dep { font-size: 12px; line-height: 1.35; padding: 6px; border-radius: 7px; background: var(--af-white); border: 1px solid var(--af-line); margin-bottom: 4px; cursor: pointer; }
+    #a13status .st-dep.done { border-left: 3px solid #10b981; } #a13status .st-dep.plan { border-left: 3px solid var(--af-accent); }
+    #a13status .st-dep small { display: block; color: var(--af-body); }
+    #a13status .st-dep { font-size: 11.5px; overflow: hidden; display: block; }
+    #a13status .st-dep .l { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 600; color: var(--af-title); }
+    #a13status .st-dep.bad { border-left: 3px solid var(--af-danger); background: #FFF1F1; }
+    #a13status .st-more { border: 0; background: none; color: var(--af-cta); font-size: 12px; font-weight: 600; cursor: pointer; padding: 2px 0; }
+    #a13status .st-ph i { width: 46px; height: 32px; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.1; }
+    #a13status .st-ph i small { font-size: 9.5px; font-weight: 600; opacity: .92; }
+    #a13status .st-rk.g, #a13status .st-blk .tg.g { color: var(--af-body); background: var(--af-surface); }
+    #a13status .st-next { margin-top: 0; } #a13status .st-wk { margin-top: 16px; } #a13status .st-week { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+    #a13status .st-nx { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 2px 12px; padding: 9px 0; border-bottom: 1px solid var(--af-surface); cursor: pointer; font-size: 13px; }
+    #a13status .st-nx b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--af-title); }
+    #a13status .st-nx .sg { grid-column: 2; font-size: 12px; color: var(--af-body); } #a13status .st-nx em { font-style: normal; color: var(--af-danger); font-weight: 700; }
+    #a13status .st-nx:hover b { color: var(--af-cta); }
+    .a13-chip.part { color: var(--af-cta); background: var(--af-accent-soft); } .a13-chip.env { color: #B45309; background: #FFFBEB; } .a13-chip.plat { color: var(--af-body); } .a13-chip.ver { color: var(--af-head); font-variant-numeric: tabular-nums; }
+    .a13-dmeta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; } .a13-dmeta .rej { flex-basis: 100%; background: #FFF1F1; color: var(--af-head); border-radius: 8px; padding: 8px 10px; font-size: 13px; } .a13-dmeta .rej b { color: var(--af-danger); margin-right: 8px; }
+    .a13-rg .rg-r { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--af-surface); font-size: 13px; }
+    .a13-rg .rg-r .t { flex: 1; min-width: 0; } .a13-rg .rg-r.fail .t { color: var(--af-danger); font-weight: 600; } .a13-rg .rg-r.pass .t, .a13-rg .rg-r.skip .t { color: var(--af-body); }
+    .a13-rg .rg-r button { border: 1px solid var(--af-line); background: var(--af-white); border-radius: 6px; font-size: 12px; padding: 3px 8px; cursor: pointer; color: var(--af-head); transition: background-color .15s, color .15s; }
+    .a13-rg .rg-r button.on.pass { background: #ECFDF5; color: #047857; border-color: #10b981; } .a13-rg .rg-r button.on.fail { background: #FFF1F1; color: var(--af-danger); border-color: var(--af-danger); } .a13-rg .rg-r button.on.skip { background: var(--af-surface); color: var(--af-body); }
+    .a13-rg .rg-r button.mk { color: var(--af-cta); border-color: var(--af-accent-line); }
+    .a13-rg .rg-add { margin-top: 6px; width: 100%; }
+    .a13-inc .inc { background: #FFF1F1; border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12.5px; } .a13-inc .inc b { color: var(--af-danger); }
+    @media (min-width: 1101px) { .a13-phr { grid-template-columns: 76px 140px 140px 1fr 120px 60px 100px !important; } }    .a13-phdone { min-width: 0; text-align: right; }
+    .a13-vd { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; vertical-align: 1px; }
+    .a13-vd.go { color: #047857; background: #ECFDF5; } .a13-vd.warn { color: #B45309; background: #FFFBEB; } .a13-vd.stop { color: var(--af-white); background: var(--af-danger); }
+    .a13-bs .bs-meta { margin-top: 2px; font-size: 12px; color: var(--af-body); }
+    .a13-dec .a13-add { display: flex; gap: 8px; align-items: center; } .a13-dec .a13-add input { flex: 1; min-width: 0; }
+    .a13-chip.q { color: var(--af-white); background: var(--af-cta); } .a13-dec .dec-q .a13-li { background: var(--af-accent-soft); border-radius: 8px; }
+    .a13-inc .inc b.k { color: var(--af-body); font-weight: 600; margin-right: 6px; }
+    .a13-glg { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--af-body); margin-right: 8px; } .a13-glg i { width: 14px; height: 10px; border-radius: 3px; display: inline-block; } .a13-glg i.r { box-shadow: 0 0 0 2px var(--af-danger); } .a13-glg i.w { outline: 2px dashed #92400E; outline-offset: 1px; margin-left: 6px; }
+    .a13-plinks .a13-plink { opacity: 1; } /* 안건 상세 관련 링크가 목록 줄 버튼 규칙에 가려 안 보이던 문제 */
+    .a13-plink .lk { font-size: 10.5px; font-weight: 700; color: var(--af-cta); background: var(--af-accent-soft); border-radius: 4px; padding: 0 4px; margin-right: 4px; }
+    #ganttBars .gantt-bar.gb-risk { box-shadow: 0 0 0 2px var(--af-danger); } #ganttBars .gantt-bar.gb-warn { outline: 2px dashed #92400E; outline-offset: 1px; }
+    .a13-rg .rg-r .t small { display: block; font-size: 11px; color: var(--af-sub); font-weight: 400; }
+    .a13-rg .rg-ver { display: flex; align-items: center; gap: 8px; margin: 2px 0 6px; }
+    .a13-mt { position: fixed; inset: 0; z-index: 9000; background: color-mix(in srgb, var(--af-title) 55%, transparent); display: grid; place-items: center; padding: 24px; }
+    .a13-mt .mt-in { width: min(1120px, 100%); max-height: 100%; overflow: auto; background: var(--af-white); border-radius: 18px; padding: 24px 28px; }
+    .a13-mt header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .a13-mt h2 { margin: 0; font-size: 26px; letter-spacing: -0.03em; color: var(--af-title); }
+    .a13-mt .mt-ph { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 18px 0; }
+    .a13-mt .mt-ph .c { border: 1px solid var(--af-line); border-top: 4px solid var(--c); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+    .a13-mt .mt-ph .c b { font-size: 15px; color: var(--af-title); } .a13-mt .mt-ph .c small { color: var(--af-body); } .a13-mt .mt-ph .c em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--c); }
+    .a13-mt .mt-ph .c.now { background: color-mix(in srgb, var(--c) 8%, var(--af-white)); } .a13-mt .mt-ph .c.late { border-top-color: var(--af-danger); } .a13-mt .mt-ph .c.late em { color: var(--af-danger); } .a13-mt .mt-ph .c.empty { opacity: .6; }
+    .a13-mt .mt-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .a13-mt h4 { margin: 0 0 8px; font-size: 13px; color: var(--af-body); font-weight: 600; }
+    .a13-mt .mt-li { font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--af-surface); color: var(--af-head); }
+    .a13-mt .mt-li.r { color: var(--af-danger); font-weight: 700; } .a13-mt .mt-li.w { color: #B45309; font-weight: 600; } .a13-mt .mt-li.g { color: var(--af-body); }
+    .a13-mt .mt-dec { width: 100%; margin-top: 10px; }
+    .a13-mt footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; } .a13-phdone .ok { font-size: 12px; font-weight: 700; color: #047857; }
+    .a13-dec .a13-add { margin-bottom: 8px; }
+    @media (max-width: 1280px) { #a13status .st-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    #a13status .st-blk { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--af-surface); cursor: pointer; font-size: 13px; }
+    #a13status .st-blk .tg { flex: none; font-size: 11px; font-weight: 700; border-radius: 5px; padding: 2px 6px; color: var(--af-danger); background: #FFF1F1; min-width: 64px; text-align: center; }
+    #a13status .st-blk .tg.w { color: #B45309; background: #FFFBEB; } #a13status .st-blk .tg.i { color: var(--af-cta); background: var(--af-accent-soft); }
+    #a13status .st-blk small { display: block; color: var(--af-body); }
+    .a13-strip { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--af-white); border: 1px solid var(--af-line); border-radius: 14px; padding: 10px 16px; margin: 0 0 16px; font-size: 13px; color: var(--af-head); cursor: pointer; }
+    .a13-strip b { font-size: 16px; font-variant-numeric: tabular-nums; margin-left: 4px; color: var(--af-title); } .a13-strip b.hot { color: var(--af-danger); }
+    .a13-strip .go { margin-left: auto; color: var(--af-cta); font-weight: 600; }
+    .a13-strip:hover { border-color: var(--af-accent-line); }
+    .np-addiss { margin-top: 8px; }
+    .a13-phrisk { margin-left: 8px; }
+    @media (max-width: 1100px) { #a13status .st-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } #a13status .st-grid { grid-template-columns: minmax(0, 1fr); } }
     /* ═══ 반응형 보강 (v10.2) — 창 폭이 줄어도 잘리거나 찌그러지지 않게 ═══ */
     #syncStatus { white-space: nowrap; }
     @media (max-width: 1200px) {
@@ -5993,6 +6088,73 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v15.4</span>
+              <span class="rn-version-title">표기 다듬기 · 링크 종류 · 간트 범례</span>
+              <span class="rn-version-date">2026-11-28</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>내 작업 이번 주 배포에 실패·롤백 · 배포 목록 「진행 중」은 준비중·배포준비만 · 회귀는 「기록 n/m · 통과 · 실패」 · 안건 링크에 종류(Figma·PR·문서·Notion·구글챗 등) 자동 표시 · 간트 범례 · 이슈 목록에서 반려된 이슈를 위로 · 결정·질문 숫자 표기</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v15.3</span>
+              <span class="rn-version-title">열린 질문 · 간트 위험 테두리 · 장애 기록 칸</span>
+              <span class="rn-version-date">2026-11-28</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건 「결정·질문」: 질문으로 남기고 「답 달기」로 닫음(답은 결정 기록으로) · 열린 질문은 현황 막힌 것·회의 모드·주간 보고에 표시</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>스케줄 간트: 일정 위험 안건 막대는 빨강, 확인 필요는 주황 테두리 · 막대 설명에 위험 내용</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>장애 기록을 원인·조치·되돌린 버전 칸으로 · 달력 카드 이름 두 줄과 안건 표시 · 미기입 숫자를 현황 카드와 막힌 것에서 같게 · 롤백 배포에는 판정·D-day 표시 안 함 · 이번 주 배포 「실패·롤백」 따로 셈 · 내 작업 다음 배포에 판정</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v15.2</span>
+              <span class="rn-version-title">출시 판정 · 회의 모드 · 미해결만 보기</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>출시 판정(출시 가능·주의·막힘): Block·회귀 실패면 막힘, 검증 전·미완료 Task·회귀 덜 끝남이면 주의 — 다음 배포·배포 상세 머리·안건 흐름에 표시</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>현황 「회의 모드」: 안건을 한 장씩(단계·담당·확인할 것·열린 이슈·다음 배포·결정), ←/→로 넘기고 그 자리에서 결정 기록</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 목록 「미해결만」 칩(현황 Block·Major 카드에서 넘어오면 켜짐, 숫자 일치) · 배포 상세 머리에 서비스·환경·버전·안건 · 회귀 항목별 기록자·시각과 확인한 빌드 · 막힌 것의 미기입은 한 줄로 · 안건 흐름에 목표일과 묶인 배포 날짜를 함께 · 시작 전 단계는 완료 버튼 숨김 · 내 작업에 Major · 반려된 이슈는 지금 할 일 맨 위</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v15.1</span>
+              <span class="rn-version-title">숫자 기준 통일 · 다음 배포 · 회귀 체크 · 결정 기록 · 이슈 직군·빌드 버전</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>현황: 과부하는 팀 표와 같은 기준, 「일정 위험」과 「미기입」을 따로 셈, Major 숫자 추가, 막힌 것은 안건별 한 줄, Block에 안건·담당 표시, 단계 칸에 끝 날짜</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>현황 「다음 배포」(D-day·검증 전·Block·회귀) · 이번 주 달력은 서비스·버전 한 줄 · 주간 보고는 미리보기 후 복사(지난주 대비·이번 주 결정 포함)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포: 회귀 체크(통과·실패·건너뜀, 실패는 바로 이슈 등록) · 실패·롤백 상태와 장애 기록 · api 서버·AI 채팅 서버·배치 서비스 · 배포완료 때 담긴 이슈·Task 함께 완료 · 목록 「이번 주」</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>이슈: 직군(FE·BE·디자인·기획)과 빌드 버전 칸 · 목록 직군 필터 · 줄에 환경·플랫폼 표시 · 상세 맨 위 최근 반려 사유 · 일괄 처리에 검증 담당·직군·검증 완료 · QA는 검증 담당 기본값이 나</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건: 단계 「완료·넘기기」 · 결정 기록(배포일·티어를 바꾸면 이유를 물음) · 내 작업에 「내 단계 마감」(2주)</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v15.0</span>
+              <span class="rn-version-title">현황판 · 주간 보고 복사 · 배포에 이슈 바로 담기</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>현황(G 다음 H): 진행 안건·Block 미해결(최장 일수)·이번 주 배포·검증 대기·과부하 인원, 안건 × 단계 흐름(끝남·진행·지연·예정·일정 없음), 이번 주 배포 달력, 막힌 것 목록</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>주간 보고 복사: 요약·안건 흐름·이번 주 배포·막힌 것을 구글챗에 붙일 글로 한 번에</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>일정 위험 자동 표시: 배포일이 QA보다 빠름·QA 뒤 여유 없음·일정 없음·단계 미입력·디자인/FE 겹침·끝난 단계에 남은 Task(현황·안건 상세)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>배포 상세 「＋ 이슈 담기」(배포 대기 이슈는 미리 체크) · 배포완료로 바꾸면 배포일 자동 입력(비어 있을 때만)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-improve">개선</span>이슈 상세 반려·보류는 사유를 받아 댓글로 남기고 반려 횟수를 셈 · 새 이슈는 마지막 안건·환경·플랫폼 기억 · 팀 부하에 열린 이슈 반영 · 내 작업 맨 위 현황 한 줄</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.9</span>
               <span class="rn-version-title">팀 부하 표 · 간트 나만 강조 · 배포 상세 정리</span>
@@ -13084,6 +13246,7 @@ function _persistIssueFilters() {
         btn.onmouseout = function() { this.style.opacity = '1'; };
         btn.onclick = function() {
           if (!_hasWritePermission()) { _checkWritePermission(); return; }
+          if (t.rej || t.next === '테스트 보류') { AF13.setIssueStatus(iss.id, t.next, t.rej ? 1 : 0); setTimeout(function() { try { renderIssues(); openIssueDetail(iss.id); } catch (e) {} }, 50); return; }
           iss.status = t.next;
           iss.updated = new Date().toISOString();
           saveIssueData(iss);
@@ -22344,7 +22507,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.9';
+    var AF_BUILD = 'v15.4';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -22947,9 +23110,44 @@ function renderNotifList() {
     if (JSON.stringify(old === undefined ? null : old) === JSON.stringify(val)) return;
     p[key] = val;
     if (label) pushHistory('수정', pid, label, old == null ? '' : String(old), val == null ? '' : String(val));
+    if ((key === 'deployDate' || key === 'tier') && old && !/jsdom/i.test(navigator.userAgent || '')) { try { var why = prompt(label + '을(를) ' + (key === 'deployDate' ? fmtD(old) + ' → ' + fmtD(val) : old + ' → ' + val) + '로 바꾼 이유를 남길까요? (비워 두면 건너뜀)'); if (why && why.trim()) p.decisions = arr(p.decisions).concat([{ at: iso(), by: (state.currentUser && state.currentUser.displayName) || '', text: label + ' ' + (key === 'deployDate' ? fmtD(old) + ' → ' + fmtD(val) : old + ' → ' + val) + ': ' + why.trim().slice(0, 160) }]); } catch (e) {} }
     saveProjects();
     A.render(true);
   };
+  A.phaseDone = function(pid, ph) {
+    if (!needW()) return; var p = proj(pid); if (!p) return;
+    var nx = PH[PH.indexOf(ph) + 1], open = arr(p.tasks).filter(function(t) { return t.phase === ph && t.status !== 'done'; }).length;
+    if (!confirm(PHL[ph] + ' 단계를 완료로 표시할까요?' + (open ? '\n아직 끝나지 않은 Task ' + open + '개가 있습니다.' : '') + (nx ? '\n다음 단계: ' + PHL[nx] + (arr(p.assignments && p.assignments[nx]).length ? ' (' + arr(p.assignments[nx]).map(function(id) { return ((TEAM.find(function(m) { return m.id === id; }) || {}).name) || id; }).join(', ') + ')' : '') : ''))) return;
+    p.phaseDone = Object.assign({}, p.phaseDone || {}); p.phaseDone[ph] = iso();
+    if (!p.phases) p.phases = {}; if (!p.phases[ph]) p.phases[ph] = { start: '', end: '' }; if (!p.phases[ph].end) p.phases[ph].end = wlToday();
+    pushHistory('수정', pid, PHL[ph] + ' 단계', '', '완료 · 다음 ' + (nx ? PHL[nx] : '배포'));
+    saveProjects(); toast(PHL[ph] + ' 완료' + (nx ? ' · ' + PHL[nx] + ' 단계로 넘겼습니다' : '')); A.render(true);
+  };
+  A.decisionsH = function(p, cw) {
+    var oq = A.openQs(p), L = arr(p.decisions).filter(function(x) { return !(x.kind === 'q' && !x.done); }).slice().reverse(), all = A.ui.decAll === p.id, show = all ? L : L.slice(0, 4);
+    var inId = 'a13Dec_' + String(p.id).replace(/\W/g, '');
+    return '<div class="a13-card a13-dec"><div class="a13-card-h"><h3>결정·질문 <span class="a13-cnt">결정 ' + L.length + '</span>' + (oq.length ? ' <span class="a13-cnt red">열린 질문 ' + oq.length + '</span>' : '') + '</h3><span class="a13-hint">일정·범위·티어를 바꾼 이유와 아직 답이 없는 질문 · 주간 보고와 회의 모드에 들어갑니다</span></div>' +
+      (cw ? '<div class="a13-add"><span class="plus">＋</span><input id="' + inId + '" placeholder="예: QA 1주 확보 위해 배포 12/8 → 12/15로 연기 (Enter = 결정)" maxlength="200" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&this.value.trim()){AF13.addDecision(\'' + q(p.id) + '\',this.value.trim());this.value=\'\'}"><button type="button" class="a13-btn sm ghost" onclick="var i=document.getElementById(\'' + inId + '\');if(i&&i.value.trim()){AF13.addDecision(\'' + q(p.id) + '\',i.value.trim(),\'q\');i.value=\'\'}else if(i)i.focus()">질문으로 남기기</button></div>' : '') +
+      (oq.length ? '<div class="a13-list dec-q">' + oq.map(function(x) { return '<div class="a13-li"><span class="a13-chip q">질문</span><div class="m"><div class="t">' + esc(x.text) + '</div><div class="s"><span>' + esc(String(x.at || '').slice(0, 10)) + '</span>' + (x.by ? '<span>' + esc(x.by) + '</span>' : '') + '<span>' + Math.max(0, Math.round((t0() - dOnly(String(x.at).slice(0, 10))) / 864e5)) + '일째</span></div></div>' + (cw ? '<button type="button" class="a13-btn sm" onclick="AF13.answerQ(\'' + q(p.id) + '\',\'' + q(x.at) + '\')">답 달기</button>' : '') + '</div>'; }).join('') + '</div>' : '') +
+      (show.length ? '<div class="a13-list">' + show.map(function(x) { return '<div class="a13-li">' + (x.kind === 'q' ? '<span class="a13-chip">답함</span>' : '') + '<div class="m"><div class="t">' + esc(x.text) + (x.answer ? ' → ' + esc(x.answer) : '') + '</div><div class="s"><span>' + esc(String(x.at || '').slice(0, 10)) + '</span>' + (x.by ? '<span>' + esc(x.by) + '</span>' : '') + '</div></div></div>'; }).join('') + '</div>' + (L.length > 4 ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.ui.decAll=' + (all ? 'null' : '\'' + q(p.id) + '\'') + ';AF13.render(true)">' + (all ? '접기' : '전체 ' + L.length + '건 보기') + '</button>' : '') : '<div class="a13-hint" style="padding:6px 2px">아직 기록이 없습니다</div>') + '</div>';
+  };
+  A.addDecision = function(pid, text, kind) {
+    if (!needW()) return; var p = proj(pid); if (!p || !String(text || '').trim()) return;
+    var o = { at: iso(), by: (state.currentUser && state.currentUser.displayName) || '', text: String(text).trim().slice(0, 200) }; if (kind === 'q') o.kind = 'q';
+    p.decisions = arr(p.decisions).concat([o]);
+    pushHistory('수정', pid, kind === 'q' ? '질문' : '결정', '', String(text).trim().slice(0, 120));
+    saveProjects(); toast(kind === 'q' ? '질문을 남겼습니다' : '결정을 기록했습니다'); A.render(true);
+  };
+  A.answerQ = function(pid, at) {
+    if (!needW()) return; var p = proj(pid); if (!p) return;
+    var L = arr(p.decisions).slice(), k = L.findIndex(function(x) { return x.at === at && x.kind === 'q'; }); if (k === -1) return;
+    var ans = prompt('답 또는 결론 (결정 기록으로 남습니다)'); if (ans === null || !ans.trim()) return;
+    var nm = (state.currentUser && state.currentUser.displayName) || '';
+    L[k] = Object.assign({}, L[k], { done: iso(), answer: ans.trim().slice(0, 200), answeredBy: nm });
+    L.push({ at: iso(), by: nm, text: '답: ' + L[k].text.slice(0, 60) + ' → ' + ans.trim().slice(0, 140) });
+    p.decisions = L; pushHistory('수정', pid, '질문 답', '', ans.trim().slice(0, 120)); saveProjects(); toast('답을 남겼습니다'); A.render(true);
+  };
+  A.openQs = function(p) { return arr(p && p.decisions).filter(function(x) { return x.kind === 'q' && !x.done; }); };
   A.setPhase = function(pid, ph, which, val) {
     if (!needW()) return;
     var p = proj(pid); if (!p) return;
@@ -23012,6 +23210,7 @@ function renderNotifList() {
       projectIds: p ? [p.id] : [], projectId: p ? p.id : '', serviceTypes: svc ? [svc] : [], serviceType: svc, platforms: arr(o.platforms), platform: arr(o.platforms)[0] || '', verifier: o.verifier || '', testSteps: o.testSteps || '', expectedResult: o.expectedResult || '', actualResult: o.actualResult || '',
       assignees: asg, assignee: asg[0] || '', references: [], relatedIssues: [], environment: o.env || '', taskId: task ? task.id : '', buildCategory: o.buildCategory || '', tags: arr(o.tags),
       reporter: (state.currentUser && (state.currentUser.displayName || state.currentUser.email)) || '', created: iso(), updated: iso(), comments: [], attachments: arr(o.attachments) };
+    if (o.jobPart) iss.jobPart = o.jobPart; if (o.buildVer) iss.buildVer = o.buildVer;
     saveIssueData(iss);
     return iss;
   };
@@ -23050,6 +23249,7 @@ function renderNotifList() {
   A.setBundle = function(bid, patch) {
     if (!needW()) return;
     var b = bundle(bid); if (!b) return;
+    if (patch && patch.status === 'deployed' && !b.deployedAt && !patch.deployedAt) patch.deployedAt = iso();
     Object.keys(patch).forEach(function(k) { b[k] = patch[k]; });
     b.updated = iso();
     _saveDeployBundlesToLocal();
@@ -23207,12 +23407,13 @@ function renderNotifList() {
       (opts.select && canW() ? '<input type="checkbox"' + (sel ? ' checked' : '') + ' onclick="event.stopPropagation()" onchange="AF13.selIssue(\'' + q(i.id) + '\',this.checked)">' : '') +
       (opts.kind ? '<span class="a13-kind issue">이슈</span>' : '') + sevB(i.severity) +
       '<div class="m" onclick="AF13.openIssue(\'' + q(i.id) + '\')"><div class="t">' + A._titleTags(i) + esc(i.title || i.id) + '</div>' +
-      '<div class="s"><span>' + esc(i.id) + '</span>' + (p && !opts.noProj ? '<span class="a13-pid">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '</div></div>' +
+      '<div class="s"><span>' + esc(i.id) + '</span>' + (p && !opts.noProj ? '<span class="a13-pid">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + A._metaChips(i) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '</div></div>' +
       (canW() ? '<button type="button" class="a13-tagbtn" title="태그" aria-label="태그 편집" onclick="event.stopPropagation();AF13.tagPick(event,\'' + q(i.id) + '\')">#</button>' : '') + avs(issueAssignees(i)) + ddH(i.deadline, i.status === '완료') + pill(A.stLabel(i.status), ST_C[i.status] || '#767676') + nextBtns(i) + '</div>';
   }
   A.openIssue = function(id) { try { openIssueDetail(id); } catch (e) { console.warn(e); } };
   function renderWork(el) {
     var mo = meObj(), items = workItems(), id = me();
+    try { items = items.filter(function(x) { return x.k !== 'task' && x.i && x.i.reopenCount > 0 && x.i.status === '작업 진행 중'; }).concat(items.filter(function(x) { return !(x.k !== 'task' && x.i && x.i.reopenCount > 0 && x.i.status === '작업 진행 중'); })); } catch (e) {}
     var verify = (_issues || []).filter(function(i) { return i.status === '검증 진행 중' && (i.verifier === id || (isQA() && !i.verifier)); });
     var rejected = (_issues || []).filter(function(i) { return id && issueAssignees(i).indexOf(id) !== -1 && (i.reopenCount > 0 && i.status === '작업 진행 중' || i.status === '테스트 보류' || i.status === '현재작업불가'); });
     var over = items.filter(function(x) { return dday(x.due) != null && dday(x.due) < 0; }).length;
@@ -23229,11 +23430,12 @@ function renderNotifList() {
       }
     } catch (e) { console.warn('[home top]', e); }
     try { if (A.leaveStripH) h += A.leaveStripH(); } catch (e) {}
+    try { h += A.statusStripH(); } catch (e) {}
     h += '<div class="a13-stats">' +
       '<div class="a13-stat' + (over ? ' hot' : '') + (items.length ? '' : ' zero') + '" onclick="document.getElementById(\'a13w1\').scrollIntoView({behavior:\'smooth\'})"><b>' + items.length + '</b><span>내 할 일 (Task·이슈)</span></div>' +
       '<div class="a13-stat' + (verify.length ? '' : ' zero') + '" onclick="document.getElementById(\'a13w2\')&&document.getElementById(\'a13w2\').scrollIntoView({behavior:\'smooth\'})"><b>' + verify.length + '</b><span>검증 대기</span></div>' +
       '<div class="a13-stat' + (rejected.length ? ' hot' : ' zero') + '" onclick="var r=document.querySelector(\'#a13work .a13-cnt.red\');if(r)r.closest(\'.a13-card\').scrollIntoView({behavior:\'smooth\'})"><b>' + rejected.length + '</b><span>반려·보류</span></div>' +
-      '<div class="a13-stat' + (deps.length ? '' : ' zero') + '" onclick="AF13.go(\'a13deploy\')"><b>' + deps.length + '</b><span>이번 주 배포</span></div></div>';
+      (function() { var wkN = deps.length, wkD = 0, wkF = 0; try { var SD = A.statusData(); wkN = SD.wkDeps.length; wkD = SD.wkDone; wkF = SD.wkFail; } catch (e) {} return '<div class="a13-stat' + (wkN ? '' : ' zero') + (wkF ? ' hot' : '') + '" onclick="AF13.go(\'a13status\')"><b>' + wkN + '</b><span>이번 주 배포' + (wkN ? ' (완료 ' + wkD + (wkF ? ' · 실패·롤백 ' + wkF : '') + ')' : '') + '</span></div>'; })() + '</div>';
     try { if (A.portfolioH && (id === 'seo' || /CPO|CEO|대표/.test((mo && mo.role) || ''))) h += A.portfolioH(); } catch (e) { console.warn('[portfolio]', e); }
     h += '<div class="a13-grid2"><div>';
     h += '<div class="a13-card" id="a13w1"><div class="a13-card-h"><h3>지금 할 일 <span class="a13-cnt">' + items.length + '</span></h3><span class="a13-hint">마감 빠른 순 · 버튼으로 다음 단계</span></div><div class="a13-list">' +
@@ -23241,8 +23443,14 @@ function renderNotifList() {
     if (rejected.length) h += '<div class="a13-card"><div class="a13-card-h"><h3>반려·보류 <span class="a13-cnt red">' + rejected.length + '</span></h3></div><div class="a13-list">' + rejected.map(function(i) { return issueRow(i); }).join('') + '</div></div>';
     h += '</div><div>';
     h += '<div class="a13-card" id="a13w2"><div class="a13-card-h"><h3>검증 대기 <span class="a13-cnt">' + verify.length + '</span></h3><span class="a13-hint">' + (isQA() ? 'QA 담당' : '내가 검증자') + '</span></div><div class="a13-list">' + (verify.length ? verify.map(function(i) { return issueRow(i); }).join('') : '<div class="a13-empty">검증할 이슈가 없습니다</div>') + '</div></div>';
-    h += '<div class="a13-card"><div class="a13-card-h"><h3>이번 주 배포 <span class="a13-cnt">' + deps.length + '</span></h3><button class="a13-btn sm ghost" onclick="AF13.go(\'a13deploy\')">배포 화면 →</button></div><div class="a13-list">' +
-      (deps.length ? deps.map(function(b) { var R = A.readiness(b); return '<div class="a13-li" onclick="AF13.go(\'a13deploy\')" style="cursor:pointer"><div class="m"><div class="t">' + esc(b.title) + '</div><div class="s">' + R.total + '건 · ' + (R.ok ? '<b style="color:#047857">준비 완료</b>' : '준비 중') + '</div></div>' + ddH(b.targetDate) + pill(b.status === 'ready' ? '배포준비' : '준비중', b.status === 'ready' ? '#3b82f6' : '#f59e0b') + '</div>'; }).join('') : '<div class="a13-empty">7일 안에 예정된 배포가 없습니다</div>') + '</div></div>';
+    try {
+      var tdM = wlToday(), toM = addDays(tdM, 14), myPh = [];
+      (state.projects || []).forEach(function(p) { if (!p || !LIVE_ST(p)) return; PH.forEach(function(k) { var d = p.phases && p.phases[k]; if (!d || !d.end || (p.phaseDone && p.phaseDone[k])) return; if (arr(p.assignments && p.assignments[k]).indexOf(id) === -1) return; if (d.end >= addDays(tdM, -7) && d.end <= toM) myPh.push({ p: p, k: k, d: d }); }); });
+      myPh.sort(function(a, b) { return a.d.end.localeCompare(b.d.end); });
+      if (myPh.length) h += '<div class="a13-card"><div class="a13-card-h"><h3>내 단계 마감 <span class="a13-cnt">' + myPh.length + '</span></h3><span class="a13-hint">앞으로 2주 · 내가 맡은 단계</span></div><div class="a13-list">' + myPh.map(function(x) { return '<div class="a13-li" style="cursor:pointer" onclick="AF13.go(\'a13project\',\'' + q(x.p.id) + '\')"><span class="a13-chip" style="color:' + phc(x.k) + '">' + esc(A.PHN[x.k]) + '</span><div class="m"><div class="t">' + esc(x.p.name) + '</div><div class="s"><span class="a13-pid">' + esc(x.p.id) + '</span><span>' + esc(fmtD(x.d.start)) + ' ~ ' + esc(fmtD(x.d.end)) + '</span></div></div>' + ddH(x.d.end) + '</div>'; }).join('') + '</div></div>';
+    } catch (e) {}
+    h += '<div class="a13-card"><div class="a13-card-h"><h3>다음 배포 <span class="a13-cnt">' + deps.length + '</span> <span class="a13-hint" style="font-weight:400">7일 안 예정 · 이번 주 완료분은 위 숫자</span></h3><button class="a13-btn sm ghost" onclick="AF13.go(\'a13deploy\')">배포 화면 →</button></div><div class="a13-list">' +
+      (deps.length ? deps.map(function(b) { var R = A.readiness(b); return '<div class="a13-li" onclick="AF13.go(\'a13deploy\')" style="cursor:pointer"><div class="m"><div class="t">' + esc(b.title) + '</div><div class="s">' + A.verdictH(b) + ' ' + (R.total ? '항목 ' + R.total + '건' : '담긴 항목 없음') + ' · ' + esc(A.verdict(b).why.join(' · ')) + '</div></div>' + ddH(b.targetDate) + '</div>'; }).join('') : '<div class="a13-empty">7일 안에 예정된 배포가 없습니다</div>') + '</div></div>';
     h += '</div></div>';
     try { if (A.wlHomeH) h += A.wlHomeH(); } catch (e) { console.warn('[home worklog]', e); }
     el.innerHTML = '<div class="a13">' + h + '</div>';
@@ -23267,13 +23475,13 @@ function renderNotifList() {
       var nb = liveBundles().filter(function(b) { return arr(b.projects).indexOf(p.id) !== -1 && (b.status === 'planning' || b.status === 'ready'); }).sort(function(a, b) { return String(a.targetDate || '9').localeCompare(String(b.targetDate || '9')); })[0];
       var depD = nb && nb.targetDate ? nb.targetDate : dep;
       var isLate = odT > 0 || (sp.e && sp.e < t0() && p.status !== '완료') || (depD && dday(depD) < 0 && p.status !== '완료');
-      if (isLate) late++; if (depD && dday(depD) != null && dday(depD) >= 0 && dday(depD) <= 7) wkDep++; if (!sp.s && !tk.length) noPlan++;
+      if (isLate) late++; if (depD && dday(depD) != null && dday(depD) >= 0 && dday(depD) <= 7) wkDep++; if (A.projRisks(p).some(function(x) { return x[2] === 'miss'; })) noPlan++;
       var pct = tk.length ? Math.round(dn / tk.length * 100) : null;
       var team = []; PH.forEach(function(k) { arr(p.assignments && p.assignments[k]).forEach(function(m) { if (team.indexOf(m) === -1) team.push(m); }); });
       return '<div class="pf-row' + (isLate ? ' late' : '') + '" role="button" tabindex="0" onclick="AF13.go(\'a13project\',\'' + q(p.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.go(\'a13project\',\'' + q(p.id) + '\')">' +
         '<div class="nm"><i style="background:' + esc((typeof TIER_COLORS !== 'undefined' && TIER_COLORS[p.tier]) || '#919191') + '"></i><span class="pf-tier">' + esc(String(TIER_L[p.tier] || '-').replace('TIER ', 'T').replace('CRITICAL', 'CRIT').replace('지속 병행', '지속')) + '</span><span class="a13-pid">' + esc(p.id) + '</span> <b>' + esc(p.name) + '</b></div>' +
         '<div class="st">' + esc(p.status || '-') + '</div>' +
-        '<div class="ph">' + (ph ? '<span class="pf-ph" style="background:' + phc(ph) + '">' + esc(PHL[ph]) + '</span>' : '<span class="a13-hint">' + (sp.s && dOnly(sp.s) > t0() ? '시작 전' : sp.s ? '단계 사이' : '일정 없음') + '</span>') + '</div>' +
+        '<div class="ph">' + (ph ? PH.filter(function(k) { return A.phaseState(p, k) === 'now' || k === ph; }).map(function(k) { return '<span class="pf-ph" style="background:' + phc(k) + ';margin-right:3px">' + esc(PHL[k]) + '</span>'; }).join('') : '<span class="a13-hint">' + (sp.s && dOnly(sp.s) > t0() ? '시작 전' : sp.s ? '단계 사이' : '일정 없음') + '</span>') + '</div>' +
         '<div class="pg">' + (pct == null ? '<span class="a13-hint">Task 없음</span>' : '<span class="ww-bar"><i style="width:' + pct + '%"></i></span><span class="ww-n">' + dn + '/' + tk.length + '</span>') + '</div>' +
         '<div class="is">' + (iss ? '이슈 ' + iss : '<span class="a13-hint">-</span>') + (odT ? ' <span class="pf-od">지연 ' + odT + '</span>' : '') + '</div>' +
         '<div class="dp">' + (depD ? fmtD(depD) + ' ' + ddH(depD) : '<span class="a13-hint">배포일 없음</span>') + '</div>' +
@@ -23281,7 +23489,7 @@ function renderNotifList() {
     }).join('');
     var open = A.ui.pfOpen !== false;
     return '<div class="a13-card pf-card"><div class="a13-card-h"><h3>전체 프로젝트 진행상황 <span class="a13-cnt">' + list.length + '</span></h3>' +
-      '<span class="pf-chips">' + (late ? '<span class="wl-chip red">지연 ' + late + '</span>' : '<span class="wl-chip ok">지연 없음</span>') + (wkDep ? '<span class="wl-chip">7일 안 배포 ' + wkDep + '</span>' : '') + (noPlan ? '<span class="wl-chip warn">일정·Task 없음 ' + noPlan + '</span>' : '') +
+      '<span class="pf-chips">' + (function() { var rk = list.filter(function(p) { return A.projRisks(p).some(function(x) { return x[1]; }); }).length; return rk ? '<span class="wl-chip red" style="cursor:pointer" onclick="event.stopPropagation();AF13.go(\'a13status\')">일정 위험 ' + rk + '</span>' : '<span class="wl-chip ok">일정 위험 없음</span>'; })() + (wkDep ? '<span class="wl-chip">7일 안 배포 ' + wkDep + '</span>' : '') + (noPlan ? '<span class="wl-chip" style="cursor:pointer" onclick="event.stopPropagation();AF13.go(\'a13status\')">미기입 ' + noPlan + '</span>' : '') +
       (parked.length ? '<button class="a13-btn sm ghost" onclick="AF13.ui.pfAll=' + (A.ui.pfAll ? 'false' : 'true') + ';AF13.render(true)">' + (A.ui.pfAll ? '연기·보류 숨기기' : '연기·보류 ' + parked.length + '건 보기') + '</button>' : '') +
       '<button class="a13-btn sm ghost" onclick="AF13.ui.pfOpen=' + (open ? 'false' : 'true') + ';AF13.render(true)">' + (open ? '접기' : '펼치기') + '</button></span></div>' +
       (open ? '<div class="pf-head"><div>프로젝트</div><div>상태</div><div>지금 단계</div><div>Task 진척</div><div>이슈</div><div>다음 배포</div><div>담당</div></div>' + rows : '') + '</div>';
@@ -23368,7 +23576,7 @@ function renderNotifList() {
     var sp = pSpan(p), s0 = sp.s, e0 = sp.e;
     if (s0 && e0) { s0 = new Date(Math.min(s0, t0())); e0 = new Date(Math.max(e0, t0())); }
     var span = s0 && e0 ? Math.max(1, (e0 - s0) / 864e5 + 1) : 0;
-    h += '<div class="a13-card"><div class="a13-card-h"><h3>단계 일정</h3><span class="a13-hint">날짜를 바꾸면 바로 저장 · 간트(스케줄)와 같은 데이터</span></div><div class="a13-phtable">' +
+    h += '<div class="a13-card"><div class="a13-card-h"><h3>단계 일정' + (function() { var rk = A.projRisks(p); return rk.length ? '<span class="a13-phrisk">' + rk.map(function(x) { return '<span class="st-rk' + (x[1] ? '' : ' w') + '" style="display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px;margin-right:4px;color:' + (x[1] ? '#EE0005;background:#FFF1F1' : x[2] === 'miss' ? '#767676;background:#F3F3F3' : '#B45309;background:#FFFBEB') + '">' + esc(x[0]) + '</span>'; }).join('') + '</span>' : ''; })() + '</h3><span class="a13-hint">날짜를 바꾸면 바로 저장 · 간트(스케줄)와 같은 데이터</span></div><div class="a13-phtable">' +
       PH.map(function(ph) {
         var d = (p.phases && p.phases[ph]) || {}, a = dOnly(d.start), b = dOnly(d.end);
         var bar = (span && a && b) ? '<b style="left:' + ((a - s0) / 864e5 / span * 100) + '%;width:' + Math.max(1.5, ((b - a) / 864e5 + 1) / span * 100) + '%;background:' + phc(ph) + '"></b>' : '';
@@ -23379,8 +23587,10 @@ function renderNotifList() {
           '<input type="date" class="a13-input"' + dis + ' value="' + esc(d.end || '') + '" onchange="AF13.setPhase(\'' + q(pid) + '\',\'' + ph + '\',\'end\',this.value)" aria-label="' + PHL[ph] + ' 종료">' +
           '<div class="track">' + bar + todayM + '</div>' +
           (cw ? '<button class="a13-avbtn' + (arr(p.assignments && p.assignments[ph]).length ? ' has' : '') + '" onclick="AF13.pickPhaseMembers(event,\'' + q(pid) + '\',\'' + ph + '\')">' + (arr(p.assignments && p.assignments[ph]).length ? avs(p.assignments[ph]) : '+ 담당') + '</button>' : avs(p.assignments && p.assignments[ph])) +
-          '<div class="cnt">' + (cnt.length ? cnt.filter(function(t) { return t.status === 'done'; }).length + '/' + cnt.length : '') + '</div></div>';
+          '<div class="cnt">' + (cnt.length ? cnt.filter(function(t) { return t.status === 'done'; }).length + '/' + cnt.length : '') + '</div>' +
+          '<div class="a13-phdone">' + (p.phaseDone && p.phaseDone[ph] ? '<span class="ok" title="' + esc(String(p.phaseDone[ph]).slice(0, 16).replace('T', ' ')) + '">완료 ' + esc(fmtD(String(p.phaseDone[ph]).slice(0, 10))) + '</span>' : (cw && d.start && d.start <= wlToday() ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.phaseDone(\'' + q(pid) + '\',\'' + ph + '\')" title="이 단계를 끝내고 다음 단계로 넘깁니다">완료·넘기기</button>' : '')) + '</div></div>';
       }).join('') + '</div></div>';
+    h += A.decisionsH(p, cw);
     // 탭
     var tabs = [['tasks', 'Task', tk.length], ['issues', '이슈', open.length], ['deploys', '배포', bs.length], ['info', '정보'], ['log', '활동']];
     h += '<div class="a13-tabs">' + tabs.map(function(t) { return '<button class="' + (A.ui.ptab === t[0] ? 'on' : '') + '" onclick="AF13.ui.ptab=\'' + t[0] + '\';AF13.render(true)">' + t[1] + (t[2] != null ? ' <span class="a13-cnt">' + t[2] + '</span>' : '') + '</button>'; }).join('') + '</div>';
@@ -23468,11 +23678,13 @@ function renderNotifList() {
   A.selIssue = function(id, on) { if (on) A.sel[id] = 1; else delete A.sel[id]; A.renderBulk(); var c = document.querySelector('.a13-ic[data-id="' + id + '"]'); if (c) c.classList.toggle('sel', !!on); };
   try { var _sf = JSON.parse(localStorage.getItem('a13_if') || 'null'); if (_sf) ['view', 'mine', 'verify', 'pid', 'sevs', 'svc'].forEach(function(k) { if (_sf[k] != null) A.ui.if[k] = _sf[k]; }); } catch (e) {}
   if (!Array.isArray(A.ui.if.sevs)) A.ui.if.sevs = [];
-  function saveIf() { try { var f = A.ui.if; localStorage.setItem('a13_if', JSON.stringify({ view: f.view, mine: f.mine, verify: f.verify, pid: f.pid, sevs: f.sevs, svc: f.svc, cats: f.cats || [], tags: f.tags || [], folder: f.folder || '' })); } catch (e) {} }
+  function saveIf() { try { var f = A.ui.if; localStorage.setItem('a13_if', JSON.stringify({ view: f.view, mine: f.mine, verify: f.verify, pid: f.pid, sevs: f.sevs, svc: f.svc, cats: f.cats || [], tags: f.tags || [], folder: f.folder || '', parts: f.parts || [], open: !!f.open })); } catch (e) {} }
+  A.PARTS = ['FE', 'BE', '디자인', '기획'];
+  A.ifPart = function(pt) { var f = A.ui.if; f.parts = (f.parts || []).slice(); var k = f.parts.indexOf(pt); if (k === -1) f.parts.push(pt); else f.parts.splice(k, 1); saveIf(); A.render(true); };
   A._saveIf = saveIf;
   A.ifSet = function(k, v) { var f = A.ui.if; f[k] = v; if (k === 'mine' && v) f.verify = false; if (k === 'verify' && v) f.mine = false; saveIf(); A.render(true); };
   A.ifSev = function(s) { var a = A.ui.if.sevs, i = a.indexOf(s); if (i === -1) a.push(s); else a.splice(i, 1); A.ui.if.sev = ''; saveIf(); A.render(true); };
-  A.ifReset = function() { var f = A.ui.if; f.mine = false; f.verify = false; f.pid = ''; f.sev = ''; f.sevs = []; f.svc = ''; f.q = ''; f.cats = []; f.tags = []; f.folder = ''; saveIf(); A.render(true); };
+  A.ifReset = function() { var f = A.ui.if; f.mine = false; f.verify = false; f.pid = ''; f.sev = ''; f.sevs = []; f.svc = ''; f.q = ''; f.cats = []; f.tags = []; f.folder = ''; f.parts = []; f.open = false; saveIf(); A.render(true); };
   function issueSvcs(i) { var a = arr(i.serviceTypes).slice(); if (i.serviceType && a.indexOf(i.serviceType) === -1) a.push(i.serviceType); return a; }
   function filteredIssues(skip) {
     var f = A.ui.if, id = me(); skip = skip || {};
@@ -23486,6 +23698,8 @@ function renderNotifList() {
       if (f.svc && !A._svcMatch(i, f.svc)) return false;
       if (!skip.cat && f.cats && f.cats.length && f.cats.indexOf(i.buildCategory || '') === -1) return false;
       if (!skip.tags && f.tags && f.tags.length) { var it = arr(i.tags); if (!f.tags.some(function(t) { return t === '__none' ? !it.length : it.indexOf(t) !== -1; })) return false; }
+      if (!skip.part && f.parts && f.parts.length && f.parts.indexOf(i.jobPart || '') === -1) return false;
+      if (f.open && i.status === '완료') return false;
       if (f.q && ((i.id || '') + ' ' + (i.title || '')).toLowerCase().indexOf(f.q.toLowerCase()) === -1) return false;
       return true;
     });
@@ -23497,9 +23711,18 @@ function renderNotifList() {
       '<div class="top">' + sevB(i.severity) + '<span class="id">' + esc(i.id) + '</span>' + (canW() ? '<button type="button" class="a13-tagbtn" title="태그" aria-label="태그 편집" onclick="AF13.tagPick(event,\'' + q(i.id) + '\')">#</button><input type="checkbox"' + (A.sel[i.id] ? ' checked' : '') + ' onchange="AF13.selIssue(\'' + q(i.id) + '\',this.checked)" aria-label="선택">' : '') + '</div>' +
       (A._titleTags(i) ? '<div class="tgs" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + A._titleTags(i) + '</div>' : '') +
       '<div class="tt" onclick="AF13.openIssue(\'' + q(i.id) + '\')">' + esc(i.title || i.id) + '</div>' +
-      '<div class="bt">' + (p ? '<span class="a13-pid" style="cursor:pointer" onclick="event.stopPropagation();AF13.go(\'a13project\',\'' + q(p.id) + '\')">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '<span style="margin-left:auto">' + avs(issueAssignees(i)) + '</span></div>' +
+      '<div class="bt">' + (p ? '<span class="a13-pid" style="cursor:pointer" onclick="event.stopPropagation();AF13.go(\'a13project\',\'' + q(p.id) + '\')">' + esc(p.id) + '</span>' : '') + (t ? '<span class="a13-chip task">' + esc(t.title) + '</span>' : '') + relChip(b) + A._metaChips(i) + (i.reopenCount ? '<span class="a13-chip" style="color:#EE0005">반려 ' + i.reopenCount + '</span>' : '') + '<span style="margin-left:auto">' + avs(issueAssignees(i)) + '</span></div>' +
       (issueNext(i).length && canW() ? '<div class="bt">' + nextBtns(i) + '</div>' : '') + '</div>';
   }
+  A.ENV_L = { production: '운영', staging: '스테이징', development: '개발' };
+  A._metaChips = function(i) {
+    var h = '';
+    if (i.jobPart) h += '<span class="a13-chip part">' + esc(i.jobPart) + '</span>';
+    var e = i.environment; if (e && e !== 'production' && e !== '운영') h += '<span class="a13-chip env">' + esc(A.ENV_L[e] || e) + '</span>';
+    var pl = arr(i.platforms).length ? arr(i.platforms) : (i.platform ? [i.platform] : []); if (pl.length) h += '<span class="a13-chip plat">' + esc(pl.join('·')) + '</span>';
+    if (i.buildVer) h += '<span class="a13-chip ver">' + esc(i.buildVer) + '</span>';
+    return h;
+  };
   A.stLabel = function(st) { var b = BUCKETS.filter(function(x) { return x.st.indexOf(st) !== -1; })[0]; if (!b) return st || '-'; if (b.st.length === 1) return b.l; return b.l !== st ? b.l + ' · ' + st.replace(' 진행 중', '').replace('운영배포예정', '배포 예정') : b.l; };
   function renderIssues(el) {
     var f = A.ui.if, list = filteredIssues();
@@ -23513,10 +23736,10 @@ function renderNotifList() {
         var cs = {}; filteredIssues({ sev: 1 }).forEach(function(i) { cs[i.severity] = (cs[i.severity] || 0) + 1; });
         var base = filteredIssues({ who: 1 }), id = me();
         var nMine = base.filter(function(i) { return issueAssignees(i).indexOf(id) !== -1 || i.verifier === id; }).length, nVer = base.filter(function(i) { return i.verifier === id; }).length;
-        var chip = function(label, on, n, oc, c) { return '<button type="button" class="a13-fchip' + (on ? ' on' : '') + '" aria-pressed="' + !!on + '" onclick="' + oc + '"' + (c ? ' style="--c:' + c + '"' : '') + '>' + (c ? '<i></i>' : '') + label + ' <span>' + n + '</span></button>'; };
+        var chip = function(label, on, n, oc, c) { return '<button type="button" class="a13-fchip' + (on ? ' on' : '') + '" aria-pressed="' + !!on + '" title="숫자는 완료 포함 · 현황의 「미해결」은 완료 제외" onclick="' + oc + '"' + (c ? ' style="--c:' + c + '"' : '') + '>' + (c ? '<i></i>' : '') + label + ' <span>' + n + '</span></button>'; };
         var svcs = (typeof _getServiceTypes === 'function') ? _getServiceTypes() : [];
-        return '<span class="a13-fchips">' + chip('내 이슈', f.mine, nMine, 'AF13.ifSet(\'mine\',' + !f.mine + ')') + chip('내가 검증', f.verify, nVer, 'AF13.ifSet(\'verify\',' + !f.verify + ')') + '<i class="sep"></i>' +
-          ['Block', 'Major', 'Minor', 'Trivial'].map(function(s) { return chip(s, f.sevs.indexOf(s) !== -1 || f.sev === s, cs[s] || 0, 'AF13.ifSev(\'' + s + '\')', SEV[s][1]); }).join('') + '</span>' +
+        return '<span class="a13-fchips">' + chip('미해결만', !!f.open, filteredIssues({ sev: 1, part: 1 }).filter(function(i) { return i.status !== '완료'; }).length, 'AF13.ifSet(\'open\',' + !f.open + ')') + chip('내 이슈', f.mine, nMine, 'AF13.ifSet(\'mine\',' + !f.mine + ')') + chip('내가 검증', f.verify, nVer, 'AF13.ifSet(\'verify\',' + !f.verify + ')') + '<i class="sep"></i>' +
+          ['Block', 'Major', 'Minor', 'Trivial'].map(function(s) { return chip(s, f.sevs.indexOf(s) !== -1 || f.sev === s, cs[s] || 0, 'AF13.ifSev(\'' + s + '\')', SEV[s][1]); }).join('') + '<i class="sep"></i>' + (function() { var pc = {}; filteredIssues({ part: 1 }).forEach(function(i) { if (i.jobPart && i.status !== '완료') pc[i.jobPart] = (pc[i.jobPart] || 0) + 1; }); return A.PARTS.map(function(pt) { return chip(pt, (f.parts || []).indexOf(pt) !== -1, pc[pt] || 0, 'AF13.ifPart(\'' + pt + '\')'); }).join(''); })() + '</span>' +
           (function() { var cc = {}; filteredIssues({ cat: 1 }).forEach(function(i) { cc[i.buildCategory || ''] = (cc[i.buildCategory || ''] || 0) + 1; });
             return '<span class="a13-fchips cats">' + BUILD_CATS.map(function(c) { var on = f.cats.indexOf(c[0]) !== -1; return '<button type="button" class="a13-fchip cat' + (on ? ' on' : '') + '" aria-pressed="' + on + '" style="--c:' + c[1] + '" onclick="AF13.ifCat(\'' + c[0] + '\')">' + (CAT_ICON[c[0]] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + CAT_ICON[c[0]] + '</svg>' : '') + c[0] + ' <span>' + (cc[c[0]] || 0) + '</span></button>'; }).join('') +
               '<button type="button" class="a13-fchip' + (f.tags.length ? ' on' : '') + '" onclick="AF13.ifTagPop(event)">태그' + (f.tags.length ? ' ' + f.tags.length : '') + ' ▾</button></span>'; })() +
@@ -23524,7 +23747,7 @@ function renderNotifList() {
           '<select class="a13-input' + (f.svc ? ' on' : '') + '" onchange="AF13.ifSet(\'svc\',this.value)" aria-label="서비스">' + A._svcOptionsH(f.svc) + '</select>';
       })() +
       '<input class="a13-input" placeholder="검색" value="' + esc(f.q) + '" oninput="AF13.ui.if.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13issues .a13-toolbar input[placeholder=검색]\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},250)" style="width:170px">' +
-      ((f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || f.cats.length || f.tags.length) ? '<button class="a13-btn sm ghost" onclick="AF13.ifReset()">필터 초기화</button>' : '') +
+      ((f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || f.cats.length || f.tags.length || (f.parts || []).length || f.open) ? '<button class="a13-btn sm ghost" onclick="AF13.ifReset()">필터 초기화</button>' : '') +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '건</span></div>';
     if (f.view === 'board') {
       var anyF = f.mine || f.verify || f.pid || f.sev || f.sevs.length || f.svc || f.q || (f.cats || []).length || (f.tags || []).length;
@@ -23538,7 +23761,7 @@ function renderNotifList() {
           items.slice(0, 300).map(issueCard).join('') + (bk.k === 'done' && hiddenDone ? '<button type="button" class="a13-btn sm ghost" style="width:100%;justify-content:center" onclick="AF13.ui.allDone=true;AF13.render(true)">최근 14일만 표시 · 오래된 완료 ' + hiddenDone + '건 모두 보기</button>' : '') + (bk.k === 'done' && !cut && A.ui.allDone && !anyF ? '<button type="button" class="a13-btn sm ghost" style="width:100%;justify-content:center" onclick="AF13.ui.allDone=false;AF13.render(true)">최근 14일만 보기</button>' : '') + '</div>';
       }).join('') + '</div>';
     } else {
-      h += '<div class="a13-card"><div class="a13-list">' + (list.length ? list.slice().sort(function(a, b) { return ((a.status === '완료') - (b.status === '완료')) || String(b.updated || b.created || '').localeCompare(String(a.updated || a.created || '')); }).slice(0, 300).map(function(i) { return issueRow(i, { select: 1 }); }).join('') : '<div class="a13-empty"><b>조건에 맞는 이슈가 없습니다</b></div>') + '</div></div>';
+      h += '<div class="a13-card"><div class="a13-list">' + (list.length ? list.slice().sort(function(a, b) { var rk = function(x) { return x.status === '완료' ? 3 : x.severity === 'Block' ? 0 : x.reopenCount > 0 ? 1 : 2; }, ra = rk(a), rb = rk(b); return ((a.status === '완료') - (b.status === '완료')) || (ra - rb) || String(b.updated || b.created || '').localeCompare(String(a.updated || a.created || '')); }).slice(0, 300).map(function(i) { return issueRow(i, { select: 1 }); }).join('') : '<div class="a13-empty"><b>조건에 맞는 이슈가 없습니다</b></div>') + '</div></div>';
     }
     el.innerHTML = '<div class="a13">' + h + '</div>';
     wireSeg(el);
@@ -23573,7 +23796,25 @@ function renderNotifList() {
     bar.innerHTML = '<b style="font-size:13px">' + ids.length + '건 선택</b>' +
       '<select onchange="AF13.bulk(\'status\',this.value)"><option value="">상태 변경</option>' + Object.keys(ST_C).map(function(s) { return '<option>' + s + '</option>'; }).join('') + '</select>' +
       '<select onchange="AF13.bulk(\'assignee\',this.value)"><option value="">담당자</option><option value="__none">담당 해제</option>' + TEAM.filter(_isOnBoard).map(function(m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>'; }).join('') + '</select>' +
+      '<select onchange="AF13.bulkSet(\'verifier\',this.value)"><option value="">검증 담당</option>' + TEAM.filter(_isOnBoard).map(function(m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>'; }).join('') + '</select>' +
+      '<select onchange="AF13.bulkSet(\'jobPart\',this.value)"><option value="">직군</option>' + A.PARTS.map(function(x) { return '<option>' + x + '</option>'; }).join('') + '</select>' +
+      '<button onclick="AF13.bulkVerifyDone()">검증 완료</button>' +
       '<button onclick="AF13.bulkBundle(event)">배포에 담기</button><button onclick="AF13.sel={};AF13.render(true)">선택 해제<span class="esc">Esc</span></button>';
+  };
+  A.bulkSet = function(key, v) {
+    if (!v || !needW()) return;
+    var ids = Object.keys(A.sel), n = 0;
+    ids.forEach(function(id) { var i = _issues.find(function(x) { return x.id === id; }); if (!i || i[key] === v) return; i[key] = v; i.updated = iso(); saveIssueData(i); n++; });
+    var lab = key === 'verifier' ? '검증 담당 ' + (((TEAM.find(function(m) { return m.id === v; }) || {}).name) || v) : '직군 ' + v;
+    toast(n + '건에 ' + lab + ' 지정'); A.sel = {}; A.render(true);
+  };
+  A.bulkVerifyDone = function() {
+    if (!needW()) return;
+    var ids = Object.keys(A.sel), list = ids.map(function(id) { return _issues.find(function(x) { return x.id === id; }); }).filter(function(i) { return i && i.status === '검증 진행 중'; });
+    if (!list.length) { toast('선택한 이슈 중 검증 중인 이슈가 없습니다', 'info'); return; }
+    if (!confirm('검증 중인 ' + list.length + '건을 검증 완료(완료)로 바꿀까요?' + (ids.length > list.length ? '\n검증 중이 아닌 ' + (ids.length - list.length) + '건은 그대로 둡니다.' : ''))) return;
+    list.forEach(function(i) { i.status = '완료'; i.updated = iso(); saveIssueData(i); });
+    toast(list.length + '건 검증 완료'); A.sel = {}; A.render(true);
   };
   A.bulk = function(kind, v) {
     if (!v || !needW()) return;
@@ -23618,7 +23859,7 @@ function renderNotifList() {
   function bundleCard(b) {
     var R = A.readiness(b), cw = canW(), cl = b.checklist || {}, closedB = b.status === 'deployed' || b.status === 'cancelled';
     var sig = function(label, n, unit) { return '<div class="' + (n ? 'bad' : 'ok') + '"><b>' + (n ? n + unit : '✓') + '</b>' + label + '</div>'; };
-    var st = { planning: ['준비중', '#f59e0b'], ready: ['배포준비', '#3b82f6'], deployed: ['배포완료', '#10b981'], cancelled: ['취소', '#919191'] }[b.status] || [b.status, '#919191'];
+    var st = { planning: ['준비중', '#f59e0b'], ready: ['배포준비', '#3b82f6'], deployed: ['배포완료', '#10b981'], failed: ['실패', '#EE0005'], rolledback: ['롤백', '#FF4C14'], cancelled: ['취소', '#919191'] }[b.status] || [b.status, '#919191'];
     var h = '<div class="a13-bundle" ondragover="event.preventDefault();this.classList.add(\'drop\')" ondragleave="this.classList.remove(\'drop\')" ondrop="AF13.dropToBundle(event,\'' + q(b.id) + '\')">' +
       '<div class="a13-row" style="justify-content:space-between"><div><h3>' + esc(b.title) + '</h3><div class="a13-hint" style="margin-top:2px">' + esc(b.id) + ' · ' + (closedB ? (b.deployedAt ? '배포 ' + fmtD(b.deployedAt) : (fmtD(b.targetDate) || '')) : (fmtD(b.targetDate) || '날짜 미정') + ' ' + ddH(b.targetDate)) + '</div></div>' + pill(st[0], st[1]) + '</div>' +
       noteH(b, 'card') +
@@ -23666,7 +23907,7 @@ function renderNotifList() {
   }
 
   /* ═══ 라우터·셸 ═══ */
-  var PAGES = { a13work: ['내 작업', renderWork], a13projects: ['프로젝트', renderProjects], a13project: ['안건', renderProject], a13issues: ['이슈', renderIssues], a13deploy: ['배포', renderDeploy] };
+  var PAGES = { a13status: ['현황', function(el) { A.renderStatus(el); }], a13work: ['내 작업', renderWork], a13projects: ['프로젝트', renderProjects], a13project: ['안건', renderProject], a13issues: ['이슈', renderIssues], a13deploy: ['배포', renderDeploy] };
   A.render = function(force) {
     try { if (A._sheetRefresh) A._sheetRefresh(); if (A._bsRefresh) A._bsRefresh(); } catch (e) { console.warn(e); }
     var pg = A.cur.page, def = PAGES[pg]; if (!def) return;
@@ -23726,7 +23967,7 @@ function renderNotifList() {
     var oldTabs = side.querySelector('.tabs');
     var ic = function(p) { return (typeof AF_NAV !== 'undefined' && AF_NAV[p]) ? _afSvg(AF_NAV[p][1], 'afs-ic') : ''; };
     var navs = document.createElement('div'); navs.className = 'a13-navs';
-    var items = [['a13work', '내 작업', 'home'], ['a13projects', '프로젝트', 'projects'], ['a13issues', '이슈', 'issues'], ['a13deploy', '배포', 'deploy'], ['a13log', '업무일지', 'worklog']];
+    var items = [['a13work', '내 작업', 'home'], ['a13status', '현황', 'overview'], ['a13projects', '프로젝트', 'projects'], ['a13issues', '이슈', 'issues'], ['a13deploy', '배포', 'deploy'], ['a13log', '업무일지', 'worklog']];
     navs.innerHTML = items.map(function(x) { return '<button class="tab a13-nav" data-page="' + x[0] + '" title="' + x[1] + '">' + ic(x[2]) + x[1] + '</button>'; }).join('');
     navs.querySelectorAll('.a13-nav').forEach(function(b) { b.onclick = function() { A.go(b.dataset.page); }; });
     navs.addEventListener('click', function(e) { if (e.target.closest('.tab[data-tab]')) setTimeout(function() { try { A.oldPh(); var tc = document.querySelector('.tab-content.active'); if (tc && !A._rm()) A.uxEnter(tc, ''); } catch (x) {} }, 60); });
@@ -23742,9 +23983,9 @@ function renderNotifList() {
     try {
       var pick = function(sel) { return navs.querySelector(sel); };
       var lab = function(t) { var d = document.createElement('div'); d.className = 'a13-ngl'; d.textContent = t; return d; };
-      var order = [lab('내 일'), pick('[data-page="a13work"]'), pick('[data-page="a13log"]'), lab('팀'), pick('[data-page="a13projects"]'), pick('.tab[data-tab="schedule"]'), pick('[data-page="a13issues"]'), pick('[data-page="a13deploy"]'), pick('.tab[data-tab="team"]'), lab('바로가기'), kpi];
+      var order = [lab('내 일'), pick('[data-page="a13work"]'), pick('[data-page="a13log"]'), lab('팀'), pick('[data-page="a13status"]'), pick('[data-page="a13projects"]'), pick('.tab[data-tab="schedule"]'), pick('[data-page="a13issues"]'), pick('[data-page="a13deploy"]'), pick('.tab[data-tab="team"]'), lab('바로가기'), kpi];
       order.forEach(function(n) { if (n) navs.appendChild(n); });
-      var keys = { a13work: 'W', a13log: 'L', a13projects: 'P', a13issues: 'I', a13deploy: 'D', schedule: 'S', team: 'T' };
+      var keys = { a13work: 'W', a13status: 'H', a13log: 'L', a13projects: 'P', a13issues: 'I', a13deploy: 'D', schedule: 'S', team: 'T' };
       navs.querySelectorAll('.tab').forEach(function(t) { var k = keys[t.dataset.page || t.dataset.tab]; if (k) { t.title = (t.textContent || '').trim() + ' (G 다음 ' + k + ')'; t.setAttribute('aria-keyshortcuts', 'g ' + k.toLowerCase()); } });
     } catch (e) { console.warn('[nav]', e); }
     var more = document.createElement('details'); more.className = 'a13-more';
@@ -23934,6 +24175,8 @@ function renderNotifList() {
   // 시트가 열리거나 다시 그려질 때 정리
   A.uxSheet = function(wrap) {
     if (!wrap) return;
+    if (wrap.id === 'a13IS' && !wrap._mem) { wrap._mem = 1; try { var M = JSON.parse(localStorage.getItem('a13_is_last') || '{}'); var ps = wrap.querySelector('.is-pid'); if (ps && !ps.value && M.pid && [].some.call(ps.options, function(o) { return o.value === M.pid; })) { ps.value = M.pid; ps.dispatchEvent(new Event('change', { bubbles: true })); } if (M.env) { var eb = [].filter.call(wrap.querySelectorAll('.is-env button'), function(b) { return b.textContent.trim() === M.env; })[0]; if (eb && !eb.classList.contains('on')) eb.click(); } if (M.plat && M.plat.length) [].forEach.call(wrap.querySelectorAll('.is-plat button'), function(b) { var want = M.plat.indexOf(b.textContent.trim()) !== -1; if (want !== b.classList.contains('on')) b.click(); }); if (M.part) { var pb = [].filter.call(wrap.querySelectorAll('.is-part button'), function(b) { return b.textContent.trim() === M.part; })[0]; if (pb && !pb.classList.contains('on')) pb.click(); } var vi = wrap.querySelector('.is-ver2'); if (vi && M.ver && !vi.value) vi.value = M.ver; } catch (e) {}
+      wrap.addEventListener('click', function(e) { var b = e.target.closest && e.target.closest('footer button'); if (!b || !/등록/.test(b.textContent)) return; try { var ps = wrap.querySelector('.is-pid'), eb = wrap.querySelector('.is-env button.on'); localStorage.setItem('a13_is_last', JSON.stringify({ pid: ps ? ps.value : '', env: eb ? eb.textContent.trim() : '', plat: [].map.call(wrap.querySelectorAll('.is-plat button.on'), function(x) { return x.textContent.trim(); }), part: ((wrap.querySelector('.is-part button.on') || {}).textContent || '').trim(), ver: ((wrap.querySelector('.is-ver2') || {}).value || '').trim() })); } catch (x) {} }, true); }
     var np = wrap.querySelector('.a13-np'); if (!np) return;
     if (!wrap._fx) { wrap._fx = 1; setTimeout(function() { var ae = document.activeElement; if (ae && (ae.classList.contains('x') || /닫기/.test(ae.getAttribute('aria-label') || ''))) { var f = np.querySelector('.body input:not([type=hidden]):not([type=checkbox]), .body textarea'); if (f) f.focus({ preventScroll: true }); else ae.blur(); } }, 60); }
     // 안건 정보: 「AI로 다시 쓰기」를 닫기 버튼에서 떼어 제목 옆으로
@@ -23946,7 +24189,7 @@ function renderNotifList() {
         var lab = inp.closest('label, .np-f, div'); var isDep = lab && /배포일/.test((lab.textContent || '').slice(0, 20));
         if (isDep) { var miss = done && !inp.value; inp.style.outline = miss ? '2px solid var(--af-urgent)' : ''; inp.title = miss ? '배포완료인데 배포일이 비어 있습니다' : ''; inp.setAttribute('aria-invalid', miss ? 'true' : 'false'); var fx = (inp.closest('.np-grid') || inp.parentNode).querySelector('.np-depfix'); if (miss && !fx) { fx = document.createElement('div'); fx.className = 'np-depfix'; fx.innerHTML = '배포완료 상태에는 배포일이 필요합니다 <button type="button" class="a13-btn sm">오늘로 채우기</button>'; fx.querySelector('button').onclick = function() { var d = new Date(), pz = function(n) { return String(n).padStart(2, '0'); }; inp.value = d.getFullYear() + '-' + pz(d.getMonth() + 1) + '-' + pz(d.getDate()); inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true })); }; var row = inp.closest('.np-grid') || inp.parentNode; row.appendChild(fx); } else if (!miss && fx) fx.remove(); }
       });
-      var h2 = np.querySelector(':scope > header h2'); var tIn = np.querySelector('.body input[type=text], .body input:not([type])'); if (h2 && tIn && h2.textContent.trim() === (tIn.value || '').trim()) h2.textContent = '배포 상세';
+      var h2 = np.querySelector(':scope > header h2'); var tIn = np.querySelector('.body input[type=text], .body input:not([type])'); /* v15.2: 머리에 배포 이름 유지 */
       if (!wrap._sv) { wrap._sv = 1; wrap.addEventListener('change', function() { var sv = wrap.querySelector('.np-saved'); if (sv) { sv.textContent = '저장됨 ✓'; sv.classList.remove('on2'); void sv.offsetWidth; sv.classList.add('on2'); } }, true); }
     }
   };
@@ -24046,6 +24289,7 @@ function renderNotifList() {
     } catch (e) {}
   }, 3200);
   // v14.9 팀 화면: 사람별 한 줄 표(앞으로 2주 부하 순)
+  A.loadLevel = function(mid, L) { var td = wlToday(); L = L || A.loadOf(mid, td, addDays(td, 13)) || { projects: 0, leave: [] }; var lv = (L.leave || []).length; return L.projects >= 3 || lv >= 5 ? 'hot' : L.projects === 2 || lv > 0 ? 'warn' : 'ok'; };
   A.teamTableH = function() {
     var td = wlToday(), to = addDays(td, 13), wk = addDays(td, 6), me0 = me();
     var PHN = { plan: '기획', design: '디자인', front: 'FE', back: 'BE', qa: 'QA' };
@@ -24056,9 +24300,10 @@ function renderNotifList() {
       L.items.forEach(function(x) { if (!x.task && x.e >= td && x.e <= wk) due++; });
       var iss = (_issues || []).filter(function(i) { return i && i.status !== '완료' && issueAssignees(i).indexOf(m.id) !== -1; }).length;
       var lvT = A.leaveOf ? A.leaveOf(m.id, td) : null, pr = (typeof _memberPresence !== 'undefined' && _memberPresence[m.id]) || null;
-      var lvDays = (L.leave || []).length; L.level = L.projects >= 3 || lvDays >= 5 ? 'hot' : L.projects === 2 || lvDays > 0 ? 'warn' : 'ok';
+      L.level = A.loadLevel(m.id, L);
       return { m: m, L: L, tasks: tasks, due: due, iss: iss, lv: lvT, on: pr && pr.online };
     });
+    rows.forEach(function(r) { var iw = (_issues || []).filter(function(i) { return i && i.status !== '완료' && issueAssignees(i).indexOf(r.m.id) !== -1; }).reduce(function(a, i) { return a + (i.severity === 'Block' ? 3 : i.severity === 'Major' ? 2 : i.severity === 'Minor' ? 0.6 : 0.3); }, 0); r.L.score = r.L.score + iw; r.iw = iw; });
     var maxS = Math.max.apply(null, rows.map(function(r) { return r.L.score; }).concat([1]));
     rows.sort(function(a, b) { return b.L.score - a.L.score || a.m.name.localeCompare(b.m.name); });
     var LV = { ok: ['여유', '#10b981'], warn: ['보통', '#f59e0b'], hot: ['과부하', '#EE0005'] };
@@ -24079,7 +24324,7 @@ function renderNotifList() {
       }
       h += '</div>';
     });
-    h += '<div class="a13-tt-foot"><span>판정: 앞으로 2주(영업일) 동안 겹친 안건 1개 이하 여유, 2개 보통, 3개 이상 과부하 · 휴가가 있으면 한 단계 위 · 막대 길이는 겹친 기간까지 반영</span><button type="button" class="a13-btn sm ghost" onclick="AF13.ttCards()">' + (A.ui.ttCards ? '표로 보기' : '예전 카드로 보기') + '</button></div></div>';
+    h += '<div class="a13-tt-foot"><span>판정: 앞으로 2주(영업일) 동안 겹친 안건 1개 이하 여유, 2개 보통, 3개 이상 과부하 · 휴가가 있으면 한 단계 위 · 막대 길이는 겹친 기간과 열린 이슈(Block 3 · Major 2 · Minor 0.6)까지 반영</span><button type="button" class="a13-btn sm ghost" onclick="AF13.ttCards()">' + (A.ui.ttCards ? '표로 보기' : '예전 카드로 보기') + '</button></div></div>';
     return h;
   };
   A.ttToggle = function(id) { A.ui.ttOpen = A.ui.ttOpen || {}; A.ui.ttOpen[id] = !A.ui.ttOpen[id]; A.teamTable(); };
@@ -24107,6 +24352,10 @@ function renderNotifList() {
       var txt = (lb ? lb.textContent : '') + ' ' + (b.getAttribute('data-tooltip') || '');
       b.classList.toggle('gb-me', !!myName && txt.indexOf(myName) !== -1);
     });
+    try {
+      var rk = {}; (state.projects || []).forEach(function(p) { if (!p || !p.name || !LIVE_ST(p)) return; var r = A.projRisks(p).filter(function(x) { return x[2] !== 'miss'; }); if (r.length) rk[p.name] = r; });
+      [].forEach.call(document.querySelectorAll('#ganttBars .gantt-bar'), function(b) { var tt = b.getAttribute('data-tooltip') || '', nm = tt.split(/\n| - /)[0]; var r = rk[nm]; b.classList.toggle('gb-risk', !!(r && r.some(function(x) { return x[1]; }))); b.classList.toggle('gb-warn', !!(r && !r.some(function(x) { return x[1]; }))); if (r && tt.indexOf('⚠') === -1) b.setAttribute('data-tooltip', tt + '\n⚠ ' + r.map(function(x) { return x[0]; }).join(' · ')); });
+    } catch (e) {}
     var bar = document.querySelector('#schedule .gantt-toolbar') || document.querySelector('.gantt-toolbar');
     if (bar && !bar.querySelector('.a13-gme')) {
       var zc = bar.querySelector('.zoom-controls');
@@ -24114,11 +24363,218 @@ function renderNotifList() {
       bt.onclick = function() { var on = !document.body.classList.contains('gantt-me'); document.body.classList.toggle('gantt-me', on); bt.classList.toggle('on', on); bt.textContent = on ? '나만 강조 켜짐' : '나만 강조'; if (on && !document.querySelector('#ganttBars .gantt-bar.gb-me')) toast('지금 화면에 내가 맡은 막대가 없습니다', 'info'); try { localStorage.setItem('a13_gantt_me', on ? '1' : ''); } catch (e) {} };
       try { if (localStorage.getItem('a13_gantt_me') === '1') { document.body.classList.add('gantt-me'); bt.classList.add('on'); bt.textContent = '나만 강조 켜짐'; } } catch (e) {}
       if (zc) zc.parentNode.insertBefore(bt, zc); else bar.appendChild(bt);
+      var lg = document.createElement('span'); lg.className = 'a13-glg'; lg.innerHTML = '<i class="r"></i>일정 위험(실선) <i class="w"></i>확인 필요(점선) <span class="a13-hint">막대에 마우스를 올리면 내용 · 세로선 = 배포 목표일</span>'; bt.parentNode.insertBefore(lg, bt);
       var fb = document.getElementById('floatingAddProjectBtn');
       if (fb && !fb.classList.contains('a13-inbar')) { fb.classList.add('a13-inbar'); bt.parentNode.insertBefore(fb, bt); }
     }
   };
   (function() { try { var rg = window.renderGantt; if (typeof rg === 'function' && !rg._ux) { window.renderGantt = function() { var r = rg.apply(this, arguments); try { setTimeout(A.ganttPolish, 0); } catch (e) {} return r; }; window.renderGantt._ux = 1; } } catch (e) {} })();
+  // v15.0 현황판: 안건 × 단계 흐름, 막힘, 이번 주 배포, 위험, 주간 보고
+  A.PHN = { plan: '기획', design: '디자인', front: 'FE', back: 'BE', qa: 'QA' };
+  A.weekRange = function() { var d = t0(), w = d.getDay() || 7; var mon = new Date(d); mon.setDate(d.getDate() - w + 1); var a = ymd(mon.getFullYear(), mon.getMonth() + 1, mon.getDate()); return { mon: a, sun: addDays(a, 6), days: [0, 1, 2, 3, 4, 5, 6].map(function(k) { return addDays(a, k); }) }; };
+  A.projRisks = function(p) {
+    var out = [], ph = p.phases || {}, td = wlToday(), dep = p.deployDate || '';
+    var qa = ph.qa && ph.qa.end ? ph.qa.end : '';
+    if (dep && qa && qa > dep) out.push(['배포일이 QA 끝보다 빠름', 1]);
+    else if (dep && qa && bdCount(addDays(qa, 1), dep) < 1 && dep >= td) out.push(['QA 뒤 여유 없음(0일)', 0]);
+    if (dep && dep < td && p.status !== '완료') out.push(['배포 목표일 지남', 1]);
+    var anyDate = PH.some(function(k) { return ph[k] && ph[k].start; });
+    if (!anyDate && (p.tier === 'CRITICAL' || p.tier === 'TIER1' || p.tier === 'TIER2')) out.push(['일정 없음', 0, 'miss']);
+    else if (anyDate) { var miss = PH.filter(function(k) { return !(ph[k] && ph[k].start) && arr(p.assignments && p.assignments[k]).length; }); if (miss.length) out.push([miss.map(function(k) { return A.PHN[k]; }).join('·') + ' 일정 미입력', 0, 'miss']); }
+    if (ph.design && ph.design.end && ph.front && ph.front.start && ph.design.end > ph.front.start) out.push(['디자인·FE 겹침', 0]);
+    PH.forEach(function(k) { var d = ph[k]; if (!d || !d.end || d.end >= td || (p.phaseDone && p.phaseDone[k])) return; var open = arr(p.tasks).filter(function(t) { return t.phase === k && t.status !== 'done'; }).length; if (open) out.push([A.PHN[k] + ' 끝났는데 Task ' + open + '개 남음', 1]); });
+    return out;
+  };
+  A.phaseState = function(p, k) {
+    var d = p.phases && p.phases[k], td = wlToday();
+    if (p.phaseDone && p.phaseDone[k]) return 'done';
+    if (!d || !d.start) return 'empty';
+    if (d.end && d.end < td) { var open = arr(p.tasks).filter(function(t) { return t.phase === k && t.status !== 'done'; }).length; return open ? 'late' : 'done'; }
+    if (d.start <= td) return 'now';
+    return 'next';
+  };
+  A.statusData = function() {
+    var td = wlToday(), wk = A.weekRange();
+    var live = (state.projects || []).filter(function(p) { return p && LIVE_ST(p); });
+    var tierRank = function(p) { var i = TIERS.indexOf(p.tier); return i === -1 ? 99 : i; };
+    live.sort(function(a, b) { return tierRank(a) - tierRank(b) || String(a.deployDate || '9999').localeCompare(String(b.deployDate || '9999')); });
+    var openIss = (_issues || []).filter(function(i) { return i && i.status !== '완료'; });
+    var blocks = openIss.filter(function(i) { return i.severity === 'Block'; });
+    var age = function(i) { var c = dOnly(String(i.created || '').slice(0, 10)); return c ? Math.max(0, Math.round((t0() - c) / 864e5)) : 0; };
+    var oldest = blocks.reduce(function(m, i) { return Math.max(m, age(i)); }, 0);
+    var verify = openIss.filter(function(i) { return i.status === '검증 진행 중'; });
+    var bs = liveBundles();
+    var wkDeps = bs.filter(function(b) { var d = bDate(b); return d >= wk.mon && d <= wk.sun; });
+    var wkDone = wkDeps.filter(function(b) { return b.status === 'deployed'; }).length;
+    var late = 0, miss = 0, rows = live.map(function(p) {
+      var risks = A.projRisks(p); if (risks.some(function(r) { return r[1]; })) late++; if (risks.some(function(r) { return r[2] === 'miss'; })) miss++;
+      var iss = issuesOf(p.id).filter(function(i) { return i.status !== '완료'; });
+      return { p: p, risks: risks, b: iss.filter(function(i) { return i.severity === 'Block'; }).length, m: iss.filter(function(i) { return i.severity === 'Major'; }).length, n: iss.length };
+    });
+    var over = TEAM.filter(_isOnBoard).filter(function(m) { return A.loadLevel(m.id) === 'hot'; });
+    var blk = [];
+    blocks.forEach(function(i) { if (age(i) >= 3) blk.push({ tg: 'Block ' + age(i) + '일', c: '', t: i.title, s: i.id + ' · ' + (projIdsOf(i)[0] || '안건 미지정') + ' · 담당 ' + (issueAssignees(i).map(function(id) { var m = TEAM.find(function(x) { return x.id === id; }); return m ? m.name : id; }).join(', ') || '담당 없음'), go: "AF13.openIssue('" + i.id + "')", k: 1000 + age(i) }); });
+    openIss.forEach(function(i) { if ((i.reopenCount || 0) >= 2) blk.push({ tg: '반려 ' + i.reopenCount + '회', c: 'w', t: i.title, s: i.id + ' · ' + i.status, go: "AF13.openIssue('" + i.id + "')", k: 500 + i.reopenCount }); });
+    verify.forEach(function(i) { var u = dOnly(String(i.updated || i.created || '').slice(0, 10)); var d = u ? Math.round((t0() - u) / 864e5) : 0; if (d >= 3) blk.push({ tg: '검증 ' + d + '일', c: 'i', t: i.title, s: i.id + ' · 검증 담당 ' + ((TEAM.find(function(x) { return x.id === i.verifier; }) || {}).name || '미정'), go: "AF13.openIssue('" + i.id + "')", k: 300 + d }); });
+    var missOnly = [];
+    rows.forEach(function(r) { if (!r.risks.length) return; var sv = r.risks.some(function(x) { return x[1]; }), wn = r.risks.some(function(x) { return !x[1] && x[2] !== 'miss'; }); var ms = r.risks.filter(function(x) { return x[2] === 'miss'; }); if (ms.length) missOnly.push(r.p.id + (sv || wn ? '(' + ms.map(function(x) { return x[0]; }).join('·') + ')' : '')); if (!sv && !wn) return; blk.push({ tg: sv ? '일정 위험' : wn ? '확인 필요' : '미기입', c: sv ? '' : wn ? 'w' : 'g', t: r.p.id + ' ' + r.p.name, s: r.risks.map(function(x) { return x[0]; }).join(' · '), go: "AF13.go('a13project','" + r.p.id + "')", k: sv ? 400 : wn ? 100 : 20 }); });
+    live.forEach(function(p) { A.openQs(p).forEach(function(x) { var d = Math.max(0, Math.round((t0() - dOnly(String(x.at).slice(0, 10))) / 864e5)); blk.push({ tg: '질문 ' + d + '일', c: 'i', t: p.id + ' ' + p.name, s: x.text + (x.by ? ' · ' + x.by : ''), go: "AF13.go('a13project','" + p.id + "')", k: 200 + d }); }); });
+    if (missOnly.length) blk.push({ tg: '미기입', c: 'g', t: '일정이 비어 있는 안건 ' + missOnly.length + '건', s: missOnly.join(', ') + ' · 위험 숫자에는 넣지 않음', go: "AF13.go('a13projects')", k: 10 });
+    blk.sort(function(a, b) { return b.k - a.k; });
+    var majors = openIss.filter(function(i) { return i.severity === 'Major'; });
+    var next = bs.filter(function(b) { return (b.status === 'planning' || b.status === 'ready') && (!b.targetDate || b.targetDate >= td); }).sort(function(a, b) { return String(a.targetDate || '9999').localeCompare(String(b.targetDate || '9999')); }).slice(0, 6);
+    var wkFail = wkDeps.filter(function(b) { return b.status === 'failed' || b.status === 'rolledback'; }).length;
+    return { td: td, wk: wk, rows: rows, live: live, blocks: blocks, majors: majors, oldest: oldest, verify: verify, wkDeps: wkDeps, wkDone: wkDone, wkFail: wkFail, late: late, miss: miss, over: over, blk: blk, next: next };
+  };
+  A.renderStatus = function(el) {
+    var D = A.statusData(), td = D.td;
+    var k = function(n, label, sub, hot, go) { return '<div class="st-k' + (hot && n ? ' hot' : '') + (n ? '' : ' zero') + '" role="button" tabindex="0" onclick="' + go + '"><b>' + n + '</b><span>' + label + '</span><small>' + (sub || '&nbsp;') + '</small></div>'; };
+    var h = '<div class="a13"><div class="a13-ph"><div><h1>현황</h1><p>지금 무엇이 어디까지 왔고, 무엇이 막혔고, 이번 주에 무엇이 나가는지 한 화면에 모았습니다</p></div><div class="a13-row"><button class="a13-btn" onclick="AF13.meeting(0)">회의 모드</button><button class="a13-btn" onclick="AF13.copyWeekly()">주간 보고 미리보기·복사</button></div></div>';
+    h += '<div class="st-kpis">' +
+      k(D.live.length, '진행·대기 안건', (D.late ? '일정 위험 ' + D.late : '일정 위험 없음') + (D.miss ? ' · 미기입 ' + D.miss : ''), false, "AF13.go('a13projects')") +
+      k(D.blocks.length, 'Block 미해결', D.blocks.length ? '가장 오래된 것 ' + D.oldest + '일째' : '없음', true, "AF13.issuesBySev('Block')") +
+      k(D.majors.length, 'Major 미해결', D.majors.length ? '누르면 Major만 봅니다' : '없음', false, "AF13.issuesBySev('Major')") +
+      k(D.wkDeps.length, '이번 주 배포', '완료 ' + D.wkDone + ' · 예정 ' + (D.wkDeps.length - D.wkDone - D.wkFail) + (D.wkFail ? ' · 실패·롤백 ' + D.wkFail : ''), D.wkFail > 0, "AF13.go('a13deploy')") +
+      k(D.verify.length, '검증 대기 이슈', D.verify.length ? 'QA 확인 필요' : '없음', false, "AF13.go('a13issues')") +
+      k(D.over.length, '과부하 인원', D.over.length ? D.over.map(function(m) { return m.name; }).join(', ') : '팀 표 기준(겹친 안건 3개+ 또는 휴가 5일+) 없음', true, "document.querySelector('.a13-navs .tab[data-tab=team]').click()") + '</div>';
+    h += '<div class="a13-card"><div class="a13-card-h"><h3>안건 흐름 <span class="a13-cnt">' + D.rows.length + '</span></h3><div class="st-legend"><span><i style="background:#9b8be0"></i>끝남</span><span><i style="background:var(--af-accent)"></i>진행 중</span><span><i style="background:var(--af-danger)"></i>끝났는데 Task 남음</span><span><i style="border:1px dashed #9b8be0;background:#fff"></i>예정</span><span><i style="border:1px dashed #ccc;background:#F3F3F3"></i>일정 없음</span><span class="a13-hint">칸 아래 날짜 = 단계 끝</span></div></div>';
+    h += '<table class="st-mx"><thead><tr><th>안건</th><th>기획 → 디자인 → FE → BE → QA</th><th>배포</th><th>열린 이슈</th><th>확인할 것</th></tr></thead><tbody>';
+    D.rows.forEach(function(r) {
+      var p = r.p;
+      h += '<tr class="r" onclick="AF13.go(\'a13project\',\'' + q(p.id) + '\')"><td class="nm"><span class="pf-tier">' + esc(String(TIER_L[p.tier] || '-').replace('TIER ', 'T').replace('CRITICAL', 'CRIT').replace('지속 병행', '지속')) + '</span><span class="a13-pid">' + esc(p.id) + '</span> <b>' + esc(p.name) + '</b><div class="a13-hint">' + esc(p.status || '') + (p.pm ? ' · PM ' + esc(((TEAM.find(function(m) { return m.id === p.pm; }) || {}).name) || p.pm) : '') + '</div></td>' +
+        '<td><div class="st-ph">' + PH.map(function(kk) { var st = A.phaseState(p, kk), d = p.phases && p.phases[kk]; return '<i class="' + st + '" style="--c:' + phc(kk) + '" title="' + esc(A.PHN[kk] + ' ' + (d && d.start ? fmtD(d.start) + '~' + fmtD(d.end) : '일정 없음') + (p.phaseDone && p.phaseDone[kk] ? ' · 완료 처리됨' : '')) + '">' + esc(A.PHN[kk]) + (d && d.end ? '<small>~' + esc(fmtD(d.end)) + '</small>' : '') + '</i>'; }).join('') + '</div></td>' +
+        '<td>' + (p.deployDate ? '목표 ' + esc(fmtD(p.deployDate)) + ' ' + ddH(p.deployDate, p.status === '완료') : '<span class="a13-hint">목표 미정</span>') + (function() { var nb = liveBundles().filter(function(b) { return (b.status === 'planning' || b.status === 'ready') && A.readiness(b).pids.indexOf(p.id) !== -1; }).sort(function(a, c) { return String(a.targetDate || '9999').localeCompare(String(c.targetDate || '9999')); })[0]; return nb ? '<div class="a13-hint">묶인 배포 ' + esc(fmtD(nb.targetDate) || '날짜 미정') + ' ' + A.verdictH(nb) + '</div>' : ''; })() + '</td>' +
+        '<td>' + (r.n ? (r.b ? '<span class="st-sev b">Block ' + r.b + '</span> ' : '') + (r.m ? '<span class="st-sev m">Major ' + r.m + '</span> ' : '') + '<span class="a13-hint">전체 ' + r.n + '</span>' : '<span class="a13-hint">-</span>') + '</td>' +
+        '<td>' + (r.risks.length ? r.risks.map(function(x) { return '<span class="st-rk' + (x[1] ? '' : x[2] === 'miss' ? ' g' : ' w') + '">' + esc(x[0]) + '</span>'; }).join('') : '<span class="a13-hint">-</span>') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="a13-card st-wk"><div class="a13-card-h"><h3>이번 주 배포</h3><span class="a13-hint">' + esc(fmtD(D.wk.mon)) + ' ~ ' + esc(fmtD(D.wk.sun)) + '</span></div><div class="st-week">' + D.wk.days.map(function(d, i) {
+      if (i >= 5 && !D.wkDeps.some(function(b) { return bDate(b) === d; }) && d !== td) return '';
+      var list = D.wkDeps.filter(function(b) { return bDate(b) === d; }), all = (A.ui.stDay || {})[d], show = all ? list : list.slice(0, 4);
+      return '<div class="st-day' + (d === td ? ' today' : '') + '"><h5>' + '월화수목금토일'.charAt(i) + ' ' + esc(fmtD(d)) + (list.length ? ' <span class="a13-cnt">' + list.length + '</span>' : '') + '</h5>' + show.map(A.depChipH).join('') + (list.length > 4 && !all ? '<button type="button" class="st-more" onclick="AF13.ui.stDay=AF13.ui.stDay||{};AF13.ui.stDay[\'' + d + '\']=1;AF13.render(true)">외 ' + (list.length - 4) + '건</button>' : '') + '</div>';
+    }).join('') + '</div></div>';
+    h += '<div class="st-grid"><div><div class="a13-card st-next"><div class="a13-card-h"><h3>다음 배포 <span class="a13-cnt">' + D.next.length + '</span></h3><button class="a13-btn sm ghost" onclick="AF13.go(\'a13deploy\')">배포 화면</button></div>' + (D.next.length ? D.next.map(function(b) { var R = A.readiness(b), RG = A.regressStat(b); var V = A.verdict(b); return '<div class="st-nx" role="button" tabindex="0" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')"><span class="dt">' + (b.targetDate ? esc(fmtD(b.targetDate)) + ' ' + ddH(b.targetDate) : '<span class="a13-hint">날짜 미정</span>') + '</span><b>' + A.verdictH(b) + ' ' + esc(A.depLabel(b)) + '</b><span class="sg">' + (R.pids.length ? '안건 ' + esc(R.pids.join(', ')) + ' · ' : '<span class="a13-hint">안건 미지정</span> · ') + (b.environment ? esc(b.environment) + ' · ' : '') + (R.total ? '항목 ' + R.total : '<span class="a13-hint">담긴 항목 없음</span>') + (R.r2 ? ' · <em>검증 전 ' + R.r2 + '</em>' : '') + (R.r3 ? ' · <em>Block ' + R.r3 + '</em>' : '') + (RG ? ' · 회귀 기록 ' + RG.rec + '/' + RG.n + ' · 통과 ' + RG.pass + (RG.fail ? ' <em>실패 ' + RG.fail + '</em>' : '') : '') + (V.k !== 'go' ? '<br><span class="a13-hint">판정 근거: ' + esc(V.why.join(' · ')) + '</span>' : '') + '</span></div>'; }).join('') : '<div class="a13-empty">예정된 배포가 없습니다</div>') + '</div></div>';
+    h += '<div><div class="a13-card"><div class="a13-card-h"><h3>막힌 것 · 확인할 것 <span class="a13-cnt' + (D.blk.length ? ' red' : '') + '">' + D.blk.length + '</span></h3><span class="a13-hint">Block 3일+ · 반려 2회+ · 검증 3일+ · 일정 위험 · 열린 질문 · 미기입</span></div>' + (D.blk.length ? D.blk.slice(0, 14).map(function(x) { return '<div class="st-blk" onclick="' + x.go + '"><span class="tg ' + x.c + '">' + esc(x.tg) + '</span><div>' + esc(x.t) + '<small>' + esc(x.s) + '</small></div></div>'; }).join('') + (D.blk.length > 14 ? '<div class="a13-hint" style="padding-top:8px">외 ' + (D.blk.length - 14) + '건</div>' : '') : '<div class="a13-empty"><b>막힌 것이 없습니다</b>Block·반려·검증 지연·일정 위험이 생기면 여기에 모입니다</div>') + '</div></div></div></div>';
+    el.innerHTML = h;
+    if (!A._rm()) {
+      [].forEach.call(el.querySelectorAll('.st-ph i'), function(c, i) { if (c.animate) c.animate([{ opacity: 0, transform: 'scaleX(.2)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 120 + Math.floor(i / 5) * 40 + (i % 5) * 55, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' }); });
+      try { _afCountUpEls([].filter.call(el.querySelectorAll('.st-k b'), function(b) { return /^\d+$/.test(b.textContent.trim()); })); } catch (e) {}
+    }
+  };
+  A.depLabel = function(b) {
+    var t = String(b.title || b.id || ''), m = (t + '\n' + String(b.notes || '').split('\n').slice(0, 3).join(' ')).match(/\bv?\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?\b/);
+    var base = t.replace(/\s*:\s*[A-Za-z][\w-]*-v?\d+\.\d+(?:\.\d+)?\s*$|\s*:\s*v?\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?\s*$/, '');
+    if (base.indexOf('>') !== -1) base = base.split('>').map(function(x) { return x.trim(); }).filter(Boolean).slice(-1)[0] || base;
+    var R = A.readiness(b), sv = (A._bundleSvcs ? A._bundleSvcs(b) : [])[0] || R.pids[0] || '';
+    var v = m ? (m[0].charAt(0) === 'v' ? m[0] : 'v' + m[0]) : '';
+    return (sv ? sv + ' · ' : '') + base.slice(0, 30) + (v && base.indexOf(v.slice(1)) === -1 ? ' ' + v : '');
+  };
+  A.depChipH = function(b) {
+    var R = A.readiness(b), RG = A.regressStat(b), bad = b.status === 'failed' || b.status === 'rolledback';
+    var lab = A.depLabel(b);
+    return '<div class="st-dep ' + (bad ? 'bad' : b.status === 'deployed' ? 'done' : 'plan') + '" title="' + esc(String(b.title || b.id)) + '" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')"><span class="l">' + esc(lab) + '</span><small>' + (bad ? (b.status === 'failed' ? '실패' : '롤백') : b.status === 'deployed' ? '완료' : '예정') + (R.pids.length ? ' · ' + esc(R.pids.slice(0, 2).join(',')) : '') + (R.total ? ' · ' + R.total + '건' : '') + (RG ? ' · 회귀 ' + RG.rec + '/' + RG.n : '') + '</small></div>';
+  };
+  A.verdict = function(b) {
+    var R = A.readiness(b), RG = A.regressStat(b), why = [];
+    if (R.r3) why.push('Block ' + R.r3); if (RG && RG.fail) why.push('회귀 실패 ' + RG.fail);
+    if (why.length) return { k: 'stop', l: '막힘', why: why };
+    if (R.r2) why.push('검증 전 ' + R.r2); if (R.r1) why.push('미완료 Task ' + R.r1);
+    if (!RG) why.push('회귀 미기록'); else if (RG.rec < RG.n) why.push('회귀 기록 ' + RG.rec + '/' + RG.n);
+    if (!R.total) why.push('담긴 항목 없음');
+    if (why.length) return { k: 'warn', l: '주의', why: why };
+    return { k: 'go', l: '출시 가능', why: ['검증·회귀 끝'] };
+  };
+  A.verdictH = function(b) { var v = A.verdict(b); return '<span class="a13-vd ' + v.k + '" title="' + esc(v.why.join(' · ')) + '">' + v.l + '</span>'; };
+  A.regressStat = function(b) { var it = b && b.regress && arr(b.regress.items); if (!it || !it.length) return null; return { n: it.length, ok: it.filter(function(x) { return x.s === 'pass' || x.s === 'skip'; }).length, pass: it.filter(function(x) { return x.s === 'pass'; }).length, rec: it.filter(function(x) { return !!x.s; }).length, fail: it.filter(function(x) { return x.s === 'fail'; }).length }; };
+  A.regressTxt = function(RG) { return RG ? '회귀 기록 ' + RG.rec + '/' + RG.n + ' · 통과 ' + RG.pass + (RG.fail ? ' · 실패 ' + RG.fail : '') : ''; };
+  A.issuesBySev = function(sv) { var f = A.ui.if; f.sev = ''; f.sevs = [sv]; f.mine = false; f.verify = false; f.open = true; f.pid = ''; f.q = ''; f.cats = []; f.tags = []; f.parts = []; f.folder = ''; try { localStorage.setItem('a13_if', JSON.stringify({ view: f.view, mine: false, verify: false, pid: '', sevs: f.sevs, svc: f.svc, cats: [], tags: [], folder: '', parts: [], open: true })); } catch (e) {} A.go('a13issues'); };
+  A.copyWeekly = function() {
+    var D = A.statusData(), L = [];
+    L.push('[플랫폼개발팀 현황 ' + fmtD(D.wk.mon) + '~' + fmtD(D.wk.sun) + ']', '');
+    L.push('■ 요약: 진행 안건 ' + D.live.length + ' (일정 위험 ' + D.late + (D.miss ? ', 미기입 ' + D.miss : '') + ') · Block 미해결 ' + D.blocks.length + (D.blocks.length ? ' (최장 ' + D.oldest + '일)' : '') + ' · Major ' + D.majors.length + ' · 이번 주 배포 ' + D.wkDeps.length + ' (완료 ' + D.wkDone + (D.wkFail ? ', 실패·롤백 ' + D.wkFail : '') + ') · 검증 대기 ' + D.verify.length);
+    try {
+      var SN = JSON.parse(localStorage.getItem('a13_wk_snap') || '{}'), cur = { mon: D.wk.mon, live: D.live.length, late: D.late, blocks: D.blocks.map(function(i) { return i.id; }), majors: D.majors.length };
+      var prev = SN.cur && SN.cur.mon !== D.wk.mon ? SN.cur : SN.prev;
+      if (prev && prev.mon !== D.wk.mon) {
+        var nb = cur.blocks.filter(function(x) { return arr(prev.blocks).indexOf(x) === -1; }), gb = arr(prev.blocks).filter(function(x) { return cur.blocks.indexOf(x) === -1; });
+        L.push('■ 지난주(' + fmtD(prev.mon) + ' 주) 대비: 진행 안건 ' + prev.live + '→' + cur.live + ' · 일정 위험 ' + prev.late + '→' + cur.late + ' · Major ' + prev.majors + '→' + cur.majors + (gb.length ? ' · 해결된 Block ' + gb.join(', ') : '') + (nb.length ? ' · 새 Block ' + nb.join(', ') : ''));
+      }
+      localStorage.setItem('a13_wk_snap', JSON.stringify({ prev: prev && prev.mon !== D.wk.mon ? prev : SN.prev, cur: cur }));
+    } catch (e) {}
+    L.push('');
+    L.push('■ 안건 흐름');
+    D.rows.forEach(function(r) { var now = PH.filter(function(k) { return A.phaseState(r.p, k) === 'now'; }).map(function(k) { return A.PHN[k]; }); L.push('* ' + r.p.id + ' ' + r.p.name + ' — ' + (now.length ? now.join('·') + ' 진행' : (PH.every(function(k) { return A.phaseState(r.p, k) === 'empty'; }) ? '일정 없음' : '단계 사이')) + (r.p.deployDate ? ' · 배포 ' + fmtD(r.p.deployDate) : '') + (r.b ? ' · Block ' + r.b : '') + (r.risks.length ? ' · ' + r.risks.map(function(x) { return x[0]; }).join(', ') : '')); });
+    L.push('', '■ 이번 주 배포');
+    if (!D.wkDeps.length) L.push('* 없음');
+    D.wkDeps.forEach(function(b) { L.push('* ' + fmtD(bDate(b)) + ' ' + (b.title || b.id) + ' (' + (b.status === 'deployed' ? '완료' : '예정') + ')'); });
+    L.push('', '■ 막힌 것');
+    if (!D.blk.length) L.push('* 없음');
+    D.blk.slice(0, 10).forEach(function(x) { L.push('* [' + x.tg + '] ' + x.t + ' — ' + x.s); });
+    var dec = [];
+    (state.projects || []).forEach(function(p) { arr(p && p.decisions).forEach(function(x) { if (x.kind === 'q' && !x.done) return; var d = String(x.at || '').slice(0, 10); if (d >= D.wk.mon && d <= D.wk.sun) dec.push('* ' + p.id + ' ' + p.name + ' — ' + x.text + (x.by ? ' (' + x.by + ')' : '')); }); });
+    var dec2 = dec.filter(function(x) { return true; }); if (dec2.length) { L.push('', '■ 이번 주 결정'); L.push.apply(L, dec2); }
+    var oqs = []; D.live.forEach(function(p) { A.openQs(p).forEach(function(x) { oqs.push('* ' + p.id + ' ' + x.text + (x.by ? ' (' + x.by + ')' : '')); }); }); if (oqs.length) { L.push('', '■ 열린 질문'); L.push.apply(L, oqs); }
+    if (D.next.length) { L.push('', '■ 다음 배포'); D.next.slice(0, 4).forEach(function(b) { var V = A.verdict(b); L.push('* ' + (b.targetDate ? fmtD(b.targetDate) : '날짜 미정') + ' ' + A.depLabel(b) + ' — ' + V.l + (V.k !== 'go' ? ' (' + V.why.join(', ') + ')' : '')); }); }
+    var txt = L.join('\n');
+    A.weeklyPreview(txt);
+    return txt;
+  };
+  A.meeting = function(i) {
+    var D = A.statusData(), rows = D.rows; if (!rows.length) { toast('진행 중인 안건이 없습니다', 'info'); return; }
+    i = Math.max(0, Math.min(rows.length - 1, i || 0)); A._mtI = i;
+    var r = rows[i], p = r.p, old = document.getElementById('a13MT'); if (old) old.remove();
+    var wrap = document.createElement('div'); wrap.id = 'a13MT'; wrap.className = 'a13-mt'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-label', '주간 회의 모드');
+    var nb = liveBundles().filter(function(b) { return (b.status === 'planning' || b.status === 'ready') && A.readiness(b).pids.indexOf(p.id) !== -1; })[0];
+    var iss = issuesOf(p.id).filter(function(x) { return x.status !== '완료'; }).sort(function(a, b) { return ['Block', 'Major', 'Minor', 'Trivial'].indexOf(a.severity) - ['Block', 'Major', 'Minor', 'Trivial'].indexOf(b.severity); });
+    var dec = arr(p.decisions).filter(function(x) { return x.kind !== 'q' || x.done; }).slice(-3).reverse(), oqM = A.openQs(p);
+    var pm = ((TEAM.find(function(m) { return m.id === p.pm; }) || {}).name) || '';
+    wrap.innerHTML = '<div class="mt-in"><header><span class="a13-hint">주간 회의 · ' + (i + 1) + ' / ' + rows.length + '</span><button class="a13-btn sm ghost mt-x">닫기 Esc</button></header>' +
+      '<h2><span class="a13-pid">' + esc(p.id) + '</span> ' + esc(p.name) + '</h2><p class="a13-hint">' + esc(TIER_L[p.tier] || '') + ' · ' + esc(p.status || '') + (pm ? ' · PM ' + esc(pm) : '') + (p.deployDate ? ' · 목표 ' + esc(fmtD(p.deployDate)) + ' ' : '') + (p.deployDate ? ddH(p.deployDate) : '') + '</p>' +
+      '<div class="mt-ph">' + PH.map(function(k) { var d = p.phases && p.phases[k], st = A.phaseState(p, k), as = arr(p.assignments && p.assignments[k]).map(function(id) { return ((TEAM.find(function(m) { return m.id === id; }) || {}).name) || id; }); return '<div class="c ' + st + '" style="--c:' + phc(k) + '"><b>' + esc(A.PHN[k]) + '</b><span>' + (d && d.start ? esc(fmtD(d.start)) + ' ~ ' + esc(fmtD(d.end)) : '일정 없음') + '</span><small>' + esc(as.join(', ') || '담당 없음') + '</small><em>' + ({ done: '끝남', now: '진행 중', late: 'Task 남음', next: '예정', empty: '' })[st] + '</em></div>'; }).join('') + '</div>' +
+      '<div class="mt-g"><section><h4>확인할 것</h4>' + (r.risks.length ? r.risks.map(function(x) { return '<div class="mt-li ' + (x[1] ? 'r' : x[2] === 'miss' ? 'g' : 'w') + '">' + esc(x[0]) + '</div>'; }).join('') : '<div class="a13-hint">없음</div>') + '</section>' +
+      '<section><h4>열린 이슈 ' + iss.length + '</h4>' + (iss.length ? iss.slice(0, 6).map(function(x) { return '<div class="mt-li">' + sevB(x.severity) + ' ' + esc(x.title) + '</div>'; }).join('') : '<div class="a13-hint">없음</div>') + '</section>' +
+      '<section><h4>다음 배포</h4>' + (nb ? '<div class="mt-li">' + A.verdictH(nb) + ' ' + esc(fmtD(nb.targetDate) || '날짜 미정') + ' ' + esc(A.depLabel(nb)) + '</div>' : '<div class="a13-hint">묶인 배포 없음</div>') + (oqM.length ? '<h4 style="margin-top:14px">열린 질문 ' + oqM.length + '</h4>' + oqM.map(function(x) { return '<div class="mt-li w">' + esc(x.text) + '</div>'; }).join('') : '') + '<h4 style="margin-top:14px">최근 결정</h4>' + (dec.length ? dec.map(function(x) { return '<div class="mt-li">' + esc(x.text) + ' <span class="a13-hint">' + esc(String(x.at || '').slice(5, 10)) + '</span></div>'; }).join('') : '<div class="a13-hint">없음</div>') +
+      (canW() ? '<input class="a13-input mt-dec" placeholder="회의에서 정한 것 기록 (Enter)" maxlength="200">' : '') + '</section></div>' +
+      '<footer><button class="a13-btn mt-p"' + (i ? '' : ' disabled') + '>← 이전</button><button class="a13-btn ghost mt-o">안건 열기</button><button class="a13-btn pri mt-n"' + (i < rows.length - 1 ? '' : ' disabled') + '>다음 →</button></footer></div>';
+    document.body.appendChild(wrap);
+    var close = function() { wrap.remove(); document.removeEventListener('keydown', key, true); };
+    var key = function(e) { if (document.activeElement && document.activeElement.classList.contains('mt-dec')) { if (e.key === 'Escape') { e.preventDefault(); document.activeElement.blur(); } return; } if (e.key === 'Escape') { e.preventDefault(); close(); } else if (e.key === 'ArrowRight' && i < rows.length - 1) { e.preventDefault(); close(); A.meeting(i + 1); } else if (e.key === 'ArrowLeft' && i > 0) { e.preventDefault(); close(); A.meeting(i - 1); } };
+    document.addEventListener('keydown', key, true);
+    wrap.querySelector('.mt-x').onclick = close;
+    wrap.querySelector('.mt-p').onclick = function() { close(); A.meeting(i - 1); };
+    wrap.querySelector('.mt-n').onclick = function() { close(); A.meeting(i + 1); };
+    wrap.querySelector('.mt-o').onclick = function() { close(); A.go('a13project', p.id); };
+    var di = wrap.querySelector('.mt-dec'); if (di) di.onkeydown = function(e) { if (e.key === 'Enter' && !e.isComposing && di.value.trim()) { A.addDecision(p.id, di.value.trim()); close(); A.meeting(i); } };
+    if (!A._rm()) { var inn = wrap.querySelector('.mt-in'); if (inn.animate) inn.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(0.16,1,0.3,1)' }); }
+    setTimeout(function() { var n = wrap.querySelector('.mt-n'); if (n && !n.disabled) n.focus(); }, 40);
+  };
+  A.weeklyPreview = function(txt) {
+    var old = document.getElementById('a13WK'); if (old) old.remove();
+    var wrap = document.createElement('div'); wrap.id = 'a13WK'; wrap.className = 'a13-np-bg';
+    wrap.innerHTML = '<aside class="a13-np" role="dialog" aria-modal="true" aria-label="주간 보고 미리보기"><header><div><h2>주간 보고 미리보기</h2><p>고칠 곳을 고친 뒤 복사하세요. 구글챗에 그대로 붙여 넣는 형식입니다.</p></div><button class="x" aria-label="닫기">✕</button></header><div class="body"><textarea class="a13-input wk-ta" style="width:100%;min-height:420px;font-size:13px;line-height:1.55">' + esc(txt) + '</textarea></div><footer><span class="np-hint">Esc 닫기</span><button class="a13-btn ghost wk-close">닫기</button><button class="a13-btn pri wk-copy">복사</button></footer></aside>';
+    document.body.appendChild(wrap);
+    var close = function() { wrap.classList.add('out'); setTimeout(function() { wrap.remove(); }, 180); };
+    wrap.querySelector('.x').onclick = close; wrap.querySelector('.wk-close').onclick = close;
+    wrap.addEventListener('mousedown', function(e) { if (e.target === wrap) close(); });
+    wrap.addEventListener('keydown', function(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+    wrap.querySelector('.wk-copy').onclick = function() { var t = wrap.querySelector('.wk-ta').value; try { navigator.clipboard.writeText(t); toast('주간 보고를 복사했습니다'); } catch (e) { toast('복사하지 못했습니다', 'error'); } var b = wrap.querySelector('.wk-copy'); b.textContent = '복사됨 ✓'; setTimeout(function() { close(); }, 600); };
+    setTimeout(function() { var b = wrap.querySelector('.wk-copy'); if (b) b.focus(); }, 60);
+  };
+  // 내 작업 맨 위: 프로덕트 현황 한 줄
+  A.statusStripH = function() {
+    try {
+      var D = A.statusData();
+      return '<div class="a13-strip" role="button" tabindex="0" onclick="AF13.go(\'a13status\')"><span>프로덕트 현황</span><span>진행·대기 안건<b>' + D.live.length + '</b></span><span>일정 위험<b' + (D.late ? ' class="hot"' : '') + '>' + D.late + '</b></span>' + (D.miss ? '<span>미기입<b>' + D.miss + '</b></span>' : '') + '<span>Block 미해결<b' + (D.blocks.length ? ' class="hot"' : '') + '>' + D.blocks.length + '</b>' + (D.blocks.length ? ' <span class="a13-hint">최장 ' + D.oldest + '일</span>' : '') + '</span><span>Major<b>' + D.majors.length + '</b></span><span>이번 주 배포<b>' + D.wkDeps.length + '</b>' + (D.wkFail ? ' <span class="a13-hint" style="color:var(--af-danger)">실패·롤백 ' + D.wkFail + '</span>' : '') + '</span><span class="go">현황 보기 →</span></div>';
+    } catch (e) { return ''; }
+  };
+  // 배포 상세: 이슈 바로 담기
+  A.bundleAddIssues = function(ev, bid) {
+    var b = bundle(bid); if (!b) return;
+    var cand = (_issues || []).filter(function(i) { return i && ['운영배포예정', '검증 진행 중', '작업 진행 중'].indexOf(i.status) !== -1 && !bundleOfIssue(i.id); }).sort(function(a, c) { return (a.status === '운영배포예정' ? 0 : a.status === '검증 진행 중' ? 1 : 2) - (c.status === '운영배포예정' ? 0 : c.status === '검증 진행 중' ? 1 : 2); });
+    var pop = openPop(ev, '<div style="font-size:13px;font-weight:700;padding:8px 10px">이슈 담기 <span class="a13-hint">배포 대기·검증·진행 중이고 아직 배포에 없는 이슈</span></div><div style="max-height:320px;overflow:auto;min-width:360px">' + (cand.length ? '<input class="a13-input pk-q" placeholder="제목 · 안건 · 직군으로 거르기" style="margin:0 10px 6px;width:calc(100% - 20px)">' + cand.slice(0, 80).map(function(i) { var pj = projIdsOf(i)[0] || ''; return '<label class="row" data-h="' + esc((i.id + ' ' + i.title + ' ' + pj + ' ' + (i.jobPart || '')).toLowerCase()) + '" style="display:flex;gap:8px;align-items:center;padding:6px 10px;font-size:13px"><input type="checkbox" value="' + esc(i.id) + '"' + (i.status === '운영배포예정' ? ' checked' : '') + '><span class="a13-hint" style="min-width:64px">' + esc(A.stLabel(i.status)) + '</span>' + (pj ? '<span class="a13-pid">' + esc(pj) + '</span>' : '') + (i.jobPart ? '<span class="a13-chip part">' + esc(i.jobPart) + '</span>' : '') + '<span>' + esc(i.title) + '</span></label>'; }).join('') : '<div class="a13-hint" style="padding:10px">담을 수 있는 이슈가 없습니다 (배포 대기·검증·진행 중이고 다른 배포에 없는 이슈만 보입니다)</div>') + '</div><div style="padding:8px;text-align:right"><button class="a13-btn sm pri done"' + (cand.length ? '' : ' disabled') + '>담기</button></div>');
+    var pq = pop.querySelector('.pk-q'); if (pq) { pq.oninput = function() { var v = pq.value.trim().toLowerCase(); [].forEach.call(pop.querySelectorAll('label.row'), function(r) { r.style.display = !v || r.dataset.h.indexOf(v) !== -1 ? 'flex' : 'none'; }); }; setTimeout(function() { pq.focus(); }, 30); }
+    var d = pop.querySelector('.done'); if (d) d.onclick = function() { var ids = [].map.call(pop.querySelectorAll('input:checked'), function(x) { return x.value; }); ids.forEach(function(id) { A.addToBundle(bid, 'issues', id, true); }); closePop(); if (ids.length) toast(ids.length + '건을 배포에 담았습니다'); A.render(true); };
+  };
   A.navBadges = function() {
     try { if (typeof _updateNotifBadge === 'function') _updateNotifBadge(); } catch (e) {}
     try {
@@ -24180,7 +24636,7 @@ function renderNotifList() {
   // 키보드: G 다음 글자로 메뉴 이동, ?로 단축키 안내
   (function() {
     var gAt = 0;
-    var go = { w: 'a13work', l: 'a13log', p: 'a13projects', i: 'a13issues', d: 'a13deploy' }, old = { s: 'schedule', t: 'team' };
+    var go = { w: 'a13work', h: 'a13status', l: 'a13log', p: 'a13projects', i: 'a13issues', d: 'a13deploy' }, old = { s: 'schedule', t: 'team' };
     var typing = function(t) { return t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable); };
     document.addEventListener('keydown', function(e) {
       if (e.metaKey || e.ctrlKey || e.altKey || typing(e.target) || document.querySelector('.a13-np-bg, #a13Keys')) { if (e.key === 'Escape') { var k = document.getElementById('a13Keys'); if (k) k.remove(); } return; }
@@ -24196,7 +24652,7 @@ function renderNotifList() {
   })();
   A.keysHelp = function() {
     var old = document.getElementById('a13Keys'); if (old) { old.remove(); return; }
-    var rows = [['#', '이동'], ['G → W', '내 작업'], ['G → L', '업무일지'], ['G → P', '프로젝트'], ['G → S', '스케줄'], ['G → I', '이슈'], ['G → D', '배포'], ['G → T', '팀'], ['#', '만들기·찾기'], ['C', '새로 만들기'], ['⌘ K', '안건·이슈·배포 검색'], ['/', '업무일지에서 할 일 입력칸으로'], ['Alt 1~4', '새 이슈 빠른 등록에서 심각도'], ['#', '창'], ['⌘ Enter', '시트에서 저장·담기'], ['Esc', '닫기'], ['?', '이 안내 열고 닫기']];
+    var rows = [['#', '이동'], ['G → W', '내 작업'], ['G → H', '현황(프로덕트 전체 흐름)'], ['G → L', '업무일지'], ['G → P', '프로젝트'], ['G → S', '스케줄'], ['G → I', '이슈'], ['G → D', '배포'], ['G → T', '팀'], ['#', '만들기·찾기'], ['C', '새로 만들기'], ['⌘ K', '안건·이슈·배포 검색'], ['/', '업무일지에서 할 일 입력칸으로'], ['Alt 1~4', '새 이슈 빠른 등록에서 심각도'], ['#', '창'], ['⌘ Enter', '시트에서 저장·담기'], ['Esc', '닫기'], ['?', '이 안내 열고 닫기']];
     var d = document.createElement('div'); d.id = 'a13Keys'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', '키보드 단축키');
     d.innerHTML = '<div class="a13-keys"><div class="hd"><b>키보드 단축키</b><button type="button" class="a13-btn sm ghost kt" onclick="event.stopPropagation();document.getElementById(\'a13Keys\').remove();AF13.tour()">바뀐 곳 둘러보기</button><button type="button" aria-label="닫기">✕</button></div><dl>' + rows.map(function(r) { if (r[0] === '#') return '<div class="kh">' + esc(r[1]) + '</div>'; return '<dt>' + r[0].split(' ').map(function(k) { return k === '→' ? '<i>다음</i>' : '<kbd>' + esc(k) + '</kbd>'; }).join('') + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl></div>';
     d.addEventListener('click', function(e) { if (e.target === d || e.target.closest('button')) d.remove(); });
@@ -24242,9 +24698,10 @@ function renderNotifList() {
   };
   A.addLinks = function(wrap, urls) { var list = wrap._links = wrap._links || []; var n = 0; urls.forEach(function(u) { if (!list.some(function(x) { return x.url === u; })) { list.push({ type: linkGuess(u), url: u }); n++; } }); return n; };
   // 안건 페이지 맨 위 링크 칩
+  A.linkKind = function(u) { u = String(u || '').toLowerCase(); return /figma\.com/.test(u) ? 'Figma' : /github\.com\/.+\/pull\//.test(u) ? 'PR' : /github\.com/.test(u) ? 'GitHub' : /docs\.google\.com\/spreadsheets/.test(u) ? '시트' : /docs\.google\.com\/presentation/.test(u) ? '슬라이드' : /docs\.google\.com|drive\.google\.com/.test(u) ? '문서' : /notion\.(so|site)/.test(u) ? 'Notion' : /chat\.google\.com/.test(u) ? '구글챗' : /jira|atlassian/.test(u) ? 'Jira' : ''; };
   A.linkChipsH = function(p, cw) {
     var l = arr(p.links);
-    return '<div class="a13-plinks">📎 ' + (l.length ? l.map(function(x) { return '<a class="a13-plink" href="' + esc(linkHref(x.url)) + '" target="_blank" rel="noopener" title="' + esc(x.url) + '">' + esc(x.type || '링크') + ' ↗</a>'; }).join('') : '<span class="a13-hint">관련 링크 없음</span>') + (cw ? '<button class="wl-link" onclick="AF13.addLink(\'' + q(p.id) + '\')">＋ 링크</button>' : '') + '</div>';
+    return '<div class="a13-plinks">📎 ' + (l.length ? l.map(function(x) { var kd = A.linkKind(x.url); return '<a class="a13-plink" href="' + esc(linkHref(x.url)) + '" target="_blank" rel="noopener" title="' + esc(x.url) + '">' + (kd && x.type && kd !== x.type ? '<span class="lk">' + esc(kd) + '</span>' : '') + esc(x.type || kd || '링크') + ' ↗</a>'; }).join('') : '<span class="a13-hint">관련 링크 없음</span>') + (cw ? '<button class="wl-link" onclick="AF13.addLink(\'' + q(p.id) + '\')">＋ 링크</button>' : '') + '</div>';
   };
 
   /* ═══ v14.6 저장된 안건을 AI로 다시 쓰기 — 바꿀 칸을 골라 적용, 되돌리기 가능 ═══ */
@@ -24947,7 +25404,7 @@ function renderNotifList() {
   A.setDv = function(v) { A.ui.dv = v; try { localStorage.setItem('a13_dv', v); } catch (e) {} A.render(true); };
   A.ui.dlOpen = A.ui.dlOpen || {};
   A.ui.dl = A.ui.dl || { st: 'all', q: '' };
-  var BST = { planning: ['준비중', '#f59e0b'], ready: ['배포준비', '#3b82f6'], deployed: ['배포완료', '#10b981'], cancelled: ['취소', '#919191'] };
+  var BST = { planning: ['준비중', '#f59e0b'], ready: ['배포준비', '#3b82f6'], deployed: ['배포완료', '#10b981'], failed: ['실패', '#EE0005'], rolledback: ['롤백', '#FF4C14'], cancelled: ['취소', '#919191'] };
   function bDate(b) { return String(b.deployedAt || b.targetDate || b.created || '').slice(0, 10); }
   A.releaseNote = function(b) {
     var R = A.readiness(b);
@@ -24965,17 +25422,18 @@ function renderNotifList() {
   A.copyNote = function(bid) { var b = bundle(bid); if (!b) return; try { navigator.clipboard.writeText(A.releaseNote(b)); toast('릴리즈 노트를 복사했습니다'); } catch (e) { toast('복사하지 못했습니다', 'error'); } };
   function deployListH() {
     var f = A.ui.dl, all = (_deployBundles || []).filter(Boolean);
-    var cnt = { active: 0, deployed: 0, cancelled: 0, all: all.length };
-    all.forEach(function(b) { if (b.status === 'deployed') cnt.deployed++; else if (b.status === 'cancelled') cnt.cancelled++; else cnt.active++; });
+    var cnt = { active: 0, week: 0, deployed: 0, cancelled: 0, all: all.length }, wkR = A.weekRange();
+    all.forEach(function(b) { if (b.status === 'deployed') cnt.deployed++; else if (b.status === 'cancelled') cnt.cancelled++; else if (b.status === 'planning' || b.status === 'ready') cnt.active++; if (b.status !== 'cancelled' && bDate(b) >= wkR.mon && bDate(b) <= wkR.sun) cnt.week++; });
     var qq = (f.q || '').toLowerCase();
     var list = all.filter(function(b) {
-      if (f.st === 'active' && (b.status === 'deployed' || b.status === 'cancelled')) return false;
+      if (f.st === 'active' && b.status !== 'planning' && b.status !== 'ready') return false;
+      if (f.st === 'week' && (b.status === 'cancelled' || bDate(b) < wkR.mon || bDate(b) > wkR.sun)) return false;
       if (f.st === 'deployed' && b.status !== 'deployed') return false;
       if (f.st === 'cancelled' && b.status !== 'cancelled') return false;
       if (qq) { var R = A.readiness(b); var hay = (b.id + ' ' + (b.title || '') + ' ' + R.pids.join(' ') + ' ' + R.pids.map(function(p) { var x = proj(p); return x ? x.name : ''; }).join(' ') + ' ' + R.iss.map(function(i) { return i.id + ' ' + i.title; }).join(' ') + ' ' + (b.notes || '') + ' ' + (b.chatAuthor || '')).toLowerCase(); if (hay.indexOf(qq) === -1) return false; }
       return true;
     }).sort(function(a, b) { return bDate(b).localeCompare(bDate(a)) || String(b.id).localeCompare(String(a.id)); });
-    var h = '<div class="a13-toolbar"><span class="a13-seg">' + [['active', '진행 중'], ['deployed', '배포 완료'], ['cancelled', '취소'], ['all', '전체']].map(function(x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" onclick="AF13.ui.dl.st=\'' + x[0] + '\';AF13.render(true)">' + x[1] + ' <span class="a13-cnt">' + cnt[x[0]] + '</span></button>'; }).join('') + '</span>' +
+    var h = '<div class="a13-toolbar"><span class="a13-seg">' + [['active', '진행 중'], ['week', '이번 주'], ['deployed', '배포 완료'], ['cancelled', '취소'], ['all', '전체']].map(function(x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" onclick="AF13.ui.dl.st=\'' + x[0] + '\';AF13.render(true)">' + x[1] + ' <span class="a13-cnt">' + cnt[x[0]] + '</span></button>'; }).join('') + '</span>' +
       '<input class="a13-input a13-dlq" placeholder="버전 · 이름 · 메모 · 작성자 · 이슈 검색" value="' + esc(f.q) + '" oninput="AF13.ui.dl.q=this.value;clearTimeout(AF13._qt);AF13._qt=setTimeout(function(){AF13.render(true);var s=document.querySelector(\'#a13deploy .a13-dlq\');if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length)}},200)" style="width:260px">' +
       '<span class="a13-hint" style="margin-left:auto">' + list.length + '개</span></div>';
     if (!list.length) return h + '<div class="a13-card"><div class="a13-empty"><b>조건에 맞는 배포가 없습니다</b></div></div>';
@@ -24986,7 +25444,7 @@ function renderNotifList() {
       if (m !== lastM) { lastM = m; h += '<div class="a13-dmonth">' + (m ? m.replace('-', '년 ') + '월' : '날짜 미정') + '</div>'; }
       var R = A.readiness(b), st = BST[b.status] || [b.status || '-', '#919191'];
       h += '<div class="a13-drow" tabindex="0" role="button" onclick="AF13.bundleSheet(\'' + q(b.id) + '\')" onkeydown="if(event.key===\'Enter\')AF13.bundleSheet(\'' + q(b.id) + '\')">' +
-        '<div class="dt">' + (fmtD(b.deployedAt || b.targetDate) || '-') + (b.status === 'deployed' ? '' : ' ' + ddH(b.targetDate, b.status === 'cancelled')) + '</div>' +
+        '<div class="dt">' + (fmtD(b.deployedAt || b.targetDate) || '-') + (b.status === 'deployed' || b.status === 'failed' || b.status === 'rolledback' ? '' : ' ' + ddH(b.targetDate, b.status === 'cancelled')) + '</div>' +
         '<div class="nm"><b>' + (function() { var m = (String(b.title || '') + '\n' + String(b.notes || '').split('\n').slice(0, 3).join(' ')).match(/\bv?\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?\b/); return m ? '<span class="a13-ver">' + esc(m[0].charAt(0) === 'v' ? m[0] : 'v' + m[0]) + '</span>' : ''; })() + esc(String(b.title || '(이름 없음)').replace(/\s*:\s*[A-Za-z][\w-]*-v?\d+\.\d+(?:\.\d+)?\s*$|\s*:\s*v?\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?\s*$/, '')) + '</b><small>' + (b.source === 'chat' ? '<span class="a13-chatsrc">구글챗</span> ' : '') + esc(b.chatAuthor ? b.chatAuthor : b.id) + (b.chatLink ? ' · <a class="a13-tc" href="' + safeHref(b.chatLink) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">구글챗 원문 ↗</a>' : '') + (b.build ? ' · <span class="a13-build' + (/fail|실패/i.test(b.build) ? ' bad' : '') + '">' + esc(b.build.replace(/^\W+/, '').slice(0, 28)) + '</span>' : '') + (b.tcLink ? ' · <a class="a13-tc" href="' + safeHref(b.tcLink) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">TC 열기 ↗</a>' : '') + '</small></div>' +
         '<div>' + pill(st[0], st[1]) + '</div>' +
         '<div class="sv">' + (function() { var s = A._bundleSvcs(b); return s.length ? s.slice(0, 2).map(function(x) { return '<span class="a13-chip">' + esc(x) + '</span>'; }).join('') + (s.length > 2 ? '<span class="a13-hint">+' + (s.length - 2) + '</span>' : '') : '<span style="color:#CCCCCC">-</span>'; })() + '</div>' +
@@ -25025,6 +25483,26 @@ function renderNotifList() {
       '<div class="a13-note-ft">' + (lines.length > LIM ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.toggleNote(event,\'' + q(b.id) + '\')">' + (open ? '접기' : '전체 보기 (' + lines.length + '줄)') + '</button>' : '') + (cw ? '<button type="button" class="a13-btn sm ghost" onclick="AF13.editNote(event,\'' + q(b.id) + '\')">메모 수정</button>' : '') + '</div></div>';
   }
   A._noteH = noteH;
+  A.regressTpl = function(b) {
+    var sv = arr(b.services), it = ['로그인·회원가입', '메인·주요 화면 진입', '예약 접수·결제', '예약 취소·환불', '푸시·알림 수신'];
+    if (sv.some(function(x) { return /선주/.test(x); })) it.push('선주 예약 관리·출조 확정');
+    if (sv.some(function(x) { return /어드민/.test(x); })) it.push('어드민 예약·정산 조회');
+    if (sv.some(function(x) { return /api|서버|배치/i.test(x); })) it.push('API 응답·오류 로그 확인', 'DB 마이그레이션·롤백 방법 확인');
+    return it.map(function(t) { return { t: t, s: '' }; });
+  };
+  A.regressH = function(b) {
+    var saved = b.regress && arr(b.regress.items).length, items = saved ? arr(b.regress.items) : A.regressTpl(b), cw = canW(), RG = A.regressStat(b);
+    var L = { pass: '통과', fail: '실패', skip: '건너뜀' };
+    return '<div class="np-f a13-rg"><span>회귀 체크 <em>' + (saved ? A.regressTxt(RG).replace('회귀 ', '') : '기본 항목 · 누르면 저장') + '</em></span><div class="rg-ver"><span class="a13-hint">확인한 빌드</span><input class="a13-input" list="a13VerList3" placeholder="예: v4.28.0" value="' + esc((b.regress && b.regress.ver) || '') + '"' + (cw ? '' : ' disabled') + ' onchange="AF13.setRegressVer(\'' + q(b.id) + '\',this.value)" style="width:140px"><datalist id="a13VerList3">' + A.recentVersions().map(function(v) { return '<option value="' + esc(v) + '">'; }).join('') + '</datalist></div>' + items.map(function(x, k) {
+      return '<div class="rg-r' + (x.s ? ' ' + x.s : '') + '"><span class="t">' + esc(x.t) + (x.s && x.by ? '<small>' + esc(x.by) + ' · ' + esc(String(x.at || '').slice(5, 16).replace('T', ' ')) + '</small>' : '') + '</span>' + (cw ? ['pass', 'fail', 'skip'].map(function(s) { return '<button type="button" class="' + (x.s === s ? 'on ' + s : '') + '" onclick="AF13.setRegress(\'' + q(b.id) + '\',' + k + ',\'' + s + '\')">' + L[s] + '</button>'; }).join('') : '<span class="a13-hint">' + (L[x.s] || '-') + '</span>') + (x.s === 'fail' && cw ? '<button type="button" class="mk" onclick="AF13.regressIssue(\'' + q(b.id) + '\',' + k + ')">이슈 등록</button>' : '') + '</div>';
+    }).join('') + (cw ? '<input class="a13-input rg-add" placeholder="＋ 항목 추가 후 Enter" onkeydown="if(event.key===\'Enter\'&&!event.isComposing&&this.value.trim()){AF13.addRegress(\'' + q(b.id) + '\',this.value.trim());this.value=\'\'}">' : '') + (b.regress && b.regress.by ? '<div class="a13-hint">마지막 기록 ' + esc(b.regress.by) + ' · ' + esc(String(b.regress.at || '').slice(5, 16).replace('T', ' ')) + '</div>' : '') + '</div>';
+  };
+  A._regItems = function(b) { return (b.regress && arr(b.regress.items).length ? arr(b.regress.items) : A.regressTpl(b)).map(function(x) { var o = { t: x.t, s: x.s || '' }; if (x.by) o.by = x.by; if (x.at) o.at = x.at; return o; }); };
+  A.setRegress = function(bid, k, s) { var b = bundle(bid); if (!b || !needW()) return; var it = A._regItems(b); if (!it[k]) return; var nm = (state.currentUser && state.currentUser.displayName) || ''; it[k].s = it[k].s === s ? '' : s; it[k].by = nm; it[k].at = iso(); A.setBundle(bid, { regress: { items: it, by: nm, at: iso(), ver: (b.regress && b.regress.ver) || '' } }); };
+  A.setRegressVer = function(bid, v) { var b = bundle(bid); if (!b || !needW()) return; var it = A._regItems(b); A.setBundle(bid, { regress: { items: it, by: (b.regress && b.regress.by) || '', at: (b.regress && b.regress.at) || iso(), ver: String(v || '').trim() } }); };
+  A.addRegress = function(bid, t) { var b = bundle(bid); if (!b || !needW()) return; var it = A._regItems(b); it.push({ t: t, s: '' }); A.setBundle(bid, { regress: { items: it, by: (state.currentUser && state.currentUser.displayName) || '', at: iso() } }); };
+  A.regressIssue = function(bid, k) { var b = bundle(bid); if (!b) return; var it = A._regItems(b)[k]; if (!it) return; A.issueSheet({ severity: 'Major' }); setTimeout(function() { var t = document.querySelector('#a13IS .is-title'); if (t) { t.value = '[회귀] ' + it.t + ' — ' + (b.title || b.id); t.dispatchEvent(new Event('input', { bubbles: true })); } }, 80); };
+  A.incidentH = function(b) { var L = arr(b.incidents); if (!L.length) return ''; return '<div class="np-f a13-inc"><span>장애 기록 <em>' + L.length + '건</em></span>' + L.slice().reverse().map(function(x) { return '<div class="inc"><b>' + (x.kind === 'failed' ? '실패' : '롤백') + '</b> ' + esc(String(x.at || '').slice(5, 16).replace('T', ' ')) + ' · ' + esc(x.by || '') + (x.cause ? '<div><b class="k">원인</b>' + esc(x.cause) + '</div><div><b class="k">조치</b>' + esc(x.action || '-') + '</div>' + (x.ver ? '<div><b class="k">되돌린 버전</b>' + esc(x.ver) + '</div>' : '') : '<div>' + esc(x.reason || '(원인 미기록)') + '</div>') + '</div>'; }).join('') + '</div>'; };
   A.bundleSheet = function(bid) {
     var b = bundle(bid); if (!b) return;
     var old = document.getElementById('a13BS'); if (old) old.remove();
@@ -25033,12 +25511,15 @@ function renderNotifList() {
       var b2 = bundle(bid); if (!b2) { close(); return; }
       var ae = document.activeElement; if (ae && wrap.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) return; // 입력 중엔 다시 그리지 않음
       var st = BST[b2.status] || [b2.status, '#919191'];
-      wrap.innerHTML = '<aside class="a13-np a13-bs" role="dialog" aria-modal="true" aria-label="배포 상세"><header><div><h2>' + esc(b2.title) + '</h2><p>' + esc(b2.id) + ' · ' + pill(st[0], st[1]) + (b2.deployedAt ? ' · 배포 ' + esc(String(b2.deployedAt).slice(0, 10)) : (b2.targetDate ? ' · 목표 ' + esc(b2.targetDate) : '')) + '</p></div><button class="x" aria-label="닫기">✕</button></header>' +
+      var RB = A.readiness(b2), svB = A._bundleSvcs ? A._bundleSvcs(b2) : [], vmB = (String(b2.title || '') + ' ' + String(b2.notes || '').split('\n').slice(0, 2).join(' ')).match(/\bv?\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?\b/);
+      wrap.innerHTML = '<aside class="a13-np a13-bs" role="dialog" aria-modal="true" aria-label="배포 상세"><header><div><h2>' + esc(b2.title) + '</h2><p>' + esc(b2.id) + ' · ' + pill(st[0], st[1]) + (b2.status === 'planning' || b2.status === 'ready' ? ' ' + A.verdictH(b2) : '') + (b2.deployedAt ? ' · 배포 ' + esc(String(b2.deployedAt).slice(0, 10)) : (b2.targetDate ? ' · 목표 ' + esc(b2.targetDate) : '')) + '</p><p class="bs-meta">' + (svB.length ? esc(svB.join(', ')) : '<span class="a13-hint">서비스 미지정</span>') + ' · ' + esc(b2.environment || '운영') + (vmB ? ' · ' + esc(vmB[0].charAt(0) === 'v' ? vmB[0] : 'v' + vmB[0]) : '') + ' · ' + (RB.pids.length ? '안건 ' + esc(RB.pids.join(', ')) : '<span class="a13-hint">안건 미지정</span>') + '</p></div><button class="x" aria-label="닫기">✕</button></header>' +
         '<div class="body"><div class="bf-form">' + A._bundleFormH(b2, false) + '</div>' + (function() {
           var R = A.readiness(b2), closed = b2.status === 'deployed' || b2.status === 'cancelled';
+          var addB = canW() && !closed ? '<button type="button" class="a13-btn sm np-addiss" onclick="AF13.bundleAddIssues(event,\'' + q(bid) + '\')">＋ 이슈 담기</button>' : '';
           if (closed && !R.total) return '<div class="a13-hint" style="padding:4px 2px">담긴 이슈·Task가 없습니다 (배포 내역은 아래 메모에 있습니다)</div>';
-          return '<div class="np-f"><span>담긴 항목</span>' + bundleCard(b2) + '</div>';
-        })() + '</div>' +
+          if (!R.total) return '<div class="np-f"><span>담긴 항목</span><div class="a13-hint">아직 담긴 이슈·Task가 없습니다</div>' + addB + '</div>';
+          return '<div class="np-f"><span>담긴 항목</span>' + bundleCard(b2) + addB + '</div>';
+        })() + A.regressH(b2) + A.incidentH(b2) + '</div>' +
         '<footer>' + (canW() ? '<button class="a13-btn ghost np-del" style="color:#EE0005">삭제</button>' : '') + '<span class="np-hint">바꾸면 바로 저장됩니다 <span class="np-saved"></span></span><button class="a13-btn ghost np-close">닫기</button><button class="a13-btn np-link" onclick="AF13.copyBundleLink(event,\'' + q(bid) + '\')">링크 복사</button><button class="a13-btn pri np-note">릴리즈 노트 복사</button></footer></aside>';
       wrap.querySelector('.x').onclick = close; wrap.querySelector('.np-close').onclick = close;
       wrap.querySelector('.np-note').onclick = function() { A.copyNote(bid); };
@@ -25380,6 +25861,16 @@ function renderNotifList() {
           bar.innerHTML = '<span class="lb">태그</span>' + (titleTags(i2) || '<span class="a13-hint">없음</span>') + '<button type="button" class="a13-btn sm ghost" onclick="AF13.tagPick(event,\'' + q(id) + '\')">' + (canW() ? '태그 편집' : '태그 보기') + '</button>';
         };
         A._refreshDetailTags();
+        (function() {
+          var body = document.getElementById('issueDetailBody'), i3 = (_issues || []).find(function(x) { return x.id === id; }); if (!body || !i3) return;
+          var bx = document.getElementById('a13DetailMeta'); if (!bx) { bx = document.createElement('div'); bx.id = 'a13DetailMeta'; bx.className = 'a13-dtags a13-dmeta'; var tg = document.getElementById('a13DetailTags'); if (tg) tg.after(bx); else body.insertBefore(bx, body.firstChild); }
+          var lastRej = arr(i3.comments).slice().reverse().find(function(c) { return /^\[반려\]/.test(String(c.text || '')); });
+          var dis = canW() ? '' : ' disabled';
+          bx.innerHTML = (lastRej ? '<div class="rej"><b>최근 반려 사유' + (i3.reopenCount ? ' · ' + i3.reopenCount + '회째' : '') + '</b>' + esc(String(lastRej.text).replace(/^\[반려\]\s*/, '')) + ' <span class="a13-hint">' + esc(lastRej.user || '') + '</span></div>' : '') +
+            '<span class="lb">직군</span><select class="a13-input"' + dis + ' data-k="jobPart"><option value="">미정</option>' + A.PARTS.map(function(x) { return '<option' + (i3.jobPart === x ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select>' +
+            '<span class="lb">빌드 버전</span><input class="a13-input"' + dis + ' data-k="buildVer" list="a13VerList2" value="' + esc(i3.buildVer || '') + '" placeholder="예: v4.28.0" maxlength="40" style="width:140px"><datalist id="a13VerList2">' + A.recentVersions().map(function(v) { return '<option value="' + esc(v) + '">'; }).join('') + '</datalist>';
+          [].forEach.call(bx.querySelectorAll('[data-k]'), function(el) { el.addEventListener('change', function() { if (!needW()) return; var i4 = (_issues || []).find(function(x) { return x.id === id; }); if (!i4) return; var v = String(el.value || '').trim(); if ((i4[el.dataset.k] || '') === v) return; i4[el.dataset.k] = v; i4.updated = iso(); saveIssueData(i4); toast((el.dataset.k === 'jobPart' ? '직군' : '빌드 버전') + ' 저장'); }); });
+        })();
       } catch (e) { console.warn('[v13.3 detail tags]', e); }
       return r;
     };
@@ -25458,6 +25949,14 @@ function renderNotifList() {
   /* ── 새 이슈 등록 시트 ── */
   var ENVS = [['production', '운영'], ['staging', '스테이징'], ['development', '개발']];
   var PLATS = ['IOS', 'AOS', 'PC', 'MW'];
+  A.recentVersions = function() {
+    var seen = {}, out = [];
+    (_deployBundles || []).filter(Boolean).slice().sort(function(a, b) { return String(b.deployedAt || b.targetDate || b.created || '').localeCompare(String(a.deployedAt || a.targetDate || a.created || '')); }).forEach(function(b) {
+      var m = (String(b.title || '') + ' ' + String(b.notes || '').split('\n').slice(0, 2).join(' ')).match(/\bv?\d+\.\d+\.\d+(?:-[\w.]+)?\b/); if (!m) return;
+      var v = m[0].charAt(0) === 'v' ? m[0] : 'v' + m[0]; if (seen[v] || out.length >= 20) return; seen[v] = 1; out.push(v);
+    });
+    return out;
+  };
   A.issueSheet = function(o) {
     if (!needW()) return;
     o = o || {};
@@ -25480,7 +25979,9 @@ function renderNotifList() {
           '<div class="np-f"><span>환경</span><div class="a13-seg is-env">' + ENVS.map(function(e) { return '<button type="button" data-v="' + e[0] + '"' + (e[0] === (o.env || 'production') ? ' class="on"' : '') + '>' + e[1] + '</button>'; }).join('') + '</div></div></div>' +
         '<div class="np-f"><span>플랫폼 <em>여러 개</em></span><div class="np-chips is-plat">' + PLATS.map(function(p) { return '<button type="button" data-v="' + p + '">' + p + '</button>'; }).join('') + '</div></div>' +
         '<div class="np-f"><span>담당자 <em>여러 명 · Task를 고르면 Task 담당자가 들어갑니다</em></span><div class="np-chips is-asg">' + people.map(function(m) { return '<button type="button" data-v="' + esc(m.id) + '">' + av(m.id) + esc(m.name) + '</button>'; }).join('') + '</div></div>' +
-        '<div class="np-f"><span>검증 담당</span><select class="a13-input is-ver"><option value="">미정</option>' + people.map(function(m) { return '<option value="' + esc(m.id) + '">' + esc(m.name) + '</option>'; }).join('') + '</select></div>' +
+        '<div class="np-grid"><div class="np-f"><span>검증 담당</span><select class="a13-input is-ver"><option value="">미정</option>' + people.map(function(m) { return '<option value="' + esc(m.id) + '"' + (isQA() && m.id === me() ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join('') + '</select></div>' +
+          '<div class="np-f"><span>직군 <em>누가 고칠지</em></span><div class="a13-seg is-part">' + A.PARTS.map(function(x) { return '<button type="button" data-v="' + x + '">' + x + '</button>'; }).join('') + '</div></div></div>' +
+        '<div class="np-f"><span>빌드 버전 <em>선택 · 발견한 빌드</em></span><input class="a13-input is-ver2" list="a13VerList" placeholder="예: v4.28.0" maxlength="40"><datalist id="a13VerList">' + A.recentVersions().map(function(v) { return '<option value="' + esc(v) + '">'; }).join('') + '</datalist></div>' +
         '<div class="np-f"><span>태그</span><div class="a13-tagpick">' + tagList().map(function(t) { return '<button type="button" data-t="' + esc(t.name) + '">' + esc(t.name) + '</button>'; }).join('') + '</div></div>' +
         '<div class="np-f"><span>확인절차</span><textarea class="a13-input is-steps" placeholder="1. 앱 실행&#10;2. 조황 탭 → 사진 업로드&#10;3. ..."></textarea></div>' +
         '<div class="np-grid"><div class="np-f"><span>기대 결과</span><textarea class="a13-input is-exp" placeholder="어떻게 되어야 하나요?"></textarea></div>' +
@@ -25494,6 +25995,7 @@ function renderNotifList() {
     wireSeg(P);
     var segOne = function(sel) { P.querySelectorAll(sel + ' button').forEach(function(b) { b.onclick = function() { P.querySelectorAll(sel + ' button').forEach(function(x) { x.classList.toggle('on', x === b); }); }; }); };
     segOne('.is-type'); segOne('.is-env');
+    P.querySelectorAll('.is-part button').forEach(function(b) { b.onclick = function() { var on = !b.classList.contains('on'); P.querySelectorAll('.is-part button').forEach(function(x) { x.classList.remove('on'); }); b.classList.toggle('on', on); }; });
     P.querySelectorAll('.is-plat button, .is-asg button, .a13-tagpick button').forEach(function(b) { b.onclick = function() { b.classList.toggle('on'); b.dataset.touched = '1'; }; });
     var catTouched = false;
     P.querySelectorAll('.a13-catpick button').forEach(function(b) { b.onclick = function() { catTouched = true; var on = !b.classList.contains('on'); P.querySelectorAll('.a13-catpick button').forEach(function(x) { x.classList.remove('on'); }); b.classList.toggle('on', on); }; });
@@ -25531,6 +26033,7 @@ function renderNotifList() {
       var cb = q1('.a13-catpick button.on'), ty = q1('.is-type button.on'), en = q1('.is-env button.on');
       var iss = A.createIssue({ title: ti, pid: q1('.is-pid').value, taskId: q1('.is-task').value, severity: segVal(P), type: ty ? ty.dataset.v : 'Bug',
         buildCategory: cb ? cb.dataset.c : '', service: q1('.is-svc').value, env: en ? en.dataset.v : '', platforms: on('.is-plat'), assignees: on('.is-asg'), verifier: q1('.is-ver').value,
+        jobPart: (q1('.is-part button.on') || {}).textContent || '', buildVer: (q1('.is-ver2').value || '').trim(),
         tags: on('.a13-tagpick'), testSteps: q1('.is-steps').value, expectedResult: q1('.is-exp').value, actualResult: q1('.is-act').value, attachments: (_createIssueAttachments || []).slice() });
       if (!iss) return;
       toast(iss.id + ' 등록');
@@ -25567,15 +26070,16 @@ function renderNotifList() {
   }
   A._bundleSvcs = bundleSvcs;
   function newProjChips(list) { return arr(list).map(function(p) { var x = proj(p); return '<span class="a13-bproj"><span class="a13-pid">' + esc(p) + '</span><span class="nm">' + esc(x ? x.name : '') + '</span><button type="button" data-rm="' + esc(p) + '" aria-label="빼기">×</button></span>'; }).join('') + '<button type="button" class="a13-bproj-add bf-padd">＋ 프로젝트</button>'; }
+  A.BSVC = NEW_SERVICES.concat(['api 서버', 'AI 채팅 서버', '배치']);
   function bundleFormH(b, isNew) {
     var st = b.status || 'planning', svc = arr(b.services);
     return '<input class="np-title bf-title" placeholder="배포 이름 (예: 10월 4주차 정기 배포)" value="' + esc(b.title || '') + '" maxlength="80" aria-label="배포 이름">' +
-      (isNew ? '' : '<div class="np-f"><span>상태</span><div class="a13-seg bf-status">' + [['planning', '준비중'], ['ready', '배포준비'], ['deployed', '배포완료'], ['cancelled', '취소']].map(function(x) { return '<button type="button" data-v="' + x[0] + '" class="' + (st === x[0] ? 'on' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>') +
+      (isNew ? '' : '<div class="np-f"><span>상태</span><div class="a13-seg bf-status">' + [['planning', '준비중'], ['ready', '배포준비'], ['deployed', '배포완료'], ['failed', '실패'], ['rolledback', '롤백'], ['cancelled', '취소']].map(function(x) { return '<button type="button" data-v="' + x[0] + '" class="' + (st === x[0] ? 'on' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>') +
       '<div class="np-grid"><div class="np-f"><span>목표일</span><input type="date" class="a13-input bf-date" value="' + esc(b.targetDate || '') + '"></div>' +
         (isNew ? '<div class="np-f"><span>환경</span><div class="a13-seg bf-env">' + BENV.map(function(e) { return '<button type="button" data-v="' + e + '" class="' + ((b.environment || '운영') === e ? 'on' : '') + '">' + e + '</button>'; }).join('') + '</div></div>'
           : '<div class="np-f"><span>배포일</span><input type="date" class="a13-input bf-done" value="' + esc(String(b.deployedAt || '').slice(0, 10)) + '"' + (st === 'deployed' ? '' : ' disabled title="배포완료 상태일 때 입력"') + '></div>') + '</div>' +
       (isNew ? '' : '<div class="np-f"><span>환경</span><div class="a13-seg bf-env">' + BENV.map(function(e) { return '<button type="button" data-v="' + e + '" class="' + ((b.environment || '운영') === e ? 'on' : '') + '">' + e + '</button>'; }).join('') + (b.environment && BENV.indexOf(b.environment) === -1 ? '<button type="button" class="on" data-v="' + esc(b.environment) + '">' + esc(b.environment) + '</button>' : '') + '</div></div>') +
-      '<div class="np-f"><span>서비스 <em>여러 개</em></span><div class="np-chips bf-svc">' + NEW_SERVICES.concat(svc.filter(function(s) { return NEW_SERVICES.indexOf(s) === -1; })).map(function(s) { return '<button type="button" data-v="' + esc(s) + '" class="' + (svc.indexOf(s) !== -1 ? 'on' : '') + '">' + esc(s) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="np-f"><span>서비스 <em>여러 개</em></span><div class="np-chips bf-svc">' + A.BSVC.concat(svc.filter(function(s) { return A.BSVC.indexOf(s) === -1; })).map(function(s) { return '<button type="button" data-v="' + esc(s) + '" class="' + (svc.indexOf(s) !== -1 ? 'on' : '') + '">' + esc(s) + '</button>'; }).join('') + '</div></div>' +
       '<div class="np-f"><span>프로젝트 <em>배포에 묶을 안건 · 여러 개</em></span><div class="bf-proj">' + (isNew ? newProjChips(arr(b.projects)) : bundleProjChipsH(b, { full: 1 })) + '</div></div>' +
       '<div class="np-f"><span>TC 링크 <em>선택 · 테스트 케이스 문서 주소</em></span><div class="bf-tcrow"><input type="url" inputmode="url" class="a13-input bf-tc" placeholder="https://… (비워 두어도 됩니다)" value="' + esc(b.tcLink || '') + '">' + (!isNew && b.tcLink ? '<a class="a13-btn sm ghost" href="' + safeHref(b.tcLink) + '" target="_blank" rel="noopener">열기 ↗</a>' : '') + '</div></div>' +
       '<div class="np-f"><span>메모 · 배포 내역 <em>버전, 변경 내용, PR 링크 등</em></span><textarea class="a13-input bf-notes" placeholder="예약 api 배포 : v2.62.0&#10;&#10;What\'s Changed&#10;- 쿠폰 사용 가능 시간 표기 개선 #241">' + esc(b.notes || '') + '</textarea></div>';
@@ -25626,7 +26130,11 @@ function renderNotifList() {
     if (!canW()) { P.querySelectorAll('.bf-form input, .bf-form textarea, .bf-form button').forEach(function(x) { x.disabled = true; }); return; }
     var t = q1('.bf-title');
     if (t) { t.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !(e.isComposing || e.keyCode === 229)) { e.preventDefault(); t.blur(); } }); t.addEventListener('blur', function() { var v = t.value.trim(), b = b0(); if (!b) return; if (!v) { t.value = b.title || ''; return; } if (v !== b.title) A.setBundle(bid, { title: v }); }); }
-    P.querySelectorAll('.bf-status button').forEach(function(x) { x.onclick = function() { var b = b0(); if (!b || b.status === x.dataset.v) return; var patch = { status: x.dataset.v }; if (x.dataset.v === 'deployed' && !b.deployedAt) patch.deployedAt = iso(); A.setBundle(bid, patch); }; });
+    P.querySelectorAll('.bf-status button').forEach(function(x) { x.onclick = function() {
+      var b = b0(); if (!b || b.status === x.dataset.v) return; var v = x.dataset.v, patch = { status: v };
+      if (v === 'deployed') { var R = A.readiness(b), oi = R.iss.filter(function(i) { return i.status !== '완료'; }).length, ot = R.tasks.filter(function(t) { return t.t.status !== 'done'; }).length; if ((oi || ot) && confirm('담긴 이슈 ' + oi + '건 · Task ' + ot + '건도 완료로 바꿀까요?\n[확인] 함께 완료 · [취소] 배포 상태만 변경')) { A.completeBundle(bid); return; } if (!b.deployedAt) patch.deployedAt = iso(); }
+      if (v === 'failed' || v === 'rolledback') { var why = prompt((v === 'failed' ? '실패' : '롤백') + ' 기록: 원인 / 조치 / 되돌린 버전 (빗금 / 으로 나눠 쓰면 칸별로 남습니다)'); if (why === null) return; var pt = String(why || '').split('/').map(function(x) { return x.trim(); }); var inc = { at: iso(), kind: v, reason: String(why || '').trim(), by: (state.currentUser && state.currentUser.displayName) || '' }; if (pt.length > 1) { inc.cause = pt[0]; inc.action = pt[1]; if (pt[2]) inc.ver = pt[2]; } patch.incidents = arr(b.incidents).concat([inc]); }
+      A.setBundle(bid, patch); }; });
     var d = q1('.bf-date'); if (d) d.addEventListener('change', function() { A.setBundle(bid, { targetDate: d.value }); });
     var dd = q1('.bf-done'); if (dd) dd.addEventListener('change', function() { if (!dd.value) return; A.setBundle(bid, { deployedAt: dd.value + 'T09:00:00.000Z' }); });
     P.querySelectorAll('.bf-env button').forEach(function(x) { x.onclick = function() { var b = b0(); if (b && b.environment !== x.dataset.v) A.setBundle(bid, { environment: x.dataset.v }); }; });

@@ -4895,6 +4895,15 @@
     .wl-wkp { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 0 7px; }
     .wl-tr .cl .ln { font-size: 14px; }
     .wl-tr .nm b { font-size: 14px; }
+    /* v14.5 속도표·담당 부하 */
+    .a13-np .np-plan-vel{color:#767676;font-size:11px}
+    .a13-np .np-load{margin-top:6px;border-top:1px dashed #E7E7E7;padding-top:6px}
+    .a13-np .np-load summary{cursor:pointer;display:flex;gap:6px;align-items:center;flex-wrap:wrap;list-style:none}
+    .a13-np .np-load summary em{font-style:normal;color:#AAAAAA;font-size:11px}
+    .a13-np .np-ld{font-size:11px;border-radius:4px;padding:0 6px;font-weight:700}.a13-np .np-ld.hot{background:#fff1f1;color:#EE0005}.a13-np .np-ld.warn{background:#fff7e0;color:#8a5a00}.a13-np .np-ld.ok{background:#e9f7ee;color:#1a7f37}
+    .a13-np .np-ldr{display:grid;grid-template-columns:56px 112px 1fr;gap:2px 8px;padding:4px 0;border-bottom:1px solid #F3F3F3;font-size:12px;align-items:baseline}
+    .a13-np .np-ldr .nm{font-weight:700}.a13-np .np-ldr .ph{color:#767676}.a13-np .np-ldr.hot .st{color:#EE0005;font-weight:600}.a13-np .np-ldr.warn .st{color:#8a5a00}.a13-np .np-ldr.ok .st{color:#1a7f37}
+    .a13-np .np-ldr .it{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:4px}.a13-np .np-ldr .it span{font-size:11px;background:#F3F3F3;border-radius:4px;padding:0 5px;color:#363636}
     /* v14.4 배포일 기준 일정 */
     .a13-np .np-plan-info{margin:2px 0 8px;font-size:12px}.a13-np .np-plan-info:empty{display:none}
     .a13-np .np-plan-ok{background:#F7F8FC;border:1px solid #E7E7E7;border-radius:10px;padding:8px 10px;color:#363636;line-height:1.6}
@@ -5641,6 +5650,18 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v14.5</span>
+              <span class="rn-version-title">팀 속도 기준 단계 기간 · 담당 부하 평가</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>단계 기간을 과거 완료 안건의 실제 단계 기간(중앙값)으로 산정 — 영향 서비스 수로 규모 S·M·L, 복잡도로 보정</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건을 만들 때마다 담당 부하 평가: 그 기간에 겹치는 진행 중 안건·Task·휴가를 보여 주고, 같은 파트에서 덜 바쁜 사람을 먼저 배정</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.4</span>
               <span class="rn-version-title">배포일만 넣으면 단계 일정·Task 자동 작성</span>
@@ -21922,7 +21943,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.4';
+    var AF_BUILD = 'v14.5';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -23400,7 +23421,37 @@ function renderNotifList() {
     weights.forEach(function(w) { var i0 = Math.floor(N * cum / tot); cum += w; var i1 = Math.max(i0, Math.ceil(N * cum / tot) - 1); out.push([days[Math.min(i0, N - 1)], days[Math.min(i1, N - 1)]]); });
     return out;
   }
-  var PLAN_BASE = { plan: 5, design: 5, back: 10, front: 8, qa: 5 };          // 복잡도 3 기준 영업일
+  // 팀 속도표: 완료 안건의 단계 기간(영업일) 중앙값 — 규모 S(서비스 0~1개)·M(2개)·L(3개 이상). work/velocity.py로 다시 계산해 갱신
+  A.VELOCITY = {"at": "2026-11-27", "projects": 46, "samples": {"plan": 31, "design": 19, "front": 35, "back": 22, "qa": 28}, "bySize": {"S": {"plan": 2, "design": 2, "front": 2, "back": 2, "qa": 2}, "M": {"plan": 2, "design": 2, "front": 4, "back": 4, "qa": 4}, "L": {"plan": 2, "design": 2, "front": 5, "back": 5, "qa": 6}}, "count": {"S": {"plan": 22, "design": 12, "front": 28, "back": 15, "qa": 19}, "M": {"plan": 2, "design": 1, "front": 2, "back": 1, "qa": 1}, "L": {"plan": 7, "design": 6, "front": 5, "back": 6, "qa": 8}}, "p75": {"plan": 2.0, "design": 1.5, "front": 2.5, "back": 1.67, "qa": 3.0}};
+  function velSize(n) { return n >= 3 ? 'L' : n === 2 ? 'M' : 'S'; }
+  // 복잡도 보정: 3=중앙값, 4=과거 상위 25% 수준, 5=그보다 1.4배, 1·2는 더 짧게
+  function velK(ph, c) { var r = (A.VELOCITY.p75 || {})[ph] || 2; c = Math.min(5, Math.max(1, Math.round(c || 3))); return c === 1 ? 0.7 : c === 2 ? 0.85 : c === 3 ? 1 : c === 4 ? r : r * 1.4; }
+  var LIVE_ST = function(p) { return ['완료', 'Deprecated', '연기', '보류', '중단'].indexOf(p.status) === -1; };
+  // 담당자 부하: [from,to] 기간에 겹치는 진행 중 안건(Task가 있으면 Task 기준, 없으면 단계 담당 기준) + 휴가
+  A.loadOf = function(mid, from, to, exceptPid) {
+    var items = [];
+    (state.projects || []).forEach(function(p) {
+      if (!p || p.id === exceptPid || !LIVE_ST(p)) return;
+      var tk = arr(p.tasks);
+      PH.forEach(function(ph) {
+        var phTasks = tk.filter(function(t) { return t.phase === ph && arr(t.assignees).length; });
+        var wins = [];
+        if (phTasks.length) phTasks.forEach(function(t) { if (t.status !== 'done' && arr(t.assignees).indexOf(mid) !== -1 && (t.end || t.start)) wins.push([t.start || t.end, t.end || t.start, t.title]); });
+        else { var d = p.phases && p.phases[ph]; if (d && d.start && d.end && arr(p.assignments && p.assignments[ph]).indexOf(mid) !== -1) wins.push([d.start, d.end, '']); }
+        wins.forEach(function(w) {
+          var a = w[0] > from ? w[0] : from, b = w[1] < to ? w[1] : to;
+          if (a > b) return;
+          var ov = bdCount(a, b); if (!ov) return;
+          items.push({ pid: p.id, name: p.name, phase: ph, s: w[0], e: w[1], ov: ov, task: w[2] });
+        });
+      });
+    });
+    var leave = (A.leaveDays ? A.leaveDays(mid, from, to) : []).filter(function(x) { return x.k === '종일' || x.k === '오전' || x.k === '오후'; });
+    var projs = {}; items.forEach(function(x) { projs[x.pid] = 1; });
+    var n = Object.keys(projs).length, win = Math.max(1, bdCount(from, to)), lv = leave.reduce(function(a, x) { return a + (x.k === '종일' ? 1 : 0.5); }, 0);
+    return { items: items, projects: n, leave: leave, level: n >= 2 || lv >= win / 2 ? 'hot' : n === 1 || lv > 0 ? 'warn' : 'ok', score: n * 10 + items.reduce(function(a, x) { return a + x.ov; }, 0) / win + lv };
+  };
+  var PLAN_BASE = { plan: 5, design: 5, back: 10, front: 8, qa: 5 };          // (예전 기본값 — 속도표가 없을 때만)
   var PLAN_K = { 1: 0.4, 2: 0.7, 3: 1, 4: 1.4, 5: 1.8 };
   var PLAN_TPL = {
     plan: [['요구사항·정책 정리', 2], ['화면 흐름·기획서 작성', 3]],
@@ -23417,7 +23468,8 @@ function renderNotifList() {
     var k = PLAN_K[Math.min(5, Math.max(1, Math.round(opt.complexity || 3)))] || 1;
     var t = new Date(), today = bdNext(ymd(t.getFullYear(), t.getMonth() + 1, t.getDate()));
     var qaEnd = bdPrev(addDays(deploy, -1));
-    var dur0 = {}; PH.forEach(function(ph) { dur0[ph] = has(ph) ? Math.max(1, Math.round(PLAN_BASE[ph] * k)) : 0; });
+    var size = velSize(opt.services || 0), vel = A.VELOCITY && A.VELOCITY.bySize && A.VELOCITY.bySize[size];
+    var dur0 = {}; PH.forEach(function(ph) { dur0[ph] = has(ph) ? Math.max(1, Math.round(vel ? vel[ph] * velK(ph, opt.complexity) : PLAN_BASE[ph] * k)) : 0; });
     function layout(dur) {
       var r = {}, end = qaEnd;
       if (dur.qa) { r.qa = [bdBack(end, dur.qa), end]; end = bdPrev(addDays(r.qa[0], -1)); }
@@ -23442,7 +23494,16 @@ function renderNotifList() {
     var phases = {}; PH.forEach(function(ph) { phases[ph] = r[ph] ? { start: r[ph][0], end: r[ph][1] } : { start: '', end: '' }; });
     // Task: AI 초안이 있으면 그것, 없으면 단계별 기본 Task. 담당은 파트 명단, FE·BE는 두 사람이 번갈아
     var asg = (A.defaultAssignments && A.defaultAssignments()) || {};
-    var lanes = { plan: arr(asg.plan).slice(0, 1), design: arr(asg.design), front: arr(asg.front), back: arr(asg.back), qa: arr(asg.qa).slice(0, 1) };
+    var lanes = {}, loads = {};
+    PH.forEach(function(ph) {
+      var cand = arr(asg[ph]); if (!r[ph] || !cand.length) { lanes[ph] = cand; return; }
+      var sc = cand.map(function(m, i) { var L = A.loadOf(m, r[ph][0], r[ph][1], opt.exceptPid); loads[ph + ':' + m] = L; return { m: m, i: i, sc: L.score }; });
+      sc.sort(function(a, b) { return a.sc - b.sc || a.i - b.i; });
+      var take = (ph === 'plan' || ph === 'qa') ? 1 : sc.length;
+      if (ph === 'qa') { var q0 = sc.filter(function(x) { return /QA/i.test((mem(x.m) || {}).role || ''); })[0]; lanes[ph] = [q0 ? q0.m : sc[0].m]; }
+      else if (ph === 'plan') { var p0 = sc.filter(function(x) { return !/QA/i.test((mem(x.m) || {}).role || ''); })[0]; lanes[ph] = [p0 ? p0.m : sc[0].m]; }
+      else lanes[ph] = sc.slice(0, take).map(function(x) { return x.m; });
+    });
     var tasks = (opt.tasks && opt.tasks.length ? opt.tasks : [].concat.apply([], PH.map(function(ph) { return (PLAN_TPL[ph] || []).map(function(x) { return { title: x[0], phase: ph, days: x[1] }; }); })))
       .filter(function(x) { return x && x.title && r[x.phase]; });
     var lines = [];
@@ -23460,7 +23521,19 @@ function renderNotifList() {
     var bm = arr(asg.back)[0] && mem(arr(asg.back)[0]);
     lines.push('운영 배포' + (bm ? ' @' + bm.name : '') + ' ~' + (+deploy.slice(5, 7)) + '/' + (+deploy.slice(8)) + ' #BE');
     var hol = Object.keys(A.KR_HOL).filter(function(d) { return d >= (r.start || today) && d <= deploy; }).map(function(d) { return fmtD(d) + ' ' + A.KR_HOL[d]; });
-    return { phases: phases, lines: lines, short: short, start: r.start, bdays: bdCount(r.start || today, qaEnd), holidays: hol, k: Math.round(opt.complexity || 3), late: (r.start || today) < today };
+    var load = [];
+    PH.forEach(function(ph) { if (!r[ph]) return; (lanes[ph] || []).forEach(function(m) { var L = loads[ph + ':' + m] || A.loadOf(m, r[ph][0], r[ph][1], opt.exceptPid); var mm = mem(m); load.push({ mid: m, name: mm ? mm.name : m, phase: ph, s: r[ph][0], e: r[ph][1], L: L }); }); });
+    return { phases: phases, lines: lines, short: short, start: r.start, bdays: bdCount(r.start || today, qaEnd), holidays: hol, k: Math.round(opt.complexity || 3), late: (r.start || today) < today, size: size, vel: !!vel, dur: dur, load: load };
+  };
+  A.loadH = function(pl) {
+    if (!pl.load || !pl.load.length) return '';
+    var hot = pl.load.filter(function(x) { return x.L.level === 'hot'; }).length, warn = pl.load.filter(function(x) { return x.L.level === 'warn'; }).length;
+    return '<details class="np-load"' + (hot ? ' open' : '') + '><summary><b>담당 부하</b> ' + (hot ? '<span class="np-ld hot">과부하 ' + hot + '</span>' : '') + (warn ? '<span class="np-ld warn">겹침 ' + warn + '</span>' : '') + (!hot && !warn ? '<span class="np-ld ok">겹치는 일 없음</span>' : '') + '<em>진행 중 안건·Task·휴가 기준 · 같은 파트에서 덜 바쁜 사람을 먼저 배정</em></summary>' +
+      pl.load.map(function(x) {
+        var L = x.L, its = L.items.slice(0, 4);
+        return '<div class="np-ldr ' + L.level + '"><span class="nm">' + esc(x.name) + '</span><span class="ph">' + esc(PHL[x.phase]) + ' ' + esc(fmtD(x.s)) + '~' + esc(fmtD(x.e)) + '</span><span class="st">' + (L.level === 'hot' ? '⚠ ' : '') + (L.projects ? '다른 안건 ' + L.projects + '건 겹침' : '여유') + (L.leave.length ? ' · 휴가 ' + L.leave.map(function(v) { return fmtD(v.d) + (v.k === '종일' ? '' : ' ' + v.k); }).join(', ') : '') + '</span>' +
+          (its.length ? '<span class="it">' + its.map(function(i) { return '<span title="' + esc(i.name + (i.task ? ' — ' + i.task : '')) + '">' + esc(i.pid) + ' ' + esc(PHL[i.phase]) + ' ' + esc(fmtD(i.s)) + '~' + esc(fmtD(i.e)) + '</span>'; }).join('') + (L.items.length > 4 ? '<span>외 ' + (L.items.length - 4) + '</span>' : '') + '</span>' : '') + '</div>';
+      }).join('') + '</details>';
   };
   // 새 안건 시트: 배포 목표일을 넣거나 AI가 채우면 단계·Task를 잡음. 직접 고친 칸은 덮어쓰지 않음
   A.planWire = function(P, wrap) {
@@ -23475,7 +23548,8 @@ function renderNotifList() {
       var t = new Date(), today = ymd(t.getFullYear(), t.getMonth() + 1, t.getDate());
       if (d <= today) { info.innerHTML = '<span class="np-plan-warn">배포일이 오늘이거나 지났어요. 날짜를 확인해 주세요</span>'; return; }
       var ai = wrap._ai && wrap._ai.d;
-      var pl = A.planFromDeploy(d, { complexity: ai ? ai.complexity : 3, tasks: ai && ai.tasks, phases: ai && ai.phases });
+      var svcN = P.querySelectorAll('.np-chips button.on').length;
+      var pl = A.planFromDeploy(d, { complexity: ai ? ai.complexity : 3, tasks: ai && ai.tasks, phases: ai && ai.phases, services: svcN });
       var canPh = phasesEmpty() || sameAsLast(), canTk = tasksEl && (!tasksEl.value.trim() || (last && tasksEl.value === last.text));
       if (!canPh && !canTk) { info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">📅 배포일 기준으로 다시 잡기</button> <span class="a13-hint">직접 고친 일정·Task가 있어 자동으로 바꾸지 않았어요</span>'; info.querySelector('.np-plan-redo').onclick = function() { last = null; force(); }; return; }
       var prev = keep || { phases: curPhases(), text: tasksEl ? tasksEl.value : '' };
@@ -23486,9 +23560,10 @@ function renderNotifList() {
       ['ph', 'task'].forEach(function(k) { var x = P.querySelector('details[data-sec="' + k + '"]'); if (x) x.open = true; });
       P.querySelectorAll('.np-phases input').forEach(function(el) { el.classList.remove('ai-filled'); void el.offsetWidth; el.classList.add('ai-filled'); });
       info.innerHTML = '<div class="np-plan-ok"><b>📅 ' + esc(fmtD(d)) + ' 배포 기준으로 거꾸로 잡았어요</b> · ' + esc(fmtD(pl.start)) + ' 시작 · 영업일 ' + pl.bdays + '일' + (ai ? ' · 복잡도 ' + pl.k + '(AI)' : '') + ' · Task ' + pl.lines.length + '건' + (ai && ai.tasks && ai.tasks.length ? '(AI 초안)' : '(기본 틀)') +
+        (pl.vel ? '<div class="np-plan-vel">⏱ 팀 속도 기준: 완료 안건 ' + A.VELOCITY.projects + '건의 단계 기간 · 규모 ' + pl.size + ' (서비스 ' + svcN + '개)' + ' → ' + PH.filter(function(k) { return pl.dur[k]; }).map(function(k) { return PHL[k] + ' ' + pl.dur[k] + '일'; }).join(' · ') + '</div>' : '') +
         (pl.holidays.length ? '<div class="np-plan-hol">공휴일 제외: ' + pl.holidays.map(esc).join(', ') + '</div>' : '') +
         (pl.short ? '<div class="np-plan-warn">⚠ 표준 일정보다 ' + pl.short + '영업일 부족해 단계마다 줄였어요. 범위를 줄이거나 배포일을 미루는 걸 검토하세요</div>' : '') +
-        '<div class="np-plan-act"><button type="button" class="wl-link np-plan-undo">되돌리기</button><button type="button" class="wl-link np-plan-redo">다시 잡기</button></div></div>';
+        '<div class="np-plan-act"><button type="button" class="wl-link np-plan-undo">되돌리기</button><button type="button" class="wl-link np-plan-redo">다시 잡기</button></div>' + A.loadH(pl) + '</div>';
       info.querySelector('.np-plan-undo').onclick = function() {
         PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = prev.phases[ph].start; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = prev.phases[ph].end; });
         if (tasksEl) { tasksEl.value = prev.text; tasksEl.dispatchEvent(new Event('input', { bubbles: true })); }
@@ -23498,15 +23573,18 @@ function renderNotifList() {
     }
     function force() { var keep = { phases: curPhases(), text: tasksEl ? tasksEl.value : '' }; PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = ''; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = ''; }); if (tasksEl) tasksEl.value = ''; last = null; run('force', keep); }
     dep.addEventListener('change', function() { run('date'); });
+    var chips = P.querySelector('.np-chips');
+    if (chips) chips.addEventListener('click', function() { setTimeout(function() { if (dep.value && last && sameAsLast()) run('svc'); }, 0); });
     wrap._plan = run;
   };
   // 이미 있는 안건: 배포일 기준으로 단계 다시 잡기(+ Task가 없으면 기본 Task)
   A.planExisting = function(pid) {
     if (!needW()) return;
     var p = proj(pid); if (!p || !p.deployDate) { toast('배포 목표일을 먼저 넣어 주세요', 'info'); return; }
-    var pl = A.planFromDeploy(p.deployDate, { complexity: p.complexity || 3 });
+    var pl = A.planFromDeploy(p.deployDate, { complexity: p.complexity || 3, services: arr(p.serviceTypes).length, exceptPid: pid });
+    var hotL = (pl.load || []).filter(function(x) { return x.L.level === 'hot'; });
     var has = PH.some(function(ph) { return p.phases && p.phases[ph] && (p.phases[ph].start || p.phases[ph].end); });
-    var msg = fmtD(p.deployDate) + ' 배포 기준으로 단계 일정을 ' + (has ? '다시 잡습니다(지금 일정은 바뀝니다)' : '잡습니다') + '.\n시작 ' + fmtD(pl.start) + ' · 영업일 ' + pl.bdays + '일' + (pl.short ? '\n⚠ 표준보다 ' + pl.short + '영업일 부족해 줄입니다' : '') + '\n계속할까요?';
+    var msg = fmtD(p.deployDate) + ' 배포 기준으로 단계 일정을 ' + (has ? '다시 잡습니다(지금 일정은 바뀝니다)' : '잡습니다') + '.\n시작 ' + fmtD(pl.start) + ' · 영업일 ' + pl.bdays + '일' + (pl.short ? '\n⚠ 표준보다 ' + pl.short + '영업일 부족해 줄입니다' : '') + (hotL.length ? '\n⚠ 과부하: ' + hotL.map(function(x) { return x.name + '(' + PHL[x.phase] + ', 다른 안건 ' + x.L.projects + '건)'; }).join(', ') : '') + '\n계속할까요?';
     if (!confirm(msg)) return;
     var old = JSON.stringify(p.phases || {});
     p.phases = pl.phases;

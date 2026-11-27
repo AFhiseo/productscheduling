@@ -22780,10 +22780,13 @@ function renderNotifList() {
 
   /* ═══ 내 작업: 전체 프로젝트 진행상황 (CPO) ═══ */
   A.portfolioH = function() {
-    var list = state.projects.filter(function(p) { return ['완료', 'Deprecated'].indexOf(p.status) === -1; });
-    if (!list.length) return '';
+    var all = state.projects.filter(function(p) { return ['완료', 'Deprecated'].indexOf(p.status) === -1; });
+    if (!all.length) return '';
+    var parked = all.filter(function(p) { return ['연기', '보류', '중단'].indexOf(p.status) !== -1; });
+    var list = A.ui.pfAll ? all : all.filter(function(p) { return parked.indexOf(p) === -1; });
+    var stRank = function(p) { var r = { '진행': 0, '진행 중': 0, 'QA': 1, '대기': 2, '예정': 2 }[p.status]; return r == null ? (parked.indexOf(p) !== -1 ? 5 : 3) : r; };
     var tierRank = function(p) { var i = TIERS.indexOf(p.tier); return i === -1 ? 99 : i; };
-    list.sort(function(a, b) { return tierRank(a) - tierRank(b) || (b.score || 0) - (a.score || 0); });
+    list.sort(function(a, b) { return stRank(a) - stRank(b) || tierRank(a) - tierRank(b) || (b.score || 0) - (a.score || 0); });
     var late = 0, wkDep = 0, noPlan = 0;
     var rows = list.map(function(p) {
       var tk = arr(p.tasks), dn = tk.filter(function(t) { return t.status === 'done'; }).length;
@@ -22808,6 +22811,7 @@ function renderNotifList() {
     var open = A.ui.pfOpen !== false;
     return '<div class="a13-card pf-card"><div class="a13-card-h"><h3>전체 프로젝트 진행상황 <span class="a13-cnt">' + list.length + '</span></h3>' +
       '<span class="pf-chips">' + (late ? '<span class="wl-chip red">지연 ' + late + '</span>' : '<span class="wl-chip ok">지연 없음</span>') + (wkDep ? '<span class="wl-chip">7일 안 배포 ' + wkDep + '</span>' : '') + (noPlan ? '<span class="wl-chip warn">일정·Task 없음 ' + noPlan + '</span>' : '') +
+      (parked.length ? '<button class="a13-btn sm ghost" onclick="AF13.ui.pfAll=' + (A.ui.pfAll ? 'false' : 'true') + ';AF13.render(true)">' + (A.ui.pfAll ? '연기·보류 숨기기' : '연기·보류 ' + parked.length + '건 보기') + '</button>' : '') +
       '<button class="a13-btn sm ghost" onclick="AF13.ui.pfOpen=' + (open ? 'false' : 'true') + ';AF13.render(true)">' + (open ? '접기' : '펼치기') + '</button></span></div>' +
       (open ? '<div class="pf-head"><div>프로젝트</div><div>상태</div><div>지금 단계</div><div>Task 진척</div><div>이슈</div><div>다음 배포</div><div>담당</div></div>' + rows : '') + '</div>';
   };

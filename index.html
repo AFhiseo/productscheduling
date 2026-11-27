@@ -4895,6 +4895,12 @@
     .wl-wkp { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 0 7px; }
     .wl-tr .cl .ln { font-size: 14px; }
     .wl-tr .nm b { font-size: 14px; }
+    /* v14.4 배포일 기준 일정 */
+    .a13-np .np-plan-info{margin:2px 0 8px;font-size:12px}.a13-np .np-plan-info:empty{display:none}
+    .a13-np .np-plan-ok{background:#F7F8FC;border:1px solid #E7E7E7;border-radius:10px;padding:8px 10px;color:#363636;line-height:1.6}
+    .a13-np .np-plan-ok b{color:#32008C}.a13-np .np-plan-hol{color:#767676;font-size:11px}
+    .a13-np .np-plan-warn{color:#FF4C14;font-weight:600}
+    .a13-np .np-plan-act{display:flex;gap:12px;margin-top:2px}
     /* v14.3 AI로 채우기 */
     .a13-np .np-ai{border:1px solid #e3d9ff;background:linear-gradient(180deg,#faf7ff,#fff);border-radius:14px;padding:12px 14px;margin:0 0 14px;display:flex;flex-direction:column;gap:8px}
     .a13-np .np-ai.drag{border-color:#6433DF;box-shadow:0 0 0 3px #efe9ff}.a13-np .np-ai.busy{opacity:.85}
@@ -5635,6 +5641,20 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v14.4</span>
+              <span class="rn-version-title">배포일만 넣으면 단계 일정·Task 자동 작성</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>새 안건에서 배포 목표일을 넣으면 기획→디자인·BE→FE→QA 단계 일정을 배포일에서 거꾸로 잡음 (주말·공휴일 제외, 빠듯하면 줄이고 경고)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>Task 초안도 같이: AI가 안건에 맞는 할 일을 만들고, 담당(파트 명단, FE·BE는 번갈아)·기간·단계를 붙여 「첫 Task」에 채움 — 고친 뒤 만들기</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>AI 메모에 "다음 달 15일 배포"처럼 날짜가 있으면 배포 목표일도 채움 · 되돌리기·다시 잡기 · 직접 고친 칸은 덮어쓰지 않음</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>기존 안건 정보 → 단계 일정에 「배포일 기준으로 단계 다시 잡기」</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.3</span>
               <span class="rn-version-title">✨ AI로 안건 채우기</span>
@@ -21902,7 +21922,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.3';
+    var AF_BUILD = 'v14.4';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -23360,6 +23380,144 @@ function renderNotifList() {
   A._parts = { tierChipsH: tierChipsH, statusSegH: statusSegH, svcChipsH: svcChipsH };
   function pmOptions(cur) { return '<option value="">미정</option>' + TEAM.filter(function(m) { return _isOnBoard(m) || m.id === cur; }).map(function(m) { return '<option value="' + esc(m.id) + '"' + (m.id === cur ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join(''); }
 
+  /* ═══ v14.4 배포일 기준 단계 일정·Task 자동 작성 ═══ */
+  // 공휴일(대체공휴일 포함) — 2026~2027
+  A.KR_HOL = {
+    '2026-01-01': '신정', '2026-02-16': '설날', '2026-02-17': '설날', '2026-02-18': '설날', '2026-03-02': '삼일절 대체', '2026-05-05': '어린이날', '2026-05-25': '부처님오신날 대체',
+    '2026-06-03': '지방선거', '2026-08-17': '광복절 대체', '2026-09-24': '추석', '2026-09-25': '추석', '2026-09-26': '추석', '2026-09-28': '추석 대체', '2026-10-05': '개천절 대체', '2026-10-09': '한글날', '2026-12-25': '성탄절',
+    '2027-01-01': '신정', '2027-02-06': '설날', '2027-02-07': '설날', '2027-02-08': '설날', '2027-02-09': '설날 대체', '2027-03-01': '삼일절', '2027-05-05': '어린이날', '2027-05-13': '부처님오신날',
+    '2027-06-07': '현충일 대체', '2027-08-16': '광복절 대체', '2027-09-14': '추석', '2027-09-15': '추석', '2027-09-16': '추석', '2027-10-04': '개천절 대체', '2027-10-11': '한글날 대체', '2027-12-27': '성탄절 대체'
+  };
+  function bdOff(d) { var x = dOnly(d); if (!x) return true; var w = x.getDay(); return w === 0 || w === 6 || !!A.KR_HOL[d]; }
+  function bdPrev(d) { var x = d; for (var i = 0; i < 30 && bdOff(x); i++) x = addDays(x, -1); return x; }   // d 또는 그 전 영업일
+  function bdNext(d) { var x = d; for (var i = 0; i < 30 && bdOff(x); i++) x = addDays(x, 1); return x; }
+  function bdBack(end, n) { var x = bdPrev(end); for (var k = 1; k < n; k++) x = bdPrev(addDays(x, -1)); return x; }   // end 포함 n영업일의 시작
+  function bdCount(a, b) { var n = 0, x = a; for (var i = 0; i < 800 && x <= b; i++) { if (!bdOff(x)) n++; x = addDays(x, 1); } return n; }
+  function bdSplit(s, e, weights) {   // [s,e] 영업일을 가중치대로 순서대로 나눔
+    var days = [], x = s; for (var i = 0; i < 800 && x <= e; i++) { if (!bdOff(x)) days.push(x); x = addDays(x, 1); }
+    if (!days.length) return weights.map(function() { return [s, e]; });
+    var N = days.length, tot = weights.reduce(function(x, y) { return x + y; }, 0) || 1, cum = 0, out = [];
+    weights.forEach(function(w) { var i0 = Math.floor(N * cum / tot); cum += w; var i1 = Math.max(i0, Math.ceil(N * cum / tot) - 1); out.push([days[Math.min(i0, N - 1)], days[Math.min(i1, N - 1)]]); });
+    return out;
+  }
+  var PLAN_BASE = { plan: 5, design: 5, back: 10, front: 8, qa: 5 };          // 복잡도 3 기준 영업일
+  var PLAN_K = { 1: 0.4, 2: 0.7, 3: 1, 4: 1.4, 5: 1.8 };
+  var PLAN_TPL = {
+    plan: [['요구사항·정책 정리', 2], ['화면 흐름·기획서 작성', 3]],
+    design: [['화면 시안', 3], ['디자인 검수', 1]],
+    back: [['API·데이터 설계', 2], ['API 개발', 5]],
+    front: [['화면 개발', 5], ['API 연동', 2]],
+    qa: [['테스트 시나리오 작성', 1], ['QA·회귀 테스트', 3]]
+  };
+  var PH_TAG = { plan: '기획', design: '디자인', front: 'FE', back: 'BE', qa: 'QA' };
+  // 배포일에서 거꾸로: QA는 배포 전 영업일에 끝나고, FE·BE는 QA 전에 끝나고, 디자인은 FE 전에, BE는 디자인과 함께 시작, 기획은 맨 앞
+  A.planFromDeploy = function(deploy, opt) {
+    opt = opt || {};
+    var need = opt.phases && opt.phases.length ? opt.phases : PH.slice(), has = function(k) { return need.indexOf(k) !== -1; };
+    var k = PLAN_K[Math.min(5, Math.max(1, Math.round(opt.complexity || 3)))] || 1;
+    var t = new Date(), today = bdNext(ymd(t.getFullYear(), t.getMonth() + 1, t.getDate()));
+    var qaEnd = bdPrev(addDays(deploy, -1));
+    var dur0 = {}; PH.forEach(function(ph) { dur0[ph] = has(ph) ? Math.max(1, Math.round(PLAN_BASE[ph] * k)) : 0; });
+    function layout(dur) {
+      var r = {}, end = qaEnd;
+      if (dur.qa) { r.qa = [bdBack(end, dur.qa), end]; end = bdPrev(addDays(r.qa[0], -1)); }
+      var devEnd = end, devStart = end;
+      if (dur.front) { r.front = [bdBack(devEnd, dur.front), devEnd]; devStart = r.front[0]; }
+      if (dur.design) { var dEnd = dur.front ? bdPrev(addDays(r.front[0], -1)) : devEnd; r.design = [bdBack(dEnd, dur.design), dEnd]; }
+      if (dur.back) r.back = [bdBack(devEnd, dur.back), devEnd];
+      var firstStart = [r.design && r.design[0], r.back && r.back[0], r.front && r.front[0], r.qa && r.qa[0]].filter(Boolean).sort()[0] || qaEnd;
+      if (dur.plan) r.plan = [bdBack(bdPrev(addDays(firstStart, -1)), dur.plan), bdPrev(addDays(firstStart, -1))];
+      r.start = [r.plan && r.plan[0], firstStart].filter(Boolean).sort()[0];
+      return r;
+    }
+    var dur = Object.assign({}, dur0), r = layout(dur), short = 0;
+    if (r.start < today) {   // 빠듯하면 비율대로 줄임(최소 1영업일)
+      var avail = bdCount(today, qaEnd), crit = dur.plan + Math.max(dur.design + dur.front, dur.back) + dur.qa;
+      short = Math.max(0, crit - avail);
+      var f = avail / Math.max(1, crit);
+      PH.forEach(function(ph) { if (dur[ph]) dur[ph] = Math.max(1, Math.floor(dur0[ph] * f)); });
+      r = layout(dur);
+      if (r.start < today) PH.forEach(function(ph) { if (r[ph] && r[ph][0] < today) { r[ph][0] = today; if (r[ph][1] < today) r[ph][1] = today; } });
+    }
+    var phases = {}; PH.forEach(function(ph) { phases[ph] = r[ph] ? { start: r[ph][0], end: r[ph][1] } : { start: '', end: '' }; });
+    // Task: AI 초안이 있으면 그것, 없으면 단계별 기본 Task. 담당은 파트 명단, FE·BE는 두 사람이 번갈아
+    var asg = (A.defaultAssignments && A.defaultAssignments()) || {};
+    var lanes = { plan: arr(asg.plan).slice(0, 1), design: arr(asg.design), front: arr(asg.front), back: arr(asg.back), qa: arr(asg.qa).slice(0, 1) };
+    var tasks = (opt.tasks && opt.tasks.length ? opt.tasks : [].concat.apply([], PH.map(function(ph) { return (PLAN_TPL[ph] || []).map(function(x) { return { title: x[0], phase: ph, days: x[1] }; }); })))
+      .filter(function(x) { return x && x.title && r[x.phase]; });
+    var lines = [];
+    PH.forEach(function(ph) {
+      var list = tasks.filter(function(x) { return x.phase === ph; }); if (!list.length) return;
+      var L = lanes[ph].length ? lanes[ph] : [''], byLane = L.map(function() { return []; });
+      list.forEach(function(x, i) { byLane[i % L.length].push(x); });
+      byLane.forEach(function(items, li) {
+        if (!items.length) return;
+        var sl = bdSplit(r[ph][0], r[ph][1], items.map(function(x) { return Math.max(1, +x.days || 1); }));
+        var m = L[li] && mem(L[li]);
+        items.forEach(function(x, i) { var a = sl[i][0], b = sl[i][1]; lines.push(x.title.replace(/[@~#]/g, '') + (m ? ' @' + m.name : '') + ' ~' + (+a.slice(5, 7)) + '/' + (+a.slice(8)) + (a !== b ? '-' + (+b.slice(5, 7)) + '/' + (+b.slice(8)) : '') + ' #' + PH_TAG[ph]); });
+      });
+    });
+    var bm = arr(asg.back)[0] && mem(arr(asg.back)[0]);
+    lines.push('운영 배포' + (bm ? ' @' + bm.name : '') + ' ~' + (+deploy.slice(5, 7)) + '/' + (+deploy.slice(8)) + ' #BE');
+    var hol = Object.keys(A.KR_HOL).filter(function(d) { return d >= (r.start || today) && d <= deploy; }).map(function(d) { return fmtD(d) + ' ' + A.KR_HOL[d]; });
+    return { phases: phases, lines: lines, short: short, start: r.start, bdays: bdCount(r.start || today, qaEnd), holidays: hol, k: Math.round(opt.complexity || 3), late: (r.start || today) < today };
+  };
+  // 새 안건 시트: 배포 목표일을 넣거나 AI가 채우면 단계·Task를 잡음. 직접 고친 칸은 덮어쓰지 않음
+  A.planWire = function(P, wrap) {
+    var dep = P.querySelector('.np-deploy'), info = P.querySelector('.np-plan-info'), tasksEl = P.querySelector('.np-tasks');
+    if (!dep || !info) return;
+    var last = null;   // 마지막으로 자동으로 넣은 값
+    var curPhases = function() { var o = {}; PH.forEach(function(ph) { o[ph] = { start: P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value, end: P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value }; }); return o; };
+    var phasesEmpty = function() { var c = curPhases(); return PH.every(function(ph) { return !c[ph].start && !c[ph].end; }); };
+    var sameAsLast = function() { return last && JSON.stringify(curPhases()) === JSON.stringify(last.phases); };
+    function run(src, keep) {
+      var d = dep.value; if (!d) { info.innerHTML = '<span class="a13-hint">배포 목표일을 넣으면 단계 일정과 Task를 거꾸로 잡아 드려요 (영업일·공휴일 제외)</span>'; return; }
+      var t = new Date(), today = ymd(t.getFullYear(), t.getMonth() + 1, t.getDate());
+      if (d <= today) { info.innerHTML = '<span class="np-plan-warn">배포일이 오늘이거나 지났어요. 날짜를 확인해 주세요</span>'; return; }
+      var ai = wrap._ai && wrap._ai.d;
+      var pl = A.planFromDeploy(d, { complexity: ai ? ai.complexity : 3, tasks: ai && ai.tasks, phases: ai && ai.phases });
+      var canPh = phasesEmpty() || sameAsLast(), canTk = tasksEl && (!tasksEl.value.trim() || (last && tasksEl.value === last.text));
+      if (!canPh && !canTk) { info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">📅 배포일 기준으로 다시 잡기</button> <span class="a13-hint">직접 고친 일정·Task가 있어 자동으로 바꾸지 않았어요</span>'; info.querySelector('.np-plan-redo').onclick = function() { last = null; force(); }; return; }
+      var prev = keep || { phases: curPhases(), text: tasksEl ? tasksEl.value : '' };
+      if (canPh) PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = pl.phases[ph].start; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = pl.phases[ph].end; });
+      var text = pl.lines.join('\n');
+      if (canTk && tasksEl) { tasksEl.value = text; tasksEl.dispatchEvent(new Event('input', { bubbles: true })); }
+      last = { phases: curPhases(), text: tasksEl ? tasksEl.value : '' };
+      ['ph', 'task'].forEach(function(k) { var x = P.querySelector('details[data-sec="' + k + '"]'); if (x) x.open = true; });
+      P.querySelectorAll('.np-phases input').forEach(function(el) { el.classList.remove('ai-filled'); void el.offsetWidth; el.classList.add('ai-filled'); });
+      info.innerHTML = '<div class="np-plan-ok"><b>📅 ' + esc(fmtD(d)) + ' 배포 기준으로 거꾸로 잡았어요</b> · ' + esc(fmtD(pl.start)) + ' 시작 · 영업일 ' + pl.bdays + '일' + (ai ? ' · 복잡도 ' + pl.k + '(AI)' : '') + ' · Task ' + pl.lines.length + '건' + (ai && ai.tasks && ai.tasks.length ? '(AI 초안)' : '(기본 틀)') +
+        (pl.holidays.length ? '<div class="np-plan-hol">공휴일 제외: ' + pl.holidays.map(esc).join(', ') + '</div>' : '') +
+        (pl.short ? '<div class="np-plan-warn">⚠ 표준 일정보다 ' + pl.short + '영업일 부족해 단계마다 줄였어요. 범위를 줄이거나 배포일을 미루는 걸 검토하세요</div>' : '') +
+        '<div class="np-plan-act"><button type="button" class="wl-link np-plan-undo">되돌리기</button><button type="button" class="wl-link np-plan-redo">다시 잡기</button></div></div>';
+      info.querySelector('.np-plan-undo').onclick = function() {
+        PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = prev.phases[ph].start; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = prev.phases[ph].end; });
+        if (tasksEl) { tasksEl.value = prev.text; tasksEl.dispatchEvent(new Event('input', { bubbles: true })); }
+        last = null; info.innerHTML = '<button type="button" class="a13-btn sm np-plan-redo">📅 배포일 기준으로 다시 잡기</button>'; info.querySelector('.np-plan-redo').onclick = force;
+      };
+      info.querySelector('.np-plan-redo').onclick = force;
+    }
+    function force() { var keep = { phases: curPhases(), text: tasksEl ? tasksEl.value : '' }; PH.forEach(function(ph) { P.querySelector('[data-ph="' + ph + '"][data-w="start"]').value = ''; P.querySelector('[data-ph="' + ph + '"][data-w="end"]').value = ''; }); if (tasksEl) tasksEl.value = ''; last = null; run('force', keep); }
+    dep.addEventListener('change', function() { run('date'); });
+    wrap._plan = run;
+  };
+  // 이미 있는 안건: 배포일 기준으로 단계 다시 잡기(+ Task가 없으면 기본 Task)
+  A.planExisting = function(pid) {
+    if (!needW()) return;
+    var p = proj(pid); if (!p || !p.deployDate) { toast('배포 목표일을 먼저 넣어 주세요', 'info'); return; }
+    var pl = A.planFromDeploy(p.deployDate, { complexity: p.complexity || 3 });
+    var has = PH.some(function(ph) { return p.phases && p.phases[ph] && (p.phases[ph].start || p.phases[ph].end); });
+    var msg = fmtD(p.deployDate) + ' 배포 기준으로 단계 일정을 ' + (has ? '다시 잡습니다(지금 일정은 바뀝니다)' : '잡습니다') + '.\n시작 ' + fmtD(pl.start) + ' · 영업일 ' + pl.bdays + '일' + (pl.short ? '\n⚠ 표준보다 ' + pl.short + '영업일 부족해 줄입니다' : '') + '\n계속할까요?';
+    if (!confirm(msg)) return;
+    var old = JSON.stringify(p.phases || {});
+    p.phases = pl.phases;
+    pushHistory('수정', pid, '단계 일정', old.slice(0, 120), '배포일 기준 자동 (' + p.deployDate + ')');
+    saveProjects();
+    var n = 0;
+    if (!arr(p.tasks).length && confirm('Task가 없습니다. 기본 Task ' + pl.lines.length + '건(담당·일정 포함)도 넣을까요?')) n = A.addTasks(pid, pl.lines.join('\n'));
+    toast('단계 일정을 잡았습니다' + (n ? ' · Task ' + n + '건' : ''));
+    A.render(true); try { if (A._sheetRefresh) A._sheetRefresh(); } catch (e) {}
+  };
+
   /* ═══ v14.3 AI로 안건 채우기 (Claude → Gemini 폴백, 회사 클라우드플레어 중계) ═══ */
   A.AI_URL = 'https://af-ai-assist.sparkling-sound-d52d.workers.dev/v1/project-draft';
   A.aiPanelH = function() {
@@ -23467,7 +23625,7 @@ function renderNotifList() {
       var svcs = [].slice.call(P.querySelectorAll('.np-chips button')).map(function(b) { return b.dataset.v; });
       var existing = (state.projects || []).map(function(p) { return { id: p.id, name: p.name, status: p.status }; });
       user.getIdToken().then(function(tok) {
-        return fetch(A.AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }, body: JSON.stringify({ text: text, urls: urls, images: imgs.map(function(im) { return { mime: im.mime, data: im.data }; }), services: svcs, existing: existing }) });
+        return fetch(A.AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }, body: JSON.stringify({ text: text, urls: urls, images: imgs.map(function(im) { return { mime: im.mime, data: im.data }; }), services: svcs, existing: existing, today: (function() { var t = new Date(); return ymd(t.getFullYear(), t.getMonth() + 1, t.getDate()); })() }) });
       }).then(function(r) { return r.json().then(function(j) { return { st: r.status, j: j }; }); }).then(function(res) {
         var j = res.j || {};
         if (!j.ok) {
@@ -23476,6 +23634,11 @@ function renderNotifList() {
         }
         var d = j.draft, prev = apply(d);
         wrap._ai = { d: d, provider: j.provider, applied: true };
+        try {
+          var dep = P.querySelector('.np-deploy');
+          if (dep && !dep.value && d.deployDate) { dep.value = d.deployDate; dep.classList.add('ai-filled'); }
+          if (wrap._plan) wrap._plan('ai');
+        } catch (e) { console.warn('[plan]', e); }
         var sc = Math.round(((d.impact + d.urgency + d.dependency) / 3 - d.complexity * 0.1) * 10) / 10;
         var h = '<div class="np-ai-res"><div class="hd"><b>' + (j.provider === 'claude' ? 'Claude' : 'Gemini') + '가 채웠어요</b>' + (j.fallback ? '<span class="np-ai-fb">Claude 응답이 없어 Gemini로 대신했어요</span>' : '') + '<button type="button" class="wl-link np-ai-undo">되돌리기</button></div>' +
           '<div class="sc">' + esc(TIER_L[d.tier] || d.tier) + ' · 점수 ' + sc + ' <small>(영향 ' + d.impact + ' · 긴급 ' + d.urgency + ' · 의존 ' + d.dependency + ' · 복잡 ' + d.complexity + ')</small>' + (d.scoreReason ? '<div class="rs">' + esc(d.scoreReason) + '</div>' : '') + '</div>';
@@ -23483,7 +23646,7 @@ function renderNotifList() {
         if (d.questions && d.questions.length) h += '<div class="np-ai-q"><b>확정 전에 확인할 것</b><ul>' + d.questions.map(function(x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
         var bad = (j.sources || []).filter(function(x) { return !x.ok; });
         if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return '🔗 ' + esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
-        h += '<div class="np-ai-foot">AI 초안이에요. 아래 칸에서 고친 뒤 「만들고 열기」를 누르세요 · 오늘 ' + j.used + '/' + j.limit + '회</div></div>';
+        h += '<div class="np-ai-foot">AI 초안이에요. ' + (d.tasks && d.tasks.length ? 'Task ' + d.tasks.length + '건 초안도 만들었어요' + (P.querySelector('.np-deploy').value ? ' (배포일 기준 일정·담당 포함)' : ' — 배포 목표일을 넣으면 일정·담당까지 잡아요') + '. ' : '') + '아래 칸에서 고친 뒤 「만들고 열기」를 누르세요 · 오늘 ' + j.used + '/' + j.limit + '회</div></div>';
         out.innerHTML = h;
         out.querySelector('.np-ai-undo').onclick = function() { undo(prev); };
         out.querySelectorAll('.np-ai-sim button').forEach(function(b) { b.onclick = function() { if (confirm(b.dataset.pid + ' 안건을 열까요? 작성 중인 새 안건은 닫힙니다.')) { if (A._closeSheet) A._closeSheet(true); A.go('a13project', b.dataset.pid); } }; });
@@ -23545,6 +23708,7 @@ function renderNotifList() {
         '<div class="np-f"><span>서비스 <em>여러 개 선택</em></span>' + svcChipsH(v.serviceTypes, dis) + '</div>' +
         sec('ph', '단계 일정', isNew ? '선택 · 간트에 바로 표시' : '간트와 같은 일정 · 단계별 담당',
           (dis ? '' : '<div class="np-auto"><span>시작일</span><input type="date" class="a13-input np-start"><button type="button" class="a13-btn sm np-fill">표준 일정으로 채우기</button></div>') +
+          '<div class="np-plan-info" aria-live="polite">' + (isNew ? '<span class="a13-hint">배포 목표일을 넣으면 단계 일정과 Task를 거꾸로 잡아 드려요 (영업일·공휴일 제외)</span>' : (cw && v.deployDate ? '<button type="button" class="a13-btn sm" onclick="AF13.planExisting(\'' + q(pid) + '\')">📅 배포일(' + esc(fmtD(v.deployDate)) + ') 기준으로 단계 다시 잡기</button>' : '')) + '</div>' +
           '<div class="np-phases">' + phaseRowsH(p) + '</div>', !isNew && hasPh) +
         sec('task', isNew ? '첫 Task' : 'Task ' + tk.length, isNew ? '선택 · 한 줄에 하나' : '추가는 한 줄에 하나 · 상세는 안건 페이지',
           (isNew ? '<textarea class="a13-input np-tasks" placeholder="수수료 정책 확정 @서현일 ~10/24 #기획&#10;취소 화면 시안 #디자인&#10;수수료 계산 API @정지섭 ~10/31 #BE"></textarea><div class="np-preview"></div>'
@@ -23682,7 +23846,7 @@ function renderNotifList() {
     wire();
     P.querySelector('.x').onclick = function() { closeIt(); };
     wrap.addEventListener('mousedown', function(e) { if (e.target === wrap) closeIt(); });
-    if (isNew) { try { A.aiWire(P, wrap, prefill); } catch (e) { console.warn('[ai]', e); } }
+    if (isNew) { try { A.aiWire(P, wrap, prefill); } catch (e) { console.warn('[ai]', e); } try { A.planWire(P, wrap); } catch (e) { console.warn('[plan]', e); } }
     if (isNew) {
       var submit = function(more) {
         var titleEl = q1('.np-title'), name = titleEl.value.trim();

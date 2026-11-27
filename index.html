@@ -4895,6 +4895,29 @@
     .wl-wkp { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; color: #6433DF; background: #F3F0FF; border-radius: 999px; padding: 0 7px; }
     .wl-tr .cl .ln { font-size: 14px; }
     .wl-tr .nm b { font-size: 14px; }
+    /* v14.6 LNB 바깥 바로가기 */
+    .a13-navs a.a13-ext{text-decoration:none;display:flex;align-items:center}
+    .a13-navs .a13-ext-ic{margin-left:auto;font-size:11px;color:#AAAAAA}
+    /* v14.6 링크 · AI로 다시 쓰기 */
+    .a13-np .np-links{display:flex;flex-direction:column;gap:6px}
+    .a13-np .np-lk{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid #F3F3F3}
+    .a13-np .np-lk a{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6433DF}
+    .a13-np .np-lk-del{border:none;background:none;color:#919191;font-size:16px;cursor:pointer;min-width:28px;min-height:28px}
+    .a13-np .np-lk-add{display:flex;gap:6px}.a13-np .np-lk-add select{width:92px;flex:none}.a13-np .np-lk-add input{flex:1;min-width:0}
+    .a13-plinks{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 10px;font-size:13px}
+    .a13-plink{background:#efe9ff;color:#32008C;border-radius:999px;padding:3px 10px;font-weight:600;text-decoration:none;font-size:12px}
+    .a13-plink:hover{background:#e3d9ff}
+    .a13-np.air{max-width:760px}
+    .a13-np.air .air-opt{font-size:12px;color:#363636;display:flex;gap:6px;align-items:center}
+    .a13-np.air .air-head{font-size:13px;margin:10px 0 6px}.a13-np.air .air-head b{color:#32008C}
+    .a13-np.air .air-row{display:grid;grid-template-columns:22px 64px minmax(0,1fr) 16px minmax(0,1fr);gap:6px;align-items:start;padding:8px 0;border-bottom:1px solid #F3F3F3;font-size:12px;cursor:pointer}
+    .a13-np.air .air-row.same{opacity:.55;cursor:default}
+    .a13-np.air .air-row .lb{font-weight:700;color:#363636}.a13-np.air .air-row .old{color:#919191}.a13-np.air .air-row .new{color:#1A1A1A}
+    .a13-np.air .air-row .arr{color:#CCCCCC}.a13-np.air .air-row em{color:#AAAAAA;font-style:normal}.a13-np.air .air-row .rs{color:#767676;margin-top:2px}
+    .a13-np.air .air-tasks{margin-top:10px;font-size:12px;display:flex;flex-direction:column;gap:4px}
+    .a13-np.air .air-t{display:flex;gap:6px;align-items:center;cursor:pointer}.a13-np.air .air-t small{color:#919191}
+    .a13-np.air .np-ai-sim,.a13-np.air .np-ai-q{margin-top:10px;font-size:12px}
+    @media (max-width:700px){.a13-np.air .air-row{grid-template-columns:22px 1fr;}.a13-np.air .air-row .old,.a13-np.air .air-row .arr{display:none}}
     /* v14.5 속도표·담당 부하 */
     .a13-np .np-plan-vel{color:#767676;font-size:11px}
     .a13-np .np-load{margin-top:6px;border-top:1px dashed #E7E7E7;padding-top:6px}
@@ -5650,6 +5673,19 @@
           </div>
 
           <div class="rn-version-block rn-latest">
+            <div class="rn-version-header">
+              <span class="rn-version-tag">v14.6</span>
+              <span class="rn-version-title">저장된 안건 AI로 다시 쓰기 · 관련 링크</span>
+              <span class="rn-version-date">2026-11-27</span>
+            </div>
+            <div class="rn-body">
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>안건 페이지·안건 정보에 「✨ AI로 다시 쓰기」: 저장된 설명·Task·이슈·관련 링크(+새 메모·캡처)를 읽고 다시 써서 칸별로 비교 → 체크한 칸만 적용, 빠진 Task 제안, 되돌리기</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>왼쪽 메뉴에 「지표 대시보드 ↗」 바로가기(새 탭)</div>
+              <div class="rn-item"><span class="rn-badge rn-badge-new">NEW</span>관련 링크(기획서·Figma·PRD·노션 등) 칸 복구: 새 안건·안건 정보에서 추가·삭제, 안건 페이지 맨 위에 링크 칩 · AI 입력에 넣은 링크는 자동으로 관련 링크에</div>
+            </div>
+          </div>
+
+          <div class="rn-version-block">
             <div class="rn-version-header">
               <span class="rn-version-tag">v14.5</span>
               <span class="rn-version-title">팀 속도 기준 단계 기간 · 담당 부하 평가</span>
@@ -21943,7 +21979,7 @@ function renderNotifList() {
     })();
 
     /* ─── 버전 안내 (화면 표시만, 데이터 무관) ─── */
-    var AF_BUILD = 'v14.5';
+    var AF_BUILD = 'v14.6';
     function _afReloadToBuild(b) {
       try {
         var u = new URL(location.href);
@@ -22964,13 +23000,14 @@ function renderNotifList() {
     var nextB = bs.filter(function(b) { return b.status === 'planning' || b.status === 'ready'; }).sort(function(a, b) { return (a.targetDate || '9999') < (b.targetDate || '9999') ? -1 : 1; })[0];
     var h = '<div class="a13-crumb"><button onclick="AF13.go(\'a13projects\')">← 프로젝트</button><span>/</span><span class="a13-pid">' + esc(p.id) + '</span></div>';
     h += '<input class="a13-title" value="' + esc(p.name) + '"' + dis + ' onkeydown="if(event.key===\'Enter\'&&!event.isComposing)this.blur()" onblur="if(this.value.trim())AF13.setProject(\'' + q(pid) + '\',\'name\',this.value.trim(),\'이름\');else this.value=AF13._pname(\'' + q(pid) + '\')" aria-label="안건 이름">';
+    h += A.linkChipsH(p, cw);
     h += '<div class="a13-meta">' +
       '<div class="a13-mf"><span>티어</span>' + tierChipsH(p.tier, !cw, function(t) { return 'AF13.setProject(\'' + q(pid) + '\',\'tier\',\'' + t + '\',\'티어\')'; }) + '</div>' +
       '<div class="a13-mf"><span>상태</span>' + statusSegH(p.status || '대기', PST_ALL, !cw, function(s) { return 'AF13.setProject(\'' + q(pid) + '\',\'status\',\'' + q(s) + '\',\'상태\')'; }) + '</div>' +
       '<div class="a13-mf-break"></div>' +
       '<label>배포 목표일<input type="date" class="a13-input"' + dis + ' value="' + esc(p.deployDate || '') + '" onchange="AF13.setProject(\'' + q(pid) + '\',\'deployDate\',this.value,\'배포일\')"></label>' +
       '<label>PM<select class="a13-input"' + dis + ' onchange="AF13.setProject(\'' + q(pid) + '\',\'pm\',this.value,\'PM\')"><option value="">미정</option>' + TEAM.filter(_isOnBoard).map(function(m) { return '<option value="' + esc(m.id) + '"' + (p.pm === m.id ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join('') + '</select></label>' +
-      '<div style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')">링크 복사</button><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
+      '<div style="margin-left:auto;display:flex;gap:6px;align-self:flex-end"><button class="a13-btn" onclick="AF13.copyProjectLink(event,\'' + q(pid) + '\')">링크 복사</button><button class="a13-btn" onclick="AF13.editProject(\'' + q(pid) + '\')">안건 정보</button>' + (cw ? '<button class="a13-btn np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">✨ AI로 다시 쓰기</button><button class="a13-btn" onclick="AF13.sheet(\'issue\',{pid:\'' + q(pid) + '\'})">＋ 이슈</button><button class="a13-btn pri" onclick="AF13.bundleFromProject(\'' + q(pid) + '\')">배포로 묶기</button>' : '') + '</div></div>';
     h += '<div class="a13-kpis">' +
       '<div class="a13-kpi"><span>Task 진행</span><b>' + (tk.length ? Math.round(dn / tk.length * 100) + '%' : '-') + '</b><small>' + dn + ' / ' + tk.length + ' 완료</small></div>' +
       '<div class="a13-kpi"><span>열린 이슈</span><b style="' + (bl ? 'color:#EE0005' : '') + '">' + open.length + '</b><small>Block ' + bl + ' · Major ' + mj + '</small></div>' +
@@ -23339,6 +23376,11 @@ function renderNotifList() {
     // 기존 스케줄·팀은 주 메뉴로, 나머지는 '더보기'
     var keep = ['schedule', 'team'];
     keep.forEach(function(k) { var t = oldTabs.querySelector('.tab[data-tab="' + k + '"]'); if (t) navs.appendChild(t); });
+    // 바깥 바로가기: 지표 대시보드(새 탭)
+    var kpi = document.createElement('a'); kpi.className = 'tab a13-nav a13-ext'; kpi.href = 'https://af-cpo-dashboard.pages.dev/'; kpi.target = '_blank'; kpi.rel = 'noopener'; kpi.title = '지표 대시보드 (새 탭)';
+    kpi.innerHTML = '<svg class="afs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>지표 대시보드<span class="a13-ext-ic" aria-hidden="true">↗</span>';
+    kpi.addEventListener('click', function(e) { e.stopPropagation(); });
+    navs.appendChild(kpi);
     var more = document.createElement('details'); more.className = 'a13-more';
     more.innerHTML = '<summary>더보기 · 기존 화면 ▾</summary>';
     var label = { home: '기존 홈', projects: '기존 프로젝트 표', issues: '기존 이슈 목록', deploy: '기존 배포 목록', overview: '개요', history: '이력', releasenotes: '릴리즈 노트' };
@@ -23400,6 +23442,155 @@ function renderNotifList() {
   }
   A._parts = { tierChipsH: tierChipsH, statusSegH: statusSegH, svcChipsH: svcChipsH };
   function pmOptions(cur) { return '<option value="">미정</option>' + TEAM.filter(function(m) { return _isOnBoard(m) || m.id === cur; }).map(function(m) { return '<option value="' + esc(m.id) + '"' + (m.id === cur ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join(''); }
+
+  /* ═══ v14.6 관련 링크 ═══ */
+  A.LINK_TYPES = ['기획서', 'Figma', 'PRD', '노션', 'API', 'TC', '기타'];
+  function linkGuess(url) { var u = String(url || '').toLowerCase(); return /figma\.com/.test(u) ? 'Figma' : /notion\.(so|site)/.test(u) ? '노션' : /docs\.google\.com\/spreadsheets/.test(u) ? '기획서' : /docs\.google\.com/.test(u) ? '기획서' : /swagger|api/.test(u) ? 'API' : '기타'; }
+  function linkHref(u) { return /^https?:\/\//i.test(u || '') ? u : '#'; }
+  A.linkBoxH = function(links, dis) {
+    return '<div class="np-links"><div class="np-lk-list">' + (links.length ? links.map(function(l, i) { return '<div class="np-lk"><span class="a13-chip">' + esc(l.type || '링크') + '</span><a href="' + esc(linkHref(l.url)) + '" target="_blank" rel="noopener">' + esc(String(l.url || '').replace(/^https?:\/\//, '')) + '</a>' + (dis ? '' : '<button type="button" class="np-lk-del" data-i="' + i + '" aria-label="링크 삭제">×</button>') + '</div>'; }).join('') : '<div class="a13-hint">아직 링크가 없어요</div>') + '</div>' +
+      (dis ? '' : '<div class="np-lk-add"><select class="a13-input np-lk-type" aria-label="링크 종류"><option value="">자동</option>' + A.LINK_TYPES.map(function(t) { return '<option>' + t + '</option>'; }).join('') + '</select><input class="a13-input np-lk-url" placeholder="링크 붙여넣고 Enter (여러 개는 줄바꿈)" aria-label="링크 주소"><button type="button" class="a13-btn sm np-lk-btn">추가</button></div>') + '</div>';
+  };
+  // 새 안건: wrap._links에 모아 두었다가 저장 / 수정: 바로 저장
+  A.linkWire = function(P, wrap, pid) {
+    var box = P.querySelector('.np-links'); if (!box || box._wired) return; box._wired = true;
+    var get = function() { return pid ? arr((proj(pid) || {}).links).slice() : (wrap._links = wrap._links || []); };
+    var redraw = function(list) { var nb = document.createElement('div'); nb.innerHTML = A.linkBoxH(list, false); box.replaceWith(nb.firstChild); A.linkWire(P, wrap, pid); var sm = P.querySelector('details[data-sec="link"] summary b'); if (sm) sm.textContent = '관련 링크 ' + list.length; };
+    var add = function() {
+      var inp = box.querySelector('.np-lk-url'), ty = box.querySelector('.np-lk-type').value;
+      var urls = String(inp.value || '').replace(/(https?:\/\/)/gi, ' $1').split(/[\s,]+/).map(function(u) { return u.trim(); }).filter(Boolean);
+      if (!urls.length) { inp.focus(); return; }
+      var list = get(), n = 0;
+      urls.forEach(function(u) { if (!/^https?:\/\//i.test(u)) u = 'https://' + u; if (list.some(function(x) { return x.url === u; })) return; list.push({ type: ty || linkGuess(u), url: u }); n++; });
+      if (pid) { if (n) A.setProject(pid, 'links', list, '링크'); } else wrap._links = list;
+      redraw(list); var ni = P.querySelector('.np-lk-url'); if (ni) ni.focus();
+    };
+    var b = box.querySelector('.np-lk-btn'); if (b) b.onclick = add;
+    var i = box.querySelector('.np-lk-url'); if (i) i.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); e.stopPropagation(); add(); } });
+    box.querySelectorAll('.np-lk-del').forEach(function(x) { x.onclick = function() {
+      var list = get(), l = list[+x.dataset.i]; if (!l) return;
+      if (pid && !confirm('링크를 삭제할까요?\n' + l.url)) return;
+      list.splice(+x.dataset.i, 1); if (pid) A.setProject(pid, 'links', list, '링크'); else wrap._links = list; redraw(list);
+    }; });
+  };
+  A.addLinks = function(wrap, urls) { var list = wrap._links = wrap._links || []; var n = 0; urls.forEach(function(u) { if (!list.some(function(x) { return x.url === u; })) { list.push({ type: linkGuess(u), url: u }); n++; } }); return n; };
+  // 안건 페이지 맨 위 링크 칩
+  A.linkChipsH = function(p, cw) {
+    var l = arr(p.links);
+    return '<div class="a13-plinks">📎 ' + (l.length ? l.map(function(x) { return '<a class="a13-plink" href="' + esc(linkHref(x.url)) + '" target="_blank" rel="noopener" title="' + esc(x.url) + '">' + esc(x.type || '링크') + ' ↗</a>'; }).join('') : '<span class="a13-hint">관련 링크 없음</span>') + (cw ? '<button class="wl-link" onclick="AF13.addLink(\'' + q(p.id) + '\')">＋ 링크</button>' : '') + '</div>';
+  };
+
+  /* ═══ v14.6 저장된 안건을 AI로 다시 쓰기 — 바꿀 칸을 골라 적용, 되돌리기 가능 ═══ */
+  A.aiRewrite = function(pid) {
+    if (!needW()) return;
+    var p = proj(pid); if (!p) return;
+    var old = document.getElementById('a13AIR'); if (old) old.remove();
+    var wrap = document.createElement('div'); wrap.id = 'a13AIR'; wrap.className = 'a13-np-bg air-bg';
+    wrap.innerHTML = '<aside class="a13-np air" role="dialog" aria-modal="true" aria-label="AI로 다시 쓰기"><header><div><h2>✨ <span class="a13-pid">' + esc(pid) + '</span> AI로 다시 쓰기</h2><p>저장된 설명·Task·이슈·관련 링크를 읽고 다시 써요. 고를 때까지 아무것도 바뀌지 않아요.</p></div><button class="x" aria-label="닫기">✕</button></header>' +
+      '<div class="body"><div class="np-ai"><div class="np-ai-h"><b>새로 알게 된 내용 (선택)</b><em>메모·대화·회의록·링크·캡처 — 비워 두면 지금 내용만 다듬어요</em></div>' +
+      '<textarea class="a13-input np-ai-in" rows="4" placeholder="예) 회의 결과 2차 범위에서 선주웹은 빠짐. 1월 말까지 고객앱만 먼저 배포"></textarea><div class="np-ai-att"></div>' +
+      '<label class="air-opt"><input type="checkbox" class="air-links" checked> 관련 링크 ' + arr(p.links).length + '개도 읽기 (공개 문서만)</label>' +
+      '<div class="np-ai-bar"><label class="a13-btn sm ghost np-ai-file">🖼 이미지<input type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="np-ai-hint">⌘/Ctrl + Enter</span><button type="button" class="a13-btn pri np-ai-go">✨ 다시 쓰기</button></div>' +
+      '<div class="np-ai-out" aria-live="polite"></div></div><div class="air-res"></div></div>' +
+      '<footer><span class="np-hint">체크한 칸만 바뀌고 변경 이력에 남아요</span><button class="a13-btn air-cancel">닫기</button><button class="a13-btn pri air-apply" disabled>선택한 항목 적용</button></footer></aside>';
+    document.body.appendChild(wrap);
+    var Pn = wrap.querySelector('.a13-np'), inp = Pn.querySelector('.np-ai-in'), att = Pn.querySelector('.np-ai-att'), out = Pn.querySelector('.np-ai-out'), res = Pn.querySelector('.air-res'), go = Pn.querySelector('.np-ai-go'), applyB = Pn.querySelector('.air-apply');
+    var imgs = [], draft = null;
+    var close = function() { wrap.remove(); };
+    Pn.querySelector('.x').onclick = close; Pn.querySelector('.air-cancel').onclick = close;
+    wrap.addEventListener('click', function(e) { if (e.target === wrap) close(); });
+    Pn.addEventListener('keydown', function(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+    var drawAtt = function() { att.innerHTML = aiUrls(inp.value).map(function(u) { return '<span class="np-ai-chip">🔗 ' + esc(u.replace(/^https?:\/\//, '').slice(0, 48)) + '</span>'; }).join('') + imgs.map(function(im, i) { return '<span class="np-ai-img"><img src="' + im.thumb + '" alt="첨부 ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="빼기">×</button></span>'; }).join(''); att.querySelectorAll('button[data-i]').forEach(function(b) { b.onclick = function() { imgs.splice(+b.dataset.i, 1); drawAtt(); }; }); };
+    var addFiles = function(files) { [].slice.call(files || []).filter(function(f) { return /^image\//.test(f.type); }).forEach(function(f) { if (imgs.length >= 3) return; aiShrink(f, function(im) { if (im && imgs.length < 3) { imgs.push(im); drawAtt(); } }); }); };
+    inp.addEventListener('input', drawAtt);
+    inp.addEventListener('paste', function(e) { var it = (e.clipboardData && e.clipboardData.items) || [], fs = []; for (var i = 0; i < it.length; i++) if (it[i].kind === 'file' && /^image\//.test(it[i].type)) fs.push(it[i].getAsFile()); if (fs.length) { e.preventDefault(); addFiles(fs); } setTimeout(drawAtt, 0); });
+    Pn.querySelector('.np-ai-file input').onchange = function() { addFiles(this.files); this.value = ''; };
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); run(); } });
+    setTimeout(function() { inp.focus(); }, 50);
+
+    function cur() {
+      var q2 = proj(pid) || p;
+      return { id: q2.id, name: q2.name, desc: q2.desc || '', rationale: q2.rationale || '', tier: q2.tier, impact: q2.impact, urgency: q2.urgency, complexity: q2.complexity, dependency: q2.dependency, serviceTypes: arr(q2.serviceTypes), status: q2.status, deployDate: q2.deployDate || '',
+        tasks: arr(q2.tasks).map(function(t) { return (t.status === 'done' ? '[완료] ' : '') + t.title + (t.phase ? ' #' + (PHL[t.phase] || t.phase) : ''); }), issues: issuesOf(q2.id).map(function(i) { return i.id + ' ' + i.title + ' [' + i.status + ']'; }) };
+    }
+    function run() {
+      var user = (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+      if (!user || typeof user.getIdToken !== 'function') { toast('로그인한 뒤 사용할 수 있어요', 'error'); return; }
+      var c = cur(), text = inp.value.trim();
+      var urls = aiUrls(text).concat(Pn.querySelector('.air-links').checked ? arr((proj(pid) || p).links).map(function(l) { return l.url; }).filter(function(u) { return /^https?:\/\//i.test(u); }) : []).filter(function(u, i, a) { return a.indexOf(u) === i; }).slice(0, 3);
+      go.disabled = true; go.textContent = '다시 쓰는 중…'; applyB.disabled = true; res.innerHTML = '';
+      out.innerHTML = '<div class="np-ai-msg">' + (urls.length ? '링크 ' + urls.length + '개를 읽고 ' : '') + '다시 쓰는 중이에요… (보통 5~20초)</div>';
+      var t = new Date();
+      user.getIdToken().then(function(tok) {
+        return fetch(A.AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }, body: JSON.stringify({ mode: 'rewrite', current: c, text: text || '(새 입력 없음 — 저장된 내용을 다듬어 주세요)', urls: urls, images: imgs.map(function(im) { return { mime: im.mime, data: im.data }; }), services: (typeof _getServiceTypes === 'function' ? _getServiceTypes() : []), existing: (state.projects || []).filter(function(x) { return x.id !== pid; }).map(function(x) { return { id: x.id, name: x.name, status: x.status }; }), today: ymd(t.getFullYear(), t.getMonth() + 1, t.getDate()) }) });
+      }).then(function(r) { return r.json().then(function(j) { return { st: r.status, j: j }; }); }).then(function(rr) {
+        var j = rr.j || {};
+        if (!j.ok) { out.innerHTML = '<div class="np-ai-msg err">' + esc(rr.st === 429 ? j.error : rr.st === 401 ? '로그인 확인에 실패했어요. 새로고침 후 다시 해 주세요' : 'AI가 응답하지 않았어요. 잠시 후 다시 해 주세요') + '</div>'; return; }
+        draft = j.draft; drawResult(j);
+      }).catch(function() { out.innerHTML = '<div class="np-ai-msg err">AI 서버에 연결하지 못했어요</div>'; })
+        .then(function() { go.disabled = false; go.textContent = '✨ 다시 쓰기'; });
+    }
+    function drawResult(j) {
+      var d = draft, c = cur(), rows = [];
+      var sc = function(o) { return o.impact == null ? '-' : Math.round(((o.impact + o.urgency + o.dependency) / 3 - o.complexity * 0.1) * 10) / 10; };
+      var add = function(k, label, a, b, same) { rows.push('<label class="air-row' + (same ? ' same' : '') + '"><input type="checkbox" data-k="' + k + '"' + (same ? ' disabled' : ' checked') + '><span class="lb">' + label + '</span><span class="old">' + (a || '<em>비어 있음</em>') + '</span><span class="arr">→</span><span class="new">' + (same ? '<em>그대로</em>' : b) + '</span></label>'); };
+      add('name', '제목', esc(c.name), esc(d.name), !d.name || d.name === c.name);
+      add('desc', '설명', esc(c.desc).replace(/\n/g, '<br>'), esc(d.desc).replace(/\n/g, '<br>'), !d.desc || d.desc === c.desc);
+      add('rationale', '기획의도', esc(c.rationale).replace(/\n/g, '<br>'), esc(d.rationale).replace(/\n/g, '<br>'), !d.rationale || d.rationale === c.rationale);
+      add('tier', '티어', esc(TIER_L[c.tier] || c.tier || ''), esc(TIER_L[d.tier] || d.tier), d.tier === c.tier);
+      var sameSc = d.impact === c.impact && d.urgency === c.urgency && d.complexity === c.complexity && d.dependency === c.dependency;
+      add('score', '점수', sc(c) + ' <small>(영향 ' + (c.impact ?? '-') + '·긴급 ' + (c.urgency ?? '-') + '·의존 ' + (c.dependency ?? '-') + '·복잡 ' + (c.complexity ?? '-') + ')</small>', sc(d) + ' <small>(영향 ' + d.impact + '·긴급 ' + d.urgency + '·의존 ' + d.dependency + '·복잡 ' + d.complexity + ')</small>' + (d.scoreReason ? '<div class="rs">' + esc(d.scoreReason) + '</div>' : ''), sameSc);
+      var sv0 = c.serviceTypes.slice().sort().join(', '), sv1 = (d.serviceTypes || []).slice().sort().join(', ');
+      add('svc', '서비스', esc(sv0), esc(sv1), !sv1 || sv0 === sv1);
+      var have = {}; arr((proj(pid) || p).tasks).forEach(function(t) { have[String(t.title).replace(/\s/g, '')] = 1; });
+      var newT = (d.tasks || []).filter(function(t) { return !have[String(t.title).replace(/\s/g, '')]; });
+      var h = '<div class="air-head"><b>' + (j.provider === 'claude' ? 'Claude' : 'Gemini') + '가 다시 썼어요</b>' + (j.fallback ? ' <span class="np-ai-fb">Gemini로 대신</span>' : '') + ' — 바꿀 칸만 체크해서 적용하세요</div>' + rows.join('');
+      if (newT.length) h += '<div class="air-tasks"><b>빠진 Task 제안</b> <span class="a13-hint">체크한 것만 추가돼요 (기존 Task는 지우지 않음)</span>' + newT.map(function(t, i) { return '<label class="air-t"><input type="checkbox" data-t="' + i + '"><span class="a13-chip" style="color:' + phc(t.phase) + '">' + esc(PHL[t.phase] || t.phase) + '</span>' + esc(t.title) + ' <small>' + t.days + '일</small></label>'; }).join('') + '</div>';
+      if (d.similar && d.similar.length) h += '<div class="np-ai-sim"><b>⚠ 비슷한 다른 안건</b>' + d.similar.map(function(x) { var q3 = proj(x.id); return '<div><span class="a13-pid">' + esc(x.id) + '</span> ' + esc(q3 ? q3.name : '') + (x.reason ? ' <small>— ' + esc(x.reason) + '</small>' : '') + '</div>'; }).join('') + '</div>';
+      if (d.questions && d.questions.length) h += '<div class="np-ai-q"><b>확인할 것</b><ul>' + d.questions.map(function(x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+      var bad = (j.sources || []).filter(function(x) { return !x.ok; }); if (bad.length) h += '<div class="np-ai-src">' + bad.map(function(x) { return '🔗 ' + esc(x.url.replace(/^https?:\/\//, '').slice(0, 40)) + ' — ' + esc(x.note); }).join('<br>') + '</div>';
+      res.innerHTML = h; out.innerHTML = '';
+      res._newT = newT;
+      var upd = function() { applyB.disabled = !res.querySelector('input[type=checkbox]:checked'); };
+      res.querySelectorAll('input[type=checkbox]').forEach(function(x) { x.onchange = upd; }); upd();
+    }
+    applyB.onclick = function() {
+      if (!draft) return;
+      var q4 = proj(pid); if (!q4) return;
+      var keys = [].slice.call(res.querySelectorAll('input[data-k]:checked')).map(function(x) { return x.dataset.k; });
+      var tIdx = [].slice.call(res.querySelectorAll('input[data-t]:checked')).map(function(x) { return +x.dataset.t; });
+      var before = { name: q4.name, desc: q4.desc, rationale: q4.rationale, tier: q4.tier, impact: q4.impact, urgency: q4.urgency, complexity: q4.complexity, dependency: q4.dependency, score: q4.score, serviceTypes: arr(q4.serviceTypes).slice(), taskN: arr(q4.tasks).length };
+      var d = draft, n = 0;
+      keys.forEach(function(k) {
+        if (k === 'name' && d.name) { A.setProject(pid, 'name', d.name, '이름(AI)'); n++; }
+        if (k === 'desc') { A.setProject(pid, 'desc', d.desc, '설명(AI)'); n++; }
+        if (k === 'rationale') { A.setProject(pid, 'rationale', d.rationale, '근거(AI)'); n++; }
+        if (k === 'tier') { A.setProject(pid, 'tier', d.tier, '티어(AI)'); n++; }
+        if (k === 'svc') { A.setProject(pid, 'serviceTypes', d.serviceTypes.slice(), '서비스(AI)'); n++; }
+        if (k === 'score') { ['impact', 'urgency', 'complexity', 'dependency'].forEach(function(f) { q4[f] = d[f]; }); q4.score = Math.round(((q4.impact + q4.urgency + q4.dependency) / 3 - q4.complexity * 0.1) * 10) / 10; pushHistory('수정', pid, '점수(AI)', before.score == null ? '' : String(before.score), String(q4.score)); saveProjects(); n++; }
+      });
+      var tn = 0; if (tIdx.length) tn = A.addTasks(pid, tIdx.map(function(i) { var t = res._newT[i]; return t.title + ' #' + ({ plan: '기획', design: '디자인', front: 'FE', back: 'BE', qa: 'QA' })[t.phase]; }).join('\n'));
+      q4 = proj(pid); if (q4) { q4.aiDraft = { by: 'rewrite', at: new Date().toISOString() }; saveProjects(); }
+      close(); A.render(true); try { if (A._sheetRefresh) A._sheetRefresh(); } catch (e) {}
+      // 되돌리기 바
+      var bar = document.getElementById('wlUndo'); if (bar) bar.remove();
+      bar = document.createElement('div'); bar.id = 'wlUndo'; bar.className = 'wl-undo'; bar.setAttribute('role', 'status');
+      bar.innerHTML = '<span>' + esc(pid) + ' — AI로 ' + n + '개 칸' + (tn ? ' · Task ' + tn + '건' : '') + ' 바꿈</span><button>되돌리기</button>';
+      document.body.appendChild(bar);
+      bar.querySelector('button').onclick = function() {
+        var r = proj(pid); if (!r) return;
+        ['name', 'desc', 'rationale', 'tier'].forEach(function(f) { if (keys.indexOf(f) !== -1) A.setProject(pid, f, before[f] == null ? '' : before[f], '되돌림'); });
+        if (keys.indexOf('svc') !== -1) A.setProject(pid, 'serviceTypes', before.serviceTypes, '되돌림');
+        if (keys.indexOf('score') !== -1) { ['impact', 'urgency', 'complexity', 'dependency', 'score'].forEach(function(f) { r[f] = before[f]; }); saveProjects(); }
+        if (tn) { r.tasks = arr(r.tasks).slice(0, before.taskN); saveProjects(); }
+        A.render(true); try { if (A._sheetRefresh) A._sheetRefresh(); } catch (e) {}
+        toast('되돌렸습니다'); bar.remove();
+      };
+      setTimeout(function() { if (bar.parentNode) bar.remove(); }, 12000);
+      toast(pid + ' 안건을 고쳤습니다');
+    };
+    go.onclick = run;
+  };
 
   /* ═══ v14.4 배포일 기준 단계 일정·Task 자동 작성 ═══ */
   // 공휴일(대체공휴일 포함) — 2026~2027
@@ -23712,6 +23903,7 @@ function renderNotifList() {
         }
         var d = j.draft, prev = apply(d);
         wrap._ai = { d: d, provider: j.provider, applied: true };
+        try { var okU = (j.sources || []).map(function(x) { return x.url; }).concat(urls).filter(function(u, i, a) { return /^https?:\/\//i.test(u) && a.indexOf(u) === i; }); if (okU.length && A.addLinks(wrap, okU)) { var lb = P.querySelector('.np-links'); if (lb) { var nb = document.createElement('div'); nb.innerHTML = A.linkBoxH(wrap._links, false); lb.replaceWith(nb.firstChild); A.linkWire(P, wrap, null); var ds2 = P.querySelector('details[data-sec="link"]'); if (ds2) ds2.open = true; } } } catch (e) {}
         try {
           var dep = P.querySelector('.np-deploy');
           if (dep && !dep.value && d.deployDate) { dep.value = d.deployDate; dep.classList.add('ai-filled'); }
@@ -23750,7 +23942,7 @@ function renderNotifList() {
     function headH() {
       if (isNew) return '<header><div><h2>새 안건</h2><p>메모·대화·링크·캡처를 주면 AI가 채워 줍니다. 제목만 있어도 만들 수 있어요.</p></div><button class="x" aria-label="닫기">✕</button></header>';
       var p = proj(pid);
-      return '<header><div><h2><span class="a13-pid">' + esc(pid) + '</span> 안건 정보</h2><p>' + (cw ? '바꾸면 그 칸만 바로 저장됩니다' : '읽기 전용 — 쓰기 권한이 있어야 수정할 수 있습니다') + (p && p.created ? ' · 등록 ' + esc(String(p.created).slice(0, 10)) : '') + '</p></div><button class="x" aria-label="닫기">✕</button></header>';
+      return '<header><div><h2><span class="a13-pid">' + esc(pid) + '</span> 안건 정보</h2><p>' + (cw ? '바꾸면 그 칸만 바로 저장됩니다' : '읽기 전용 — 쓰기 권한이 있어야 수정할 수 있습니다') + (p && p.created ? ' · 등록 ' + esc(String(p.created).slice(0, 10)) : '') + '</p></div>' + (cw ? '<button type="button" class="a13-btn sm np-ai-entry" onclick="AF13.aiRewrite(\'' + q(pid) + '\')">✨ AI로 다시 쓰기</button>' : '') + '<button class="x" aria-label="닫기">✕</button></header>';
     }
     function sumH(p) {
       var tk = arr(p.tasks), dn = tk.filter(function(t) { return t.status === 'done'; }).length;
@@ -23793,6 +23985,7 @@ function renderNotifList() {
             : (cw ? '<input class="a13-input np-taskadd" placeholder="할 일 입력 후 Enter — @담당 ~마감 #단계">' : '') +
               '<div class="np-tlist">' + (tk.length ? tk.slice().sort(function(a, b) { if ((a.status === 'done') !== (b.status === 'done')) return a.status === 'done' ? 1 : -1; return (a.end || '9999') < (b.end || '9999') ? -1 : 1; }).slice(0, 8).map(function(t) {
                 return '<div class="np-pv' + (t.status === 'done' ? ' done' : '') + '"><b>' + esc(t.title) + '</b>' + (t.phase ? '<span class="a13-chip" style="color:' + phc(t.phase) + '">' + PHL[t.phase] + '</span>' : '') + avs(t.assignees) + (t.end ? '<span class="a13-chip">~' + fmtD(t.end) + '</span>' : '') + pill((TST[t.status] || TST.todo)[0], (TST[t.status] || TST.todo)[1]) + '</div>'; }).join('') + (tk.length > 8 ? '<div class="a13-hint" style="padding:4px 10px">외 ' + (tk.length - 8) + '개 — 안건 페이지에서 전체 보기</div>' : '') : '<div class="a13-hint" style="padding:4px 2px">아직 Task가 없습니다</div>') + '</div>'), isNew ? false : true) +
+        sec('link', '관련 링크' + (isNew ? '' : ' ' + arr(v.links).length), '기획서·Figma·PRD·노션 등', A.linkBoxH(isNew ? (wrap._links || []) : arr(v.links), dis), !isNew && arr(v.links).length > 0) +
         sec('desc', '설명 · 왜 중요한가', isNew ? '선택' : (v.desc || v.rationale ? '' : '비어 있음'),
           '<textarea class="a13-input np-desc" placeholder="무엇을 하는 안건인가요?"' + (dis ? ' disabled' : '') + '>' + esc(v.desc || '') + '</textarea>' +
           '<textarea class="a13-input np-rat" placeholder="왜 지금 해야 하나요? (근거·지표)" style="margin-top:8px"' + (dis ? ' disabled' : '') + '>' + esc(v.rationale || '') + '</textarea>', !isNew && !!(v.desc || v.rationale));
@@ -23843,6 +24036,7 @@ function renderNotifList() {
     A._closeSheet = closeIt;
 
     function wire() {
+      try { A.linkWire(P, wrap, isNew ? null : pid); } catch (e) { console.warn('[link]', e); }
       var titleEl = q1('.np-title');
       // 공통: 칩·세그먼트 선택 표시
       P.querySelectorAll('.np-tiers button').forEach(function(b) { b.onclick = function() {
@@ -23942,6 +24136,7 @@ function renderNotifList() {
         p.phases = phases;
         p.desc = q1('.np-desc').value.trim();
         p.rationale = q1('.np-rat').value.trim();
+        if (wrap._links && wrap._links.length) p.links = wrap._links.slice();
         try {
           var ai = wrap._ai;
           if (ai && ai.applied) {
@@ -23957,6 +24152,7 @@ function renderNotifList() {
         if (more) {
           titleEl.value = ''; tasksEl.value = ''; q1('.np-preview').innerHTML = ''; q1('.np-dup').innerHTML = '';
           q1('.np-desc').value = ''; q1('.np-rat').value = '';
+          try { wrap._links = []; var lb0 = q1('.np-links'); if (lb0) lb0.outerHTML = A.linkBoxH([], false); A.linkWire(P, wrap, null); } catch (e) {}
           try { wrap._ai = null; var ai0 = q1('.np-ai-in'); if (ai0) ai0.value = ''; var ao = q1('.np-ai-out'); if (ao) ao.innerHTML = ''; var at0 = q1('.np-ai-att'); if (at0) at0.innerHTML = ''; wrap._aiImgs = []; } catch (e) {}
           titleEl.focus(); A.render(true);
         } else { closeIt(true); A.go('a13project', p.id); }
